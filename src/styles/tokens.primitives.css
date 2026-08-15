@@ -1,0 +1,129 @@
+/* LAYER 1 — PRIMITIVES. Raw values, no meaning. Components never read these;
+ * they read the semantic layer, which is what makes re-theming a one-file edit.
+ *
+ * Declared in `@theme` (not `@theme inline`) so Tailwind both generates scale
+ * utilities and emits each value as a CSS variable the semantic layer points at.
+ *
+ * [FIGMA] marks a value measured from the reference file. */
+
+@theme {
+  /* Anchored on blue-500, the measured brand blue. Ramp built at its hue, 210deg.
+   *
+   * White text contrast: blue-500 = 3.65:1 (passes AA Large only), blue-600 =
+   * 4.67:1 (passes AA body). That gap is why the semantic layer points
+   * surface-brand at blue-600 rather than the reference's blue-500. */
+  --color-blue-50: #f0f7ff;
+  --color-blue-100: #d6ebff;
+  --color-blue-200: #b3d9ff;
+  --color-blue-300: #7abdff;
+  --color-blue-400: #42a1ff;
+  --color-blue-500: #0a84ff; /* [FIGMA] */
+  --color-blue-600: #0973dc;
+  --color-blue-700: #0b5eb1;
+  --color-blue-800: #0c4d8d;
+  --color-blue-900: #0c3d6e;
+  --color-blue-950: #082445;
+
+  /* Pure black and white are kept exact because the reference uses both unmixed.
+   * The middle carries a faint cool cast so greys sit beside the blue. */
+  --color-neutral-0: #ffffff; /* [FIGMA] */
+  --color-neutral-50: #f7f8fa;
+  --color-neutral-100: #eff1f4;
+  --color-neutral-200: #e1e4e9;
+  --color-neutral-300: #c7ccd4;
+  --color-neutral-400: #9aa1ad;
+  --color-neutral-500: #6e7681;
+  --color-neutral-600: #545b65;
+  --color-neutral-700: #3d434b;
+  --color-neutral-800: #272b31;
+  --color-neutral-900: #16191d;
+  --color-neutral-950: #0b0d0f;
+  --color-neutral-1000: #000000; /* [FIGMA] */
+
+  /* Invented. The reference is one marketing screen with no state to express.
+   * Info is violet, not blue, because brand blue is the page surface here and a
+   * blue info state would vanish into it. */
+  --color-green-100: #d1fadf;
+  --color-green-500: #12b76a;
+  --color-green-600: #039855;
+  --color-green-900: #05603a;
+
+  --color-amber-100: #fef0c7;
+  --color-amber-500: #f79009;
+  --color-amber-600: #dc6803;
+  --color-amber-900: #93370d;
+
+  --color-red-100: #fee4e2;
+  --color-red-500: #f04438;
+  --color-red-600: #d92d20;
+  --color-red-900: #912018;
+
+  --color-violet-100: #ece9fe;
+  --color-violet-500: #7a5af8;
+  --color-violet-600: #6938ef;
+  --color-violet-900: #4a1fb8;
+
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.375rem; /* 22px [FIGMA] nav bar, cards */
+  --radius-xl: 2rem; /* 32px [FIGMA] hero panel */
+  --radius-2xl: 2.5rem;
+  --radius-pill: 9999px;
+
+  /* Luckiest Guy is single-weight and display-only. Fredoka carries the 300-600
+   * range and does the actual work. */
+  --font-display: 'Luckiest Guy', 'Fredoka', system-ui, sans-serif;
+  --font-text: 'Fredoka', ui-rounded, system-ui, -apple-system, sans-serif;
+
+  --text-display-2xl: 4.5rem;
+  --text-display-2xl--line-height: 4.5rem;
+  --text-display-xl: 4.0625rem; /* 65px [FIGMA] */
+  --text-display-xl--line-height: 4.1875rem; /* 67px [FIGMA] */
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 3.125rem;
+  --text-display-md: 2.25rem;
+  --text-display-md--line-height: 2.375rem;
+
+  --text-heading-lg: 1.75rem;
+  --text-heading-lg--line-height: 2.125rem;
+  --text-heading-md: 1.375rem;
+  --text-heading-md--line-height: 1.75rem;
+  --text-heading-sm: 1.125rem;
+  --text-heading-sm--line-height: 1.5rem;
+
+  /* The reference sets body at 18px/20px — a ratio of 1.11, which crowds badly
+   * once a paragraph wraps. Body line heights here are 1.44-1.5. Display stays
+   * tight at 1.03 because that is the look. */
+  --text-body-lg: 1.125rem; /* 18px [FIGMA], line height corrected */
+  --text-body-lg--line-height: 1.625rem;
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.5rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Kept soft on purpose: the reference separates layers with flat colour and
+   * overlap, never shadow. These exist only for lifted surfaces it never shows. */
+  --shadow-sm: 0 1px 2px 0 rgb(11 13 15 / 0.06);
+  --shadow-md: 0 4px 12px -2px rgb(11 13 15 / 0.1), 0 2px 4px -2px rgb(11 13 15 / 0.06);
+  --shadow-lg: 0 12px 32px -8px rgb(11 13 15 / 0.18), 0 4px 8px -4px rgb(11 13 15 / 0.08);
+  --shadow-brand: 0 12px 32px -8px rgb(10 132 255 / 0.45);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Outside @theme: Tailwind's duration-* utilities take bare numbers, so these
+ * are referenced directly from component CSS instead. */
+:root {
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+}

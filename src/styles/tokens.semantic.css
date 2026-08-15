@@ -1,0 +1,228 @@
+/* LAYER 2 — SEMANTIC. What a value MEANS, never what it is. Components read only
+ * this layer, so fixing a contrast fault or adding dark mode is an edit here and
+ * nowhere else.
+ *
+ * SURFACE CONTEXTS: a button on white and the same button on the blue panel need
+ * different colours but are one component. Rather than thread an `inverted` prop
+ * everywhere, a surface declares its context by class (.ctx-brand, .ctx-inverse)
+ * and re-points these variables for everything inside it. */
+
+:root {
+  --color-surface-page: var(--color-neutral-0);
+  --color-surface-raised: var(--color-neutral-0);
+  --color-surface-sunken: var(--color-neutral-50);
+  --color-surface-inverse: var(--color-neutral-1000);
+
+  /* blue-600, NOT the reference's blue-500: white body copy on blue-500 measures
+   * 3.65:1 against AA's 4.5:1 minimum. blue-600 measures 4.67:1. */
+  --color-surface-brand: var(--color-blue-600);
+
+  /* The identity blue, kept exact. Safe only behind display-size type, where
+   * AA Large's 3:1 threshold applies. */
+  --color-surface-brand-vivid: var(--color-blue-500);
+  --color-surface-brand-subtle: var(--color-blue-50);
+
+  --color-text-primary: var(--color-neutral-1000);
+  --color-text-secondary: var(--color-neutral-700);
+  /* neutral-600, not 500: on the sunken surface neutral-500 measures 4.32:1,
+   * just under AA. This clears it at 6.46:1 and still reads as muted. */
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-accent: var(--color-blue-700);
+  --color-text-inverse: var(--color-neutral-0);
+
+  --color-overlay-scrim: color-mix(in srgb, var(--color-neutral-1000) 60%, transparent);
+
+  /* The corner ornament. Measured as #6CB5FF on the blue panel and #555555 on the
+   * black card — which are the same rule, translucent white, composited over each
+   * surface. Expressed that way it reproduces both exactly and holds on surfaces
+   * added later. White is invisible on a light page, so this one inverts. */
+  --color-surface-glint: color-mix(in srgb, var(--color-neutral-1000) 10%, transparent);
+
+  --color-border-subtle: var(--color-neutral-200);
+  --color-border-default: var(--color-neutral-300);
+  --color-border-strong: var(--color-neutral-1000);
+  --color-focus-ring: var(--color-blue-500);
+  --color-focus-ring-offset: var(--color-neutral-0);
+
+  --color-action-primary-bg: var(--color-blue-600);
+  --color-action-primary-bg-hover: var(--color-blue-700);
+  --color-action-primary-bg-active: var(--color-blue-800);
+  --color-action-primary-fg: var(--color-neutral-0);
+
+  --color-action-secondary-bg: transparent;
+  --color-action-secondary-bg-hover: var(--color-neutral-100);
+  --color-action-secondary-fg: var(--color-neutral-1000);
+  --color-action-secondary-border: var(--color-neutral-300);
+
+  --color-action-ghost-bg-hover: var(--color-neutral-100);
+  --color-action-ghost-fg: var(--color-neutral-1000);
+
+  --color-action-danger-bg: var(--color-red-600);
+  --color-action-danger-bg-hover: var(--color-red-900);
+  --color-action-danger-fg: var(--color-neutral-0);
+
+  --color-action-disabled-bg: var(--color-neutral-200);
+  --color-action-disabled-fg: var(--color-neutral-400);
+
+  --color-status-success-bg: var(--color-green-100);
+  --color-status-success-fg: var(--color-green-900);
+  --color-status-success-solid: var(--color-green-600);
+
+  --color-status-warning-bg: var(--color-amber-100);
+  --color-status-warning-fg: var(--color-amber-900);
+  --color-status-warning-solid: var(--color-amber-600);
+
+  --color-status-danger-bg: var(--color-red-100);
+  --color-status-danger-fg: var(--color-red-900);
+  --color-status-danger-solid: var(--color-red-600);
+
+  --color-status-info-bg: var(--color-violet-100);
+  --color-status-info-fg: var(--color-violet-900);
+  --color-status-info-solid: var(--color-violet-600);
+}
+
+/* Applied by SpotlightPanel. */
+.ctx-brand {
+  --color-surface-page: var(--color-blue-600);
+  --color-surface-raised: var(--color-blue-700);
+  --color-surface-sunken: var(--color-blue-700);
+
+  --color-text-primary: var(--color-neutral-0);
+
+  /* Identical to primary on purpose. White on blue-600 is 4.67:1, barely over
+   * AA's 4.5:1, so any transparency drops below it — 88% measures 3.97:1 and 95%
+   * measures 4.37:1. (AA Large's 3:1 does not rescue this: Large means 24px, or
+   * 18.66px bold. An 18px paragraph is normal text.) On brand surfaces hierarchy
+   * therefore comes from size and weight, not opacity. */
+  --color-text-secondary: var(--color-neutral-0);
+
+  /* 3.16:1 — under the 4.5:1 text needs, over the 3:1 non-text graphics need.
+   * Dividers, dot grid, icon ornament. Never copy. */
+  --color-text-muted: color-mix(in srgb, var(--color-neutral-0) 72%, transparent);
+
+  --color-text-accent: var(--color-blue-100);
+  --color-text-inverse: var(--color-neutral-1000);
+
+  --color-border-subtle: color-mix(in srgb, var(--color-neutral-0) 24%, transparent);
+  --color-border-default: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
+  --color-border-strong: var(--color-neutral-0);
+  --color-focus-ring: var(--color-neutral-0);
+  --color-focus-ring-offset: var(--color-blue-600);
+
+  /* 40% white over the reference's blue-500 composites to exactly #6CB5FF. */
+  --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 40%, transparent);
+
+  /* On blue the primary action inverts to the reference's white pill. */
+  --color-action-primary-bg: var(--color-neutral-0);
+  --color-action-primary-bg-hover: var(--color-blue-50);
+  --color-action-primary-bg-active: var(--color-blue-100);
+  --color-action-primary-fg: var(--color-neutral-1000);
+
+  --color-action-secondary-bg: transparent;
+  --color-action-secondary-bg-hover: color-mix(in srgb, var(--color-neutral-0) 16%, transparent);
+  --color-action-secondary-fg: var(--color-neutral-0);
+  --color-action-secondary-border: var(--color-neutral-0);
+
+  --color-action-ghost-bg-hover: color-mix(in srgb, var(--color-neutral-0) 14%, transparent);
+  --color-action-ghost-fg: var(--color-neutral-0);
+
+  --color-action-disabled-bg: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
+  --color-action-disabled-fg: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
+}
+
+/* Applied by NavBar, dark Card, dark Chip, Tooltip. */
+.ctx-inverse {
+  --color-surface-page: var(--color-neutral-1000);
+  --color-surface-raised: var(--color-neutral-900);
+  --color-surface-sunken: var(--color-neutral-950);
+
+  --color-text-primary: var(--color-neutral-0);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-muted: var(--color-neutral-400);
+  --color-text-accent: var(--color-blue-300);
+  --color-text-inverse: var(--color-neutral-1000);
+
+  --color-border-subtle: var(--color-neutral-800);
+  --color-border-default: var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-0);
+  --color-focus-ring: var(--color-blue-400);
+  --color-focus-ring-offset: var(--color-neutral-1000);
+
+  /* 33.33% white over black composites to exactly #555555. */
+  --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 33.33%, transparent);
+
+  --color-action-primary-bg: var(--color-neutral-0);
+  --color-action-primary-bg-hover: var(--color-neutral-100);
+  --color-action-primary-bg-active: var(--color-neutral-200);
+  --color-action-primary-fg: var(--color-neutral-1000);
+
+  --color-action-secondary-bg: transparent;
+  --color-action-secondary-bg-hover: var(--color-neutral-800);
+  --color-action-secondary-fg: var(--color-neutral-0);
+  --color-action-secondary-border: var(--color-neutral-600);
+
+  --color-action-ghost-bg-hover: var(--color-neutral-800);
+  --color-action-ghost-fg: var(--color-neutral-0);
+
+  --color-action-disabled-bg: var(--color-neutral-800);
+  --color-action-disabled-fg: var(--color-neutral-600);
+}
+
+/* Invented — the reference has no dark mode. It is one block of re-pointed
+ * variables and zero component changes, which is the payoff for layering. */
+.dark {
+  --color-surface-page: var(--color-neutral-950);
+  --color-surface-raised: var(--color-neutral-900);
+  --color-surface-sunken: var(--color-neutral-1000);
+  --color-surface-inverse: var(--color-neutral-0);
+
+  /* Down the ramp, not up: vivid blue reads brighter against a dark page, and
+   * this keeps the same 4.5:1 clearance with white. */
+  --color-surface-brand: var(--color-blue-700);
+  --color-surface-brand-vivid: var(--color-blue-500);
+  --color-surface-brand-subtle: var(--color-blue-950);
+
+  --color-overlay-scrim: color-mix(in srgb, var(--color-neutral-1000) 75%, transparent);
+  --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 14%, transparent);
+
+  --color-text-primary: var(--color-neutral-0);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-muted: var(--color-neutral-400);
+  --color-text-accent: var(--color-blue-300);
+  --color-text-inverse: var(--color-neutral-1000);
+
+  --color-border-subtle: var(--color-neutral-800);
+  --color-border-default: var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-0);
+  --color-focus-ring: var(--color-blue-400);
+  --color-focus-ring-offset: var(--color-neutral-950);
+
+  --color-action-primary-bg: var(--color-blue-500);
+  --color-action-primary-bg-hover: var(--color-blue-400);
+  --color-action-primary-bg-active: var(--color-blue-300);
+  --color-action-primary-fg: var(--color-neutral-1000);
+
+  --color-action-secondary-bg: transparent;
+  --color-action-secondary-bg-hover: var(--color-neutral-800);
+  --color-action-secondary-fg: var(--color-neutral-0);
+  --color-action-secondary-border: var(--color-neutral-700);
+
+  --color-action-ghost-bg-hover: var(--color-neutral-800);
+  --color-action-ghost-fg: var(--color-neutral-0);
+
+  --color-action-danger-bg: var(--color-red-500);
+  --color-action-danger-bg-hover: var(--color-red-600);
+  --color-action-danger-fg: var(--color-neutral-1000);
+
+  --color-action-disabled-bg: var(--color-neutral-800);
+  --color-action-disabled-fg: var(--color-neutral-600);
+
+  --color-status-success-bg: var(--color-green-900);
+  --color-status-success-fg: var(--color-green-100);
+  --color-status-warning-bg: var(--color-amber-900);
+  --color-status-warning-fg: var(--color-amber-100);
+  --color-status-danger-bg: var(--color-red-900);
+  --color-status-danger-fg: var(--color-red-100);
+  --color-status-info-bg: var(--color-violet-900);
+  --color-status-info-fg: var(--color-violet-100);
+}

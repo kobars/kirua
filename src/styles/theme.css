@@ -1,0 +1,66 @@
+/* LAYER 3 — Tailwind aliases for the semantic layer.
+ *
+ * `@theme inline` is load-bearing: it compiles utilities to literal
+ * `var(--color-…)` references instead of frozen values, which is what lets
+ * .ctx-brand / .ctx-inverse / .dark re-point a token at runtime and have every
+ * utility inside follow. Without `inline`, context switching silently breaks. */
+
+@theme inline {
+  --color-page: var(--color-surface-page);
+  --color-raised: var(--color-surface-raised);
+  --color-sunken: var(--color-surface-sunken);
+  --color-inverse: var(--color-surface-inverse);
+  --color-brand: var(--color-surface-brand);
+  --color-brand-vivid: var(--color-surface-brand-vivid);
+  --color-brand-subtle: var(--color-surface-brand-subtle);
+
+  --color-fg: var(--color-text-primary);
+  --color-fg-secondary: var(--color-text-secondary);
+  --color-fg-muted: var(--color-text-muted);
+  --color-fg-accent: var(--color-text-accent);
+  --color-fg-inverse: var(--color-text-inverse);
+
+  --color-line-subtle: var(--color-border-subtle);
+  --color-line: var(--color-border-default);
+  --color-line-strong: var(--color-border-strong);
+  --color-ring: var(--color-focus-ring);
+  --color-ring-offset: var(--color-focus-ring-offset);
+  --color-scrim: var(--color-overlay-scrim);
+  --color-glint: var(--color-surface-glint);
+
+  --color-primary: var(--color-action-primary-bg);
+  --color-primary-hover: var(--color-action-primary-bg-hover);
+  --color-primary-active: var(--color-action-primary-bg-active);
+  --color-on-primary: var(--color-action-primary-fg);
+
+  --color-secondary: var(--color-action-secondary-bg);
+  --color-secondary-hover: var(--color-action-secondary-bg-hover);
+  --color-on-secondary: var(--color-action-secondary-fg);
+  --color-secondary-line: var(--color-action-secondary-border);
+
+  --color-ghost-hover: var(--color-action-ghost-bg-hover);
+  --color-on-ghost: var(--color-action-ghost-fg);
+
+  --color-danger: var(--color-action-danger-bg);
+  --color-danger-hover: var(--color-action-danger-bg-hover);
+  --color-on-danger: var(--color-action-danger-fg);
+
+  --color-disabled: var(--color-action-disabled-bg);
+  --color-on-disabled: var(--color-action-disabled-fg);
+
+  --color-success-bg: var(--color-status-success-bg);
+  --color-success-fg: var(--color-status-success-fg);
+  --color-success-solid: var(--color-status-success-solid);
+  --color-warning-bg: var(--color-status-warning-bg);
+  --color-warning-fg: var(--color-status-warning-fg);
+  --color-warning-solid: var(--color-status-warning-solid);
+  --color-danger-bg: var(--color-status-danger-bg);
+  --color-danger-fg: var(--color-status-danger-fg);
+  --color-danger-solid: var(--color-status-danger-solid);
+  --color-info-bg: var(--color-status-info-bg);
+  --color-info-fg: var(--color-status-info-fg);
+  --color-info-solid: var(--color-status-info-solid);
+}
+
+/* Type, radius, elevation and easing utilities come straight from the primitive
+ * @theme block — they carry no context-dependent meaning, so no alias. */
