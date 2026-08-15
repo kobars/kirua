@@ -1,0 +1,153 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Kirua — a design system from one Figma screen
+
+This is a proof of concept. It takes a single anime landing-page hero published
+on Figma Community and turns it into a working design system: a token
+architecture, a component library, and a rebuild of the original screen made
+entirely from that library.
+
+## What the reference actually was
+
+The source is one node in a Figma Community file called *"Figma Anime Website UI
+Design: Futuristic & Interactive Hero Section"*. It is worth being precise about
+what it contained, because it explains most of the decisions here.
+
+- **Two frames**, `Desktop - 1` and `Desktop - 2`, near-identical.
+- **A flat layer list** — about twenty loose shapes named `Rectangle 32`,
+  `Rectangle 27`, and so on.
+- **No components. No variables. No styles.**
+
+So it was one marketing screen, not a design system. It had no form fields, no
+tables, no modals, no hover, focus, disabled, loading, empty, or error states, no
+mobile layout, and no dark mode. Roughly 85% of what appears here was invented,
+and the parts that were invented are labelled as such throughout.
+
+## What was measured, exactly
+
+These values were read from the Figma file itself rather than sampled from a
+screenshot:
+
+{/* Written as HTML rather than a markdown table — Storybook's MDX pipeline does
+    not enable GFM, so pipe tables render as literal text. */}
+
+<table>
+  <thead>
+    <tr><th align="left">Property</th><th align="left">Measured value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Brand blue (hero panel fill)</td><td><code>#0A84FF</code></td></tr>
+    <tr><td>Hero panel corner radius</td><td><code>32px</code></td></tr>
+    <tr><td>Nav bar fill / radius / height</td><td><code>#000000</code> / <code>22px</code> / <code>70px</code></td></tr>
+    <tr><td>Display face</td><td>Luckiest Guy, 65px / 67px line height</td></tr>
+    <tr><td>Text face</td><td>Fredoka, 18px / 20px line height, white at 80% opacity</td></tr>
+    <tr><td>Call-to-action height</td><td><code>54px</code></td></tr>
+  </tbody>
+</table>
+
+## The one thing that had to change
+
+White body copy on `#0A84FF` measures **3.65:1**. The reference actually sets it
+at 80% white, which measures **2.85:1**. WCAG AA requires **4.5:1** for body
+text.
+
+That is not a rounding error, and it is not fixable per component. The system
+therefore separates two blues:
+
+- `blue-500` — `#0A84FF`, the identity blue, kept exact. Used behind display
+  type, where AA Large's 3:1 threshold applies.
+- `blue-600` — `#0973DC`, the text-bearing surface. Measures **4.67:1** with
+  white.
+
+`--color-surface-brand` points at `blue-600`. That single line is the fix, and
+every component inherits it.
+
+See **Foundations → Colour → Contrast Audit**, where these ratios are computed in
+the browser from the shipped tokens rather than written down by hand.
+
+## How the tokens are layered
+
+```
+tokens.primitives.css   @theme        blue-500 is #0A84FF
+        ↓
+tokens.semantic.css     :root/.ctx-*  surface-brand is blue-600
+        ↓
+theme.css               @theme inline bg-brand → var(--color-surface-brand)
+        ↓
+components                            <SpotlightPanel /> uses bg-brand
+```
+
+Components read the semantic layer only. They never reference a primitive and
+never a raw hex. That indirection is what makes dark mode a single block of
+re-pointed variables and zero component edits.
+
+## Surface contexts
+
+A button on a white page and the same button on the blue panel need different
+colours but are the same component. Instead of threading an `inverted` prop
+through everything, a surface declares its context by class — `.ctx-brand`,
+`.ctx-inverse` — and re-points the semantic tokens for everything inside it.
+
+**Components → Button → Across Surfaces** shows the same component with the same
+props on three surfaces, with no overrides.
+
+## The corner glint
+
+The one ornament in the reference design is a small blade tucked into each
+rounded corner. It is easy to miss and it does a lot of work, so it is a
+component: `CornerGlint`.
+
+Two things about it are worth stating, because both were got wrong first.
+
+**It is flat.** The first attempt drew it as a stroke with a soft gradient fade.
+That reads as a bevel highlight — a 3D lighting cue — which is wrong for a system
+whose whole character is flat 2D anime. The real thing is one solid fill, one
+colour, hard edges, no gradient.
+
+**Its colour is a rule, not a value.** Measured from Figma, the blade is always a
+lighter tint of the surface beneath it: `#6CB5FF` on the `#0A84FF` panel,
+`#555555` on the black card. Those look like two unrelated hexes. They are not —
+they are the same rule. `#6CB5FF` is exactly 40% white over the blue, and
+`#555555` is exactly 33.3% white over the black. So the token is translucent
+white, and one value is correct on every surface, including ones added later.
+
+**It is inset, not flush.** In Figma the card's corner arc is centred at
+`(872.41, 753)` and the glint's at `(871.25, 752.61)` — the same point. The blade
+is *concentric* with the corner and one radius smaller: 22 − 14, an 8px inset, so
+a band of surface shows between the border and the blade. Its tails then run out
+onto the straight edges and taper to points.
+
+Everything derives from the corner radius, so the blade tracks the corner rather
+than the box — the way `border-radius` does — and re-draws itself when a card
+uses a different radius.
+
+## Behaviour comes from Radix Primitives
+
+Dialog, DropdownMenu, Tooltip, and Tabs are built on
+[Radix Primitives](https://www.radix-ui.com/primitives) — headless components
+that supply behaviour and accessibility and no appearance at all.
+
+That split is why this system can look nothing like a default component library
+and still trap focus correctly, return focus to the trigger, support typeahead in
+a menu, and move through tabs with the correct keyboard model. Those are the
+parts nobody credits you for and almost everybody gets wrong.
+
+## Known gaps
+
+Honest list, since a proof of concept that claims to be finished is lying:
+
+- **No form controls.** No input, select, checkbox, radio, or switch. These are
+  the largest remaining gap for real product use.
+- **No loading or empty states.**
+- **Artwork is not licensed for commercial use.** The hero uses fan-distributed
+  Killua Zoldyck cut-outs. Killua is Yoshihiro Togashi's character, published by
+  Shueisha. Fine for a personal portfolio piece; replace with commissioned or
+  licensed art before shipping or selling anything built on this. The layout only
+  needs a tall figure on a transparent background, so swapping is a one-line
+  change in `src/patterns/characters.ts`.
+- **Fredoka is a rounded, characterful face.** It suits this brand and would be
+  a poor choice for dense data tables.
+- **No visual regression testing.** `pnpm test` renders every story in Chromium
+  and asserts no axe violations, but nothing checks appearance.
