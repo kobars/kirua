@@ -1,0 +1,66 @@
+/* Radix keeps an overlay mounted while a CSS animation named by
+ * `data-state="closed"` runs, then unmounts it — so exit motion has to be a real
+ * keyframe animation, not a transition.
+ *
+ * The reference shows no motion at all, so these are invented. Kept short and
+ * low-travel to suit a UI whose character comes from flat colour, not movement.
+ * `prefers-reduced-motion` is honoured globally in index.css. */
+
+@theme {
+  --animate-fade-in: fade-in var(--duration-base) var(--ease-out);
+  --animate-fade-out: fade-out var(--duration-fast) var(--ease-out);
+  --animate-pop-in: pop-in var(--duration-base) var(--ease-out);
+  --animate-pop-out: pop-out var(--duration-fast) var(--ease-out);
+  --animate-slide-down: slide-down var(--duration-base) var(--ease-out);
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes pop-out {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.96) translateY(4px);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,0 +1,52 @@
+/* Import order is the token architecture: primitives -> semantic -> aliases. */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap');
+@import 'tailwindcss';
+
+@import './styles/tokens.primitives.css';
+@import './styles/tokens.semantic.css';
+@import './styles/theme.css';
+@import './styles/animations.css';
+
+/* The .dark class re-points semantic tokens, so most components need no `dark:`
+ * variants at all. This exists for the rare case where dark mode changes layout
+ * or opacity rather than colour. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-surface-page);
+    color: var(--color-text-primary);
+    font-family: var(--font-text);
+    font-size: var(--text-body-md);
+    line-height: var(--text-body-md--line-height);
+    font-weight: var(--font-weight-regular);
+  }
+
+  /* Components may restyle the ring, but none may remove it. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Luckiest Guy has no lowercase design of its own and very tight sidebearings. */
+  .font-display {
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
