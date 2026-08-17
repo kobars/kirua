@@ -11,6 +11,13 @@ export interface AvatarStackProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'sm' | 'md' | 'lg';
   /** Show at most this many, then a "+N" counter. */
   max?: number;
+  /**
+   * Builds the accessible name of the whole stack. Takes the total number of
+   * people, not the number shown, because that is what is being announced.
+   * Defaults to English — replace it to translate, including the plural rule,
+   * which differs by language.
+   */
+  label?: (count: number) => string;
 }
 
 const sizes = {
@@ -29,6 +36,8 @@ const swatches = [
   'bg-blue-300',
 ];
 
+const defaultLabel = (count: number) => `${count} ${count === 1 ? 'person' : 'people'}`;
+
 function swatchFor(name: string) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
@@ -41,14 +50,17 @@ function swatchFor(name: string) {
  *
  * The whole stack is announced as one label rather than as N separate images,
  * because individually announcing six cropped faces tells a screen reader user
- * nothing useful.
+ * nothing useful. That label is the only text this component produces, so it is
+ * a prop and not a constant.
  *
  * @example <AvatarStack items={[{ name: 'Rin' }, { name: 'Kai' }]} max={3} />
+ * @example <AvatarStack items={people} label={(n) => `${n} personnes`} />
  */
 export function AvatarStack({
   items,
   size = 'md',
   max = 3,
+  label = defaultLabel,
   className,
   ...props
 }: AvatarStackProps) {
@@ -60,7 +72,7 @@ export function AvatarStack({
       data-slot="avatar-stack"
       className={cn('inline-flex items-center', className)}
       role="img"
-      aria-label={`${items.length} ${items.length === 1 ? 'person' : 'people'}`}
+      aria-label={label(items.length)}
       {...props}
     >
       {shown.map((item) => (

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { AvatarStack } from './AvatarStack';
 import { DotGrid } from './DotGrid';
 import { Stat, StatRow } from './Stat';
@@ -56,6 +57,23 @@ export const AvatarStacks: Story = {
       </div>
     </div>
   ),
+};
+
+/**
+ * `label` receives the total count, so a consumer can carry their own plural
+ * rule — Polish needs three forms and English needs two, which is exactly why
+ * this is a function and not a string.
+ *
+ * The play function looks the stack up by the translated name, so the story
+ * fails if the prop stops reaching the accessibility tree.
+ */
+export const TranslatedAvatarLabel: Story = {
+  render: () => <AvatarStack items={PEOPLE} max={3} label={(n) => `${n} personnes`} />,
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole('img', { name: '5 personnes' }),
+    ).toBeInTheDocument();
+  },
 };
 
 export const Stats: Story = {

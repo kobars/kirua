@@ -26,12 +26,25 @@ export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
 
+/**
+ * The panel itself. Everything visible is passed in as children, with one
+ * exception: the close button, which the component supplies.
+ *
+ * That button needs an accessible name, and a name is user-visible text — so it
+ * is a prop with an English default rather than a hardcoded string. kirua does
+ * not own translation; it only has to stop being an obstacle to it.
+ */
 export function DialogContent({
   className,
   children,
   showCloseButton = true,
+  closeLabel = 'Close',
   ...props
-}: ComponentProps<typeof DialogPrimitive.Content> & { showCloseButton?: boolean }) {
+}: ComponentProps<typeof DialogPrimitive.Content> & {
+  showCloseButton?: boolean;
+  /** Accessible name of the built-in close button. */
+  closeLabel?: string;
+}) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
@@ -55,7 +68,7 @@ export function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
-            <IconButton aria-label="Close" size="sm" className="absolute top-5 right-5">
+            <IconButton aria-label={closeLabel} size="sm" className="absolute top-5 right-5">
               <CloseIcon size={18} />
             </IconButton>
           </DialogPrimitive.Close>
