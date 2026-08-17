@@ -5,8 +5,7 @@ import { cn } from '@/lib/cn';
 import { buttonVariants } from './Button.variants';
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   /**
    * Render the styles onto the child element instead of a `<button>`, so a link
    * keeps real link semantics rather than faking one with a click handler.

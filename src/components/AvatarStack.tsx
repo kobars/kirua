@@ -68,7 +68,7 @@ export function AvatarStack({
           key={item.name}
           className={cn(
             'relative -mr-2 inline-flex items-center justify-center overflow-hidden',
-            'rounded-pill ring-2 ring-page font-semibold text-white last:mr-0',
+            'rounded-pill font-semibold text-white ring-2 ring-page last:mr-0',
             sizes[size],
             !item.src && swatchFor(item.name),
           )}
@@ -86,7 +86,7 @@ export function AvatarStack({
             'relative inline-flex items-center justify-center',
             // Inverted against whatever surface context this sits in, so the
             // counter stays legible on a black chip and on a white one.
-            'rounded-pill bg-fg text-page ring-2 ring-page font-semibold',
+            'rounded-pill bg-fg font-semibold text-page ring-2 ring-page',
             sizes[size],
           )}
         >

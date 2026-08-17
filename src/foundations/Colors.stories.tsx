@@ -1,6 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
-import { contrastRatio, formatRatio, grade, resolveColor, type WcagLevel } from '@/lib/contrast';
+import {
+  contrastRatio,
+  formatRatio,
+  grade,
+  resolveColor,
+  type WcagLevel,
+} from '@/lib/contrast';
 import { Badge } from '@/components';
 
 const meta = {
@@ -39,9 +45,9 @@ export const Ramps: Story = {
         <div>
           <h2 className="font-text text-heading-lg font-semibold text-fg">Brand blue</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            Anchored on <strong>blue-500 = #0A84FF</strong>, the exact fill measured from the hero
-            panel in the reference Figma file. The rest of the ramp is built at that colour&apos;s
-            measured hue, 210 degrees.
+            Anchored on <strong>blue-500 = #0A84FF</strong>, the exact fill measured from the
+            hero panel in the reference Figma file. The rest of the ramp is built at that
+            colour&apos;s measured hue, 210 degrees.
           </p>
         </div>
         <div className="grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-11">
@@ -56,8 +62,8 @@ export const Ramps: Story = {
           <h2 className="font-text text-heading-lg font-semibold text-fg">Neutrals</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
             Pure white and pure black are kept exact, because the reference design uses both
-            unmixed. The middle of the ramp carries a faint cool cast so greys sit beside the blue
-            without looking muddy.
+            unmixed. The middle of the ramp carries a faint cool cast so greys sit beside the
+            blue without looking muddy.
           </p>
         </div>
         <div className="grid grid-cols-4 gap-4 md:grid-cols-7 lg:grid-cols-13">
@@ -71,15 +77,19 @@ export const Ramps: Story = {
         <div>
           <h2 className="font-text text-heading-lg font-semibold text-fg">Status hues</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            None of these exist in the reference design — it is one marketing screen, with nothing
-            to succeed or fail. <strong>Info is violet, not blue,</strong> on purpose: brand blue is
-            the page surface here, so a blue info state would disappear into it.
+            None of these exist in the reference design — it is one marketing screen, with
+            nothing to succeed or fail. <strong>Info is violet, not blue,</strong> on purpose:
+            brand blue is the page surface here, so a blue info state would disappear into it.
           </p>
         </div>
         <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
           {['green', 'amber', 'red', 'violet'].flatMap((hue) =>
             [100, 500, 600, 900].map((step) => (
-              <Swatch key={`${hue}-${step}`} token={`--color-${hue}-${step}`} name={`${hue}-${step}`} />
+              <Swatch
+                key={`${hue}-${step}`}
+                token={`--color-${hue}-${step}`}
+                name={`${hue}-${step}`}
+              />
             )),
           )}
         </div>
@@ -156,7 +166,7 @@ function ContrastTable() {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[46rem] border-collapse font-text text-body-sm">
+      <table className="w-full min-w-184 border-collapse font-text text-body-sm">
         <thead>
           <tr className="border-b border-line">
             <th className="py-3 pr-4 text-left font-semibold text-fg">Sample</th>
@@ -178,7 +188,9 @@ function ContrastTable() {
               </td>
               <td className="py-3 pr-4 text-fg">
                 {pair.label}
-                {pair.note && <div className="mt-1 text-caption text-fg-muted">{pair.note}</div>}
+                {pair.note && (
+                  <div className="mt-1 text-caption text-fg-muted">{pair.note}</div>
+                )}
               </td>
               <td className="py-3 pr-4 text-right font-mono text-fg">{formatRatio(ratio)}</td>
               <td className="py-3">
@@ -204,8 +216,8 @@ export const ContrastAudit: Story = {
         <h2 className="font-text text-heading-lg font-semibold text-fg">Contrast audit</h2>
         <p className="mt-1 max-w-3xl font-text text-body-md text-fg-secondary">
           These ratios are computed at render time from the shipped tokens, not written by hand.
-          The first two rows are the reference design as drawn; the third is the single token change
-          that fixes it. <strong>AA</strong> needs 4.5:1 for body text.{' '}
+          The first two rows are the reference design as drawn; the third is the single token
+          change that fixes it. <strong>AA</strong> needs 4.5:1 for body text.{' '}
           <strong>AA Large</strong> needs 3:1, and applies only at 24px, or 18.66px bold.
         </p>
       </div>

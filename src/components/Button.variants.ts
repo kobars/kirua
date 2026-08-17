@@ -18,14 +18,14 @@ export const buttonVariants = cva(
     'active:scale-[0.98]',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     'disabled:pointer-events-none disabled:cursor-not-allowed',
-    'disabled:bg-disabled disabled:text-on-disabled disabled:border-transparent',
+    'disabled:border-transparent disabled:bg-disabled disabled:text-on-disabled',
   ],
   {
     variants: {
       variant: {
         primary: 'bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active',
         secondary:
-          'bg-secondary text-on-secondary border-2 border-secondary-line hover:bg-secondary-hover',
+          'border-2 border-secondary-line bg-secondary text-on-secondary hover:bg-secondary-hover',
         ghost: 'bg-transparent text-on-ghost hover:bg-ghost-hover',
         danger: 'bg-danger text-on-danger hover:bg-danger-hover',
       },
@@ -34,6 +34,10 @@ export const buttonVariants = cva(
         /** 44px — meets the minimum touch target. */
         md: 'h-11 px-6 text-body-md',
         /** 54px — the reference design's hero call to action. */
+        /** 54px — the reference design's hero call to action. Arbitrary, not
+         *  `h-13.5`: numeric utilities compile to calc(var(--spacing) * n), and a
+         *  measured value must not move when the spacing scale is retuned. */
+        // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes
         lg: 'h-[3.375rem] px-8 text-body-lg',
       },
       fullWidth: {

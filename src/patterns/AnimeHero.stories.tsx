@@ -15,7 +15,7 @@ const meta = {
           '',
           '**Deliberate deviations from the Figma file:**',
           '1. The blue panel uses blue-600, not the measured blue-500. White body copy on blue-500 measures 3.65:1 and fails WCAG AA.',
-          '2. Body line height is 1.44, not the reference\'s 1.11.',
+          "2. Body line height is 1.44, not the reference's 1.11.",
           "3. The artwork is Killua Zoldyck rather than the reference's own AI-generated illustrations. Killua is Yoshihiro Togashi's character, published by Shueisha — these fan-distributed cut-outs are fine for a personal portfolio piece and are not licensed for commercial use.",
         ].join('\n'),
       },

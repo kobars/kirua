@@ -62,8 +62,8 @@ export const Destructive: Story = {
       <DialogContent>
         <DialogTitle>Delete this artwork?</DialogTitle>
         <DialogDescription>
-          This removes it from your portfolio and from every collection that features it. It cannot
-          be undone.
+          This removes it from your portfolio and from every collection that features it. It
+          cannot be undone.
         </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>

@@ -14,25 +14,23 @@ const chip = cva(
         /* `bg-page` inside `ctx-inverse` stays pure black in dark mode too;
          * `bg-inverse` would flip to white. Same trick in Card and NavBar. */
         dark: 'ctx-inverse bg-page text-fg',
-        light: 'bg-raised text-fg border border-line-subtle',
+        light: 'border border-line-subtle bg-raised text-fg',
         /* bg-brand, not bg-brand-vivid: white chip text is 14px or smaller,
          * and white on blue-500 is only 3.64:1. */
         brand: 'bg-brand text-white',
-        outline: 'bg-transparent text-fg border-2 border-line',
+        outline: 'border-2 border-line bg-transparent text-fg',
       },
       size: {
-        sm: 'h-7 pl-2 pr-3 text-caption',
-        md: 'h-9 pl-2.5 pr-4 text-body-sm',
-        lg: 'h-11 pl-3 pr-5 text-body-md',
+        sm: 'h-7 pr-3 pl-2 text-caption',
+        md: 'h-9 pr-4 pl-2.5 text-body-sm',
+        lg: 'h-11 pr-5 pl-3 text-body-md',
       },
     },
     defaultVariants: { variant: 'dark', size: 'md' },
   },
 );
 
-export interface ChipProps
-  extends HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof chip> {
+export interface ChipProps extends HTMLAttributes<HTMLSpanElement>, VariantProps<typeof chip> {
   /** Leading slot — an avatar stack, a dot, or a small icon. */
   leading?: ReactNode;
   children: ReactNode;

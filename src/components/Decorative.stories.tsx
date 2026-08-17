@@ -16,15 +16,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const PEOPLE = [{ name: 'Rin' }, { name: 'Kai' }, { name: 'Mio' }, { name: 'Sora' }, { name: 'Aki' }];
+const PEOPLE = [
+  { name: 'Rin' },
+  { name: 'Kai' },
+  { name: 'Mio' },
+  { name: 'Sora' },
+  { name: 'Aki' },
+];
 
 export const DotGrids: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <p className="max-w-2xl font-text text-body-md text-fg-secondary">
         Ornamental only, so it is hidden from assistive technology. Colour comes from
-        <code className="mx-1 font-mono text-body-sm">currentColor</code>, so a text utility on any
-        ancestor controls it.
+        <code className="mx-1 font-mono text-body-sm">currentColor</code>, so a text utility on
+        any ancestor controls it.
       </p>
       <div className="flex flex-wrap items-start gap-10">
         <DotGrid rows={5} cols={5} className="text-brand-vivid" />
@@ -39,8 +45,9 @@ export const AvatarStacks: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <p className="max-w-2xl font-text text-body-md text-fg-secondary">
-        The stack is announced as one label — &ldquo;5 people&rdquo; — rather than as five separate
-        images. Announcing six cropped faces individually tells a screen reader user nothing useful.
+        The stack is announced as one label — &ldquo;5 people&rdquo; — rather than as five
+        separate images. Announcing six cropped faces individually tells a screen reader user
+        nothing useful.
       </p>
       <div className="flex flex-wrap items-center gap-8">
         <AvatarStack items={PEOPLE} size="sm" max={3} />
