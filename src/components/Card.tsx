@@ -7,7 +7,7 @@ import { CornerGlint } from './CornerGlint';
 const card = cva(['relative flex flex-col', 'transition-colors duration-200 ease-out'], {
   variants: {
     variant: {
-      light: 'bg-raised text-fg border border-line-subtle',
+      light: 'border border-line-subtle bg-raised text-fg',
       dark: 'ctx-inverse bg-page text-fg',
       brand: 'ctx-brand bg-brand text-fg',
       ghost: 'bg-transparent',
@@ -20,7 +20,7 @@ const card = cva(['relative flex flex-col', 'transition-colors duration-200 ease
     },
     radius: {
       md: 'rounded-md',
-      lg: 'rounded-lg', /* 22px — the reference design's card corner */
+      lg: 'rounded-lg' /* 22px — the reference design's card corner */,
       xl: 'rounded-xl',
     },
   },

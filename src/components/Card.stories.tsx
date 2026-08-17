@@ -62,8 +62,8 @@ export const WithStats: Story = {
   render: () => (
     <Card variant="dark" padding="lg" className="max-w-lg">
       <CardBody className="text-body-lg">
-        We&apos;re a platform built for digital artists and cartoon creators who want to share their
-        anime-inspired art with the world.
+        We&apos;re a platform built for digital artists and cartoon creators who want to share
+        their anime-inspired art with the world.
       </CardBody>
       <CardFooter>
         <StatRow>

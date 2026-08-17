@@ -40,7 +40,7 @@ export function TooltipContent({
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow className="fill-[var(--color-surface-page)]" width={11} height={5} />
+        <TooltipPrimitive.Arrow className="fill-(--color-surface-page)" width={11} height={5} />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   );

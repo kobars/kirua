@@ -32,11 +32,13 @@ export const Scale: Story = {
     <div className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
         <div>
-          <h2 className="font-text text-heading-lg font-semibold text-fg">Display — Luckiest Guy</h2>
+          <h2 className="font-text text-heading-lg font-semibold text-fg">
+            Display — Luckiest Guy
+          </h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
             A single-weight decorative face. It carries the brand and nothing else. It has no
-            weight range, no true lowercase design, and it is unreadable below about 24px, so the
-            system permits it at display sizes only.
+            weight range, no true lowercase design, and it is unreadable below about 24px, so
+            the system permits it at display sizes only.
           </p>
         </div>
         {DISPLAY.map((step) => (
@@ -53,9 +55,9 @@ export const Scale: Story = {
         <div>
           <h2 className="font-text text-heading-lg font-semibold text-fg">Text — Fredoka</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            The working face, and the one that does 95% of the job. Fredoka is a real text family
-            with a 300&ndash;600 weight range, which is why the system can use it for headings,
-            labels, and body copy without reaching for a second family.
+            The working face, and the one that does 95% of the job. Fredoka is a real text
+            family with a 300&ndash;600 weight range, which is why the system can use it for
+            headings, labels, and body copy without reaching for a second family.
           </p>
         </div>
         {TEXT.map((step) => (
@@ -75,9 +77,9 @@ export const Scale: Story = {
           Why body line height changed
         </h2>
         <p className="max-w-2xl font-text text-body-md text-fg-secondary">
-          The reference file sets body copy at 18px with a 20px line height — a ratio of 1.11. That
-          is tight enough to work for one line and to crowd badly across three. The system ships
-          1.44 instead. Both are shown below at the same width.
+          The reference file sets body copy at 18px with a 20px line height — a ratio of 1.11.
+          That is tight enough to work for one line and to crowd badly across three. The system
+          ships 1.44 instead. Both are shown below at the same width.
         </p>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-md border border-line-subtle p-5">
@@ -85,8 +87,8 @@ export const Scale: Story = {
               Reference: 18px / 20px (1.11)
             </div>
             <p className="font-text text-fg" style={{ fontSize: '18px', lineHeight: '20px' }}>
-              Whether you create chibi characters, digital comics, or lively cartoon animations, we
-              give you the tools to design, display, and sell your work beautifully.
+              Whether you create chibi characters, digital comics, or lively cartoon animations,
+              we give you the tools to design, display, and sell your work beautifully.
             </p>
           </div>
           <div className="rounded-md border border-line-subtle p-5">
@@ -94,8 +96,8 @@ export const Scale: Story = {
               System: text-body-lg — 18px / 26px (1.44)
             </div>
             <p className="font-text text-body-lg text-fg">
-              Whether you create chibi characters, digital comics, or lively cartoon animations, we
-              give you the tools to design, display, and sell your work beautifully.
+              Whether you create chibi characters, digital comics, or lively cartoon animations,
+              we give you the tools to design, display, and sell your work beautifully.
             </p>
           </div>
         </div>
