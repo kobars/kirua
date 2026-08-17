@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, screen, userEvent, within } from 'storybook/test';
 import { Button } from './Button';
 import {
   Dialog,
@@ -51,6 +52,34 @@ export const Default: Story = {
       </DialogContent>
     </Dialog>
   ),
+};
+
+/**
+ * The close button is the one piece of text this component supplies itself, so
+ * `closeLabel` exists to replace it. Everything else was already a child.
+ *
+ * The play function is the proof, not the rendering: it opens the dialog and
+ * finds the button by its accessible name, which is the same lookup a screen
+ * reader makes. If the label stopped reaching the accessibility tree, this
+ * story would fail rather than look correct.
+ */
+export const TranslatedCloseLabel: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="primary">Ouvrir</Button>
+      </DialogTrigger>
+      <DialogContent closeLabel="Fermer">
+        <DialogTitle>Rejoindre le cours</DialogTitle>
+        <DialogDescription>Deux séances en direct par semaine.</DialogDescription>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Ouvrir' }));
+    // Radix portals the panel to document.body, so it is outside canvasElement.
+    await expect(await screen.findByRole('button', { name: 'Fermer' })).toBeInTheDocument();
+  },
 };
 
 export const Destructive: Story = {
