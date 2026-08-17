@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card, CardBody, CardTitle } from './Card';
 import { CornerGlint } from './CornerGlint';
-import { SpotlightPanel } from './SpotlightPanel';
+import { SpotlightContent, SpotlightPanel } from './SpotlightPanel';
 
 const meta = {
   title: 'Components/CornerGlint',
@@ -26,9 +26,9 @@ const meta = {
           '',
           '**Colour is a rule, not a value.** Measured from Figma, the blade is always a lighter tint of the surface beneath it: `#6CB5FF` on the `#0A84FF` panel, `#555555` on the black card. Drawing it in translucent white composites to *exactly* those two values — 40% white over the blue, 33.3% over the black — so one token is correct on every surface, including ones added later.',
           '',
-          '**It is inset, not welded to the edge.** This was the detail that took two attempts to get right. In Figma the card\'s corner arc is centred at `(872.41, 753)` and the glint\'s arc at `(871.25, 752.61)` — the same point. The glint is *concentric* with the corner and one radius smaller: 22 − 14 = an 8px inset, so a band of surface shows between the border and the blade.',
+          "**It is inset, not welded to the edge.** This was the detail that took two attempts to get right. In Figma the card's corner arc is centred at `(872.41, 753)` and the glint's arc at `(871.25, 752.61)` — the same point. The glint is *concentric* with the corner and one radius smaller: 22 − 14 = an 8px inset, so a band of surface shows between the border and the blade.",
           '',
-          '**Geometry, all from the Figma paths.** Outer edge = the inset arc plus two straight runs tangent to it. Inner edge = a second arc joined to each tip by that tip\'s tangent line, which is what tapers the ends to true points. Tails are asymmetric — about 1.57× the arc radius one way, 0.29× the other. At the reference\'s own `radius=22, inset=8` this reproduces the Figma asset\'s 36 × 18 bounding box exactly.',
+          "**Geometry, all from the Figma paths.** Outer edge = the inset arc plus two straight runs tangent to it. Inner edge = a second arc joined to each tip by that tip's tangent line, which is what tapers the ends to true points. Tails are asymmetric — about 1.57× the arc radius one way, 0.29× the other. At the reference's own `radius=22, inset=8` this reproduces the Figma asset's 36 × 18 bounding box exactly.",
         ].join('\n'),
       },
     },
@@ -74,7 +74,14 @@ export const FollowsTheRadius: Story = {
   render: () => (
     <div className="flex flex-wrap items-end gap-6">
       {(['md', 'lg', 'xl'] as const).map((radius) => (
-        <Card key={radius} variant="dark" radius={radius} padding="md" glint="tr" className="w-56">
+        <Card
+          key={radius}
+          variant="dark"
+          radius={radius}
+          padding="md"
+          glint="tr"
+          className="w-56"
+        >
           <CardTitle className="text-heading-md">radius=&quot;{radius}&quot;</CardTitle>
           <CardBody className="mt-1 text-body-sm">
             {{ md: 16, lg: 22, xl: 32 }[radius]}px corner
@@ -90,12 +97,12 @@ export const InContext: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
       <SpotlightPanel padding="lg" className="min-h-52">
-        <SpotlightPanel.Content className="gap-2">
+        <SpotlightContent className="gap-2">
           <h3 className="font-display text-display-md text-fg">Panel</h3>
           <p className="font-text text-body-md text-fg-secondary">
             Defaults to the top-left and bottom-left corners.
           </p>
-        </SpotlightPanel.Content>
+        </SpotlightContent>
       </SpotlightPanel>
       <div className="grid gap-6 md:grid-cols-2">
         <Card variant="dark" padding="lg" glint="tr">

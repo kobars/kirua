@@ -22,6 +22,8 @@ import {
   NavBar,
   SearchIcon,
   SendIcon,
+  SpotlightContent,
+  SpotlightMedia,
   SpotlightPanel,
   Stat,
   StatRow,
@@ -62,6 +64,8 @@ export function AnimeHero() {
 
           <DotGrid rows={5} cols={5} className="hidden text-brand-vivid lg:block" />
 
+          {/* [FIGMA] 70px, matching NavBar. Arbitrary so it cannot drift with --spacing. */}
+          {/* oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes */}
           <div className="ctx-inverse flex h-[4.375rem] shrink-0 items-center gap-1 rounded-lg bg-page px-2 md:gap-2 md:px-3">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -103,7 +107,7 @@ export function AnimeHero() {
               className="absolute inset-0 size-full object-contain object-bottom"
             />
             <Chip
-              className="absolute right-0 top-[38%] shadow-md"
+              className="absolute top-[38%] right-0 shadow-md"
               leading={<AvatarStack items={LIKERS} max={3} />}
             >
               +1M Like&apos;s
@@ -121,44 +125,48 @@ export function AnimeHero() {
               panel's right edge: the reference pose is a wide diagonal, so
               fitting it inside the reserved column would leave it small. */}
           <SpotlightPanel padding="lg" mediaWidth="30%" className="md:min-h-[480px]">
-            <SpotlightPanel.Media
-              side="right"
-              overhang="both"
-              width="42%"
-              className="-right-[7%]"
-            >
+            <SpotlightMedia side="right" overhang="both" width="42%" className="right-[-7%]">
               <img
                 src={CHARACTERS.yoyo.src}
                 width={CHARACTERS.yoyo.width}
                 height={CHARACTERS.yoyo.height}
                 alt=""
-                className="h-full w-full object-contain object-bottom"
+                className="size-full object-contain object-bottom"
               />
-            </SpotlightPanel.Media>
+            </SpotlightMedia>
 
-            <SpotlightPanel.Content className="max-w-[44rem] gap-6">
+            <SpotlightContent className="max-w-176 gap-6">
               <h1 className="font-display text-display-md text-fg md:text-display-lg xl:text-display-xl">
                 Bring your anime worlds to life
               </h1>
 
               <p className="font-text text-body-lg text-fg-secondary">
-                Whether you create chibi characters, digital comics, or lively cartoon animations,
-                we give you the tools to design, display, and sell your work beautifully.
+                Whether you create chibi characters, digital comics, or lively cartoon
+                animations, we give you the tools to design, display, and sell your work
+                beautifully.
               </p>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size="lg">
                   Start now
                 </Button>
-                <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon size={18} />}>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  trailingIcon={<ArrowRightIcon size={18} />}
+                >
                   Enroll Now
                 </Button>
               </div>
-            </SpotlightPanel.Content>
+            </SpotlightContent>
 
             {/* Hidden on phones, where the panel is short enough that it would
                 collide with the buttons. */}
-            <DotGrid rows={4} cols={4} className="absolute bottom-8 left-8 z-10 hidden text-fg-muted md:block" />
+            <DotGrid
+              rows={4}
+              cols={4}
+              className="absolute bottom-8 left-8 z-10 hidden text-fg-muted md:block"
+            />
           </SpotlightPanel>
         </div>
 
@@ -195,8 +203,8 @@ export function AnimeHero() {
 
           <Card variant="dark" padding="lg" radius="lg" glint="tl" className="justify-between">
             <CardBody className="text-body-lg">
-              We&apos;re a platform built for digital artists and cartoon creators who want to share
-              their anime-inspired art with the world.
+              We&apos;re a platform built for digital artists and cartoon creators who want to
+              share their anime-inspired art with the world.
             </CardBody>
             <CardFooter>
               <StatRow>

@@ -22,6 +22,8 @@ export {
 } from './Card';
 export {
   SpotlightPanel,
+  SpotlightMedia,
+  SpotlightContent,
   type SpotlightPanelProps,
   type SpotlightMediaProps,
 } from './SpotlightPanel';
