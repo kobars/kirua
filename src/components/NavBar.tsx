@@ -43,6 +43,7 @@ export function NavBar({
         // `bg-page` inside `ctx-inverse` resolves to pure black in BOTH light
         // and dark mode. `bg-inverse` would flip to white under `.dark`.
         'ctx-inverse bg-page',
+        // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 70px, must not track --spacing
         'flex h-[4.375rem] min-w-0 items-center gap-3 rounded-lg px-3 md:gap-6 md:px-8',
         className,
       )}
@@ -53,7 +54,7 @@ export function NavBar({
       <ul
         className={cn(
           'flex min-w-0 flex-1 items-center justify-start gap-1 md:justify-center md:gap-2',
-          'overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          'scrollbar-none overflow-x-auto [&::-webkit-scrollbar]:hidden',
         )}
       >
         {items.map((item) => (

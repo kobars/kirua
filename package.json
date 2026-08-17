@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "lint:fix": "oxlint --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
+    "check": "tsc -b && oxlint && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -25,25 +29,28 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-a11y": "^10.5.8",
+    "@storybook/addon-docs": "^10.5.8",
+    "@storybook/addon-mcp": "latest",
+    "@storybook/addon-vitest": "^10.5.8",
+    "@storybook/react-vite": "^10.5.8",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
+    "eslint-plugin-better-tailwindcss": "^4.7.0",
     "oxlint": "^1.75.0",
+    "playwright": "latest",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "storybook": "^10.5.8",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
-    "storybook": "^10.5.8",
-    "@storybook/react-vite": "^10.5.8",
-    "@chromatic-com/storybook": "latest",
-    "@storybook/addon-vitest": "^10.5.8",
-    "@storybook/addon-a11y": "^10.5.8",
-    "@storybook/addon-docs": "^10.5.8",
-    "@storybook/addon-mcp": "latest",
-    "vitest": "latest",
-    "playwright": "latest",
-    "@vitest/browser-playwright": "latest",
-    "@vitest/coverage-v8": "latest"
+    "vitest": "latest"
   }
 }

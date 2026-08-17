@@ -37,16 +37,16 @@ export function DialogContent({
       <DialogPrimitive.Overlay
         className={cn(
           'fixed inset-0 z-50 bg-scrim backdrop-blur-sm',
-          'data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out',
+          'data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in',
         )}
       />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-          'w-[min(32rem,calc(100vw-2rem))] max-h-[calc(100vh-2rem)] overflow-y-auto',
+          'fixed top-1/2 left-1/2 z-50 -translate-1/2',
+          'max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] overflow-y-auto',
           'rounded-xl bg-raised p-8 text-fg shadow-lg',
-          'data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out',
+          'data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in',
           'focus:outline-none',
           className,
         )}
@@ -55,7 +55,7 @@ export function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
-            <IconButton aria-label="Close" size="sm" className="absolute right-5 top-5">
+            <IconButton aria-label="Close" size="sm" className="absolute top-5 right-5">
               <CloseIcon size={18} />
             </IconButton>
           </DialogPrimitive.Close>

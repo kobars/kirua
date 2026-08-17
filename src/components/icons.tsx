@@ -33,7 +33,9 @@ export const SearchIcon = (p: IconProps) => (
 
 export const GridIcon = (p: IconProps) => (
   <Icon {...p} strokeWidth={0} fill="currentColor">
-    {[5, 12, 19].map((y) => [5, 12, 19].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r="1.6" />))}
+    {[5, 12, 19].map((y) =>
+      [5, 12, 19].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r="1.6" />),
+    )}
   </Icon>
 );
 

@@ -112,7 +112,10 @@ export const AcrossSurfaces: Story = {
         { label: 'ctx-brand', cls: 'ctx-brand bg-brand' },
         { label: 'ctx-inverse', cls: 'ctx-inverse bg-page' },
       ].map((surface) => (
-        <div key={surface.label} className={`flex flex-col gap-4 rounded-xl p-6 ${surface.cls}`}>
+        <div
+          key={surface.label}
+          className={`flex flex-col gap-4 rounded-xl p-6 ${surface.cls}`}
+        >
           <span className="font-mono text-caption text-fg-secondary">{surface.label}</span>
           <div className="flex flex-wrap items-center gap-3">
             <Button {...args} variant="primary">

@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Built on Radix Primitives. Radix shows the hint on keyboard focus as well as hover, shares one open-delay timer across a group so a row of icons does not stutter, dismisses on Escape, and positions with collision detection. A tooltip is a hint and never the only source of a control\'s name — every IconButton here still carries its own aria-label, which is why the component requires one.',
+          "Built on Radix Primitives. Radix shows the hint on keyboard focus as well as hover, shares one open-delay timer across a group so a row of icons does not stutter, dismisses on Escape, and positions with collision detection. A tooltip is a hint and never the only source of a control's name — every IconButton here still carries its own aria-label, which is why the component requires one.",
       },
     },
   },

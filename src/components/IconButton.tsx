@@ -17,13 +17,15 @@ const iconButton = cva(
     variants: {
       variant: {
         primary: 'bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active',
-        secondary: 'bg-secondary text-on-secondary border-2 border-secondary-line hover:bg-secondary-hover',
+        secondary:
+          'border-2 border-secondary-line bg-secondary text-on-secondary hover:bg-secondary-hover',
         ghost: 'bg-transparent text-on-ghost hover:bg-ghost-hover',
       },
       size: {
         sm: 'size-9',
         md: 'size-11',
         /** 54px — the reference design's circular search control. */
+        // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 54px, must not track --spacing
         lg: 'size-[3.375rem]',
       },
     },
@@ -32,8 +34,7 @@ const iconButton = cva(
 );
 
 export interface IconButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof iconButton> {
+  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof iconButton> {
   /**
    * Required, not optional polish: an icon-only control has no text for a screen
    * reader to announce, so without this it is unusable without sight. Typed as

@@ -119,7 +119,11 @@
   --color-action-primary-fg: var(--color-neutral-1000);
 
   --color-action-secondary-bg: transparent;
-  --color-action-secondary-bg-hover: color-mix(in srgb, var(--color-neutral-0) 16%, transparent);
+  --color-action-secondary-bg-hover: color-mix(
+    in srgb,
+    var(--color-neutral-0) 16%,
+    transparent
+  );
   --color-action-secondary-fg: var(--color-neutral-0);
   --color-action-secondary-border: var(--color-neutral-0);
 
