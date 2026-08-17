@@ -24,10 +24,9 @@ const panel = cva(['relative isolate', 'rounded-xl', 'ctx-brand'], {
 });
 
 export interface SpotlightPanelProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof panel> {
+  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof panel> {
   /**
-   * Sizes `SpotlightPanel.Media` AND reserves matching space on the content
+   * Sizes `SpotlightMedia` AND reserves matching space on the content
    * side, so a long headline can never run underneath the artwork. Leave unset
    * for a panel with no media.
    */
@@ -44,14 +43,20 @@ export interface SpotlightPanelProps
  * It does not clip its children, and `isolate` gives it a stacking context so
  * the media can overhang while the content stays layered above.
  *
+ * Sub-components are named exports rather than static properties on
+ * `SpotlightPanel`. A module marked `"use client"` reaches a Server Component as
+ * an opaque reference, and static properties do not survive that — `.Content`
+ * would resolve to `undefined` and the build would fail on an invalid element
+ * type. Named exports cannot hit it.
+ *
  * @example
  * <SpotlightPanel>
- *   <SpotlightPanel.Media side="right" overhang="both">
+ *   <SpotlightMedia side="right" overhang="both">
  *     <img src={character} alt="" />
- *   </SpotlightPanel.Media>
- *   <SpotlightPanel.Content>
+ *   </SpotlightMedia>
+ *   <SpotlightContent>
  *     <h1 className="font-display text-display-xl">Bring your anime worlds to life</h1>
- *   </SpotlightPanel.Content>
+ *   </SpotlightContent>
  * </SpotlightPanel>
  */
 export function SpotlightPanel({
@@ -103,7 +108,7 @@ const overhangClasses = {
 
 /** Sits behind the content layer, so a long headline never disappears under the
  *  image. Always decorative — pass `alt=""` inside and keep the meaning in text. */
-function SpotlightMedia({
+export function SpotlightMedia({
   side = 'right',
   overhang = 'both',
   width = 'var(--spotlight-media-width)',
@@ -133,7 +138,7 @@ function SpotlightMedia({
 
 /** Right padding tracks the panel's `mediaWidth` plus a gutter, so text stops
  *  before the artwork begins however long it runs. */
-function SpotlightContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function SpotlightContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       data-slot="spotlight-content"
@@ -146,6 +151,3 @@ function SpotlightContent({ className, ...props }: HTMLAttributes<HTMLDivElement
     />
   );
 }
-
-SpotlightPanel.Media = SpotlightMedia;
-SpotlightPanel.Content = SpotlightContent;

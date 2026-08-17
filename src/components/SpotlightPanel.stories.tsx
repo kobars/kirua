@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CHARACTERS } from '@/patterns/characters';
 import { Button } from './Button';
 import { DotGrid } from './DotGrid';
-import { SpotlightPanel } from './SpotlightPanel';
+import { SpotlightContent, SpotlightMedia, SpotlightPanel } from './SpotlightPanel';
 import { ArrowRightIcon } from './icons';
 
 const meta = {
@@ -18,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "The signature layout of the reference design: a rounded brand panel whose artwork deliberately breaks out past its own edges. The panel does not clip its children, and setting `mediaWidth` both sizes the artwork and reserves matching space on the text side, so a long headline can never run underneath it.",
+          'The signature layout of the reference design: a rounded brand panel whose artwork deliberately breaks out past its own edges. The panel does not clip its children, and setting `mediaWidth` both sizes the artwork and reserves matching space on the text side, so a long headline can never run underneath it.',
       },
     },
   },
@@ -31,18 +31,20 @@ export const Playground: Story = {
   render: (args) => (
     <div className="py-16">
       <SpotlightPanel {...args} className="min-h-[420px]">
-        <SpotlightPanel.Media side="right" overhang="both">
+        <SpotlightMedia side="right" overhang="both">
           <img
             src={CHARACTERS.yoyo.src}
             alt=""
-            className="h-full w-full object-contain object-bottom"
+            className="size-full object-contain object-bottom"
           />
-        </SpotlightPanel.Media>
-        <SpotlightPanel.Content className="max-w-[40rem] gap-6">
-          <h2 className="font-display text-display-lg text-fg">Bring your anime worlds to life</h2>
+        </SpotlightMedia>
+        <SpotlightContent className="max-w-160 gap-6">
+          <h2 className="font-display text-display-lg text-fg">
+            Bring your anime worlds to life
+          </h2>
           <p className="font-text text-body-lg text-fg-secondary">
-            Whether you create chibi characters, digital comics, or lively cartoon animations, we
-            give you the tools to design, display, and sell your work beautifully.
+            Whether you create chibi characters, digital comics, or lively cartoon animations,
+            we give you the tools to design, display, and sell your work beautifully.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button variant="primary" size="lg">
@@ -52,7 +54,7 @@ export const Playground: Story = {
               Enroll Now
             </Button>
           </div>
-        </SpotlightPanel.Content>
+        </SpotlightContent>
         <DotGrid rows={4} cols={4} className="absolute bottom-8 left-8 z-10 text-fg-muted" />
       </SpotlightPanel>
     </div>
@@ -83,7 +85,7 @@ export const Tones: Story = {
         ] as const
       ).map(([tone, note]) => (
         <SpotlightPanel key={tone} tone={tone} padding="lg">
-          <SpotlightPanel.Content className="gap-3">
+          <SpotlightContent className="gap-3">
             <span className="font-mono text-caption text-fg-secondary">
               tone=&quot;{tone}&quot; · {note}
             </span>
@@ -91,7 +93,7 @@ export const Tones: Story = {
             <p className="max-w-xl font-text text-body-md text-fg-secondary">
               Body copy at 16px is the size that decides whether a surface passes AA.
             </p>
-          </SpotlightPanel.Content>
+          </SpotlightContent>
         </SpotlightPanel>
       ))}
     </div>
