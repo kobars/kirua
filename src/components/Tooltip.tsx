@@ -34,7 +34,7 @@ export function TooltipContent({
         className={cn(
           'ctx-inverse z-50 max-w-64 rounded-sm bg-page px-3 py-2',
           'font-text text-body-sm text-fg shadow-md',
-          'data-[state=delayed-open]:animate-pop-in',
+          'data-open:animate-pop-in',
           className,
         )}
         {...props}
