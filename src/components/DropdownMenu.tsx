@@ -43,7 +43,7 @@ export function DropdownMenuContent({
         className={cn(
           'z-50 min-w-52 rounded-md bg-raised p-1.5 shadow-lg',
           'border border-line-subtle',
-          'data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in',
+          'data-open:animate-pop-in data-closed:animate-pop-out',
           className,
         )}
         {...props}

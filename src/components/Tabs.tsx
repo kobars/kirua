@@ -42,8 +42,8 @@ export function TabsTrigger({
         'hover:text-fg',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         // The active tab is marked by fill AND weight, not colour alone.
-        'data-[state=active]:bg-primary data-[state=active]:text-on-primary',
-        'data-[state=active]:font-semibold',
+        'data-active:bg-primary data-active:text-on-primary',
+        'data-active:font-semibold',
         'disabled:pointer-events-none disabled:text-on-disabled',
         className,
       )}
@@ -61,7 +61,7 @@ export function TabsContent({
       data-slot="tabs-content"
       className={cn(
         'mt-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        'data-[state=active]:animate-fade-in',
+        'data-active:animate-fade-in',
         className,
       )}
       {...props}

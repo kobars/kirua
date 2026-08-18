@@ -13,6 +13,36 @@
  * or opacity rather than colour. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Components name a state, not a vendor's spelling of it. Radix writes
+ * `data-state="open"`; Base UI writes a bare `data-open`. Both are matched here
+ * so swapping primitives is a change of import, not a rewrite.
+ *
+ * Radix's tooltip is the reason `data-open` lists three values: it never emits a
+ * plain "open", only "delayed-open" after its hover delay or "instant-open" when
+ * a neighbouring tooltip was already showing. */
+@custom-variant data-open {
+  &:where(
+    [data-state='open'],
+    [data-state='delayed-open'],
+    [data-state='instant-open'],
+    [data-open]:not([data-open='false'])
+  ) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state='closed'], [data-closed]:not([data-closed='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state='active'], [data-active]:not([data-active='false'])) {
+    @slot;
+  }
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
