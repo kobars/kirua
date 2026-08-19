@@ -6,9 +6,16 @@ import { extendTailwindMerge } from 'tailwind-merge';
  * tokens.primitives.css, otherwise it cannot tell that `rounded-pill` and
  * `rounded-xl` conflict, or that `text-display-xl` (a size) conflicts with
  * `text-body-md` rather than with `text-fg` (a colour).
+ *
+ * `theme` extends a scale tailwind-merge already models (so `shadow-brand` is
+ * read as a shadow, not as a shadow *colour*); `classGroups` is for the rest.
  */
 const twMerge = extendTailwindMerge({
   extend: {
+    theme: {
+      animate: ['fade-in', 'fade-out', 'pop-in', 'pop-out', 'slide-down'],
+      shadow: ['brand'],
+    },
     classGroups: {
       'font-size': [
         {
@@ -29,6 +36,7 @@ const twMerge = extendTailwindMerge({
       ],
       rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] }],
       'font-family': [{ font: ['display', 'text'] }],
+      duration: [{ duration: ['fast', 'base', 'slow'] }],
     },
   },
 });
