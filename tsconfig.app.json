@@ -32,5 +32,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  /* `vitest.shims.d.ts` is named explicitly because it sits outside `src` and
+   * carries the browser-matcher type references the test suite needs. It was
+   * present but unreachable until this line existed. */
+  "include": ["src", "vitest.shims.d.ts"]
 }

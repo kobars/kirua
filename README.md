@@ -16,7 +16,9 @@ pnpm storybook   # the design system — http://localhost:6006
 pnpm dev         # the rebuilt hero page — http://localhost:5173
 pnpm build       # type-check and build
 pnpm test        # render every story in Chromium and assert no a11y violations
+pnpm test:webkit # run the unit tests again in WebKit, the second declared engine
 pnpm lint        # oxlint
+pnpm check       # the whole gate: types, lint, format, every test, coverage
 ```
 
 ## What was measured, exactly
@@ -49,6 +51,36 @@ recorded in the code at the point where they happen:
 Every ratio quoted above is recomputed in the browser from the shipped tokens on
 the **Foundations → Colour → Contrast Audit** page. Change a hex and the numbers
 change with it.
+
+## Browser support
+
+Two things set the floors, and neither is a round number somebody liked.
+
+**Tailwind CSS v4 sets three of them.** It compiles to `@property`, cascade
+layers and `color-mix()`, and states its own requirement: Safari 16.4, Chrome
+111, Firefox 128. Nothing here can go below that, whatever this system uses.
+
+**`:dir()` raises Chrome from 111 to 120.** It is the only selector that follows
+*inherited* direction, and the `CornerGlint` mirror needs it to re-invert inside
+a right-to-left document. Chrome shipped it in 120; Safari shipped it in 16.4,
+which is already the Tailwind floor, so Safari does not move.
+
+| Engine | Floor | Set by |
+| --- | --- | --- |
+| Chrome / Edge | **120** | `:dir()` — Tailwind alone would allow 111 |
+| Safari | **16.4** | Tailwind 4. `:dir()` lands in the same release |
+| Firefox | **128** | Tailwind 4 |
+
+Declared once, as `browserslist` in `package.json`. Vite does not read that key —
+it reads `build.target` — so `src/styles/browsers.test.ts` asserts the two agree
+and that each feature the floor was set by is really in use. A matrix the build
+ignores is worse than no matrix, because it reads like a guarantee.
+
+**Two engines are actually run.** The suite is Chromium by default;
+`pnpm test:webkit` runs the unit tests again in WebKit, which is the engine that
+differs most from Chromium. Story and visual runs stay Chromium-only — a
+screenshot is a baseline *for* an engine, and a second set would double the
+pictures without doubling what they tell you.
 
 ## Token architecture
 
@@ -95,8 +127,8 @@ hard-coded hex values.
   real product use.
 - No loading or empty states.
 - Character artwork is not commercially licensed (see Attribution).
-- No visual regression baseline. `pnpm test` covers behaviour and accessibility,
-  not appearance.
+- Visual baselines are Chromium-on-macOS only. They are committed PNGs, so a
+  contributor on Linux will see diffs that are rasterisation, not regression.
 
 ## Attribution and licensing
 

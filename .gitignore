@@ -26,7 +26,13 @@ dist-ssr
 *storybook.log
 storybook-static
 
-# Vitest browser mode writes a PNG beside the test on failure, and coverage
-# reports into coverage/. Both are output, not source.
-__screenshots__
+# Coverage reports are output, not source.
 coverage
+
+# On a screenshot mismatch Vitest writes the actual and the diff here. Output.
+#
+# `src/components/__screenshots__` is deliberately NOT ignored: those PNGs are
+# the approved baselines the `visual` project compares against, so they are
+# source. Ignoring them would make every fresh clone generate its own baseline
+# on first run and pass — a gate that can never fail.
+.vitest-attachments
