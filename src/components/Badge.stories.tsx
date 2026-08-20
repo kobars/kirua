@@ -35,7 +35,7 @@ export const Statuses: Story = {
       <Badge {...args} status="neutral">
         Draft
       </Badge>
-      <Badge {...args} status="success" icon={<CheckIcon size={14} />}>
+      <Badge {...args} status="success" icon={<CheckIcon />}>
         Published
       </Badge>
       <Badge {...args} status="warning">

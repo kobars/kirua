@@ -60,15 +60,46 @@
   --color-info-bg: var(--color-status-info-bg);
   --color-info-fg: var(--color-status-info-fg);
   --color-info-solid: var(--color-status-info-solid);
+
+  /* Elevation IS context-dependent, unlike type, radius and easing — see the
+   * reasoning beside the tokens. These must be `@theme inline` for the same
+   * reason the colours are: without `inline` a utility freezes the value it had
+   * at build time and .dark / .ctx-inverse stop reaching it. */
+  --shadow-resting: var(--elevation-resting);
+  --shadow-raised: var(--elevation-raised);
+  --shadow-overlay: var(--elevation-overlay);
 }
 
-/* Type, radius, elevation and easing utilities come straight from the primitive
- * @theme block — they carry no context-dependent meaning, so no alias.
+/* Type, radius and easing utilities come straight from the primitive @theme
+ * block — they carry no context-dependent meaning, so no alias. Elevation used
+ * to be in that list and did not belong there; it is aliased above.
  *
  * The stacking order needs `@utility` rather than `@theme`, because Tailwind
  * has no `--z-*` theme namespace to generate from: `z-*` takes a bare number.
  * Written out one per layer so a component names its layer and never a number.
  * `cn.ts` lists these under the `z` group, or two of them would stop cancelling. */
+/* MOTION. The scale was declared, consumed by every `@keyframes`, and bypassed
+ * by every component, which wrote Tailwind's raw `duration-200` instead. That
+ * matched by coincidence and would have stopped matching the moment the scale
+ * was retuned — which is the entire reason a scale exists.
+ *
+ * The mapping is by role, and it is short enough to state in full:
+ *   fast  — a state a pointer is driving: hover, press, a menu item highlight.
+ *           Any slower and the control feels like it is lagging the cursor.
+ *   base  — anything the user asked for and is waiting on: an overlay opening,
+ *           a panel changing.
+ *   slow  — reserved. Nothing in the system is slow yet, and a scale step with
+ *           no use is better than a component inventing a fourth number. */
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: var(--duration-base);
+}
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
 @utility z-base {
   z-index: var(--z-base);
 }

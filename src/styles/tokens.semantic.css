@@ -105,6 +105,27 @@
   --z-popover: 60;
   --z-tooltip: 70;
   --z-toast: 80;
+
+  /* ELEVATION. The one visual layer that opted out of the context system, and it
+   * opted out by a comment rather than by a test.
+   *
+   * Every shadow primitive is near-black. On a white page that is correct. On a
+   * near-black one it is nothing at all: in dark mode `surface-raised` is
+   * neutral-900 sitting on a neutral-950 page, so an 18%-black shadow between
+   * them is invisible — and `Tooltip` sets `ctx-inverse`, so it loses its
+   * shadow on a light page too. The three components that most need to read as
+   * floating were the three that stopped.
+   *
+   * On a dark surface a shadow cannot do the work alone, because there is no
+   * lighter ground for it to fall on. What reads instead is a hairline of light
+   * along the top edge of the raised surface, with a deeper, wider shadow under
+   * it. That is why the dark values start with a `0 0 0 1px` ring.
+   *
+   * Named by role rather than by size, so a component asks for the elevation it
+   * means: `raised` for a hint or a chip, `overlay` for a dialog or a menu. */
+  --elevation-resting: var(--shadow-sm);
+  --elevation-raised: var(--shadow-md);
+  --elevation-overlay: var(--shadow-lg);
 }
 
 /* Applied by SpotlightPanel. */
@@ -158,6 +179,12 @@
 
   --color-action-disabled-bg: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
   --color-action-disabled-fg: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
+
+  /* On the brand panel the ring is brighter — white at 8% disappears into
+   * blue-600, which is already light enough to swallow it. */
+  --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.14);
+  --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.18), 0 6px 16px -4px rgb(8 36 69 / 0.45);
+  --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.22), 0 18px 44px -12px rgb(8 36 69 / 0.55);
 }
 
 /* Applied by NavBar, dark Card, dark Chip, Tooltip. */
@@ -196,6 +223,12 @@
 
   --color-action-disabled-bg: var(--color-neutral-800);
   --color-action-disabled-fg: var(--color-neutral-600);
+
+  /* A ring of light along the edge, then a deeper shadow under it. Black alone
+   * has nothing lighter to fall on here. */
+  --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.06);
+  --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.08), 0 6px 16px -4px rgb(0 0 0 / 0.55);
+  --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.1), 0 18px 44px -12px rgb(0 0 0 / 0.7);
 }
 
 /* Invented — the reference has no dark mode. It is one block of re-pointed
@@ -255,4 +288,10 @@
   --color-status-danger-fg: var(--color-red-100);
   --color-status-info-bg: var(--color-violet-900);
   --color-status-info-fg: var(--color-violet-100);
+
+  /* A ring of light along the edge, then a deeper shadow under it. Black alone
+   * has nothing lighter to fall on here. */
+  --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.06);
+  --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.08), 0 6px 16px -4px rgb(0 0 0 / 0.55);
+  --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.1), 0 18px 44px -12px rgb(0 0 0 / 0.7);
 }

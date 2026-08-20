@@ -35,7 +35,7 @@ export const Default: Story = {
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" trailingIcon={<ChevronDownIcon size={18} />}>
+        <Button variant="secondary" trailingIcon={<ChevronDownIcon />}>
           Browse
         </Button>
       </DropdownMenuTrigger>

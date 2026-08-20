@@ -27,7 +27,7 @@ export const Playground: Story = {
         Create, showcase, and sell your digital art and cartoon creations with ease.
       </CardBody>
       <CardFooter>
-        <Button variant="primary" trailingIcon={<ArrowRightIcon size={18} />}>
+        <Button variant="primary" trailingIcon={<ArrowRightIcon />}>
           Claim
         </Button>
       </CardFooter>
@@ -67,9 +67,9 @@ export const WithStats: Story = {
       </CardBody>
       <CardFooter>
         <StatRow>
-          <Stat icon={<HeartIcon size={18} />} value="100k" label="Likes" />
-          <Stat icon={<BookmarkIcon size={18} />} value="10k" label="Saves" />
-          <Stat icon={<SendIcon size={18} />} value="20k" label="Shares" />
+          <Stat icon={<HeartIcon />} value="100k" label="Likes" />
+          <Stat icon={<BookmarkIcon />} value="10k" label="Saves" />
+          <Stat icon={<SendIcon />} value="20k" label="Shares" />
         </StatRow>
       </CardFooter>
     </Card>

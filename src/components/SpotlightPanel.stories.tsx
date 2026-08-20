@@ -52,7 +52,7 @@ export const Playground: Story = {
             <Button variant="primary" size="lg">
               Start now
             </Button>
-            <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon size={18} />}>
+            <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon />}>
               Enroll Now
             </Button>
           </div>
