@@ -75,12 +75,18 @@ export function SpotlightPanel({
       style={{ '--spotlight-media-width': mediaWidth ?? '0px', ...style } as CSSProperties}
       {...props}
     >
-      {/* z-20 keeps the blade above overhanging artwork. The panel's corner is
+      {/* z-ornament keeps the blade above overhanging artwork. The panel's corner is
           32, but the reference reuses the same 14px-arc blade it uses on the
           22px cards rather than scaling it up, so the inset absorbs the
           difference: 32 - 18 = 14. */}
       {resolveGlints(glint).map((corner) => (
-        <CornerGlint key={corner} corner={corner} radius={32} inset={18} className="z-20" />
+        <CornerGlint
+          key={corner}
+          corner={corner}
+          radius={32}
+          inset={18}
+          className="z-ornament"
+        />
       ))}
       {children}
     </div>
@@ -122,7 +128,7 @@ export function SpotlightMedia({
       aria-hidden="true"
       className={cn(
         // Decorative, and there is no room for it beside the text on a phone.
-        'pointer-events-none absolute z-0 hidden items-end justify-center md:flex',
+        'pointer-events-none absolute z-base hidden items-end justify-center md:flex',
         side === 'right' ? 'right-0' : 'left-0',
         overhangClasses[overhang],
         className,
@@ -142,7 +148,7 @@ export function SpotlightContent({ className, ...props }: ComponentProps<'div'>)
     <div
       data-slot="spotlight-content"
       className={cn(
-        'relative z-10 flex flex-col items-start',
+        'relative z-raised flex flex-col items-start',
         'md:pr-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
         className,
       )}

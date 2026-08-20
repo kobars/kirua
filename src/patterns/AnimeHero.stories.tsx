@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import { LG, atLeast } from '@/test/viewport';
 import { AnimeHero } from './AnimeHero';
 
 const meta = {
@@ -42,4 +44,20 @@ export const Dark: Story = {
       </div>
     ),
   ],
+};
+
+/**
+ * The hero's own reflow: one column of stacked content below `lg`, two columns
+ * at `lg` and above. Asserted from the computed `grid-template-columns`, which
+ * resolves to a pixel list — so the assertion is on the *count* of tracks, the
+ * thing that actually changes.
+ */
+export const SplitsIntoTwoColumnsAtLg: Story = {
+  play: async ({ canvasElement }) => {
+    const grid = canvasElement.querySelector('div.grid.z-raised');
+    await expect(grid).not.toBeNull();
+
+    const tracks = getComputedStyle(grid as Element).gridTemplateColumns.split(/\s+/);
+    await expect(tracks).toHaveLength(atLeast(LG) ? 2 : 1);
+  },
 };

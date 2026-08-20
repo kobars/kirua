@@ -49,14 +49,14 @@ export function DialogContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          'fixed inset-0 z-50 bg-scrim backdrop-blur-sm',
+          'fixed inset-0 z-scrim bg-scrim backdrop-blur-sm',
           'data-open:animate-fade-in data-closed:animate-fade-out',
         )}
       />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 -translate-1/2',
+          'fixed top-1/2 left-1/2 z-modal -translate-1/2',
           'max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] overflow-y-auto',
           'rounded-xl bg-raised p-8 text-fg shadow-lg',
           'data-open:animate-pop-in data-closed:animate-pop-out',

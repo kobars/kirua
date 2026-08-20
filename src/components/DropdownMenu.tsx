@@ -41,7 +41,7 @@ export function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          'z-50 min-w-52 rounded-md bg-raised p-1.5 shadow-lg',
+          'z-popover min-w-52 rounded-md bg-raised p-1.5 shadow-lg',
           'border border-line-subtle',
           'data-open:animate-pop-in data-closed:animate-pop-out',
           className,

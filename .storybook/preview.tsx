@@ -1,5 +1,6 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { TooltipProvider } from '../src/components';
+import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
 
 /**
@@ -57,6 +58,14 @@ const preview: Preview = {
   },
   parameters: {
     layout: 'fullscreen',
+    /**
+     * `@storybook/addon-vitest` resets the viewport before every story, so a
+     * `viewport` on a Vitest browser *instance* never survives — the addon
+     * overwrites it with its own 1200x900 default. The supported route is a
+     * Storybook global, which is why `vite.config.ts` defines one project per
+     * width rather than one project with three instances.
+     */
+    viewport: { options: KIRUA_VIEWPORTS },
     controls: {
       matchers: {
         color: /(background|color)$/i,
