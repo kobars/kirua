@@ -61,6 +61,7 @@ const browser = (width: number, forcedColors: 'none' | 'active' = 'none') => ({
 const OTHER_PROJECTS_OWN = [
   'src/**/*.forced.test.{ts,tsx}',
   'src/**/*.visual.test.{ts,tsx}',
+  'src/**/*.node.test.{ts,tsx}',
 ] as const;
 
 /**
@@ -200,6 +201,24 @@ export default defineConfig({
               },
             },
           },
+        },
+      },
+      /**
+       * The only project here with **no browser at all**, and that absence is
+       * the assertion.
+       *
+       * A React Server Component renders on a server, where `window` and
+       * `document` do not exist. Every other project in this file runs in a
+       * real browser precisely so the cascade resolves — which means not one of
+       * them could ever notice a component reaching for a browser API during
+       * render. Under `environment: 'node'` such a component throws.
+       */
+      {
+        extends: true as const,
+        test: {
+          name: 'node',
+          environment: 'node' as const,
+          include: ['src/**/*.node.test.{ts,tsx}'],
         },
       },
       ...WIDTHS.map(({ name, width }) => ({
