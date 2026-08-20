@@ -94,9 +94,9 @@ export function AnimeHero() {
           </div>
         </header>
 
-        {/* `z-10` lifts this row above the cards below, so artwork that
+        {/* `z-raised` lifts this row above the cards below, so artwork that
             overhangs the panel's bottom edge is not painted over by them. */}
-        <div className="relative z-10 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)]">
+        <div className="relative z-raised grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)]">
           <div className="relative hidden min-h-[480px] lg:block">
             <img
               src={CHARACTERS.splatter.src}
@@ -165,7 +165,7 @@ export function AnimeHero() {
             <DotGrid
               rows={4}
               cols={4}
-              className="absolute bottom-8 left-8 z-10 hidden text-fg-muted md:block"
+              className="absolute bottom-8 left-8 z-raised hidden text-fg-muted md:block"
             />
           </SpotlightPanel>
         </div>

@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import { MD, atLeast } from '@/test/viewport';
 import { IconButton } from './IconButton';
 import { NavBar } from './NavBar';
 import { GridIcon, SearchIcon } from './icons';
@@ -43,5 +45,21 @@ export const WithActions: Story = {
         </IconButton>
       </>
     ),
+  },
+};
+
+/**
+ * The pill has one reflow and it is easy to lose: below `md` the links are
+ * left-aligned and scroll horizontally, at `md` and above they centre. The
+ * suite runs at three widths, so this story asserts both sides of the switch
+ * rather than whichever one the runner happened to open at.
+ */
+export const CentresItsLinksAtMd: Story = {
+  play: async ({ canvasElement }) => {
+    const list = canvasElement.querySelector('[data-slot="nav-bar"] ul');
+    await expect(list).not.toBeNull();
+
+    const justify = getComputedStyle(list as Element).justifyContent;
+    await expect(justify).toBe(atLeast(MD) ? 'center' : 'flex-start');
   },
 };

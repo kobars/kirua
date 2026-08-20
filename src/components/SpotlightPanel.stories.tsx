@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 import { CHARACTERS } from '@/patterns/characters';
+import { MD, atLeast } from '@/test/viewport';
 import { Button } from './Button';
 import { DotGrid } from './DotGrid';
 import { SpotlightContent, SpotlightMedia, SpotlightPanel } from './SpotlightPanel';
@@ -98,4 +100,21 @@ export const Tones: Story = {
       ))}
     </div>
   ),
+};
+
+/**
+ * The artwork is decorative and there is no room for it beside the text on a
+ * phone, so `SpotlightMedia` is `hidden md:flex`. That is a real switch, not a
+ * reflow: below `md` the element is not laid out at all, which is also why it
+ * cannot be relied on to carry meaning.
+ */
+export const HidesItsArtworkBelowMd: Story = {
+  ...Playground,
+  play: async ({ canvasElement }) => {
+    const media = canvasElement.querySelector('[data-slot="spotlight-media"]');
+    await expect(media).not.toBeNull();
+
+    const display = getComputedStyle(media as Element).display;
+    await expect(display).toBe(atLeast(MD) ? 'flex' : 'none');
+  },
 };

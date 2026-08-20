@@ -9,6 +9,10 @@ import { extendTailwindMerge } from 'tailwind-merge';
  *
  * `theme` extends a scale tailwind-merge already models (so `shadow-brand` is
  * read as a shadow, not as a shadow *colour*); `classGroups` is for the rest.
+ *
+ * `z` is in `classGroups` because Tailwind has no `--z-*` theme namespace
+ * — the named layers are `@utility` rules in theme.css, so tailwind-merge has
+ * no way to learn them from the CSS.
  */
 const twMerge = extendTailwindMerge({
   extend: {
@@ -37,6 +41,21 @@ const twMerge = extendTailwindMerge({
       rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] }],
       'font-family': [{ font: ['display', 'text'] }],
       duration: [{ duration: ['fast', 'base', 'slow'] }],
+      z: [
+        {
+          z: [
+            'base',
+            'raised',
+            'ornament',
+            'sticky',
+            'scrim',
+            'modal',
+            'popover',
+            'tooltip',
+            'toast',
+          ],
+        },
+      ],
     },
   },
 });
