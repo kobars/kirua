@@ -24,10 +24,14 @@ export function TooltipContent({
   className,
   sideOffset = 8,
   children,
+  container,
   ...props
-}: ComponentProps<typeof TooltipPrimitive.Content>) {
+}: ComponentProps<typeof TooltipPrimitive.Content> & {
+  /** See `DialogContent`'s `container`. */
+  container?: ComponentProps<typeof TooltipPrimitive.Portal>['container'];
+}) {
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal container={container}>
       <TooltipPrimitive.Content
         data-slot="tooltip-content"
         sideOffset={sideOffset}
