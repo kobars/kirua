@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
+  "plugins": ["react", "typescript", "oxc", "jsx-a11y", "import"],
   "jsPlugins": ["eslint-plugin-better-tailwindcss"],
   "settings": {
     "better-tailwindcss": {
@@ -10,6 +10,10 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/only-export-components": ["warn", { "allowConstantExport": true }],
+
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "import/no-duplicates": "error",
 
     "better-tailwindcss/enforce-canonical-classes": "error",
     "better-tailwindcss/no-conflicting-classes": "error",
