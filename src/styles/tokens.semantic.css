@@ -232,7 +232,18 @@
 }
 
 /* Invented — the reference has no dark mode. It is one block of re-pointed
- * variables and zero component changes, which is the payoff for layering. */
+ * variables and zero component changes, which is the payoff for layering.
+ *
+ * CLASS-ONLY, DELIBERATELY. There is no bare
+ * `@media (prefers-color-scheme: dark)` block here, and adding one would be a
+ * defect rather than a convenience: a consumer who offers a three-way
+ * light/dark/system control could then never render light on a machine set to
+ * dark, because a media query cannot be turned off from inside the page.
+ *
+ * The system preference is honoured — by the snippet in the host document,
+ * which reads a stored choice and falls back to `matchMedia`. That keeps one
+ * decision in one place, and it is the place that can run before first paint.
+ * The whole switch is documented in `src/foundations/DarkMode.mdx`. */
 .dark {
   --color-surface-page: var(--color-neutral-950);
   --color-surface-raised: var(--color-neutral-900);

@@ -1,6 +1,15 @@
-/* Import order is the token architecture: primitives -> semantic -> aliases. */
-
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap');
+/* Import order is the token architecture: primitives -> semantic -> aliases.
+ *
+ * NO REMOTE @import HERE. A font fetched from inside this file costs three
+ * sequential round trips before text is drawn in the intended face: the browser
+ * downloads index.css, parses it, discovers a second stylesheet on another
+ * origin, fetches that, and only then learns the font file URLs. It also makes
+ * every consumer of kirua inherit a runtime dependency on Google's CDN, which
+ * is not a design system's choice to make.
+ *
+ * kirua NAMES its typefaces and does not ship them. `--font-display` and
+ * `--font-text` both end in a system fallback, so a host that loads nothing
+ * still gets a working page. See `board/tasks/font-delivery.md`. */
 @import 'tailwindcss';
 
 @import './styles/tokens.primitives.css';
