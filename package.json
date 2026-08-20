@@ -3,10 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "pnpm": ">=10"
+  },
+  "pnpm": {
+    "overrides": {
+      "valibot": "^1.4.2"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
+    "lint": "oxlint --deny-warnings",
+    "audit": "pnpm audit --audit-level moderate",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -14,7 +25,7 @@
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
-    "check": "tsc -b && oxlint && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\""
+    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" && vitest --run"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -29,10 +40,10 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "latest",
+    "@chromatic-com/storybook": "^5.3.0",
     "@storybook/addon-a11y": "^10.5.8",
     "@storybook/addon-docs": "^10.5.8",
-    "@storybook/addon-mcp": "latest",
+    "@storybook/addon-mcp": "^0.7.0",
     "@storybook/addon-vitest": "^10.5.8",
     "@storybook/react-vite": "^10.5.8",
     "@tailwindcss/vite": "^4.3.3",
@@ -40,17 +51,17 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
-    "@vitest/browser-playwright": "latest",
-    "@vitest/coverage-v8": "latest",
+    "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint-plugin-better-tailwindcss": "^4.7.0",
     "oxlint": "^1.75.0",
-    "playwright": "latest",
+    "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "storybook": "^10.5.8",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
-    "vitest": "latest"
+    "vitest": "^4.1.10"
   }
 }
