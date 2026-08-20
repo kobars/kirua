@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, screen, userEvent } from 'storybook/test';
 import { useState } from 'react';
 import { Button } from './Button';
 import {
@@ -78,5 +79,23 @@ export const FromIconButton: Story = {
         </DropdownMenuContent>
       </DropdownMenu>
     );
+  },
+};
+
+/**
+ * Until this story existed, no story had ever *opened* a menu — so the axe run
+ * only ever saw a closed one, and the open state of every menu in the system
+ * was unchecked. Opening it immediately found a real violation: Radix's default
+ * `modal` menu leaves its own trigger `aria-hidden` and focusable. `DropdownMenu`
+ * now defaults `modal` to false; see the reasoning on the component.
+ */
+export const OpensAndPassesItsAccessibilityRun: Story = {
+  ...Default,
+  play: async () => {
+    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement);
+    const menu = await screen.findByRole('menu');
+
+    await expect(menu).toBeInTheDocument();
+    await expect(menu.closest('[aria-hidden="true"]')).toBeNull();
   },
 };

@@ -17,7 +17,28 @@ import { CheckIcon } from './icons';
  *   </DropdownMenuContent>
  * </DropdownMenu>
  */
-export const DropdownMenu = MenuPrimitive.Root;
+/**
+ * `modal` defaults to **false** here, where Radix defaults it to true.
+ *
+ * A modal menu locks page scroll and marks everything outside itself
+ * `aria-hidden` — including its own trigger, which is a `<button>` and stays
+ * focusable. axe reports that as `aria-hidden-focus`, and it is not a false
+ * positive: an element cannot be both hidden from assistive technology and
+ * reachable by Tab. Found by opening a menu inside a story for the first time;
+ * no story had ever opened one, so the whole system's menus had never been
+ * checked in their open state.
+ *
+ * A dropdown menu is also not a modal dialog. Scroll locking and inerting the
+ * page are what a `Dialog` is for. Pass `modal` back to Radix's default if a
+ * particular menu really does need it.
+ */
+export function DropdownMenu({
+  modal = false,
+  ...props
+}: ComponentProps<typeof MenuPrimitive.Root>) {
+  return <MenuPrimitive.Root modal={modal} {...props} />;
+}
+
 export const DropdownMenuTrigger = MenuPrimitive.Trigger;
 export const DropdownMenuGroup = MenuPrimitive.Group;
 export const DropdownMenuRadioGroup = MenuPrimitive.RadioGroup;
@@ -34,10 +55,14 @@ const itemStyles = [
 export function DropdownMenuContent({
   className,
   sideOffset = 8,
+  container,
   ...props
-}: ComponentProps<typeof MenuPrimitive.Content>) {
+}: ComponentProps<typeof MenuPrimitive.Content> & {
+  /** See `DialogContent`'s `container`. */
+  container?: ComponentProps<typeof MenuPrimitive.Portal>['container'];
+}) {
   return (
-    <MenuPrimitive.Portal>
+    <MenuPrimitive.Portal container={container}>
       <MenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
