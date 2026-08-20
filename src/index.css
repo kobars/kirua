@@ -114,3 +114,55 @@
     }
   }
 }
+
+/* WINDOWS HIGH CONTRAST. Forced-colors mode replaces every colour on the page
+ * with a small user-chosen palette, for people who cannot read the colours a
+ * designer picked. A token system is the thing it overrides hardest, and none
+ * of it is visible in a normal render.
+ *
+ * Measured, not guessed. Under emulation `bg-brand` computes to plain white
+ * and `shadow-overlay` computes to `none` — so the two ways this system
+ * separates one surface from another, fill and elevation, both stop working
+ * at once. Everything below restores a boundary that forced colours KEEPS.
+ *
+ * `outline` with a negative offset rather than `border`, so nothing moves: a
+ * border would add a pixel to every one of these boxes in this mode only.
+ *
+ * DELIBERATELY OUTSIDE `@layer base`. Unlayered CSS beats every cascade layer,
+ * and these rules have to beat Tailwind's `utilities` layer — the first attempt
+ * put them in `base`, where `display: none` lost to `DotGrid`'s own
+ * `inline-block` and the ornament kept rendering. */
+@media (forced-colors: active) {
+  [data-slot='badge'],
+  [data-slot='chip'],
+  [data-slot='card'],
+  [data-slot='nav-bar'],
+  [data-slot='spotlight-panel'],
+  [data-slot='dialog-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='tooltip-content'] {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+
+  /* The scrim is a translucent fill, so it is dropped, and the dialog would
+     otherwise float over a fully legible page with nothing marking it modal. */
+  [data-slot='dialog-content'] {
+    background-color: Canvas;
+  }
+
+  /* The focus ring is the one thing that must never be what disappears.
+     `Highlight` is the system's own selection colour, so it is guaranteed to
+     contrast with `Canvas` whatever palette the user chose. */
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  /* Ornament only. In forced colours both resolve to CanvasText and become
+     solid marks competing with the text they sit behind. */
+  [data-slot='dot-grid'],
+  [data-slot='corner-glint'] {
+    display: none;
+  }
+}
