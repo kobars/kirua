@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 import { MD, atLeast } from '@/test/viewport';
 import { IconButton } from './IconButton';
 import { NavBar } from './NavBar';
@@ -61,5 +61,38 @@ export const CentresItsLinksAtMd: Story = {
 
     const justify = getComputedStyle(list as Element).justifyContent;
     await expect(justify).toBe(atLeast(MD) ? 'center' : 'flex-start');
+  },
+};
+
+/**
+ * **The current item is announced as current, not merely shaded.**
+ *
+ * `current` drives two separate things, and only one of them is visible.
+ * `bg-ghost-hover` and `font-medium` say "you are here" to someone looking at
+ * the pill; `aria-current="page"` is the only thing that says it to a screen
+ * reader. Losing the attribute while keeping the styling is invisible in every
+ * other check here — the render is identical, axe reports nothing, and the
+ * screenshot matches its baseline exactly.
+ *
+ * The link is found by its accessible name, which is the lookup assistive
+ * technology makes, rather than by a class or a `data-slot`.
+ */
+export const MarksTheCurrentPage: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole('link', { name: 'Home' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+
+    // Exactly one. Two would be a contradiction rather than extra emphasis, and
+    // `aria-current` absent is the correct state for the rest — not `false`,
+    // which some assistive technology still announces.
+    for (const label of ['Portfolio', 'About', 'Contact Us']) {
+      await expect(canvas.getByRole('link', { name: label })).not.toHaveAttribute(
+        'aria-current',
+      );
+    }
   },
 };
