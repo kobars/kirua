@@ -22,7 +22,7 @@ export interface Rgb {
  */
 function parseComputedColor(computed: string): Rgb & { a: number } {
   const colorFn = computed.match(/^color\(\s*[a-z0-9-]+\s+(.*)\)\s*$/i);
-  const body = colorFn ? colorFn[1] : computed;
+  const body = colorFn?.[1] ?? computed;
   const scale = colorFn ? 255 : 1;
 
   const parts = body.match(/[\d.]+/g)?.map(Number) ?? [0, 0, 0];
