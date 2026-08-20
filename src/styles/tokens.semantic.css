@@ -80,6 +80,56 @@
   --color-status-info-fg: var(--color-violet-900);
   --color-status-info-solid: var(--color-violet-600);
 
+  /* FIELD — the family every form control reads, and the gate the forms epic
+   * had to wait for. Seven families existed and not one described an input:
+   * no invalid border, no placeholder colour, no selected-row surface.
+   * Inventing them per component is how a token system stops being one.
+   *
+   * Three thresholds apply here and they are not the same number:
+   *   - text on the field (`fg`, `placeholder`) needs 4.5:1 — a placeholder is
+   *     text, and WCAG makes no exception for it
+   *   - the field's OWN border needs 3:1, because WCAG 1.4.11 treats the
+   *     boundary of a control as a non-text UI component
+   *   - disabled is exempt from both. 1.4.3 excludes inactive components, and
+   *     that is deliberate: a disabled control has to LOOK unavailable
+   *
+   * That 3:1 boundary is why `--color-field-border` is not
+   * `--color-border-default`. neutral-300 measures about 1.6:1 on white, which
+   * is fine for a card's decorative edge and not fine for the edge of a
+   * control somebody has to find and click.
+   *
+   * NO FIELD HEIGHT TOKEN, deliberately. A field's height has to match a
+   * button's — they sit side by side in every search bar ever drawn — and
+   * `Button` expresses its heights as scale steps inside its own variant
+   * (`h-9`, `h-11`) rather than as tokens. A `--size-field-md` would be a
+   * second, unlinked source for a number that must not diverge. `Field` should
+   * use the same steps. Colour is what needed a family here; height did not.
+   *
+   * Every pair below is measured in the browser, in all four contexts, by
+   * `src/styles/field-contrast.test.tsx`. */
+  --color-field-bg: var(--color-neutral-0);
+  --color-field-fg: var(--color-neutral-1000);
+  --color-field-placeholder: var(--color-neutral-600);
+
+  --color-field-border: var(--color-neutral-500);
+  --color-field-border-hover: var(--color-neutral-700);
+
+  --color-field-border-invalid: var(--color-red-600);
+
+  /* The message under the field, which sits on the SURFACE and not on the
+   * field. It is a separate token from `--color-status-danger-fg` for exactly
+   * that reason: the status pair is always painted together, so red-900 on
+   * red-100 is legible anywhere, while red-900 on a black surface measures
+   * 2.42:1. A field is the first component to need one of that pair alone. */
+  --color-field-fg-invalid: var(--color-red-900);
+
+  --color-field-bg-disabled: var(--color-neutral-100);
+  --color-field-fg-disabled: var(--color-neutral-500);
+  --color-field-border-disabled: var(--color-neutral-300);
+
+  --color-field-selected-bg: var(--color-blue-50);
+  --color-field-selected-fg: var(--color-blue-900);
+
   /* STACKING ORDER. Semantic, not primitive: with z-index the name IS the
    * meaning — there is no raw value underneath that means anything on its own.
    *
@@ -180,6 +230,32 @@
   --color-action-disabled-bg: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
   --color-action-disabled-fg: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
 
+  /* FIELD. White, like the primary action inverts to a white pill here — a
+   * translucent field on blue-600 cannot carry 4.5:1 text, for the same reason
+   * `--color-text-secondary` above had to stop being translucent. So the field
+   * keeps the light palette, and only the two tokens that sit on the PANEL
+   * rather than on the field are re-pointed. */
+  --color-field-bg: var(--color-neutral-0);
+  --color-field-fg: var(--color-neutral-1000);
+  --color-field-placeholder: var(--color-neutral-600);
+
+  --color-field-border: var(--color-neutral-500);
+  --color-field-border-hover: var(--color-neutral-700);
+  --color-field-border-invalid: var(--color-red-600);
+
+  /* On the panel, not on the field. red-100 measures 3.95:1 on blue-600 —
+   * under AA — so this is white, and "invalid" is carried by the border, an
+   * icon and the words. Colour was never allowed to be the only signal
+   * anyway; WCAG 1.4.1 says so. */
+  --color-field-fg-invalid: var(--color-neutral-0);
+
+  --color-field-bg-disabled: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
+  --color-field-fg-disabled: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
+  --color-field-border-disabled: color-mix(in srgb, var(--color-neutral-0) 24%, transparent);
+
+  --color-field-selected-bg: var(--color-blue-50);
+  --color-field-selected-fg: var(--color-blue-900);
+
   /* On the brand panel the ring is brighter — white at 8% disappears into
    * blue-600, which is already light enough to swallow it. */
   --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.14);
@@ -223,6 +299,28 @@
 
   --color-action-disabled-bg: var(--color-neutral-800);
   --color-action-disabled-fg: var(--color-neutral-600);
+
+  /* FIELD. The field sits one step up from the page so it reads as a well.
+   * `--color-field-border` is neutral-500 rather than the `border-default`
+   * neutral-700: 700 measures about 1.4:1 here, well under the 3:1 a control
+   * boundary needs. */
+  --color-field-bg: var(--color-neutral-900);
+  --color-field-fg: var(--color-neutral-0);
+  --color-field-placeholder: var(--color-neutral-400);
+
+  --color-field-border: var(--color-neutral-500);
+  --color-field-border-hover: var(--color-neutral-400);
+  --color-field-border-invalid: var(--color-red-500);
+
+  /* red-100, not red-900. This is the token the card's warning was about. */
+  --color-field-fg-invalid: var(--color-red-100);
+
+  --color-field-bg-disabled: var(--color-neutral-950);
+  --color-field-fg-disabled: var(--color-neutral-500);
+  --color-field-border-disabled: var(--color-neutral-800);
+
+  --color-field-selected-bg: var(--color-blue-950);
+  --color-field-selected-fg: var(--color-blue-100);
 
   /* A ring of light along the edge, then a deeper shadow under it. Black alone
    * has nothing lighter to fall on here. */
@@ -299,6 +397,28 @@
   --color-status-danger-fg: var(--color-red-100);
   --color-status-info-bg: var(--color-violet-900);
   --color-status-info-fg: var(--color-violet-100);
+
+  /* FIELD. The field sits one step up from the page so it reads as a well.
+   * `--color-field-border` is neutral-500 rather than the `border-default`
+   * neutral-700: 700 measures about 1.4:1 here, well under the 3:1 a control
+   * boundary needs. */
+  --color-field-bg: var(--color-neutral-900);
+  --color-field-fg: var(--color-neutral-0);
+  --color-field-placeholder: var(--color-neutral-400);
+
+  --color-field-border: var(--color-neutral-500);
+  --color-field-border-hover: var(--color-neutral-400);
+  --color-field-border-invalid: var(--color-red-500);
+
+  /* red-100, not red-900. This is the token the card's warning was about. */
+  --color-field-fg-invalid: var(--color-red-100);
+
+  --color-field-bg-disabled: var(--color-neutral-950);
+  --color-field-fg-disabled: var(--color-neutral-500);
+  --color-field-border-disabled: var(--color-neutral-800);
+
+  --color-field-selected-bg: var(--color-blue-950);
+  --color-field-selected-fg: var(--color-blue-100);
 
   /* A ring of light along the edge, then a deeper shadow under it. Black alone
    * has nothing lighter to fall on here. */

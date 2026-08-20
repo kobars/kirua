@@ -48,6 +48,33 @@
   --color-disabled: var(--color-action-disabled-bg);
   --color-on-disabled: var(--color-action-disabled-fg);
 
+  /* FIELD.
+   *
+   * The alias names deliberately do NOT repeat the semantic ones. `@theme
+   * inline` compiles an alias to a literal `var()` reference, so
+   * `--color-field-fg: var(--color-field-fg)` is a variable pointing at itself
+   * — it resolves to nothing, silently, and every field renders with no colour.
+   * The first draft of this block did exactly that.
+   *
+   * So this follows the `action` family's convention instead: the semantic
+   * layer carries the long name (`--color-action-primary-fg`) and the utility
+   * carries the short one (`--color-on-primary`). */
+  --color-field: var(--color-field-bg);
+  --color-on-field: var(--color-field-fg);
+  --color-placeholder: var(--color-field-placeholder);
+
+  --color-field-line: var(--color-field-border);
+  --color-field-line-hover: var(--color-field-border-hover);
+  --color-field-line-invalid: var(--color-field-border-invalid);
+  --color-invalid: var(--color-field-fg-invalid);
+
+  --color-field-disabled: var(--color-field-bg-disabled);
+  --color-on-field-disabled: var(--color-field-fg-disabled);
+  --color-field-line-disabled: var(--color-field-border-disabled);
+
+  --color-selected: var(--color-field-selected-bg);
+  --color-on-selected: var(--color-field-selected-fg);
+
   --color-success-bg: var(--color-status-success-bg);
   --color-success-fg: var(--color-status-success-fg);
   --color-success-solid: var(--color-status-success-solid);
