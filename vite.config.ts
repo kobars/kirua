@@ -44,10 +44,21 @@ const WIDTHS = [
  * instance when one is given, which then collides with the project's own name.
  * The width lives in the project name instead.
  */
-const browser = (width: number, forcedColors: 'none' | 'active' = 'none') => ({
+const browser = (
+  width: number,
+  contextOptions: {
+    forcedColors?: 'none' | 'active';
+    reducedMotion?: 'no-preference' | 'reduce';
+  } = {},
+) => ({
   enabled: true as const,
   headless: true as const,
-  provider: playwright({ contextOptions: { forcedColors } }),
+  // A failing test would otherwise drop a PNG into `src/**/__screenshots__`,
+  // which is now a *tracked* directory holding the visual baselines. A picture
+  // of a headless assertion is worth little and would arrive looking like an
+  // approved baseline, which is worth less than nothing.
+  screenshotFailures: false,
+  provider: playwright({ contextOptions }),
   instances: [{ browser: 'chromium' as const, viewport: { width, height: 900 } }],
 });
 
@@ -62,6 +73,7 @@ const OTHER_PROJECTS_OWN = [
   'src/**/*.forced.test.{ts,tsx}',
   'src/**/*.visual.test.{ts,tsx}',
   'src/**/*.node.test.{ts,tsx}',
+  'src/**/*.reduced.test.{ts,tsx}',
 ] as const;
 
 /**
@@ -165,7 +177,30 @@ export default defineConfig({
           name: 'forced-colors',
           include: ['src/**/*.forced.test.{ts,tsx}'],
           setupFiles: [path.join(dirname, 'src/test/setup.ts')],
-          browser: browser(breakpointPx('lg'), 'active'),
+          browser: browser(breakpointPx('lg'), { forcedColors: 'active' }),
+        },
+      },
+      /**
+       * Reduced motion, emulated the same way and for the same reason.
+       *
+       * `prefers-reduced-motion` exists for people whose vestibular disorders
+       * are triggered by movement, and the base layer answers it by flattening
+       * every animation and transition to `0.01ms !important`. Like forced
+       * colours it is a browser *context* option, so no test can turn it on
+       * from inside the page — which is why it is a project and not a story.
+       *
+       * `!important` in a low layer beats `!important` in a high one, so the
+       * rule sitting in `@layer base` is the strongest thing in the cascade.
+       * That is the opposite of the forced-colors rules, which had to leave
+       * `base` entirely — the difference is worth not re-deriving.
+       */
+      {
+        extends: true as const,
+        test: {
+          name: 'reduced-motion',
+          include: ['src/**/*.reduced.test.{ts,tsx}'],
+          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+          browser: browser(breakpointPx('lg'), { reducedMotion: 'reduce' }),
         },
       },
       /**
