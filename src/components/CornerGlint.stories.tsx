@@ -6,9 +6,19 @@ import { SpotlightContent, SpotlightPanel } from './SpotlightPanel';
 const meta = {
   title: 'Components/CornerGlint',
   component: CornerGlint,
-  args: { corner: 'tl', radius: 22, inset: 8, longTail: 1.57, shortTail: 0.29, weight: 0.19 },
+  args: {
+    corner: 'top-start',
+    radius: 22,
+    inset: 8,
+    longTail: 1.57,
+    shortTail: 0.29,
+    weight: 0.19,
+  },
   argTypes: {
-    corner: { control: 'inline-radio', options: ['tl', 'tr', 'bl', 'br'] },
+    corner: {
+      control: 'inline-radio',
+      options: ['top-start', 'top-end', 'bottom-start', 'bottom-end'],
+    },
     radius: { control: { type: 'range', min: 12, max: 80, step: 1 } },
     inset: { control: { type: 'range', min: 0, max: 24, step: 1 } },
     longTail: { control: { type: 'range', min: 0, max: 3, step: 0.05 } },
@@ -50,10 +60,10 @@ export const Playground: Story = {
 export const AllFourCorners: Story = {
   render: (args) => (
     <div className="ctx-brand relative h-72 w-full max-w-2xl rounded-xl bg-brand">
-      <CornerGlint {...args} corner="tl" />
-      <CornerGlint {...args} corner="tr" />
-      <CornerGlint {...args} corner="bl" />
-      <CornerGlint {...args} corner="br" />
+      <CornerGlint {...args} corner="top-start" />
+      <CornerGlint {...args} corner="top-end" />
+      <CornerGlint {...args} corner="bottom-start" />
+      <CornerGlint {...args} corner="bottom-end" />
     </div>
   ),
   parameters: {
@@ -79,7 +89,7 @@ export const FollowsTheRadius: Story = {
           variant="dark"
           radius={radius}
           padding="md"
-          glint="tr"
+          glint="top-end"
           className="w-56"
         >
           <CardTitle className="text-heading-md">radius=&quot;{radius}&quot;</CardTitle>
@@ -105,11 +115,11 @@ export const InContext: Story = {
         </SpotlightContent>
       </SpotlightPanel>
       <div className="grid gap-6 md:grid-cols-2">
-        <Card variant="dark" padding="lg" glint="tr">
+        <Card variant="dark" padding="lg" glint="top-end">
           <CardTitle>glint=&quot;tr&quot;</CardTitle>
           <CardBody className="mt-1">Faces the panel from the left.</CardBody>
         </Card>
-        <Card variant="dark" padding="lg" glint="tl">
+        <Card variant="dark" padding="lg" glint="top-start">
           <CardTitle>glint=&quot;tl&quot;</CardTitle>
           <CardBody className="mt-1">Faces the panel from the right.</CardBody>
         </Card>

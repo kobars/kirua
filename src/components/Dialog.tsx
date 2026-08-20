@@ -69,7 +69,10 @@ export function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-modal -translate-1/2',
+          // `inset-0 m-auto` centres on both axes without naming a side, so the
+          // panel is centred in a right-to-left document too. `left-1/2` with a
+          // translate is not: it resolves to `right: 50%` and lands off-centre.
+          'fixed inset-0 z-modal m-auto h-fit',
           'max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] overflow-y-auto',
           'rounded-xl bg-raised p-8 text-fg shadow-overlay',
           'data-open:animate-pop-in data-closed:animate-pop-out',
@@ -81,7 +84,7 @@ export function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
-            <IconButton aria-label={closeLabel} size="sm" className="absolute top-5 right-5">
+            <IconButton aria-label={closeLabel} size="sm" className="absolute inset-e-5 top-5">
               <CloseIcon />
             </IconButton>
           </DialogPrimitive.Close>

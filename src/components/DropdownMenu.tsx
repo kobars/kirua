@@ -99,10 +99,10 @@ export function DropdownMenuCheckboxItem({
   return (
     <MenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
-      className={cn(itemStyles, 'pl-9', className)}
+      className={cn(itemStyles, 'ps-9', className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className="absolute left-3 flex items-center">
+      <MenuPrimitive.ItemIndicator className="absolute inset-s-3 flex items-center">
         <CheckIcon />
       </MenuPrimitive.ItemIndicator>
       {children}
@@ -118,10 +118,10 @@ export function DropdownMenuRadioItem({
   return (
     <MenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
-      className={cn(itemStyles, 'pl-9', className)}
+      className={cn(itemStyles, 'ps-9', className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className="absolute left-3 flex items-center">
+      <MenuPrimitive.ItemIndicator className="absolute inset-s-3 flex items-center">
         <span className="size-2 rounded-pill bg-fg" />
       </MenuPrimitive.ItemIndicator>
       {children}

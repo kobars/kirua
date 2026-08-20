@@ -21,9 +21,9 @@ const chip = cva(
         outline: 'border-2 border-line bg-transparent text-fg',
       },
       size: {
-        sm: 'h-7 pr-3 pl-2 text-caption [--icon-size:var(--icon-sm)]',
-        md: 'h-9 pr-4 pl-2.5 text-body-sm [--icon-size:var(--icon-sm)]',
-        lg: 'h-11 pr-5 pl-3 text-body-md [--icon-size:var(--icon-md)]',
+        sm: 'h-7 ps-2 pe-3 text-caption [--icon-size:var(--icon-sm)]',
+        md: 'h-9 ps-2.5 pe-4 text-body-sm [--icon-size:var(--icon-sm)]',
+        lg: 'h-11 ps-3 pe-5 text-body-md [--icon-size:var(--icon-md)]',
       },
     },
     defaultVariants: { variant: 'dark', size: 'md' },

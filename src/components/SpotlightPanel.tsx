@@ -51,7 +51,7 @@ export interface SpotlightPanelProps extends ComponentProps<'div'>, VariantProps
  *
  * @example
  * <SpotlightPanel>
- *   <SpotlightMedia side="right" overhang="both">
+ *   <SpotlightMedia side="end" overhang="both">
  *     <img src={character} alt="" />
  *   </SpotlightMedia>
  *   <SpotlightContent>
@@ -64,7 +64,7 @@ export function SpotlightPanel({
   tone,
   padding,
   mediaWidth,
-  glint = ['tl', 'bl'],
+  glint = ['top-start', 'bottom-start'],
   style,
   children,
   ...props
@@ -96,7 +96,7 @@ export function SpotlightPanel({
 }
 
 export interface SpotlightMediaProps extends ComponentProps<'div'> {
-  side?: 'left' | 'right';
+  side?: 'start' | 'end';
   /** Which panel edges the artwork is allowed to cross. */
   overhang?: 'top' | 'bottom' | 'both' | 'none';
   /**
@@ -116,7 +116,7 @@ const overhangClasses = {
 /** Sits behind the content layer, so a long headline never disappears under the
  *  image. Always decorative — pass `alt=""` inside and keep the meaning in text. */
 export function SpotlightMedia({
-  side = 'right',
+  side = 'end',
   overhang = 'both',
   width = 'var(--spotlight-media-width)',
   className,
@@ -131,7 +131,7 @@ export function SpotlightMedia({
       className={cn(
         // Decorative, and there is no room for it beside the text on a phone.
         'pointer-events-none absolute z-base hidden items-end justify-center md:flex',
-        side === 'right' ? 'right-0' : 'left-0',
+        side === 'end' ? 'inset-e-0' : 'inset-s-0',
         overhangClasses[overhang],
         className,
       )}
@@ -151,7 +151,7 @@ export function SpotlightContent({ className, ...props }: ComponentProps<'div'>)
       data-slot="spotlight-content"
       className={cn(
         'relative z-raised flex flex-col items-start',
-        'md:pr-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
+        'md:pe-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
         className,
       )}
       {...props}
