@@ -1,10 +1,10 @@
-import type { CSSProperties, HTMLAttributes } from 'react';
+import type { ComponentProps, CSSProperties } from 'react';
 import { cn } from '@/lib/cn';
 import type { Corner } from '@/lib/glint';
 
 export type { Corner };
 
-export interface CornerGlintProps extends HTMLAttributes<HTMLSpanElement> {
+export interface CornerGlintProps extends ComponentProps<'span'> {
   corner?: Corner;
   /** Corner radius of the surface this sits inside. 22 = --radius-lg. */
   radius?: number;

@@ -1,7 +1,7 @@
-import type { HTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 
-export interface DotGridProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'> {
+export interface DotGridProps extends Omit<ComponentProps<'span'>, 'color'> {
   rows?: number;
   cols?: number;
   /** Diameter, px. */
