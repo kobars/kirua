@@ -5,6 +5,30 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kirua — Anime Design System</title>
+
+    <!-- The host document loads the fonts, not the stylesheet. `preconnect`
+         opens the TCP and TLS connection to both origins while the HTML is
+         still parsing, so the font request does not wait on index.css being
+         downloaded and parsed first. `gstatic` is where the font FILES live and
+         needs `crossorigin`; `googleapis` serves only the small CSS. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap"
+    />
+
+    <!-- Dark mode, applied before first paint. See
+         board/tasks/dark-mode-wiring.md for why this must be blocking. -->
+    <script>
+      (() => {
+        const stored = localStorage.getItem('kirua-theme');
+        const dark =
+          stored === 'dark' ||
+          (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
