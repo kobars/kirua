@@ -38,8 +38,14 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  *
  * ```
  * javascript   329.58 kB raw   104.16 kB gzip
- * css           44.93 kB raw     8.52 kB gzip
+ * css           48.73 kB raw     8.90 kB gzip
  * ```
+ *
+ * The CSS figure was 8.52 kB when this file was written and moved to 8.90 kB
+ * in the same session, when the field token family added twelve variables in
+ * four contexts. Re-recorded here rather than left to show as permanent drift:
+ * `measured` is a baseline for comparison, so a baseline nobody updates turns
+ * the drift column into a constant.
  *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
@@ -57,7 +63,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 8.52, gzipLimitKb: 12 },
+  css: { extension: '.css', measured: 8.9, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
