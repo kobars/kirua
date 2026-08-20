@@ -64,6 +64,31 @@
     outline-offset: 2px;
   }
 
+  /* The CornerGlint blade is drawn once, for the start-top corner, and flipped
+   * into the other three. `transform` is physical — it knows nothing about
+   * reading direction — so in a right-to-left document every horizontal flip
+   * has to invert again, which is what `--glint-dir` does. Keeping this in CSS
+   * rather than in the inline style is the only way the component can stay
+   * direction-agnostic. */
+  [data-slot='corner-glint'] {
+    --glint-x: 1;
+    --glint-y: 1;
+    --glint-dir: 1;
+    transform: scale(calc(var(--glint-x) * var(--glint-dir)), var(--glint-y));
+  }
+
+  [data-slot='corner-glint'][data-corner$='-end'] {
+    --glint-x: -1;
+  }
+
+  [data-slot='corner-glint'][data-corner^='bottom-'] {
+    --glint-y: -1;
+  }
+
+  :dir(rtl) [data-slot='corner-glint'] {
+    --glint-dir: -1;
+  }
+
   /* Luckiest Guy has no lowercase design of its own and very tight sidebearings. */
   .font-display {
     letter-spacing: 0.01em;

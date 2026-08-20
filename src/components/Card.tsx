@@ -33,7 +33,7 @@ export interface CardProps extends ComponentProps<'div'>, VariantProps<typeof ca
    * Corner ornament. Off by default — it is a highlight, so it only reads on a
    * dark or brand surface and just adds noise on a white one.
    *
-   * @example <Card variant="brand" glint={['tl', 'br']}>
+   * @example <Card variant="brand" glint={['top-start', 'bottom-end']}>
    */
   glint?: Corner | Corner[] | false;
 }

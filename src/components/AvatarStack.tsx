@@ -80,8 +80,8 @@ export function AvatarStack({
         <span
           key={item.name}
           className={cn(
-            'relative -mr-2 inline-flex items-center justify-center overflow-hidden',
-            'rounded-pill font-semibold text-white ring-2 ring-page last:mr-0',
+            'relative -me-2 inline-flex items-center justify-center overflow-hidden',
+            'rounded-pill font-semibold text-white ring-2 ring-page last:me-0',
             sizes[size],
             !item.src && swatchFor(item.name),
           )}

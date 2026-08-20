@@ -1,5 +1,6 @@
-/** Which corner a `CornerGlint` tucks into. */
-export type Corner = 'tl' | 'tr' | 'bl' | 'br';
+/** Which corner a `CornerGlint` tucks into, named by reading direction rather
+ *  than by screen side: `start` is the left in English and the right in Arabic. */
+export type Corner = 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end';
 
 /**
  * Normalises the `glint` prop shared by Card and SpotlightPanel, so callers can
