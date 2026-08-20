@@ -44,10 +44,10 @@ const WIDTHS = [
  * instance when one is given, which then collides with the project's own name.
  * The width lives in the project name instead.
  */
-const browser = (width: number) => ({
+const browser = (width: number, forcedColors: 'none' | 'active' = 'none') => ({
   enabled: true as const,
   headless: true as const,
-  provider: playwright({}),
+  provider: playwright({ contextOptions: { forcedColors } }),
   instances: [{ browser: 'chromium' as const, viewport: { width, height: 900 } }],
 });
 
@@ -83,11 +83,30 @@ export default defineConfig({
   test: {
     projects: [
       ...storyProjects,
+      /**
+       * Windows high contrast, emulated. Forced colours replace every colour on
+       * the page with a small user-chosen palette and **drop `box-shadow`
+       * entirely**, so a token system is the thing it overrides hardest — and
+       * none of that is visible in a normal render.
+       *
+       * Its own project because it is a browser *context* option, not something
+       * a test can turn on. One file, so the cost is one extra browser.
+       */
+      {
+        extends: true as const,
+        test: {
+          name: 'forced-colors',
+          include: ['src/**/*.forced.test.{ts,tsx}'],
+          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+          browser: browser(breakpointPx('lg'), 'active'),
+        },
+      },
       ...WIDTHS.map(({ name, width }) => ({
         extends: true as const,
         test: {
           name: `unit:${name}`,
           include: ['src/**/*.test.{ts,tsx}'],
+          exclude: ['src/**/*.forced.test.{ts,tsx}'],
           setupFiles: [path.join(dirname, 'src/test/setup.ts')],
           // Also a real browser. `contrast.ts` reads computed styles from the
           // shipped CSS, and a component's surface context only resolves where
