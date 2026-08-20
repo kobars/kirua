@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 export interface NavItem {
@@ -7,7 +7,7 @@ export interface NavItem {
   current?: boolean;
 }
 
-export interface NavBarProps extends HTMLAttributes<HTMLElement> {
+export interface NavBarProps extends ComponentProps<'nav'> {
   items: NavItem[];
   actions?: ReactNode;
   'aria-label'?: string;

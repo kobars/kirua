@@ -25,3 +25,8 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# Vitest browser mode writes a PNG beside the test on failure, and coverage
+# reports into coverage/. Both are output, not source.
+__screenshots__
+coverage

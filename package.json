@@ -22,10 +22,11 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
-    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" && vitest --run"
+    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" && vitest --run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

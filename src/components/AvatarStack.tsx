@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 
 export interface AvatarItem {
@@ -6,7 +6,7 @@ export interface AvatarItem {
   src?: string;
 }
 
-export interface AvatarStackProps extends HTMLAttributes<HTMLSpanElement> {
+export interface AvatarStackProps extends ComponentProps<'span'> {
   items: AvatarItem[];
   size?: 'sm' | 'md' | 'lg';
   /** Show at most this many, then a "+N" counter. */
