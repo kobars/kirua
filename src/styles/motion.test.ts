@@ -65,4 +65,19 @@ describe('the motion scale is declared and used', () => {
     expect(primitivesCss).not.toContain('prefers-reduced-motion');
     expect(computed('transition-colors duration-base', 'transition-duration')).not.toBe('0s');
   });
+
+  /**
+   * **The control half of the reduced-motion check.**
+   * `src/components/motion.reduced.test.tsx` renders this exact class pair with
+   * `prefers-reduced-motion: reduce` emulated and asserts the duration collapses
+   * below 1ms. That assertion on its own cannot tell a working media query from
+   * a utility that was never generated — both read as "not 500ms".
+   *
+   * This is the other half: with no preference set, the same class really is
+   * half a second. Move or weaken the rule in `index.css` and exactly one of the
+   * two fails, which is what makes the pair diagnostic rather than decorative.
+   */
+  it('with no preference set, the same class is really half a second', () => {
+    expect(computed('transition-colors duration-500', 'transition-duration')).toBe('0.5s');
+  });
 });

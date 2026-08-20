@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, screen, userEvent, within } from 'storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from './Button';
 import {
   Dialog,
@@ -105,4 +105,51 @@ export const Destructive: Story = {
       </DialogContent>
     </Dialog>
   ),
+};
+
+/**
+ * **Focus trapping and focus restore, driven with the keyboard.**
+ *
+ * Both are Radix's job, and that is the right division — but "Radix does it"
+ * was an assumption this harness never tested. A missing `Portal`, a swallowed
+ * `onOpenChange`, a wrapper that stops the panel being the focus scope: each
+ * breaks the trap silently while the dialog still looks and renders correctly,
+ * and no axe rule and no screenshot can see it.
+ *
+ * The failure this catches is severe and specific. A keyboard-only user who
+ * tabs out of an open modal lands on the page behind it, which is marked inert
+ * — so focus goes somewhere they cannot see and cannot act on, with no way back
+ * except a mouse.
+ */
+export const TrapsAndRestoresFocus: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: 'Enroll Now' });
+
+    await userEvent.click(trigger);
+    const dialog = await screen.findByRole('dialog');
+
+    // Tab far enough to have left any real panel, then check where focus sits.
+    // A count larger than the number of focusable children is the point: the
+    // trap has to survive a wrap, not merely a first Tab.
+    for (let i = 0; i < 8; i += 1) await userEvent.tab();
+    await expect(dialog.contains(document.activeElement)).toBe(true);
+
+    // And backwards, which is a separate code path in every focus trap.
+    for (let i = 0; i < 8; i += 1) await userEvent.tab({ shift: true });
+    await expect(dialog.contains(document.activeElement)).toBe(true);
+
+    await userEvent.keyboard('{Escape}');
+
+    // Escape marks it closed *immediately*; the node stays mounted for as long
+    // as its exit animation runs, which is the whole reason those exits are
+    // real `@keyframes` and not transitions. Asserting removal without waiting
+    // reads the panel mid-animation and fails on behaviour that is correct.
+    await expect(dialog).toHaveAttribute('data-state', 'closed');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+
+    // Restore. Without it a keyboard user is returned to the top of the
+    // document and has to walk back to where they were.
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  },
 };

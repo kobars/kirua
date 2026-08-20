@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { Card, CardBody, CardTitle } from './Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 
@@ -59,4 +60,40 @@ export const Default: Story = {
       ))}
     </Tabs>
   ),
+};
+
+/**
+ * **Arrow keys move between tabs, and the panel follows.**
+ *
+ * This is the keyboard model most hand-rolled tab sets get wrong: arrows move
+ * between the triggers, and `Tab` leaves the list for the panel rather than
+ * walking through every trigger in turn. Radix supplies it; nothing here
+ * checked that the wrapper had not broken it.
+ *
+ * Asserting the *panel* as well as the trigger is the point. A roving tabindex
+ * that moved focus without changing `aria-selected` — or a panel that stayed on
+ * the old value — would leave a sighted mouse user perfectly happy and a screen
+ * reader user reading content that does not match the tab they are on.
+ */
+export const ArrowKeysMoveBetweenTabs: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chibi = canvas.getByRole('tab', { name: 'Chibi' });
+
+    await userEvent.click(chibi);
+    await expect(chibi).toHaveAttribute('aria-selected', 'true');
+
+    await userEvent.keyboard('{ArrowRight}');
+    const comics = canvas.getByRole('tab', { name: 'Comics' });
+    await expect(comics).toHaveFocus();
+    await expect(comics).toHaveAttribute('aria-selected', 'true');
+    await expect(canvas.getByRole('tabpanel')).toHaveTextContent('Digital comics');
+
+    // Wrapping is behaviour, not an edge case: three tabs, three rights, back
+    // to the first. A list that stopped at the end would strand the last tab.
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}');
+    await expect(chibi).toHaveFocus();
+    await expect(canvas.getByRole('tabpanel')).toHaveTextContent('Chibi characters');
+  },
 };
