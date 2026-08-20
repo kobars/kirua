@@ -24,18 +24,20 @@ export interface CornerGlintProps extends ComponentProps<'span'> {
   weight?: number;
 }
 
-const mirror: Record<Corner, string> = {
-  tl: 'none',
-  tr: 'scaleX(-1)',
-  bl: 'scaleY(-1)',
-  br: 'scale(-1, -1)',
-};
-
+/**
+ * Logical insets, so `start` follows the reading direction.
+ *
+ * The mirror is deliberately NOT here. The blade is drawn once for the
+ * start-top corner and flipped into the other three, and `transform` knows
+ * nothing about direction — in a right-to-left document every horizontal flip
+ * has to invert again. That inversion is one rule in `index.css` keyed on
+ * `data-corner`; this component only reports which corner it is in.
+ */
 const edges: Record<Corner, (inset: number) => CSSProperties> = {
-  tl: (i) => ({ top: i, left: i }),
-  tr: (i) => ({ top: i, right: i }),
-  bl: (i) => ({ bottom: i, left: i }),
-  br: (i) => ({ bottom: i, right: i }),
+  'top-start': (i) => ({ insetBlockStart: i, insetInlineStart: i }),
+  'top-end': (i) => ({ insetBlockStart: i, insetInlineEnd: i }),
+  'bottom-start': (i) => ({ insetBlockEnd: i, insetInlineStart: i }),
+  'bottom-end': (i) => ({ insetBlockEnd: i, insetInlineEnd: i }),
 };
 
 type Point = { x: number; y: number };
@@ -48,17 +50,17 @@ type Point = { x: number; y: number };
  * Flat by design — one solid fill, no gradient. A gradient fade reads as a bevel
  * highlight, and this system is 2D.
  *
- * Drawn once for the top-left corner and mirrored into the other three. Mirrors
- * rather than rotations: the bounding box is not square, so a rotation would
- * leave the blade hanging off the corner.
+ * Drawn once for the start-top corner and mirrored into the other three.
+ * Mirrors rather than rotations: the bounding box is not square, so a rotation
+ * would leave the blade hanging off the corner.
  *
  * At the reference's own numbers (radius 22, inset 8) this reproduces the Figma
  * asset's 36 x 18 bounding box.
  *
- * @example <CornerGlint corner="tr" radius={22} />
+ * @example <CornerGlint corner="top-end" radius={22} />
  */
 export function CornerGlint({
-  corner = 'tl',
+  corner = 'top-start',
   radius = 22,
   inset = 8,
   longTail = 1.57,
@@ -104,7 +106,8 @@ export function CornerGlint({
       data-slot="corner-glint"
       aria-hidden="true"
       className={cn('pointer-events-none absolute text-glint', className)}
-      style={{ ...edges[corner](inset), transform: mirror[corner], ...style }}
+      data-corner={corner}
+      style={{ ...edges[corner](inset), ...style }}
       {...props}
     >
       <svg

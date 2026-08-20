@@ -107,14 +107,14 @@ export function AnimeHero() {
               className="absolute inset-0 size-full object-contain object-bottom"
             />
             <Chip
-              className="absolute top-[38%] right-0 shadow-md"
+              className="absolute inset-e-0 top-[38%] shadow-raised"
               leading={<AvatarStack items={LIKERS} max={3} />}
             >
               +1M Like&apos;s
             </Chip>
             <Chip
               size="sm"
-              className="absolute bottom-[18%] left-0 shadow-md"
+              className="absolute inset-s-0 bottom-[18%] shadow-raised"
               leading={<span className="size-5 rounded-pill bg-amber-500" aria-hidden="true" />}
             >
               @Dsingr
@@ -125,7 +125,7 @@ export function AnimeHero() {
               panel's right edge: the reference pose is a wide diagonal, so
               fitting it inside the reserved column would leave it small. */}
           <SpotlightPanel padding="lg" mediaWidth="30%" className="md:min-h-[480px]">
-            <SpotlightMedia side="right" overhang="both" width="42%" className="right-[-7%]">
+            <SpotlightMedia side="end" overhang="both" width="42%" className="inset-e-[-7%]">
               <img
                 src={CHARACTERS.yoyo.src}
                 width={CHARACTERS.yoyo.width}
@@ -161,7 +161,7 @@ export function AnimeHero() {
             <DotGrid
               rows={4}
               cols={4}
-              className="absolute bottom-8 left-8 z-raised hidden text-fg-muted md:block"
+              className="absolute inset-s-8 bottom-8 z-raised hidden text-fg-muted md:block"
             />
           </SpotlightPanel>
         </div>
@@ -169,7 +169,13 @@ export function AnimeHero() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* radius="lg" is the 22px corner measured on the reference's 380x280
               dark cards. Each card's glint faces the blue panel. */}
-          <Card variant="dark" padding="lg" radius="lg" glint="tr" className="justify-between">
+          <Card
+            variant="dark"
+            padding="lg"
+            radius="lg"
+            glint="top-end"
+            className="justify-between"
+          >
             <div className="flex flex-col gap-2">
               <CardEyebrow>Join our anime class</CardEyebrow>
               {/* h2 — the hero headline is the h1 and levels must not skip. */}
@@ -197,7 +203,13 @@ export function AnimeHero() {
             </CardFooter>
           </Card>
 
-          <Card variant="dark" padding="lg" radius="lg" glint="tl" className="justify-between">
+          <Card
+            variant="dark"
+            padding="lg"
+            radius="lg"
+            glint="top-start"
+            className="justify-between"
+          >
             <CardBody className="text-body-lg">
               We&apos;re a platform built for digital artists and cartoon creators who want to
               share their anime-inspired art with the world.

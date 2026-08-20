@@ -33,7 +33,7 @@ export const Playground: Story = {
   render: (args) => (
     <div className="py-16">
       <SpotlightPanel {...args} className="min-h-[420px]">
-        <SpotlightMedia side="right" overhang="both">
+        <SpotlightMedia side="end" overhang="both">
           <img
             src={CHARACTERS.yoyo.src}
             alt=""
@@ -57,7 +57,11 @@ export const Playground: Story = {
             </Button>
           </div>
         </SpotlightContent>
-        <DotGrid rows={4} cols={4} className="absolute bottom-8 left-8 z-10 text-fg-muted" />
+        <DotGrid
+          rows={4}
+          cols={4}
+          className="absolute inset-s-8 bottom-8 z-raised text-fg-muted"
+        />
       </SpotlightPanel>
     </div>
   ),

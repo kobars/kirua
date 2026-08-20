@@ -8,11 +8,11 @@ describe('resolveGlints', () => {
   });
 
   it('wraps a single corner', () => {
-    expect(resolveGlints('tl')).toEqual(['tl']);
+    expect(resolveGlints('top-start')).toEqual(['top-start']);
   });
 
   it('passes a list through in order', () => {
-    expect(resolveGlints(['tr', 'bl'])).toEqual(['tr', 'bl']);
+    expect(resolveGlints(['top-end', 'bottom-start'])).toEqual(['top-end', 'bottom-start']);
   });
 
   it('returns an empty list for an empty list, not a glint', () => {
