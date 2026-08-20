@@ -33,7 +33,7 @@ export function TooltipContent({
         sideOffset={sideOffset}
         className={cn(
           'ctx-inverse z-tooltip max-w-64 rounded-sm bg-page px-3 py-2',
-          'font-text text-body-sm text-fg shadow-md',
+          'font-text text-body-sm text-fg shadow-raised',
           'data-open:animate-pop-in',
           className,
         )}

@@ -58,13 +58,13 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
       <IconButton {...args} size="sm" aria-label="Close">
-        <CloseIcon size={16} />
+        <CloseIcon />
       </IconButton>
       <IconButton {...args} size="md" aria-label="Close">
-        <CloseIcon size={20} />
+        <CloseIcon />
       </IconButton>
       <IconButton {...args} size="lg" aria-label="Close">
-        <CloseIcon size={24} />
+        <CloseIcon />
       </IconButton>
     </div>
   ),

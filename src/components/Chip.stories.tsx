@@ -51,7 +51,7 @@ export const AsInTheReference: Story = {
       >
         @Dsingr
       </Chip>
-      <Chip variant="brand" leading={<SparkleIcon size={16} />}>
+      <Chip variant="brand" leading={<SparkleIcon />}>
         New drop
       </Chip>
     </div>

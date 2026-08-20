@@ -2,6 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import type { ComponentProps, CSSProperties } from 'react';
 import { cn } from '@/lib/cn';
 import { resolveGlints, type Corner } from '@/lib/glint';
+import { PANEL_GLINT_INSET_PX, PANEL_RADIUS_PX } from '@/lib/radius';
 import { CornerGlint } from './CornerGlint';
 
 const panel = cva(['relative isolate', 'rounded-xl', 'ctx-brand'], {
@@ -78,13 +79,14 @@ export function SpotlightPanel({
       {/* z-ornament keeps the blade above overhanging artwork. The panel's corner is
           32, but the reference reuses the same 14px-arc blade it uses on the
           22px cards rather than scaling it up, so the inset absorbs the
-          difference: 32 - 18 = 14. */}
+          difference: 32 - 18 = 14. Same mirror-of-CSS-in-JavaScript as
+          `CARD_RADIUS_PX`, and asserted the same way. */}
       {resolveGlints(glint).map((corner) => (
         <CornerGlint
           key={corner}
           corner={corner}
-          radius={32}
-          inset={18}
+          radius={PANEL_RADIUS_PX}
+          inset={PANEL_GLINT_INSET_PX}
           className="z-ornament"
         />
       ))}

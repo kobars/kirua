@@ -25,7 +25,7 @@ export const AllIcons: Story = {
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-5">
       {entries.map(([name, Glyph]) => (
         <div key={name} className="flex flex-col items-center gap-2 rounded-md p-4 text-fg">
-          <Glyph size={28} />
+          <Glyph size="2xl" />
           <span className="font-text text-caption text-fg-secondary">{name}</span>
         </div>
       ))}
@@ -33,11 +33,19 @@ export const AllIcons: Story = {
   ),
 };
 
+/**
+ * Inside a `Button`, `IconButton`, `Badge`, `Chip`, `Stat` or a menu item, leave
+ * `size` unset — each of those sets `--icon-size`, so the icon follows the
+ * control. These names are for an icon standing on its own.
+ */
 export const Sizes: Story = {
   render: () => (
     <div className="flex items-end gap-6 text-brand-vivid">
-      {[14, 18, 20, 28, 40].map((size) => (
-        <icons.SparkleIcon key={size} size={size} />
+      {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((size) => (
+        <span key={size} className="flex flex-col items-center gap-2">
+          <icons.SparkleIcon size={size} />
+          <span className="font-text text-caption text-fg-secondary">{size}</span>
+        </span>
       ))}
     </div>
   ),

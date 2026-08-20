@@ -22,16 +22,16 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
-  args: { icon: <HeartIcon size={18} /> },
+  args: { icon: <HeartIcon /> },
 };
 
 /** `StatRow` is the only layout this needs: wrap, with a wider gap across. */
 export const Row: Story = {
   render: () => (
     <StatRow>
-      <Stat icon={<HeartIcon size={18} />} value="100k" label="Likes" />
-      <Stat icon={<BookmarkIcon size={18} />} value="10k" label="Saves" />
-      <Stat icon={<SendIcon size={18} />} value="20k" label="Shares" />
+      <Stat icon={<HeartIcon />} value="100k" label="Likes" />
+      <Stat icon={<BookmarkIcon />} value="10k" label="Saves" />
+      <Stat icon={<SendIcon />} value="20k" label="Shares" />
     </StatRow>
   ),
 };
@@ -41,7 +41,7 @@ export const Row: Story = {
  * announced as "heart image, 100k Likes" three times over.
  */
 export const IconIsNotAnnounced: Story = {
-  args: { icon: <HeartIcon size={18} /> },
+  args: { icon: <HeartIcon /> },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).queryAllByRole('img')).toHaveLength(0);
     await expect(canvasElement.textContent).toContain('100k Likes');

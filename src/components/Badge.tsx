@@ -14,8 +14,8 @@ const badge = cva(
         info: 'bg-info-bg text-info-fg',
       },
       size: {
-        sm: 'h-5 px-2 text-caption',
-        md: 'h-6 px-2.5 text-body-sm',
+        sm: 'h-5 px-2 text-caption [--icon-size:var(--icon-xs)]',
+        md: 'h-6 px-2.5 text-body-sm [--icon-size:var(--icon-sm)]',
       },
     },
     defaultVariants: { status: 'neutral', size: 'md' },
@@ -32,7 +32,7 @@ export interface BadgeProps extends ComponentProps<'span'>, VariantProps<typeof 
  * the meaning alone: every badge shows a word, so the state survives greyscale
  * and colour blindness.
  *
- * @example <Badge status="success" icon={<CheckIcon size={14} />}>Published</Badge>
+ * @example <Badge status="success" icon={<CheckIcon />}>Published</Badge>
  */
 export function Badge({ className, status, size, icon, children, ...props }: BadgeProps) {
   return (

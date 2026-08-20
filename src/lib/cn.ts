@@ -18,7 +18,7 @@ const twMerge = extendTailwindMerge({
   extend: {
     theme: {
       animate: ['fade-in', 'fade-out', 'pop-in', 'pop-out', 'slide-down'],
-      shadow: ['brand'],
+      shadow: ['brand', 'resting', 'raised', 'overlay'],
     },
     classGroups: {
       'font-size': [
