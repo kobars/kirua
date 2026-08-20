@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { CSSProperties, HTMLAttributes } from 'react';
+import type { ComponentProps, CSSProperties } from 'react';
 import { cn } from '@/lib/cn';
 import { resolveGlints, type Corner } from '@/lib/glint';
 import { CornerGlint } from './CornerGlint';
@@ -23,8 +23,7 @@ const panel = cva(['relative isolate', 'rounded-xl', 'ctx-brand'], {
   defaultVariants: { tone: 'default', padding: 'lg' },
 });
 
-export interface SpotlightPanelProps
-  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof panel> {
+export interface SpotlightPanelProps extends ComponentProps<'div'>, VariantProps<typeof panel> {
   /**
    * Sizes `SpotlightMedia` AND reserves matching space on the content
    * side, so a long headline can never run underneath the artwork. Leave unset
@@ -88,7 +87,7 @@ export function SpotlightPanel({
   );
 }
 
-export interface SpotlightMediaProps extends HTMLAttributes<HTMLDivElement> {
+export interface SpotlightMediaProps extends ComponentProps<'div'> {
   side?: 'left' | 'right';
   /** Which panel edges the artwork is allowed to cross. */
   overhang?: 'top' | 'bottom' | 'both' | 'none';
@@ -138,7 +137,7 @@ export function SpotlightMedia({
 
 /** Right padding tracks the panel's `mediaWidth` plus a gutter, so text stops
  *  before the artwork begins however long it runs. */
-export function SpotlightContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function SpotlightContent({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="spotlight-content"

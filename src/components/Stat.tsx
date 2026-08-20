@@ -1,7 +1,7 @@
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-export interface StatProps extends HTMLAttributes<HTMLDivElement> {
+export interface StatProps extends ComponentProps<'div'> {
   icon?: ReactNode;
   /** Already formatted for display — "100k". */
   value: string;
@@ -31,7 +31,7 @@ export function Stat({ icon, value, label, className, ...props }: StatProps) {
   );
 }
 
-export function StatRow({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function StatRow({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="stat-row"

@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const iconButton = cva(
@@ -34,7 +34,7 @@ const iconButton = cva(
 );
 
 export interface IconButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof iconButton> {
+  extends ComponentProps<'button'>, VariantProps<typeof iconButton> {
   /**
    * Required, not optional polish: an icon-only control has no text for a screen
    * reader to announce, so without this it is unusable without sight. Typed as

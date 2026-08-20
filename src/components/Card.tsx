@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { HTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 import { resolveGlints, type Corner } from '@/lib/glint';
 import { CornerGlint } from './CornerGlint';
@@ -30,7 +30,7 @@ const card = cva(['relative flex flex-col', 'transition-colors duration-200 ease
 /** Feeds CornerGlint, whose arc has to match the corner it sits in. */
 const radiusPx = { md: 16, lg: 22, xl: 32 } as const;
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof card> {
+export interface CardProps extends ComponentProps<'div'>, VariantProps<typeof card> {
   /**
    * Corner ornament. Off by default — it is a highlight, so it only reads on a
    * dark or brand surface and just adds noise on a white one.
@@ -76,7 +76,7 @@ export function Card({
   );
 }
 
-export function CardEyebrow({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
+export function CardEyebrow({ className, ...props }: ComponentProps<'p'>) {
   return (
     <p
       data-slot="card-eyebrow"
@@ -86,7 +86,7 @@ export function CardEyebrow({ className, ...props }: HTMLAttributes<HTMLParagrap
   );
 }
 
-export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
+export interface CardTitleProps extends ComponentProps<'h3'> {
   /**
    * Set to match the page outline. Levels must not skip — an `h1` followed by an
    * `h3` reads as a missing section to anyone navigating by headings. Visual
@@ -105,7 +105,7 @@ export function CardTitle({ className, as: Comp = 'h3', ...props }: CardTitlePro
   );
 }
 
-export function CardBody({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
+export function CardBody({ className, ...props }: ComponentProps<'p'>) {
   return (
     <p
       data-slot="card-body"
@@ -115,7 +115,7 @@ export function CardBody({ className, ...props }: HTMLAttributes<HTMLParagraphEl
   );
 }
 
-export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function CardFooter({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-footer"

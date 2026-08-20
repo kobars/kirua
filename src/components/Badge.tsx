@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const badge = cva(
@@ -22,8 +22,7 @@ const badge = cva(
   },
 );
 
-export interface BadgeProps
-  extends HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badge> {
+export interface BadgeProps extends ComponentProps<'span'>, VariantProps<typeof badge> {
   icon?: ReactNode;
   children: ReactNode;
 }

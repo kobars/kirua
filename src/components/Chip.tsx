@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const chip = cva(
@@ -30,7 +30,7 @@ const chip = cva(
   },
 );
 
-export interface ChipProps extends HTMLAttributes<HTMLSpanElement>, VariantProps<typeof chip> {
+export interface ChipProps extends ComponentProps<'span'>, VariantProps<typeof chip> {
   /** Leading slot — an avatar stack, a dot, or a small icon. */
   leading?: ReactNode;
   children: ReactNode;
