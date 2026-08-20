@@ -71,6 +71,7 @@ export function AvatarStack({
     <span
       data-slot="avatar-stack"
       className={cn('inline-flex items-center', className)}
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a stack of DOM children has no single src, so <img> cannot replace it
       role="img"
       aria-label={label(items.length)}
       {...props}
