@@ -52,6 +52,18 @@ const browser = (width: number, forcedColors: 'none' | 'active' = 'none') => ({
 });
 
 /**
+ * Every file a *dedicated* project owns, so the general projects do not also
+ * pick it up. The general `include` glob matches both suffixes too, and a
+ * file that runs in two projects at once is not twice as tested — for a
+ * screenshot it is actively wrong, because both projects write the same
+ * baseline path and the second overwrites the first.
+ */
+const OTHER_PROJECTS_OWN = [
+  'src/**/*.forced.test.{ts,tsx}',
+  'src/**/*.visual.test.{ts,tsx}',
+] as const;
+
+/**
  * One project per width, not one project with three instances.
  * `@storybook/addon-vitest` resets the viewport before every story to its own
  * 1200x900 default unless a Storybook *global* says otherwise, so an instance
@@ -73,8 +85,61 @@ const storyProjects = WIDTHS.map(({ key, name, width }) => ({
   },
 }));
 
+/**
+ * Kept in step with the `browserslist` key in `package.json` by
+ * `src/styles/browsers.test.ts`. Vite does not read `browserslist` — it reads
+ * `build.target` — so without that test the declared matrix and the compiled
+ * output would be free to disagree, which is worse than having neither.
+ */
+const BUILD_TARGET = ['chrome120', 'edge120', 'safari16.4', 'firefox128'];
+
+/**
+ * The second engine. WebKit differs most from Chromium, and the declared matrix
+ * says Safari 16.4 — so a suite that only ever ran Chromium was asserting
+ * support it had never seen.
+ *
+ * One width, and the unit tests only. What an engine changes is how a computed
+ * style resolves — a logical property, an `@utility`, a `color-mix()` — and
+ * that is exactly what those tests read. Tripling the story suite would buy
+ * pictures nobody compares.
+ *
+ * **Behind an environment variable, and not by choice.** `@vitest/coverage-v8`
+ * refuses to initialise if *any* configured project uses a non-Chromium
+ * browser, and it validates the config rather than the projects actually being
+ * run — so `--project='!webkit'` does not help. `pnpm check` therefore runs the
+ * coverage pass first and the WebKit pass second, as two commands.
+ *
+ * `forced-colors` stays Chromium-only regardless: WebKit has no equivalent mode
+ * at all, which is itself worth knowing.
+ */
+const webkitProjects = process.env['KIRUA_WEBKIT']
+  ? [
+      {
+        extends: true as const,
+        test: {
+          name: 'webkit',
+          include: ['src/**/*.test.{ts,tsx}'],
+          exclude: [...OTHER_PROJECTS_OWN],
+          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+          browser: {
+            enabled: true as const,
+            headless: true as const,
+            provider: playwright({}),
+            instances: [
+              {
+                browser: 'webkit' as const,
+                viewport: { width: breakpointPx('lg'), height: 900 },
+              },
+            ],
+          },
+        },
+      },
+    ]
+  : [];
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: { target: BUILD_TARGET },
   resolve: {
     alias: {
       '@': path.resolve(dirname, 'src'),
@@ -82,6 +147,7 @@ export default defineConfig({
   },
   test: {
     projects: [
+      ...webkitProjects,
       ...storyProjects,
       /**
        * Windows high contrast, emulated. Forced colours replace every colour on
@@ -101,12 +167,47 @@ export default defineConfig({
           browser: browser(breakpointPx('lg'), 'active'),
         },
       },
+      /**
+       * Appearance, compared against a committed picture.
+       *
+       * **One project, one width, one engine — and that is the whole point.**
+       * A baseline is a baseline *for* a browser at a size. Left in the general
+       * `unit:*` set this file ran at three widths against a single filename,
+       * so the three runs overwrote each other and three of eleven comparisons
+       * failed. Measured, not predicted.
+       *
+       * `lg` is the width the reference file was drawn at, so a diff here is a
+       * diff against the design rather than against a reflow.
+       *
+       * The comparator lives here rather than at each call site. Anti-aliasing
+       * moves by a pixel or two between runs and between machines, so zero
+       * tolerance produces a suite that fails for reasons nobody can act on —
+       * which is how a visual gate gets switched off. 1% of pixels is far below
+       * a one-step padding change and far above rasterisation noise.
+       */
+      {
+        extends: true as const,
+        test: {
+          name: 'visual',
+          include: ['src/**/*.visual.test.{ts,tsx}'],
+          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+          browser: {
+            ...browser(breakpointPx('lg')),
+            expect: {
+              toMatchScreenshot: {
+                comparatorName: 'pixelmatch' as const,
+                comparatorOptions: { allowedMismatchedPixelRatio: 0.01 },
+              },
+            },
+          },
+        },
+      },
       ...WIDTHS.map(({ name, width }) => ({
         extends: true as const,
         test: {
           name: `unit:${name}`,
           include: ['src/**/*.test.{ts,tsx}'],
-          exclude: ['src/**/*.forced.test.{ts,tsx}'],
+          exclude: [...OTHER_PROJECTS_OWN],
           setupFiles: [path.join(dirname, 'src/test/setup.ts')],
           // Also a real browser. `contrast.ts` reads computed styles from the
           // shipped CSS, and a component's surface context only resolves where
