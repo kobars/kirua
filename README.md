@@ -52,6 +52,29 @@ Every ratio quoted above is recomputed in the browser from the shipped tokens on
 the **Foundations → Colour → Contrast Audit** page. Change a hex and the numbers
 change with it.
 
+## What it weighs
+
+Measured from the application build on 2026-08-20, and re-measured on every
+`pnpm build` — `tools/size-budget.mjs` runs as the last step and **exits
+non-zero** when a budget is crossed. A warning in a build log is a budget nobody
+has ever been stopped by.
+
+| Asset | Raw | Gzip | Budget (gzip) |
+| --- | --- | --- | --- |
+| JavaScript | 329.58 kB | **104.16 kB** | 115 kB |
+| CSS | 44.93 kB | **8.52 kB** | 12 kB |
+
+That JavaScript figure includes React and ReactDOM, because it is the rebuilt
+hero page rather than a library bundle. It catches "something heavy entered the
+graph"; it cannot answer "what does one `Button` cost", which needs tree-shaken
+library output that does not exist yet.
+
+**In a React Server Component the JavaScript number is zero.** No file in
+`src/components` carries a `"use client"` directive — asserted, not remembered,
+by `src/components/server.node.test.tsx` — so the components render on the
+server and ship none of themselves to the browser. What a consumer still pays is
+the stylesheet: **8.52 kB gzip** for the whole system, tokens included.
+
 ## Browser support
 
 Two things set the floors, and neither is a round number somebody liked.

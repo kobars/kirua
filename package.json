@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node tools/size-budget.mjs",
     "lint": "oxlint --deny-warnings",
     "audit": "pnpm audit --audit-level moderate",
     "preview": "vite preview",
@@ -31,9 +31,9 @@
     "test:webkit": "KIRUA_WEBKIT=1 vitest --run --project webkit",
     "test:coverage": "vitest --run --coverage",
     "lint:fix": "oxlint --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\"",
-    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit"
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
+    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
