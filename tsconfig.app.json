@@ -20,7 +20,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* Linting.
+     *
+     * There is no `"strict": true` line and strict IS on — TypeScript 6 turns
+     * it on by default. Do not "fix" the absence by adding a redundant line.
+     * These two are the opt-ins that sit beyond strict. */
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
