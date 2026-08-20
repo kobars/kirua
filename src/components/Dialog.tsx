@@ -58,7 +58,7 @@ export function DialogContent({
         className={cn(
           'fixed top-1/2 left-1/2 z-modal -translate-1/2',
           'max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] overflow-y-auto',
-          'rounded-xl bg-raised p-8 text-fg shadow-lg',
+          'rounded-xl bg-raised p-8 text-fg shadow-overlay',
           'data-open:animate-pop-in data-closed:animate-pop-out',
           'focus:outline-none',
           className,
@@ -69,7 +69,7 @@ export function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
             <IconButton aria-label={closeLabel} size="sm" className="absolute top-5 right-5">
-              <CloseIcon size={18} />
+              <CloseIcon />
             </IconButton>
           </DialogPrimitive.Close>
         )}

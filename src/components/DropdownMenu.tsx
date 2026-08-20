@@ -25,7 +25,8 @@ export const DropdownMenuRadioGroup = MenuPrimitive.RadioGroup;
 const itemStyles = [
   'relative flex cursor-pointer select-none items-center gap-2.5',
   'rounded-sm px-3 py-2.5 font-text text-body-sm text-fg outline-none',
-  'transition-colors duration-100 ease-out',
+  '[--icon-size:var(--icon-sm)]',
+  'transition-colors duration-fast ease-out',
   'data-[highlighted]:bg-ghost-hover',
   'data-[disabled]:pointer-events-none data-[disabled]:text-fg-muted',
 ];
@@ -41,7 +42,7 @@ export function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          'z-popover min-w-52 rounded-md bg-raised p-1.5 shadow-lg',
+          'z-popover min-w-52 rounded-md bg-raised p-1.5 shadow-overlay',
           'border border-line-subtle',
           'data-open:animate-pop-in data-closed:animate-pop-out',
           className,
@@ -77,7 +78,7 @@ export function DropdownMenuCheckboxItem({
       {...props}
     >
       <MenuPrimitive.ItemIndicator className="absolute left-3 flex items-center">
-        <CheckIcon size={15} />
+        <CheckIcon />
       </MenuPrimitive.ItemIndicator>
       {children}
     </MenuPrimitive.CheckboxItem>

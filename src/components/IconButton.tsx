@@ -7,7 +7,7 @@ const iconButton = cva(
   [
     'inline-flex shrink-0 items-center justify-center',
     'rounded-pill',
-    'transition-[background-color,color,transform] duration-200 ease-out',
+    'transition-[background-color,color,transform] duration-fast ease-out',
     'active:scale-95',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     'disabled:pointer-events-none disabled:cursor-not-allowed',
@@ -22,11 +22,11 @@ const iconButton = cva(
         ghost: 'bg-transparent text-on-ghost hover:bg-ghost-hover',
       },
       size: {
-        sm: 'size-9',
-        md: 'size-11',
+        sm: 'size-9 [--icon-size:var(--icon-md)]',
+        md: 'size-11 [--icon-size:var(--icon-lg)]',
         /** 54px — the reference design's circular search control. */
         // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 54px, must not track --spacing
-        lg: 'size-[3.375rem]',
+        lg: 'size-[3.375rem] [--icon-size:var(--icon-xl)]',
       },
     },
     defaultVariants: { variant: 'ghost', size: 'md' },

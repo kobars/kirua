@@ -2,9 +2,10 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 import { resolveGlints, type Corner } from '@/lib/glint';
+import { CARD_RADIUS_PX } from '@/lib/radius';
 import { CornerGlint } from './CornerGlint';
 
-const card = cva(['relative flex flex-col', 'transition-colors duration-200 ease-out'], {
+const card = cva(['relative flex flex-col', 'transition-colors duration-base ease-out'], {
   variants: {
     variant: {
       light: 'border border-line-subtle bg-raised text-fg',
@@ -26,9 +27,6 @@ const card = cva(['relative flex flex-col', 'transition-colors duration-200 ease
   },
   defaultVariants: { variant: 'light', padding: 'md', radius: 'xl' },
 });
-
-/** Feeds CornerGlint, whose arc has to match the corner it sits in. */
-const radiusPx = { md: 16, lg: 22, xl: 32 } as const;
 
 export interface CardProps extends ComponentProps<'div'>, VariantProps<typeof card> {
   /**
@@ -69,7 +67,7 @@ export function Card({
       {...props}
     >
       {resolveGlints(glint).map((corner) => (
-        <CornerGlint key={corner} corner={corner} radius={radiusPx[radiusKey]} />
+        <CornerGlint key={corner} corner={corner} radius={CARD_RADIUS_PX[radiusKey]} />
       ))}
       {children}
     </div>

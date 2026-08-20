@@ -6,7 +6,7 @@ const chip = cva(
   [
     'inline-flex items-center gap-2',
     'rounded-pill font-text font-medium whitespace-nowrap',
-    'transition-colors duration-200 ease-out',
+    'transition-colors duration-fast ease-out',
   ],
   {
     variants: {
@@ -21,9 +21,9 @@ const chip = cva(
         outline: 'border-2 border-line bg-transparent text-fg',
       },
       size: {
-        sm: 'h-7 pr-3 pl-2 text-caption',
-        md: 'h-9 pr-4 pl-2.5 text-body-sm',
-        lg: 'h-11 pr-5 pl-3 text-body-md',
+        sm: 'h-7 pr-3 pl-2 text-caption [--icon-size:var(--icon-sm)]',
+        md: 'h-9 pr-4 pl-2.5 text-body-sm [--icon-size:var(--icon-sm)]',
+        lg: 'h-11 pr-5 pl-3 text-body-md [--icon-size:var(--icon-md)]',
       },
     },
     defaultVariants: { variant: 'dark', size: 'md' },

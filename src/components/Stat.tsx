@@ -20,7 +20,10 @@ export function Stat({ icon, value, label, className, ...props }: StatProps) {
   return (
     <div
       data-slot="stat"
-      className={cn('inline-flex items-center gap-2 text-fg-secondary', className)}
+      className={cn(
+        'inline-flex items-center gap-2 text-fg-secondary [--icon-size:var(--icon-md)]',
+        className,
+      )}
       {...props}
     >
       {icon}

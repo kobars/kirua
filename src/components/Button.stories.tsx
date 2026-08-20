@@ -69,10 +69,10 @@ export const Sizes: Story = {
 export const WithIcons: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
-      <Button {...args} leadingIcon={<SparkleIcon size={18} />}>
+      <Button {...args} leadingIcon={<SparkleIcon />}>
         Generate
       </Button>
-      <Button {...args} variant="secondary" trailingIcon={<ArrowRightIcon size={18} />}>
+      <Button {...args} variant="secondary" trailingIcon={<ArrowRightIcon />}>
         Enroll Now
       </Button>
     </div>

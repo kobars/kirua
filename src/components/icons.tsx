@@ -1,14 +1,44 @@
-import type { SVGProps } from 'react';
+import type { CSSProperties, SVGProps } from 'react';
+
+/** The `--icon-*` tokens, by name. Values live in `tokens.primitives.css`. */
+const ICON_SIZES = {
+  xs: 'var(--icon-xs)',
+  sm: 'var(--icon-sm)',
+  md: 'var(--icon-md)',
+  lg: 'var(--icon-lg)',
+  xl: 'var(--icon-xl)',
+  '2xl': 'var(--icon-2xl)',
+} as const;
+
+export type IconSize = keyof typeof ICON_SIZES;
 
 /** Inline icon set matching the reference's outline style: 1.75px strokes,
  *  round caps and joins, 24x24 box. Colour follows `currentColor`. */
-type IconProps = SVGProps<SVGSVGElement> & { size?: number };
+export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+  /**
+   * A name from the icon scale. **Leave it unset inside a component that has a
+   * size** — `Button`, `IconButton`, `Badge`, `Chip`, `Stat` and the menu items
+   * each set `--icon-size`, so an unsized icon follows the control it sits in
+   * instead of being typed by hand at the call site.
+   *
+   * A raw number is still accepted, as an escape hatch for a one-off ornament.
+   * It is deliberately the ugly option: every other visual dimension in this
+   * system is a named token, and an unnamed number is what produced 14, 15, 18
+   * and 20 with nothing to align them.
+   */
+  size?: IconSize | number;
+};
 
-function Icon({ size = 20, children, ...props }: IconProps) {
+function Icon({ size, children, style, ...props }: IconProps) {
+  const resolved =
+    size === undefined
+      ? 'var(--icon-size, var(--icon-md))'
+      : typeof size === 'number'
+        ? `${size}px`
+        : ICON_SIZES[size];
+
   return (
     <svg
-      width={size}
-      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -17,6 +47,9 @@ function Icon({ size = 20, children, ...props }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
+      // Width and height rather than the SVG attributes, so a token can be a
+      // `var()` and so a consumer's `className` can still win.
+      style={{ width: resolved, height: resolved, ...style } as CSSProperties}
       {...props}
     >
       {children}

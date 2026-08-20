@@ -38,7 +38,7 @@ export function TabsTrigger({
       className={cn(
         'inline-flex h-10 items-center rounded-pill px-5',
         'font-text text-body-sm font-medium text-fg-muted',
-        'transition-colors duration-200 ease-out',
+        'transition-colors duration-fast ease-out',
         'hover:text-fg',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         // The active tab is marked by fill AND weight, not colour alone.

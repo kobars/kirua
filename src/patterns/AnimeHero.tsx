@@ -150,11 +150,7 @@ export function AnimeHero() {
                 <Button variant="primary" size="lg">
                   Start now
                 </Button>
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  trailingIcon={<ArrowRightIcon size={18} />}
-                >
+                <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon />}>
                   Enroll Now
                 </Button>
               </div>
@@ -188,7 +184,7 @@ export function AnimeHero() {
               <Button
                 variant="secondary"
                 size="md"
-                trailingIcon={<ArrowRightIcon size={18} />}
+                trailingIcon={<ArrowRightIcon />}
                 className="min-w-40 justify-between"
               >
                 Claim
@@ -208,9 +204,9 @@ export function AnimeHero() {
             </CardBody>
             <CardFooter>
               <StatRow>
-                <Stat icon={<HeartIcon size={18} />} value="100k" label="Likes" />
-                <Stat icon={<BookmarkIcon size={18} />} value="10k" label="Saves" />
-                <Stat icon={<SendIcon size={18} />} value="20k" label="Shares" />
+                <Stat icon={<HeartIcon />} value="100k" label="Likes" />
+                <Stat icon={<BookmarkIcon />} value="10k" label="Saves" />
+                <Stat icon={<SendIcon />} value="20k" label="Shares" />
               </StatRow>
             </CardFooter>
           </Card>

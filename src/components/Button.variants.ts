@@ -14,7 +14,7 @@ export const buttonVariants = cva(
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
     'font-text font-medium',
     'rounded-pill',
-    'transition-[background-color,color,border-color,transform] duration-200 ease-out',
+    'transition-[background-color,color,border-color,transform] duration-fast ease-out',
     'active:scale-[0.98]',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     'disabled:pointer-events-none disabled:cursor-not-allowed',
@@ -30,15 +30,15 @@ export const buttonVariants = cva(
         danger: 'bg-danger text-on-danger hover:bg-danger-hover',
       },
       size: {
-        sm: 'h-9 px-4 text-body-sm',
+        sm: 'h-9 px-4 text-body-sm [--icon-size:var(--icon-sm)]',
         /** 44px — meets the minimum touch target. */
-        md: 'h-11 px-6 text-body-md',
+        md: 'h-11 px-6 text-body-md [--icon-size:var(--icon-md)]',
         /** 54px — the reference design's hero call to action. */
         /** 54px — the reference design's hero call to action. Arbitrary, not
          *  `h-13.5`: numeric utilities compile to calc(var(--spacing) * n), and a
          *  measured value must not move when the spacing scale is retuned. */
         // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes
-        lg: 'h-[3.375rem] px-8 text-body-lg',
+        lg: 'h-[3.375rem] px-8 text-body-lg [--icon-size:var(--icon-lg)]',
       },
       fullWidth: {
         true: 'w-full',

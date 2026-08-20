@@ -65,7 +65,7 @@ export function NavBar({
               className={cn(
                 'inline-flex h-11 shrink-0 items-center rounded-pill px-3 md:px-4',
                 'font-text text-body-sm text-fg-secondary md:text-body-md',
-                'transition-colors duration-200 ease-out',
+                'transition-colors duration-fast ease-out',
                 'hover:bg-ghost-hover hover:text-fg',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                 item.current && 'bg-ghost-hover font-medium text-fg',
