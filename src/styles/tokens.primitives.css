@@ -118,6 +118,28 @@
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Tailwind's own default, restated so kirua owns it. Every `p-4`, `gap-6` and
+   * `h-11` in the system compiles to `calc(var(--spacing) * n)`, and
+   * `SpotlightContent` reads `var(--spacing)` directly inside a `calc()`. Left
+   * undeclared, a consumer retuning their spacing scale silently changes
+   * kirua's geometry and neither side finds out.
+   *
+   * This is a declaration, not a retune: 0.25rem is the value already in use. */
+  --spacing: 0.25rem;
+
+  /* Also Tailwind's defaults, and also restated for ownership rather than
+   * changed. 58 responsive utilities in `src/` are written against these
+   * numbers — `md:` 40 of them — so they are load-bearing whether or not they
+   * are written down. `responsive-tests` asserts behaviour at these widths.
+   *
+   * The reference design is one 1440px desktop frame, so no breakpoint here is
+   * [FIGMA]: every one was invented to make that single frame reflow. */
+  --breakpoint-sm: 40rem; /* 640px */
+  --breakpoint-md: 48rem; /* 768px — where the artwork rejoins the layout */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
+  --breakpoint-2xl: 96rem; /* 1536px */
 }
 
 /* Outside @theme: Tailwind's duration-* utilities take bare numbers, so these

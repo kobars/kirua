@@ -79,6 +79,32 @@
   --color-status-info-bg: var(--color-violet-100);
   --color-status-info-fg: var(--color-violet-900);
   --color-status-info-solid: var(--color-violet-600);
+
+  /* STACKING ORDER. Semantic, not primitive: with z-index the name IS the
+   * meaning — there is no raw value underneath that means anything on its own.
+   *
+   * Read it as one ordered list, top of the screen last. The gaps are ten so a
+   * consumer can slot their own layer between two of ours without editing kirua.
+   *
+   * The three that are not obvious:
+   *   ornament sits ABOVE raised because a CornerGlint must stay over artwork
+   *     that overhangs the panel edge, and that artwork is content.
+   *   tooltip sits ABOVE popover because a tooltip can be attached to a menu
+   *     item, and a hint hidden behind the menu it describes is useless.
+   *   toast is last because a toast reports on the thing you just did, which
+   *     may well have been done in a dialog that is still open.
+   *
+   * These do not change per surface context, so they are not re-pointed in
+   * .ctx-brand, .ctx-inverse or .dark. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-ornament: 20;
+  --z-sticky: 30;
+  --z-scrim: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-tooltip: 70;
+  --z-toast: 80;
 }
 
 /* Applied by SpotlightPanel. */
