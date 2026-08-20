@@ -62,7 +62,7 @@ has ever been stopped by.
 | Asset | Raw | Gzip | Budget (gzip) |
 | --- | --- | --- | --- |
 | JavaScript | 329.58 kB | **104.16 kB** | 115 kB |
-| CSS | 48.73 kB | **8.90 kB** | 12 kB |
+| CSS | 48.64 kB | **8.88 kB** | 12 kB |
 
 That JavaScript figure includes React and ReactDOM, because it is the rebuilt
 hero page rather than a library bundle. It catches "something heavy entered the
@@ -73,7 +73,7 @@ library output that does not exist yet.
 `src/components` carries a `"use client"` directive — asserted, not remembered,
 by `src/components/server.node.test.tsx` — so the components render on the
 server and ship none of themselves to the browser. What a consumer still pays is
-the stylesheet: **8.90 kB gzip** for the whole system, tokens included.
+the stylesheet: **8.88 kB gzip** for the whole system, tokens included.
 
 ## Browser support
 

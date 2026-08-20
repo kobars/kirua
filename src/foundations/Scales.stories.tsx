@@ -43,11 +43,18 @@ interface Resolved {
  * this page printed exactly that in the column labelled "px". Assigning the
  * token to a property the browser must resolve is what turns it into a number.
  *
- * The empty `declared` case is not defensive padding either. **Tailwind 4
- * tree-shakes an `@theme` variable nothing uses**, so `--radius-2xl` is
- * declared in the source and absent from the shipped stylesheet. A page that
- * assumed every declared token exists would print a blank cell and look broken;
- * this one says so.
+ * The empty `declared` case is not defensive padding either. **Tailwind emits an
+ * `@theme` variable only where something references it**, so a step no component
+ * uses — the 2xl radius, today — is declared in the source and absent from the
+ * shipped stylesheet. A page that assumed every declared token exists would
+ * print a blank cell and look broken; this one says so.
+ *
+ * **Do not spell that token's full name anywhere in this file.** Tailwind scans
+ * source *text* and treats a `--custom-property` name as a reference wherever it
+ * finds one — a JSDoc comment included. Writing it out emits the variable into
+ * the application bundle, so a sentence describing an unused token makes it
+ * used. Measured: deleting the mention takes the declaration from 1 occurrence
+ * to 0 in `dist`.
  *
  * A story may do this; a component may not. Nothing in `src/components` reads
  * the DOM during render, because that is what keeps the system
@@ -235,13 +242,20 @@ export const Radius: Story = {
           </div>
           <p className="max-w-2xl font-text text-body-sm text-fg-muted">
             <strong>
-              <code className="font-mono">rounded-2xl</code> is declared and used by nothing.
+              The <code className="font-mono">2xl</code> step is declared and no component uses
+              it.
             </strong>{' '}
-            It resolves here because Storybook’s stylesheet is built from this page among
-            others, and it is absent from the application build entirely — Tailwind emits an{' '}
-            <code className="font-mono">@theme</code> variable only where something references
-            it. A declared step nothing uses looks identical to a working one until you go
-            looking, which is the same trap the motion scale was in.
+            Tailwind emits an <code className="font-mono">@theme</code> variable only where
+            something references it, so a step nothing uses looks identical to a working one
+            until you go looking — the same trap the motion scale was in.
+          </p>
+          <p className="max-w-2xl font-text text-body-sm text-fg-muted">
+            <strong>And writing that sentence used to break it.</strong> An earlier draft
+            spelled the utility out in full, inside a <code className="font-mono">code</code>{' '}
+            tag. Tailwind finds classes by scanning source <em>text</em> and does not care that
+            this one sits in a paragraph explaining that nothing uses it — so the class was
+            generated, the variable was pulled into the application bundle, and the claim
+            falsified itself. The step is named without its prefix above for that reason.
           </p>
           <p className="max-w-2xl font-text text-body-sm text-fg-muted">
             The reference file contradicts itself here and{' '}

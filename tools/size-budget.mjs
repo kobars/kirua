@@ -38,7 +38,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  *
  * ```
  * javascript   329.58 kB raw   104.16 kB gzip
- * css           48.73 kB raw     8.90 kB gzip
+ * css           48.64 kB raw     8.88 kB gzip
  * ```
  *
  * The CSS figure was 8.52 kB when this file was written and moved to 8.90 kB
@@ -63,7 +63,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 8.9, gzipLimitKb: 12 },
+  css: { extension: '.css', measured: 8.88, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
