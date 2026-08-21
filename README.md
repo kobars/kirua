@@ -141,13 +141,16 @@ NavBar, Stat / StatRow, DotGrid, CornerGlint, SpotlightPanel.
 trapping, focus restore, typeahead, roving tabindex, collision-aware
 positioning, and the correct ARIA wiring. This repo supplies appearance only.
 
+**Forms** — Field, Label, Input, Textarea. Field connects a native control to
+its visible label, description, error, required state, and invalid state while
+remaining server-renderable.
+
 **Pattern** — `AnimeHero`, the reference screen rebuilt from the system with no
 hard-coded hex values.
 
 ## Known gaps
 
-- No form controls (input, select, checkbox, radio, switch). Largest gap for
-  real product use.
+- No choice or selection controls yet (select, checkbox, radio, switch).
 - No loading or empty states.
 - Character artwork is not commercially licensed (see Attribution).
 - Visual baselines are Chromium-on-macOS only. They are committed PNGs, so a

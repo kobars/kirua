@@ -6,7 +6,9 @@ import { Card } from './Card';
 import { Chip } from './Chip';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { DotGrid } from './DotGrid';
+import { Input } from './Input';
 import { SpotlightPanel } from './SpotlightPanel';
+import { Textarea } from './Textarea';
 
 afterEach(cleanup);
 
@@ -41,6 +43,8 @@ describe('a surface that reads by fill still reads by edge', () => {
     ['Badge', () => <Badge>New</Badge>, '[data-slot="badge"]'],
     ['Chip', () => <Chip>Tag</Chip>, '[data-slot="chip"]'],
     ['Card', () => <Card />, '[data-slot="card"]'],
+    ['Input', () => <Input />, '[data-slot="input"]'],
+    ['Textarea', () => <Textarea />, '[data-slot="textarea"]'],
     ['SpotlightPanel', () => <SpotlightPanel />, '[data-slot="spotlight-panel"]'],
   ];
 

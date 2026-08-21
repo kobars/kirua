@@ -53,6 +53,13 @@ describe('the barrel renders on a server', () => {
           </kirua.CardFooter>
         </kirua.Card>
         <kirua.Badge status="success">Published</kirua.Badge>
+        <kirua.Field controlId="server-email" label="Email">
+          <kirua.Input type="email" />
+        </kirua.Field>
+        <kirua.Label htmlFor="server-name">Name</kirua.Label>
+        <kirua.Input id="server-name" />
+        <kirua.Label htmlFor="server-biography">Biography</kirua.Label>
+        <kirua.Textarea id="server-biography" />
         <kirua.Chip variant="brand">+1M Likes</kirua.Chip>
         <kirua.StatRow>
           <kirua.Stat icon={<kirua.HeartIcon />} value="100k" label="Likes" />
@@ -102,7 +109,18 @@ describe('the barrel renders on a server', () => {
    */
   it('carries the data-slot hooks into the server markup', () => {
     const html = renderToStaticMarkup(tree);
-    for (const slot of ['card', 'badge', 'chip', 'nav-bar', 'stat', 'dot-grid']) {
+    for (const slot of [
+      'card',
+      'badge',
+      'field',
+      'label',
+      'input',
+      'textarea',
+      'chip',
+      'nav-bar',
+      'stat',
+      'dot-grid',
+    ]) {
       expect(html, `data-slot="${slot}" is missing from the server markup`).toContain(
         `data-slot="${slot}"`,
       );

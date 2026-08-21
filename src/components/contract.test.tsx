@@ -13,13 +13,17 @@ import {
   Chip,
   CornerGlint,
   DotGrid,
+  Field,
   IconButton,
+  Input,
+  Label,
   NavBar,
   SpotlightContent,
   SpotlightMedia,
   SpotlightPanel,
   Stat,
   StatRow,
+  Textarea,
 } from './index';
 
 afterEach(cleanup);
@@ -47,6 +51,26 @@ const cases: Case[] = [
   ['Chip', (p) => <Chip {...p}>Tag</Chip>, 'SPAN'],
   ['AvatarStack', (p) => <AvatarStack items={[{ name: 'Rin' }]} {...p} />, 'SPAN'],
   ['DotGrid', (p) => <DotGrid {...p} />, 'SPAN'],
+  [
+    'Label',
+    (p) => (
+      <Label htmlFor="contract-label" {...p}>
+        Name
+      </Label>
+    ),
+    'LABEL',
+  ],
+  ['Input', (p) => <Input {...p} />, 'INPUT'],
+  ['Textarea', (p) => <Textarea {...p} />, 'TEXTAREA'],
+  [
+    'Field',
+    (p) => (
+      <Field controlId="contract-field" label="Contract field" {...p}>
+        <input />
+      </Field>
+    ),
+    'DIV',
+  ],
   ['CornerGlint', (p) => <CornerGlint {...p} />, 'SPAN'],
   ['Card', (p) => <Card {...p} />, 'DIV'],
   ['CardEyebrow', (p) => <CardEyebrow {...p} />, 'P'],
