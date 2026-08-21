@@ -138,8 +138,8 @@ parts nobody credits you for and almost everybody gets wrong.
 
 Honest list, since a proof of concept that claims to be finished is lying:
 
-- **No form controls.** No input, select, checkbox, radio, or switch. These are
-  the largest remaining gap for real product use.
+- **The forms slice is text-entry only.** Field, Label, Input, and Textarea now
+  exist; select, checkbox, radio, and switch do not.
 - **No loading or empty states.**
 - **Artwork is not licensed for commercial use.** The hero uses fan-distributed
   Killua Zoldyck cut-outs. Killua is Yoshihiro Togashi's character, published by
@@ -149,5 +149,6 @@ Honest list, since a proof of concept that claims to be finished is lying:
   change in `src/patterns/characters.ts`.
 - **Fredoka is a rounded, characterful face.** It suits this brand and would be
   a poor choice for dense data tables.
-- **No visual regression testing.** `pnpm test` renders every story in Chromium
-  and asserts no axe violations, but nothing checks appearance.
+- **Visual baselines are Chromium-on-macOS only.** They are committed and fail
+  on a missing baseline, but another operating system can produce rasterisation
+  diffs that are not regressions.
