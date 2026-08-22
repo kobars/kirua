@@ -163,6 +163,20 @@ describe('no file declares a client boundary', () => {
   );
 });
 
+describe('component source has no hydration escape hatch', () => {
+  /**
+   * The documented host theme script needs this prop on `<html>` because it
+   * changes the class before React starts. A component using it would instead
+   * hide exactly the mismatch this suite exists to expose.
+   */
+  it.each(sourceFiles(COMPONENTS_DIR).map((f) => [path.relative(SRC_DIR, f), f]))(
+    '%s',
+    (_label, file) => {
+      expect(readFileSync(file, 'utf8')).not.toContain('suppressHydrationWarning');
+    },
+  );
+});
+
 /**
  * Follow every static import out of a file, and report the set reachable from a
  * root. Only static `import`/`export … from` edges — which is the right scope,
