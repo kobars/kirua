@@ -16,8 +16,10 @@ const chip = cva(
         dark: 'ctx-inverse bg-page text-fg',
         light: 'border border-line-subtle bg-raised text-fg',
         /* bg-brand, not bg-brand-vivid: white chip text is 14px or smaller,
-         * and white on blue-500 is only 3.64:1. */
-        brand: 'bg-brand text-white',
+         * and white on blue-500 is only 3.64:1. The semantic border is what
+         * keeps this variant visible on a brand surface; re-pointing bg-brand
+         * there would also recolour the surface that declares the context. */
+        brand: 'border border-line bg-brand text-white',
         outline: 'border-2 border-line bg-transparent text-fg',
       },
       size: {
@@ -39,7 +41,9 @@ export interface ChipProps extends ComponentProps<'span'>, VariantProps<typeof c
 /**
  * A compact pill label. In the reference these float over the artwork carrying
  * social proof and attribution. The `dark` variant sets `ctx-inverse`, so
- * anything nested inside flips to its on-black colours automatically.
+ * anything nested inside flips to its on-black colours automatically. The
+ * `brand` variant keeps a contextual border so it still has an edge when its
+ * fill matches a brand surface.
  *
  * @example <Chip leading={<AvatarStack items={people} />}>+1M Likes</Chip>
  */

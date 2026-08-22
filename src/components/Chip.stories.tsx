@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { AvatarStack } from './AvatarStack';
 import { Chip } from './Chip';
 import { SparkleIcon } from './icons';
@@ -38,6 +39,25 @@ export const Variants: Story = {
       </Chip>
     </div>
   ),
+};
+
+/** The contextual border keeps the brand fill visible on the brand surface. */
+export const BrandOnBrand: Story = {
+  render: (args) => (
+    <div className="ctx-brand bg-brand p-8">
+      <Chip {...args} variant="brand">
+        Brand on brand
+      </Chip>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const chip = within(canvasElement).getByText('Brand on brand');
+    const style = getComputedStyle(chip);
+
+    await expect(style.borderTopStyle).toBe('solid');
+    await expect(style.borderTopWidth).toBe('1px');
+    await expect(style.borderTopColor).not.toBe(style.backgroundColor);
+  },
 };
 
 /** The reference design's two floating badges, rebuilt from the component. */
