@@ -99,13 +99,11 @@ export const TheFourSurfaces: Story = {
           <Specimen />
           {context.name === 'ctx-brand' ? (
             <p className="max-w-2xl font-text text-caption text-fg-muted">
-              <strong>Found by building this page:</strong> the brand <code>Chip</code> above
-              has no visible edge here. It is <code>bg-brand</code>, and <code>.ctx-brand</code>{' '}
-              does not re-point <code>--color-surface-brand</code>, so the chip is the same blue
-              as the panel. The text stays legible at 4.67:1 — this is a missing boundary, not a
-              contrast failure — and <code>AnimeHero</code> uses the default <code>dark</code>{' '}
-              chip, so nothing shipped is affected. Carded rather than fixed here:{' '}
-              <code>brand-chip-on-brand</code>.
+              <strong>Context check:</strong> the brand <code>Chip</code> keeps its blue fill
+              here, but its semantic border resolves to the context&apos;s translucent white
+              line. The boundary stays visible without re-pointing{' '}
+              <code>--color-surface-brand</code>, which would also recolour the panel that
+              declares this context.
             </p>
           ) : null}
         </section>
