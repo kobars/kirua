@@ -137,6 +137,7 @@ const webkitProjects = process.env['KIRUA_WEBKIT']
           browser: {
             enabled: true as const,
             headless: true as const,
+            screenshotFailures: false,
             provider: playwright({}),
             instances: [
               {
@@ -152,6 +153,10 @@ const webkitProjects = process.env['KIRUA_WEBKIT']
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // The hydration test renders server markup inside a browser project. Keep
+  // this entry in the first dependency-optimizer pass: discovering it after
+  // WebKit starts reloads the test and can leave React with two dispatchers.
+  optimizeDeps: { include: ['react-dom/server'] },
   build: { target: BUILD_TARGET },
   resolve: {
     alias: {
