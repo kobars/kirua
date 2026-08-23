@@ -47,6 +47,11 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * `measured` is a baseline for comparison, so a baseline nobody updates turns
  * the drift column into a constant.
  *
+ * It moved again to 9.06 kB with `a600a3c feat(forms)`, the first text-entry
+ * slice — Field, Label, Input and Textarea — and was not re-recorded in that
+ * commit. Found three commits later by building each one; recorded here so
+ * the next reader does not repeat the search.
+ *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
  * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
@@ -63,7 +68,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 8.88, gzipLimitKb: 12 },
+  css: { extension: '.css', measured: 9.06, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
