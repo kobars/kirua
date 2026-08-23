@@ -56,5 +56,6 @@ export {
 } from './DropdownMenu';
 export { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './Tooltip';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
+export { ScrollArea, ScrollBar, type ScrollAreaProps, type ScrollBarProps } from './ScrollArea';
 
 export * from './icons';

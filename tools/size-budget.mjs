@@ -59,6 +59,9 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * with its own `@source` list is the fix if it ever grows past a rounding
  * error, and not before.
  *
+ * 9.27 kB with `ScrollArea`: the component's own utilities, its forced-colours
+ * rule, and the story-only classes that ride along as above.
+ *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
  * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
@@ -75,7 +78,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 9.09, gzipLimitKb: 12 },
+  css: { extension: '.css', measured: 9.27, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
