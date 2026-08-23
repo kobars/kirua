@@ -42,8 +42,8 @@ export const Playground: Story = {
  */
 export const SurfaceContexts: Story = {
   render: () => (
-    <div className="grid gap-6 md:grid-cols-3">
-      {(['light', 'dark', 'brand'] as const).map((variant) => (
+    <div className="grid gap-6 md:grid-cols-2">
+      {(['light', 'dark', 'brand', 'ghost'] as const).map((variant) => (
         <Card key={variant} variant={variant} padding="lg">
           <CardEyebrow>variant=&quot;{variant}&quot;</CardEyebrow>
           <CardTitle className="mt-1 text-heading-lg">Same button</CardTitle>
@@ -51,6 +51,38 @@ export const SurfaceContexts: Story = {
           <CardFooter>
             <Button variant="primary">Start now</Button>
           </CardFooter>
+        </Card>
+      ))}
+    </div>
+  ),
+};
+
+/**
+ * Below `md` every step tightens by one — `p-5` to `p-4`, `p-6` to `p-5` — so
+ * the same card keeps its proportion at a narrow width. Only `lg` at `md` and
+ * above is a measured value; see the note on the variant map.
+ */
+export const Paddings: Story = {
+  render: () => (
+    <div className="grid gap-6 md:grid-cols-4">
+      {(['none', 'sm', 'md', 'lg'] as const).map((padding) => (
+        <Card key={padding} padding={padding}>
+          <CardEyebrow>padding=&quot;{padding}&quot;</CardEyebrow>
+          <CardBody className="mt-1">The eyebrow sits flush when there is none.</CardBody>
+        </Card>
+      ))}
+    </div>
+  ),
+};
+
+/** Three steps of one scale. `lg` is the reference's 22px card corner. */
+export const Radii: Story = {
+  render: () => (
+    <div className="grid gap-6 md:grid-cols-3">
+      {(['md', 'lg', 'xl'] as const).map((radius) => (
+        <Card key={radius} radius={radius} padding="md">
+          <CardEyebrow>radius=&quot;{radius}&quot;</CardEyebrow>
+          <CardBody className="mt-1">Glints, when enabled, follow the corner.</CardBody>
         </Card>
       ))}
     </div>

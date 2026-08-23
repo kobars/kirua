@@ -1,40 +1,11 @@
 import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { VariantProps } from '@/lib/cva';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
-
-const iconButton = cva(
-  [
-    'inline-flex shrink-0 items-center justify-center',
-    'rounded-pill',
-    'transition-[background-color,color,transform] duration-fast ease-out',
-    'active:scale-95',
-    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-    'disabled:pointer-events-none disabled:cursor-not-allowed',
-    'disabled:bg-disabled disabled:text-on-disabled',
-  ],
-  {
-    variants: {
-      variant: {
-        primary: 'bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active',
-        secondary:
-          'border-2 border-secondary-line bg-secondary text-on-secondary hover:bg-secondary-hover',
-        ghost: 'bg-transparent text-on-ghost hover:bg-ghost-hover',
-      },
-      size: {
-        sm: 'size-9 [--icon-size:var(--icon-md)]',
-        md: 'size-11 [--icon-size:var(--icon-lg)]',
-        /** 54px — the reference design's circular search control. */
-        // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 54px, must not track --spacing
-        lg: 'size-[3.375rem] [--icon-size:var(--icon-xl)]',
-      },
-    },
-    defaultVariants: { variant: 'ghost', size: 'md' },
-  },
-);
+import { iconButtonVariants } from './IconButton.variants';
 
 export interface IconButtonProps
-  extends ComponentProps<'button'>, VariantProps<typeof iconButton> {
+  extends ComponentProps<'button'>, VariantProps<typeof iconButtonVariants> {
   /**
    * Required, not optional polish: an icon-only control has no text for a screen
    * reader to announce, so without this it is unusable without sight. Typed as
@@ -63,7 +34,7 @@ export function IconButton({
   return (
     <Comp
       data-slot="icon-button"
-      className={cn(iconButton({ variant, size }), className)}
+      className={cn(iconButtonVariants({ variant, size }), className)}
       {...props}
     >
       {children}

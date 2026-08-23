@@ -66,6 +66,20 @@ export const Sizes: Story = {
   },
 };
 
+/** Stretches to its container — a form's submit row, a card footer, a sheet. */
+export const FullWidth: Story = {
+  render: (args) => (
+    <div className="flex w-80 flex-col gap-3">
+      <Button {...args} fullWidth>
+        Continue
+      </Button>
+      <Button {...args} variant="secondary" fullWidth>
+        Back
+      </Button>
+    </div>
+  ),
+};
+
 export const WithIcons: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
