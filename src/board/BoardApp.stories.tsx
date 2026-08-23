@@ -28,5 +28,7 @@ export const Sample: Story = {
     await expect(canvas.getByRole('heading', { level: 1 })).toHaveTextContent('Lantern board');
     await expect(canvas.getByRole('heading', { name: 'Write the home page' })).toBeVisible();
     await expect(canvas.queryByText('Could not read')).toBeNull();
+    // `ready` is never written on a card; seeing it at all proves the graph was walked.
+    await expect(canvas.getAllByText('ready')).toHaveLength(2);
   },
 };
