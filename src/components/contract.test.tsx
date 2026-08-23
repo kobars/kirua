@@ -18,6 +18,8 @@ import {
   Input,
   Label,
   NavBar,
+  ScrollArea,
+  ScrollBar,
   SpotlightContent,
   SpotlightMedia,
   SpotlightPanel,
@@ -83,6 +85,16 @@ const cases: Case[] = [
   ['SpotlightPanel', (p) => <SpotlightPanel {...p} />, 'DIV'],
   ['SpotlightMedia', (p) => <SpotlightMedia {...p} />, 'DIV'],
   ['SpotlightContent', (p) => <SpotlightContent {...p} />, 'DIV'],
+  ['ScrollArea', (p) => <ScrollArea {...p} />, 'DIV'],
+  [
+    'ScrollBar',
+    (p) => (
+      <ScrollArea orientation="horizontal">
+        <ScrollBar forceMount {...p} />
+      </ScrollArea>
+    ),
+    'DIV',
+  ],
 ];
 
 describe('the ref reaches the rendered root', () => {

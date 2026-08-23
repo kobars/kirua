@@ -152,6 +152,13 @@
     outline-offset: -1px;
   }
 
+  /* A scrollbar thumb is nothing but a fill. Measured: `bg-line-strong`
+     computes to Canvas here, so the thumb vanishes into the track. A system
+     colour is the one kind of fill the mode keeps. */
+  [data-slot='scroll-bar-thumb'] {
+    background-color: CanvasText;
+  }
+
   /* The scrim is a translucent fill, so it is dropped, and the dialog would
      otherwise float over a fully legible page with nothing marking it modal. */
   [data-slot='dialog-content'] {
