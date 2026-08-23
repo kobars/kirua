@@ -41,6 +41,23 @@ export const Variants: Story = {
   ),
 };
 
+/** Heights match the button steps, so a chip and a button can share a row. */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Chip {...args} size="sm" leading={<SparkleIcon />}>
+        Small
+      </Chip>
+      <Chip {...args} size="md" leading={<SparkleIcon />}>
+        Medium
+      </Chip>
+      <Chip {...args} size="lg" leading={<SparkleIcon />}>
+        Large
+      </Chip>
+    </div>
+  ),
+};
+
 /** The contextual border keeps the brand fill visible on the brand surface. */
 export const BrandOnBrand: Story = {
   render: (args) => (

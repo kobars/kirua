@@ -50,3 +50,17 @@ export const Statuses: Story = {
     </div>
   ),
 };
+
+/** `sm` drops to the caption size and the smallest icon step — table cells, not headings. */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge {...args} size="sm" icon={<CheckIcon />}>
+        Small
+      </Badge>
+      <Badge {...args} size="md" icon={<CheckIcon />}>
+        Medium
+      </Badge>
+    </div>
+  ),
+};

@@ -107,6 +107,28 @@ export const Tones: Story = {
 };
 
 /**
+ * Three padding steps, each with a smaller pair below `md`. The reference's
+ * panel is the `xl` step; `md` exists for a panel that sits inside another
+ * layout rather than carrying the page.
+ */
+export const Paddings: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {(['md', 'lg', 'xl'] as const).map((padding) => (
+        <SpotlightPanel key={padding} padding={padding}>
+          <SpotlightContent className="gap-2">
+            <span className="font-mono text-caption text-fg-secondary">
+              padding=&quot;{padding}&quot;
+            </span>
+            <h3 className="font-display text-display-md text-fg">Same panel, less air</h3>
+          </SpotlightContent>
+        </SpotlightPanel>
+      ))}
+    </div>
+  ),
+};
+
+/**
  * The artwork is decorative and there is no room for it beside the text on a
  * phone, so `SpotlightMedia` is `hidden md:flex`. That is a real switch, not a
  * reflow: below `md` the element is not laid out at all, which is also why it
