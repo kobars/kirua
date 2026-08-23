@@ -1,0 +1,26 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { TooltipProvider } from '@/components';
+import '@/index.css';
+import { BoardApp } from './BoardApp';
+import { choose, relativeTo } from './sources';
+
+/**
+ * The only place the real board is read. On a machine with the overlay the
+ * glob finds it; on every other machine it is empty and `choose` falls back
+ * to the committed sample. Vite resolves the glob at build time and hot
+ * reloads when a card changes, which is what makes a server unnecessary —
+ * see `board/decisions/board-app-stack.md`.
+ */
+const board = relativeTo(
+  '/board',
+  import.meta.glob<string>('/board/**/*.md', { query: '?raw', import: 'default', eager: true }),
+);
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <TooltipProvider delayDuration={200}>
+      <BoardApp source={choose(board)} />
+    </TooltipProvider>
+  </StrictMode>,
+);
