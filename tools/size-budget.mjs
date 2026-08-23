@@ -52,6 +52,13 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * commit. Found three commits later by building each one; recorded here so
  * the next reader does not repeat the search.
  *
+ * 9.09 kB with the board app skeleton. Tailwind emits one stylesheet for every
+ * scanned source, so a utility the board page uses and the hero does not —
+ * `max-w-5xl`, `md:p-10` — ships in the hero's CSS too, exactly as story-only
+ * classes already do. 0.03 kB is the cost of that today; a second CSS entry
+ * with its own `@source` list is the fix if it ever grows past a rounding
+ * error, and not before.
+ *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
  * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
@@ -68,7 +75,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 9.06, gzipLimitKb: 12 },
+  css: { extension: '.css', measured: 9.09, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
