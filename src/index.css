@@ -12,6 +12,13 @@
  * still gets a working page. See `board/tasks/font-delivery.md`. */
 @import 'tailwindcss';
 
+/* Tailwind scans source *text*, and the sample board bundle under src/board is
+ * prose that will grow. A sentence saying "when to use a table" is a candidate
+ * for the `table` utility. A fence, not a repair: measured on the day it was
+ * added, the CSS hash was identical with and without this line, because every
+ * utility-shaped word the sample uses today is already emitted by real source. */
+@source not './board/sample';
+
 @import './styles/tokens.primitives.css';
 @import './styles/tokens.semantic.css';
 @import './styles/theme.css';
