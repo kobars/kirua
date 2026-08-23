@@ -153,10 +153,12 @@ const webkitProjects = process.env['KIRUA_WEBKIT']
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  // The hydration test renders server markup inside a browser project. Keep
-  // this entry in the first dependency-optimizer pass: discovering it after
-  // WebKit starts reloads the test and can leave React with two dispatchers.
-  optimizeDeps: { include: ['react-dom/server'] },
+  // The hydration test renders server markup inside a browser project, and
+  // the variants test composes stories inside one. Keep these in the first
+  // dependency-optimizer pass: discovering one after a browser starts reloads
+  // the test mid-run, which can leave React with two dispatchers and reports
+  // the interrupted files as "0 tests".
+  optimizeDeps: { include: ['react-dom/server', '@storybook/react-vite', 'storybook/test'] },
   build: { target: BUILD_TARGET },
   resolve: {
     alias: {
@@ -283,6 +285,12 @@ export default defineConfig({
       // omits every fully-covered file, so a green report reads as a report
       // with files missing from it.
       reporter: [['text', { skipFull: false }], 'html'],
+      // `src/lib` only, and that is a choice. A component here is a `cva` map
+      // and a spread: one object literal that evaluates on import, so line
+      // coverage would report every variant as covered whether or not a story
+      // ever renders it. The measure that matters for a component is variant
+      // completeness, and `src/components/variants.test.tsx` enforces it by
+      // rendering every story and failing on any variant none of them shows.
       include: ['src/lib/**'],
       // What the suite actually reaches today, not an aspiration. `src/lib` is
       // three small pure modules, so full cover is the honest number; the one

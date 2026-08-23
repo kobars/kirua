@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority';
+import { cva } from '@/lib/cva';
 
 /**
  * Kept out of `Button.tsx` so that file exports components only, which React
