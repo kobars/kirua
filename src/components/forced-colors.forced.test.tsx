@@ -1,3 +1,4 @@
+import { act } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
 import { Badge } from './Badge';
@@ -7,6 +8,7 @@ import { Chip } from './Chip';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { DotGrid } from './DotGrid';
 import { Input } from './Input';
+import { ScrollArea } from './ScrollArea';
 import { SpotlightPanel } from './SpotlightPanel';
 import { Textarea } from './Textarea';
 
@@ -75,6 +77,31 @@ describe('a dialog still reads as modal', () => {
 
     expect(hasBoundary(style)).toBe(true);
     expect(style.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  });
+});
+
+describe('a scrollbar thumb still reads', () => {
+  it('keeps a fill that differs from the canvas, because a fill is all it has', async () => {
+    const container = render(
+      <ScrollArea className="h-20 w-40">
+        <div className="h-96">Taller than the region.</div>
+      </ScrollArea>,
+    );
+    // Radix measures in a ResizeObserver and mounts the thumb afterwards, so
+    // the wait is inside `act`: those are state updates, and React warns about
+    // any it did not see coming.
+    // One `act` per frame, not one around the loop: React flushes at the end
+    // of a scope, and the thumb arrives through a chain of update → effect →
+    // measure that needs several flushes to finish.
+    for (let frames = 0; frames < 20; frames++) {
+      await act(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+      if (container.querySelector('[data-slot="scroll-bar-thumb"]')) break;
+    }
+    const thumb = container.querySelector('[data-slot="scroll-bar-thumb"]');
+    if (!thumb) throw new Error('thumb never mounted');
+    const canvas = getComputedStyle(document.body).backgroundColor;
+    expect(getComputedStyle(thumb).backgroundColor).not.toBe(canvas);
+    expect(getComputedStyle(thumb).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
   });
 });
 

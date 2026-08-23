@@ -71,6 +71,9 @@ describe('the barrel renders on a server', () => {
           ]}
         />
         <kirua.DotGrid />
+        <kirua.ScrollArea>
+          <p>Scrolls on the client, if it must.</p>
+        </kirua.ScrollArea>
         <kirua.Tabs defaultValue="one">
           <kirua.TabsList>
             <kirua.TabsTrigger value="one">One</kirua.TabsTrigger>

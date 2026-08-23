@@ -137,7 +137,7 @@ switch propagates.
 **Presentational** — Button, IconButton, Chip, AvatarStack, Badge, Card,
 NavBar, Stat / StatRow, DotGrid, CornerGlint, SpotlightPanel.
 
-**Radix-backed** — Dialog, DropdownMenu, Tooltip, Tabs. Radix supplies focus
+**Radix-backed** — Dialog, DropdownMenu, Tooltip, Tabs, ScrollArea. Radix supplies focus
 trapping, focus restore, typeahead, roving tabindex, collision-aware
 positioning, and the correct ARIA wiring. This repo supplies appearance only.
 

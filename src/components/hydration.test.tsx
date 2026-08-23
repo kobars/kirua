@@ -28,6 +28,11 @@ function PublicComposition() {
         <kirua.Field controlId="hydrate-email" label="Email">
           <kirua.Input type="email" />
         </kirua.Field>
+        {/* Measures overflow in an effect: the server renders no scrollbar and
+            the client must not claim one until after hydration. */}
+        <kirua.ScrollArea className="h-20">
+          <p>A region that fits its content.</p>
+        </kirua.ScrollArea>
         <kirua.Tabs defaultValue="details">
           <kirua.TabsList>
             <kirua.TabsTrigger value="details">Details</kirua.TabsTrigger>
