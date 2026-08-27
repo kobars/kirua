@@ -2,6 +2,9 @@ import { createRef, type ReactElement } from 'react';
 import { describe, expect, it, afterEach } from 'vitest';
 import { cleanup, render } from '@/test/render';
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
   AvatarStack,
   Badge,
   Button,
@@ -50,6 +53,13 @@ const cases: Case[] = [
     'BUTTON',
   ],
   ['Badge', (p) => <Badge {...p}>New</Badge>, 'SPAN'],
+  ['Alert', (p) => <Alert {...p}>Saved</Alert>, 'DIV'],
+  ['AlertTitle', (p) => <AlertTitle {...p}>Saved</AlertTitle>, 'P'],
+  [
+    'AlertDescription',
+    (p) => <AlertDescription {...p}>Your changes are live.</AlertDescription>,
+    'P',
+  ],
   ['Chip', (p) => <Chip {...p}>Tag</Chip>, 'SPAN'],
   ['AvatarStack', (p) => <AvatarStack items={[{ name: 'Rin' }]} {...p} />, 'SPAN'],
   ['DotGrid', (p) => <DotGrid {...p} />, 'SPAN'],

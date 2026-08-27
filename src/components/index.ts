@@ -6,6 +6,8 @@ export { IconButton, type IconButtonProps } from './IconButton';
 export { Chip, type ChipProps } from './Chip';
 export { AvatarStack, type AvatarStackProps, type AvatarItem } from './AvatarStack';
 export { Badge, type BadgeProps } from './Badge';
+export { Alert, AlertTitle, AlertDescription, type AlertProps } from './Alert';
+export { alertVariants } from './Alert.variants';
 export { Field, type FieldProps } from './Field';
 export { Label, type LabelProps } from './Label';
 export { Input, type InputProps } from './Input';
