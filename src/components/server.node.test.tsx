@@ -53,6 +53,10 @@ describe('the barrel renders on a server', () => {
           </kirua.CardFooter>
         </kirua.Card>
         <kirua.Badge status="success">Published</kirua.Badge>
+        <kirua.Alert status="success">
+          <kirua.AlertTitle>Published</kirua.AlertTitle>
+          <kirua.AlertDescription>Your changes are live.</kirua.AlertDescription>
+        </kirua.Alert>
         <kirua.Field controlId="server-email" label="Email">
           <kirua.Input type="email" />
         </kirua.Field>
@@ -115,6 +119,9 @@ describe('the barrel renders on a server', () => {
     for (const slot of [
       'card',
       'badge',
+      'alert',
+      'alert-title',
+      'alert-description',
       'field',
       'label',
       'input',
