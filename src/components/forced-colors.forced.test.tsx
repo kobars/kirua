@@ -1,6 +1,7 @@
 import { act } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
+import { Alert } from './Alert';
 import { Badge } from './Badge';
 import { Button } from './Button';
 import { Card } from './Card';
@@ -42,6 +43,7 @@ function hasBoundary(style: CSSStyleDeclaration): boolean {
 
 describe('a surface that reads by fill still reads by edge', () => {
   const cases: Array<[string, () => React.ReactElement, string]> = [
+    ['Alert', () => <Alert>Saved</Alert>, '[data-slot="alert"]'],
     ['Badge', () => <Badge>New</Badge>, '[data-slot="badge"]'],
     ['Chip', () => <Chip>Tag</Chip>, '[data-slot="chip"]'],
     ['Card', () => <Card />, '[data-slot="card"]'],
