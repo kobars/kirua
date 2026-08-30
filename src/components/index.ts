@@ -67,6 +67,12 @@ export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner';
 export { Checkbox, type CheckboxProps } from './Checkbox';
+export {
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupProps,
+  type RadioGroupItemProps,
+} from './RadioGroup';
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
