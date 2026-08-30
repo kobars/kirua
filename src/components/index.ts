@@ -16,6 +16,8 @@ export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
 export { CARD_RADIUS_PX, PANEL_RADIUS_PX, PANEL_GLINT_INSET_PX } from '@/lib/radius';
+export { Link, type LinkProps } from './Link';
+export { linkVariants } from './Link.variants';
 export { Heading, type HeadingProps } from './Heading';
 export { headingVariants } from './Heading.variants';
 export { Text, Eyebrow, type TextProps } from './Text';

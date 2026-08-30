@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  CalendarIcon,
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+  GridIcon,
   IconButton,
   Kbd,
+  Link,
+  MenuIcon,
+  PillIcon,
+  PlusIcon,
+  SearchIcon,
   Sheet,
   SheetContent,
   SheetTitle,
@@ -22,16 +29,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  StethoscopeIcon,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  CalendarIcon,
-  GridIcon,
-  MenuIcon,
-  PillIcon,
-  PlusIcon,
-  SearchIcon,
-  StethoscopeIcon,
   UserIcon,
 } from 'kirua';
 import { Appointments } from './Appointments';
@@ -164,14 +165,15 @@ export function App() {
             </SheetContent>
           </Sheet>
 
-          <a
+          <Link
             href="#/"
-            className="flex items-center gap-2 rounded-xs text-body-md font-semibold [--icon-size:var(--icon-lg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            variant="block"
+            className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
           >
             <StethoscopeIcon aria-hidden="true" className="text-fg-accent" />
             <span className="hidden sm:inline">SIMRS Sehat Bersama</span>
             <span className="sm:hidden">SIMRS</span>
-          </a>
+          </Link>
 
           <span className="flex-1" />
 

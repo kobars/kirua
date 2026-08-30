@@ -5,6 +5,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  Link,
   Text,
 } from 'kirua';
 import { compactCount, initials, people } from './data';
@@ -25,12 +26,9 @@ export function PersonLink({ handle }: PersonLinkProps) {
   return (
     <HoverCard openDelay={150}>
       <HoverCardTrigger asChild>
-        <a
-          href={`#/profil/${handle}`}
-          className="rounded-xs font-semibold text-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
+        <Link href={`#/profil/${handle}`} variant="block" className="font-semibold text-fg">
           {person.name}
-        </a>
+        </Link>
       </HoverCardTrigger>
       <HoverCardContent>
         <div className="grid gap-3">

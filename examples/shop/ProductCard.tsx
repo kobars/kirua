@@ -6,6 +6,7 @@ import {
   CardTitle,
   CartIcon,
   Eyebrow,
+  Link,
   StarIcon,
 } from 'kirua';
 import { rupiah, type Product } from './data';
@@ -39,12 +40,9 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
               select on; the size is overridden because a product name in a grid
               of nine is not display type. */}
           <CardTitle as="h2" className="text-body-md font-semibold text-balance">
-            <a
-              href={`#/produk/${product.id}`}
-              className="rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
+            <Link href={`#/produk/${product.id}`} variant="block">
               {product.name}
-            </a>
+            </Link>
           </CardTitle>
         </div>
         {product.condition === 'used' && <Badge status="warning">Bekas</Badge>}

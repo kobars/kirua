@@ -6,6 +6,7 @@ import {
   Heading,
   Input,
   Label,
+  Link,
   PlusIcon,
   SearchIcon,
   Select,
@@ -116,13 +117,14 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
               <TableRow key={patient.rm}>
                 <TableCell className="tabular-nums">{patient.rm}</TableCell>
                 <TableCell>
-                  <a
+                  <Link
+                    variant="block"
                     href={`#/pasien/${patient.rm}`}
                     onClick={() => onOpen(patient.rm)}
-                    className="rounded-xs font-medium text-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="font-medium text-fg"
                   >
                     {patient.name}
-                  </a>
+                  </Link>
                 </TableCell>
                 <TableCell className="tabular-nums">{age(patient.born)}</TableCell>
                 <TableCell>{patient.sex}</TableCell>

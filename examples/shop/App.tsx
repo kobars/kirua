@@ -18,6 +18,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Link,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -153,12 +154,9 @@ export function App() {
             spend 60 of the 288 pixels a 320-wide phone leaves after the page
             padding — more than any single control here costs. */}
         <div className="mx-auto flex w-full max-w-6xl items-center gap-2 px-4 py-3 sm:gap-3 md:px-8">
-          <a
-            href="#/"
-            className="rounded-xs text-body-lg font-semibold text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
+          <Link href="#/" variant="block" className="text-body-lg font-semibold text-fg">
             Senja
-          </a>
+          </Link>
 
           {/* A `<nav>` of links, not a menu of commands: these go somewhere.
               Hidden below `md`, where the same categories are reachable from the
