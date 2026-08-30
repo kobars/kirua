@@ -28,7 +28,7 @@
     "example:social": "vite --config examples/social/vite.config.ts",
     "build:examples": "for a in claude shop simrs social; do vite build --config examples/$a/vite.config.ts || exit 1; done",
     "check:responsive": "pnpm build:examples && node tools/responsive-check.mjs",
-    "build": "tsc -b && vite build && node tools/size-budget.mjs",
+    "build": "tsc -b && vite build && node tools/dead-classes.mjs && node tools/size-budget.mjs",
     "lint": "oxlint --deny-warnings",
     "audit": "pnpm audit --audit-level moderate",
     "preview": "vite preview",
@@ -40,7 +40,8 @@
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
-    "check": "tsc -b && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit"
+    "check": "tsc -b && node tools/dead-classes.mjs && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit",
+    "dead-classes": "node tools/dead-classes.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.20",
