@@ -80,6 +80,33 @@
   --color-status-info-fg: var(--color-violet-900);
   --color-status-info-solid: var(--color-violet-600);
 
+  /* CHART SERIES — five hues whose only job is to be told apart.
+   *
+   * Deliberately NOT the status family. Green and red already mean "succeeded"
+   * and "failed" everywhere else in this system, and a bar chart that colours
+   * its second series red is making a claim it does not mean. These are
+   * identity, not meaning, which is why they are numbered.
+   *
+   * Ordered by how far apart they read: a two-series chart gets 1 and 2, which
+   * differ in hue AND in lightness, so it survives being printed in grey and
+   * survives the most common colour-vision deficiencies. Past five, colour has
+   * stopped working as the distinguishing signal and the chart needs direct
+   * labels instead — so there is no sixth.
+   *
+   * They are defined for the page, raised and sunken surfaces only. A chart on
+   * `.ctx-brand` or `.ctx-inverse` is not a case this system has measured, and
+   * these tokens are not re-pointed there. */
+  --color-chart-series-1: var(--color-blue-600);
+  --color-chart-series-2: var(--color-violet-600);
+  --color-chart-series-3: var(--color-green-600);
+  --color-chart-series-4: var(--color-amber-600);
+  --color-chart-series-5: var(--color-red-600);
+
+  /* The plot's own furniture: grid lines behind the data, and the resting fill
+   * of a track a value is drawn over. */
+  --color-chart-grid-line: var(--color-neutral-200);
+  --color-chart-track-fill: var(--color-neutral-100);
+
   /* FIELD — the family every form control reads, and the gate the forms epic
    * had to wait for. Seven families existed and not one described an input:
    * no invalid border, no placeholder colour, no selected-row surface.
@@ -397,6 +424,17 @@
   --color-status-danger-fg: var(--color-red-100);
   --color-status-info-bg: var(--color-violet-900);
   --color-status-info-fg: var(--color-violet-100);
+
+  /* CHART SERIES, one step up the ramp. A 600 that reads well on white is too
+   * dark to separate from a neutral-950 page. */
+  --color-chart-series-1: var(--color-blue-400);
+  --color-chart-series-2: var(--color-violet-500);
+  --color-chart-series-3: var(--color-green-500);
+  --color-chart-series-4: var(--color-amber-500);
+  --color-chart-series-5: var(--color-red-500);
+
+  --color-chart-grid-line: var(--color-neutral-800);
+  --color-chart-track-fill: var(--color-neutral-900);
 
   /* FIELD. The field sits one step up from the page so it reads as a well.
    * `--color-field-border` is neutral-500 rather than the `border-default`
