@@ -66,6 +66,14 @@ export { AspectRatio, type AspectRatioProps } from './AspectRatio';
 export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner';
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverAnchor,
+  PopoverClose,
+  PopoverContent,
+  type PopoverContentProps,
+} from './Popover';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export {
   RadioGroup,
