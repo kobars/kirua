@@ -22,7 +22,20 @@ export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrim
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn('inline-flex items-center gap-1 rounded-pill bg-sunken p-1.5', className)}
+      className={cn(
+        'inline-flex items-center gap-1 rounded-pill bg-sunken p-1.5',
+        // A tab list is `inline-flex`, so it takes the width of its tabs and
+        // never shrinks: four tabs need 372 pixels, and on a 320-wide phone the
+        // bar runs past the viewport and scrolls the whole document instead of
+        // scrolling inside itself.
+        //
+        // Both utilities are inert until it actually overflows — a bar that
+        // fits is narrower than `100%` and has nothing to scroll. The focus
+        // ring survives the clip because a trigger sits inside 6 pixels of
+        // padding and the ring reaches 4.
+        'max-w-full overflow-x-auto',
+        className,
+      )}
       {...props}
     />
   );
