@@ -67,6 +67,16 @@ export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner';
 export {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableRow,
+  TableHead,
+  TableCell,
+} from './Table';
+export {
   Popover,
   PopoverTrigger,
   PopoverAnchor,
