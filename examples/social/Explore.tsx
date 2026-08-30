@@ -122,7 +122,7 @@ export function Explore({ onOpen }: ExploreProps) {
         />
       ) : (
         <>
-          <ItemGroup className="rounded-lg border border-line-subtle">
+          <ItemGroup variant="outlined">
             {handles.map((handle, index) => {
               const person = people[handle];
               if (!person) return null;

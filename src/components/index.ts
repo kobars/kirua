@@ -228,8 +228,10 @@ export {
   ItemActions,
   ItemSeparator,
   type ItemProps,
+  type ItemGroupProps,
 } from './Item';
 export { itemVariants } from './Item.variants';
+export { itemGroupVariants } from './ItemGroup.variants';
 
 export {
   ButtonGroup,

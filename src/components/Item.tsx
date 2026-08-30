@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
 import { itemVariants } from './Item.variants';
+import { itemGroupVariants } from './ItemGroup.variants';
 
 export interface ItemProps extends ComponentProps<'div'>, VariantProps<typeof itemVariants> {
   asChild?: boolean;
@@ -42,8 +43,17 @@ export function Item({ className, variant, size, interactive, asChild, ...props 
   );
 }
 
-export function ItemGroup({ className, ...props }: ComponentProps<'div'>) {
-  return <div data-slot="item-group" className={cn('flex flex-col', className)} {...props} />;
+export interface ItemGroupProps
+  extends ComponentProps<'div'>, VariantProps<typeof itemGroupVariants> {}
+
+export function ItemGroup({ className, variant, ...props }: ItemGroupProps) {
+  return (
+    <div
+      data-slot="item-group"
+      className={cn(itemGroupVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
 /** The leading figure — an avatar, an icon, a thumbnail. Never grows. */
