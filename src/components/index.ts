@@ -197,4 +197,12 @@ export {
 } from './Item';
 export { itemVariants } from './Item.variants';
 
+export {
+  ButtonGroup,
+  ButtonGroupText,
+  ButtonGroupSeparator,
+  type ButtonGroupProps,
+} from './ButtonGroup';
+export { buttonGroupVariants } from './ButtonGroup.variants';
+
 export * from './icons';
