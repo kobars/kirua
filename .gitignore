@@ -36,3 +36,6 @@ coverage
 # source. Ignoring them would make every fresh clone generate its own baseline
 # on first run and pass — a gate that can never fail.
 .vitest-attachments
+
+# Each example app builds into its own root.
+examples/*/dist
