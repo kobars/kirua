@@ -9,10 +9,12 @@ import {
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   IconButton,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Separator,
   Toggle,
   BookmarkIcon,
@@ -53,8 +55,14 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
             <span className="text-fg-muted">· {post.when}</span>
           </p>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
+        {/* A menu of commands, so `DropdownMenu` rather than a `Popover` of
+            buttons: a menu answers the arrow keys, jumps to an item by its
+            first letter, closes on Escape, and reports itself as a `menu` of
+            `menuitem`s. The same four commands are `ContextMenuItem`s at the
+            bottom of this file for the right-click path, so the two paths share
+            one keyboard model. */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <IconButton
               aria-label={`Opsi untuk kiriman ${person.name}`}
               variant="ghost"
@@ -62,30 +70,21 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
             >
               <MoreIcon />
             </IconButton>
-          </PopoverTrigger>
-          <PopoverContent aria-label="Opsi kiriman" className="w-56 p-2">
-            <div className="grid">
-              {['Salin tautan', 'Sematkan', 'Laporkan'].map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  className="rounded-sm px-3 py-2 text-start text-body-sm text-fg hover:bg-ghost-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-                >
-                  {label}
-                </button>
-              ))}
-              {onDelete && (
-                <button
-                  type="button"
-                  onClick={() => onDelete(post.id)}
-                  className="rounded-sm px-3 py-2 text-start text-body-sm text-danger-fg hover:bg-ghost-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-                >
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem>Salin tautan</DropdownMenuItem>
+            <DropdownMenuItem>Sematkan</DropdownMenuItem>
+            <DropdownMenuItem>Laporkan</DropdownMenuItem>
+            {onDelete && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
                   Hapus kiriman
-                </button>
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       <p className="text-body-md text-pretty text-fg">{post.text}</p>
@@ -147,7 +146,9 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
         {onDelete && (
           <>
             <ContextMenuSeparator />
-            <ContextMenuItem onSelect={() => onDelete(post.id)}>Hapus kiriman</ContextMenuItem>
+            <ContextMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
+              Hapus kiriman
+            </ContextMenuItem>
           </>
         )}
       </ContextMenuContent>
