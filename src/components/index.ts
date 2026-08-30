@@ -184,4 +184,17 @@ export {
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
+export {
+  Item,
+  ItemGroup,
+  ItemMedia,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemActions,
+  ItemSeparator,
+  type ItemProps,
+} from './Item';
+export { itemVariants } from './Item.variants';
+
 export * from './icons';
