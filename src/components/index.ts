@@ -77,6 +77,16 @@ export {
   TableCell,
 } from './Table';
 export {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+  type BreadcrumbProps,
+} from './Breadcrumb';
+export {
   Popover,
   PopoverTrigger,
   PopoverAnchor,
