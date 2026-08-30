@@ -97,6 +97,7 @@ export {
   type PaginationProps,
   type PaginationLinkProps,
 } from './Pagination';
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './Accordion';
 export {
   Popover,
   PopoverTrigger,
