@@ -99,6 +99,16 @@ export {
 } from './Pagination';
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './Accordion';
 export {
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+  type ToastProps,
+  type ToastViewportProps,
+} from './Toast';
+export { toastVariants } from './Toast.variants';
+export {
   Popover,
   PopoverTrigger,
   PopoverAnchor,
