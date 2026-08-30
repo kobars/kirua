@@ -38,12 +38,13 @@ pnpm test:webkit # run the unit tests again in WebKit, the second declared engin
 pnpm lint        # oxlint
 pnpm check       # the whole gate: types, lint, format, every test, coverage
 
-pnpm example:claude   # the four example apps, one Vite root each
+pnpm example:claude    # the five example apps, one Vite root each
+pnpm example:marketing
 pnpm example:shop
 pnpm example:simrs
 pnpm example:social
-pnpm build:examples   # build all four
-pnpm check:responsive # build them, then measure every route at 375px
+pnpm build:examples    # build all five
+pnpm check:responsive  # build them, then measure every route at five widths
 ```
 
 ## What was measured, exactly

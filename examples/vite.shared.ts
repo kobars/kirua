@@ -1,5 +1,5 @@
 /**
- * One config factory for the four example applications.
+ * One config factory for the five example applications.
  *
  * Each app is a Vite root, not a package: Node resolution walks upward, so a
  * root under `examples/` finds the repository's single `node_modules` with no
@@ -23,11 +23,22 @@ const REPO = path.resolve(import.meta.dirname, '..');
 /** Kept in step with `vite.config.ts` by `src/styles/browsers.test.ts`. */
 const BUILD_TARGET = ['chrome120', 'edge120', 'safari16.4', 'firefox128'];
 
-export function exampleConfig(slug: string): UserConfig {
+export interface ExampleOptions {
+  /**
+   * Where to copy static files from, if the app serves any. Only `marketing`
+   * passes it: its hero reuses the character artwork in the repository's own
+   * `public/`, and Vite resolves an unset `publicDir` against the app root,
+   * which holds nothing to copy.
+   */
+  publicDir?: string;
+}
+
+export function exampleConfig(slug: string, options: ExampleOptions = {}): UserConfig {
   return {
     root: path.join(REPO, 'examples', slug),
     // Relative, so the built app works under any path a host serves it from.
     base: './',
+    publicDir: options.publicDir ?? false,
     plugins: [react(), tailwindcss()],
     build: { target: BUILD_TARGET, outDir: 'dist', emptyOutDir: true },
     resolve: {

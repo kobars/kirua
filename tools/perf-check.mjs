@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Weighs each of the four example applications and fails when one crosses its
+ * Weighs each of the five example applications and fails when one crosses its
  * declared size.
  *
  * `tools/size-budget.mjs` does this for `dist` — the rebuilt hero page. That is
  * one screen importing a handful of components, so it answers "did something
  * heavy enter the graph" for a page nobody ships. The example apps are the
- * closest thing here to a real consumer: four applications, thirty-one screens,
+ * closest thing here to a real consumer: five applications, thirty-six screens,
  * and most of the component set between them.
  *
  * ## What is enforced, and what is only reported
@@ -40,14 +40,15 @@ import { APPS, distOf, serve } from './example-apps.mjs';
  * rather than an aspiration.
  *
  * ```
- * claude   130.69 kB js   12.52 kB css
- * shop     135.87 kB js   12.81 kB css
- * simrs    136.20 kB js   12.71 kB css
- * social   131.30 kB js   12.77 kB css
+ * claude     130.73 kB js   12.52 kB css
+ * marketing  126.00 kB js   12.69 kB css
+ * shop       135.87 kB js   12.81 kB css
+ * simrs      136.20 kB js   12.71 kB css
+ * social     130.54 kB js   12.77 kB css
  * ```
  *
- * One pair of limits for all four rather than four pairs, because the four
- * numbers are within 6 kB of each other and a per-app limit would invite
+ * One pair of limits for all five rather than five pairs, because the five
+ * numbers are within 11 kB of each other and a per-app limit would invite
  * raising one quietly. The headroom is roughly a tenth, for the reason
  * `size-budget.mjs` gives: a budget with room for a whole extra dependency does
  * not fail until after the mistake has shipped.
@@ -56,9 +57,11 @@ import { APPS, distOf, serve } from './example-apps.mjs';
  * to do.** Edit the number here, in the same commit as the change that needed
  * it, and say why in the message.
  *
- * The CSS figures are near-identical across four very different applications,
+ * The CSS figures are near-identical across five very different applications,
  * and that is the finding rather than a coincidence — see the coverage note
- * above.
+ * above. The marketing app is the sharpest version of it: it uses 86% of the
+ * sheet it ships against the others' 78%, because it is the app whose screens
+ * are made of the components the system was reverse-engineered from.
  */
 const BUDGETS = {
   javascript: { extension: '.js', gzipLimitKb: 150 },
