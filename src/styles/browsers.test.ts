@@ -1,7 +1,13 @@
 import packageJson from '../../package.json';
 import viteConfigSource from '../../vite.config.ts?raw';
-import indexCss from '@/index.css?raw';
+import kiruaCss from '@/styles/kirua.css?raw';
 import { describe, expect, it } from 'vitest';
+
+/**
+ * `styles/kirua.css`, not `index.css`: the layers moved there when the example
+ * apps needed their own entry point, and every feature this file looks for
+ * lives one import further down.
+ */
 
 /**
  * One declared matrix, read by two things that cannot ask each other.
@@ -49,14 +55,14 @@ describe('the features the floors were set by are really in use', () => {
   it(':dir() — the reason Chrome is 120 and not 111', () => {
     // The CornerGlint mirror has to re-invert in a right-to-left document, and
     // `:dir()` is the only selector that follows inherited direction.
-    expect(indexCss).toContain(':dir(rtl)');
+    expect(kiruaCss).toContain(':dir(rtl)');
   });
 
   it('forced-colors — Chromium and Firefox only, no WebKit equivalent', () => {
-    expect(indexCss).toContain('forced-colors: active');
+    expect(kiruaCss).toContain('forced-colors: active');
   });
 
   it('@custom-variant and @utility — Tailwind 4, which sets the same floor', () => {
-    expect(indexCss).toContain('@custom-variant');
+    expect(kiruaCss).toContain('@custom-variant');
   });
 });
