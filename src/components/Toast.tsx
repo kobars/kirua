@@ -20,9 +20,12 @@ export interface ToastViewportProps extends ComponentProps<'section'> {
  * // In the application shell, once:
  * <ToastViewport>
  *   {toasts.map((t) => (
- *     <Toast key={t.id} status={t.status}>
+ *     <Toast
+ *       key={t.id}
+ *       status={t.status}
+ *       close={<ToastClose onClick={() => dismiss(t.id)} />}
+ *     >
  *       <ToastTitle>{t.title}</ToastTitle>
- *       <ToastClose onClick={() => dismiss(t.id)} />
  *     </Toast>
  *   ))}
  * </ToastViewport>
@@ -49,6 +52,15 @@ export function ToastViewport({
 export interface ToastProps extends ComponentProps<'div'>, VariantProps<typeof toastVariants> {
   /** Decorative leading icon. The title and description carry the meaning. */
   icon?: ReactNode;
+  /**
+   * The dismiss control, usually a `ToastClose`. A prop rather than a child,
+   * because it has to sit beside the text column and not inside it.
+   *
+   * Anything rendered directly in `ToastViewport` is unclickable: the viewport
+   * is `pointer-events-none` so it cannot swallow clicks meant for the page.
+   * This slot is inside the toast, which restores them.
+   */
+  close?: ReactNode;
 }
 
 /**
@@ -58,7 +70,7 @@ export interface ToastProps extends ComponentProps<'div'>, VariantProps<typeof t
  * Dismissal is the consumer's. Do not auto-dismiss a `danger` toast that is the
  * only copy of the error.
  */
-export function Toast({ className, status, icon, children, ...props }: ToastProps) {
+export function Toast({ className, status, icon, close, children, ...props }: ToastProps) {
   return (
     <div
       data-slot="toast"
@@ -78,6 +90,7 @@ export function Toast({ className, status, icon, children, ...props }: ToastProp
       <div data-slot="toast-content" className="min-w-0 flex-1">
         {children}
       </div>
+      {close}
     </div>
   );
 }

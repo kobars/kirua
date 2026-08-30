@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { Toast, ToastClose, ToastDescription, ToastTitle, ToastViewport } from './Toast';
 import { CheckIcon, CloseIcon } from './icons';
 
@@ -63,11 +63,10 @@ export const AnchoredToTheCorner: Story = {
         The viewport is fixed to the bottom end corner, at the top of the stacking order.
       </p>
       <ToastViewport>
-        <Toast {...args} status="success" icon={<CheckIcon />}>
+        <Toast {...args} status="success" icon={<CheckIcon />} close={<ToastClose />}>
           <ToastTitle>Added to cart</ToastTitle>
           <ToastDescription>Kacamata bulat — 1 item.</ToastDescription>
         </Toast>
-        <ToastClose />
       </ToastViewport>
     </div>
   ),
@@ -112,5 +111,55 @@ export const TheViewportDoesNotSwallowClicks: Story = {
 
     await expect(getComputedStyle(canvas.getByTestId('viewport')).pointerEvents).toBe('none');
     await expect(getComputedStyle(canvas.getByTestId('toast')).pointerEvents).toBe('auto');
+  },
+};
+
+/**
+ * The dismiss control must be inside the toast, and clickable.
+ *
+ * Both are easy to get wrong in the same way. `ToastClose` rendered as a
+ * sibling of `Toast` looks almost right in a screenshot — it lands just below
+ * the panel — and it inherits the viewport's `pointer-events: none`, so it
+ * cannot be clicked at all. The `close` prop is what makes that unrepresentable.
+ */
+export const TheCloseControlIsInsideTheToastAndClickable: Story = {
+  render: (args) => {
+    const dismiss = () => {
+      document.querySelector('[data-slot="toast"]')?.setAttribute('data-dismissed', 'yes');
+    };
+    return (
+      <div className="relative min-h-72">
+        <ToastViewport>
+          <Toast
+            {...args}
+            status="neutral"
+            data-testid="toast"
+            close={<ToastClose onClick={dismiss} />}
+          >
+            <ToastTitle>Draft saved</ToastTitle>
+          </Toast>
+        </ToastViewport>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByTestId('toast');
+    const close = canvas.getByRole('button', { name: 'Dismiss' });
+
+    // Inside the panel, not a sibling of it.
+    await expect(toast.contains(close)).toBe(true);
+
+    // Within the panel's box, so it is not drawn over the page behind it.
+    const t = toast.getBoundingClientRect();
+    const c = close.getBoundingClientRect();
+    await expect(c.top).toBeGreaterThanOrEqual(t.top - 1);
+    await expect(c.bottom).toBeLessThanOrEqual(t.bottom + 1);
+    await expect(c.right).toBeLessThanOrEqual(t.right + 1);
+
+    // And it really receives the click.
+    await expect(getComputedStyle(close).pointerEvents).toBe('auto');
+    await userEvent.click(close);
+    await expect(toast).toHaveAttribute('data-dismissed', 'yes');
   },
 };
