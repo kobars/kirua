@@ -10,9 +10,15 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
   Card,
   CardBody,
+  CartIcon,
+  ChevronEndIcon,
+  Container,
   EmptyState,
+  Heading,
   Item,
   ItemActions,
   ItemContent,
@@ -21,7 +27,7 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  CartIcon,
+  Text,
 } from 'kirua';
 import { orderTone, orders, products, rupiah, type Order } from './data';
 
@@ -53,10 +59,16 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
   });
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-6 md:px-8">
+    <Container>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="text-heading-md font-semibold text-fg">Pesanan saya</h1>
+        <Heading as="h1" size="heading-md">
+          Pesanan saya
+        </Heading>
         <ButtonGroup aria-label="Saring pesanan">
+          {/* A static label sharing the group's shape. Hidden below `sm`,
+              where three buttons already fill the row. */}
+          <ButtonGroupText className="hidden sm:inline-flex">Tampilkan</ButtonGroupText>
+          <ButtonGroupSeparator className="hidden sm:block" />
           {(['semua', 'berjalan', 'selesai'] as const).map((value) => (
             <Button
               key={value}
@@ -90,13 +102,22 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
             return (
               <li key={order.id}>
                 <Card>
-                  <CardBody className="grid gap-4">
+                  {/* `minmax(0,1fr)`, because an `Item` row cannot shrink on
+                      its own. `ItemContent` truncates, so its min-content is the
+                      whole untruncated title, and a flex row's min-content is
+                      the sum of its children's — 294 pixels against 246 of card.
+                      `min-w-0` lets the title shrink once the row has a width;
+                      it does not stop an `auto` grid column asking for the row's
+                      min-content in the first place. */}
+                  <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h2 className="text-body-md font-semibold text-fg">{order.id}</h2>
-                        <p className="text-body-sm text-fg-secondary tabular-nums">
+                        <Heading as="h2" size="body-md">
+                          {order.id}
+                        </Heading>
+                        <Text size="sm" className="tabular-nums">
                           Dipesan {order.placed} · {rupiah(total(order))}
-                        </p>
+                        </Text>
                       </div>
                       <Badge status={orderTone[status]}>{status}</Badge>
                     </div>
@@ -135,7 +156,11 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                           Batalkan
                         </Button>
                       )}
-                      <Button variant="secondary" onClick={() => onOpen(order.id)}>
+                      <Button
+                        variant="secondary"
+                        trailingIcon={<ChevronEndIcon />}
+                        onClick={() => onOpen(order.id)}
+                      >
                         Lihat rincian
                       </Button>
                     </div>
@@ -175,6 +200,6 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Container>
   );
 }

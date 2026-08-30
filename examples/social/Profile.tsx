@@ -1,7 +1,16 @@
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   AspectRatio,
   Avatar,
   AvatarFallback,
+  AvatarImage,
   AvatarStack,
   BarChart,
   Button,
@@ -9,20 +18,25 @@ import {
   CardBody,
   Chart,
   ChartCaption,
+  Heading,
   Separator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  Text,
 } from 'kirua';
 import { PostCard } from './PostCard';
+import type { CardSurface } from './experiment';
 import { compactCount, initials, people, posts, postsPerMonth, type Person } from './data';
 
 export interface ProfileProps {
   person: Person;
+  /** TEMPORARY — see `experiment.tsx`. */
+  surface?: CardSurface | undefined;
 }
 
-export function Profile({ person }: ProfileProps) {
+export function Profile({ person, surface }: ProfileProps) {
   const theirs = posts.filter((p) => p.handle === person.handle);
   const others = Object.values(people).filter((p) => p.handle !== person.handle);
 
@@ -36,17 +50,46 @@ export function Profile({ person }: ProfileProps) {
         <div className="grid gap-3 px-4 pb-4">
           <div className="-mt-12 flex items-end justify-between gap-3">
             <Avatar size="xl" className="ring-4 ring-page">
+              {person.photo && <AvatarImage src={person.photo} alt="" />}
               <AvatarFallback>{initials(person.name)}</AvatarFallback>
             </Avatar>
-            <Button size="sm">Ikuti</Button>
+            {/* `AlertDialogTrigger` and not a boolean: Radix owns the open
+                state, marks the trigger `aria-expanded`, and returns focus to
+                it on cancel. Blocking is the one action on this page that has
+                to be confirmed. */}
+            <div className="flex items-center gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="ghost">
+                    Blokir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogTitle>Blokir @{person.handle}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Kalian tidak akan saling melihat kiriman. Ini contoh, jadi tidak ada yang
+                    benar-benar diblokir.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction>Blokir</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button size="sm">Ikuti</Button>
+            </div>
           </div>
 
           <div>
-            <h1 className="text-heading-sm font-semibold text-fg">{person.name}</h1>
-            <p className="text-body-sm text-fg-muted">@{person.handle}</p>
+            <Heading as="h1" size="heading-sm">
+              {person.name}
+            </Heading>
+            <Text size="sm" tone="muted">
+              @{person.handle}
+            </Text>
           </div>
 
-          <p className="text-body-md text-pretty text-fg-secondary">{person.bio}</p>
+          <Text className="text-pretty">{person.bio}</Text>
 
           <p className="flex flex-wrap gap-4 text-body-sm text-fg-secondary">
             <span>
@@ -71,7 +114,7 @@ export function Profile({ person }: ProfileProps) {
               items={others.map((p) => ({ name: p.name }))}
               className="[--icon-size:var(--icon-sm)]"
             />
-            <p className="text-body-sm text-fg-secondary">Diikuti oleh orang yang kamu ikuti</p>
+            <Text size="sm">Diikuti oleh orang yang kamu ikuti</Text>
           </div>
         </div>
       </Card>
@@ -86,7 +129,7 @@ export function Profile({ person }: ProfileProps) {
 
         <TabsContent value="kiriman" className="grid gap-4">
           {theirs.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} surface={surface} />
           ))}
         </TabsContent>
 

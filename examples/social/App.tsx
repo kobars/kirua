@@ -9,7 +9,13 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
+  CommentIcon,
+  GridIcon,
+  Heading,
+  HeartIcon,
   IconButton,
+  Link,
+  SearchIcon,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -18,25 +24,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   Skeleton,
+  SparkleIcon,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  CommentIcon,
-  GridIcon,
-  HeartIcon,
-  SearchIcon,
-  SparkleIcon,
   UserIcon,
 } from 'kirua';
 import { Composer } from './Composer';
+import { ExperimentBar } from './ExperimentBar';
+import { readSurface, writeSurface, type CardSurface } from './experiment';
 import { Explore } from './Explore';
 import { Messages } from './Messages';
 import { Notifications } from './Notifications';
 import { PostCard } from './PostCard';
-import { ThemeMenu } from './ThemeMenu';
+import { ThemeMenu } from '../shared/ThemeMenu';
 import { Profile } from './Profile';
 import { notices, people, posts } from './data';
-import { useHashRoute } from './useHashRoute';
+import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, shared by the rail, the header and the bottom bar. */
 const nav = [
@@ -57,6 +61,8 @@ export function App() {
   const [shown, setShown] = useState(3);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
+  /** TEMPORARY — see `experiment.tsx`. */
+  const [surface, setSurface] = useState<CardSurface>(readSurface);
 
   useEffect(() => {
     if (!loadingMore) return;
@@ -77,13 +83,14 @@ export function App() {
     <div className="min-h-dvh bg-page text-fg">
       <header className="sticky top-0 z-sticky border-b border-line-subtle bg-page/95 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-4xl items-center gap-2 px-4 py-3">
-          <a
+          <Link
             href="#/"
-            className="flex items-center gap-2 rounded-xs text-body-md font-semibold [--icon-size:var(--icon-lg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            variant="block"
+            className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
           >
             <SparkleIcon aria-hidden="true" className="text-fg-accent" />
             Ruang
-          </a>
+          </Link>
           <span className="flex-1" />
           <Tooltip>
             <TooltipTrigger asChild>
@@ -142,7 +149,7 @@ export function App() {
 
         <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 sm:pb-4">
           {profile ? (
-            <Profile person={profile} />
+            <Profile person={profile} surface={surface} />
           ) : route === 'jelajah' ? (
             <Explore onOpen={(handle) => navigate(`profil/${handle}`)} />
           ) : route === 'notifikasi' ? (
@@ -151,9 +158,24 @@ export function App() {
             <Messages />
           ) : (
             <>
+              {/* The other four routes name themselves on the screen and a
+                  timeline does not, so the page needs a heading it never shows.
+                  `sr-only` rather than `hidden`, which would take it out of the
+                  accessibility tree and leave the page unnamed either way. */}
+              <Heading as="h1" className="sr-only">
+                Beranda
+              </Heading>
+
+              <ExperimentBar
+                value={surface}
+                onChange={(next) => {
+                  setSurface(next);
+                  writeSurface(next);
+                }}
+              />
               <Composer />
               {feed.slice(0, shown).map((post) => (
-                <PostCard key={post.id} post={post} onDelete={setDeleting} />
+                <PostCard key={post.id} post={post} onDelete={setDeleting} surface={surface} />
               ))}
 
               {loadingMore && (
@@ -222,17 +244,18 @@ export function App() {
         <ul className="mx-auto flex max-w-2xl items-center justify-around">
           {nav.map(({ route: target, label, icon: Icon }) => (
             <li key={label}>
-              <a
+              <Link
                 href={`#/${target}`}
                 aria-current={route === target ? 'page' : undefined}
-                className="relative flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-caption text-fg-secondary [--icon-size:var(--icon-lg)] hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[current=page]:text-fg"
+                variant="block"
+                className="relative flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-caption text-fg-secondary [--icon-size:var(--icon-lg)] hover:text-fg aria-[current=page]:text-fg"
               >
                 <Icon aria-hidden="true" />
                 {label}
                 {label === 'Notifikasi' && unread > 0 && (
                   <span className="sr-only">, {unread} belum dibaca</span>
                 )}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

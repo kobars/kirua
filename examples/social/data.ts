@@ -7,7 +7,23 @@ export interface Person {
   followers: number;
   following: number;
   joined: string;
+  /**
+   * A portrait, if this person has uploaded one. Optional on purpose: half the
+   * people here have one and half do not, which is the only way to see that
+   * `AvatarImage` and `AvatarFallback` are both doing their job. A real feed
+   * always contains both.
+   *
+   * Drawn rather than photographed — a data URI, so the example ships no
+   * binary and needs no `publicDir`.
+   */
+  photo?: string;
 }
+
+/** A flat two-tone portrait, as a data URI. Enough to be an image. */
+const portrait = (bg: string, ink: string) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="${bg}"/><circle cx="32" cy="25" r="12" fill="${ink}"/><path d="M8 64c0-13 11-21 24-21s24 8 24 21z" fill="${ink}"/></svg>`,
+  )}`;
 
 export interface Post {
   id: string;
@@ -28,6 +44,7 @@ export const people: Record<string, Person> = {
     followers: 12400,
     following: 318,
     joined: 'Maret 2024',
+    photo: portrait('#d6ebff', '#0b5eb1'),
   },
   agus: {
     handle: 'agus',
@@ -44,6 +61,7 @@ export const people: Record<string, Person> = {
     followers: 8901,
     following: 204,
     joined: 'Juli 2022',
+    photo: portrait('#ece9fe', '#4a1fb8'),
   },
   budi: {
     handle: 'budi',

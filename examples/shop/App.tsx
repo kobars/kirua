@@ -2,6 +2,10 @@ import { useMemo, useState } from 'react';
 import {
   Badge,
   Button,
+  CartIcon,
+  CheckIcon,
+  CloseIcon,
+  Container,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,10 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   EmptyState,
+  FilterIcon,
+  Heading,
   IconButton,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Link,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -25,6 +32,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  SearchIcon,
   Select,
   SelectContent,
   SelectItem,
@@ -39,11 +47,6 @@ import {
   ToastDescription,
   ToastTitle,
   ToastViewport,
-  CartIcon,
-  CheckIcon,
-  CloseIcon,
-  FilterIcon,
-  SearchIcon,
   UserIcon,
 } from 'kirua';
 import { CartSheet, type CartLine } from './CartSheet';
@@ -52,12 +55,12 @@ import { OrderPage } from './OrderPage';
 import { OrdersPage } from './OrdersPage';
 import { SignInPage } from './SignInPage';
 import { Filters } from './Filters';
-import { ThemeMenu } from './ThemeMenu';
+import { ThemeMenu } from '../shared/ThemeMenu';
 import { emptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
 import { ProductPage } from './ProductPage';
 import { categories, orders, products, type Category, type Product } from './data';
-import { useHashRoute } from './useHashRoute';
+import { useHashRoute } from '../shared/useHashRoute';
 
 const PER_PAGE = 6;
 
@@ -148,13 +151,13 @@ export function App() {
   return (
     <div className="min-h-dvh bg-page text-fg">
       <header className="sticky top-0 z-sticky border-b border-line-subtle bg-page/95 backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3 md:px-8">
-          <a
-            href="#/"
-            className="rounded-xs text-body-lg font-semibold text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
+        {/* `gap-2` below `sm`. Six items sit in this row and five gaps at 12px
+            spend 60 of the 288 pixels a 320-wide phone leaves after the page
+            padding — more than any single control here costs. */}
+        <div className="mx-auto flex w-full max-w-6xl items-center gap-2 px-4 py-3 sm:gap-3 md:px-8">
+          <Link href="#/" variant="block" className="text-body-lg font-semibold text-fg">
             Senja
-          </a>
+          </Link>
 
           {/* A `<nav>` of links, not a menu of commands: these go somewhere.
               Hidden below `md`, where the same categories are reachable from the
@@ -261,13 +264,17 @@ export function App() {
 
           <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
             <SheetTrigger asChild>
+              {/* The label goes below `sm` for the same reason the cart's does,
+                  and it is the wider of the two. `aria-label` carries the name
+                  once the word is gone. */}
               <Button
                 variant="secondary"
                 size="sm"
                 leadingIcon={<FilterIcon />}
+                aria-label="Filter"
                 className="md:hidden"
               >
-                Filter
+                <span className="hidden sm:inline">Filter</span>
               </Button>
             </SheetTrigger>
             {/* `pt-14` clears the sheet's own close control, which is
@@ -279,9 +286,9 @@ export function App() {
             </SheetContent>
           </Sheet>
 
-          {/* The label is dropped below `sm`. At 375 the row is a logo, a
-              search control, Filter and this; keeping every word left six
-              pixels of clearance, which reads as a clipped edge. */}
+          {/* The label is dropped below `sm`. At 375 the row is a logo, the
+              account and theme menus, Filter and this; keeping every word left
+              six pixels of clearance, which reads as a clipped edge. */}
           <Button
             variant="secondary"
             size="sm"
@@ -316,18 +323,18 @@ export function App() {
         ) : route === 'checkout' ? (
           <CheckoutPage lines={lines} onPlaced={() => setLines([])} />
         ) : (
-          <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 md:grid-cols-[16rem_1fr] md:px-8">
+          <Container width="6xl" className="md:grid-cols-[16rem_1fr]">
             <aside className="hidden md:block">{filterPanel}</aside>
 
             <div className="grid content-start gap-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-heading-md font-semibold text-fg">
+                  <Heading as="h1" size="heading-md">
                     {categories.find((c) => c.id === category)?.label ?? 'Katalog'}{' '}
                     <span className="text-body-md font-normal text-fg-muted tabular-nums">
                       ({matches.length})
                     </span>
-                  </h1>
+                  </Heading>
                   {(category !== 'semua' || query !== '') && (
                     <Button
                       variant="ghost"
@@ -411,7 +418,7 @@ export function App() {
                 </>
               )}
             </div>
-          </div>
+          </Container>
         )}
       </main>
 

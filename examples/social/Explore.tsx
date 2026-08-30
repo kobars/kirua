@@ -5,7 +5,10 @@ import {
   Button,
   Card,
   CardBody,
+  CloseIcon,
   EmptyState,
+  Heading,
+  IconButton,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -17,9 +20,8 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  IconButton,
-  CloseIcon,
   SearchIcon,
+  Text,
 } from 'kirua';
 import { compactCount, initials, people, posts, topics } from './data';
 
@@ -57,7 +59,9 @@ export function Explore({ onOpen }: ExploreProps) {
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
-      <h1 className="text-heading-sm font-semibold text-fg">Jelajah</h1>
+      <Heading as="h1" size="heading-sm">
+        Jelajah
+      </Heading>
 
       <InputGroup>
         <InputGroupAddon>
@@ -146,14 +150,18 @@ export function Explore({ onOpen }: ExploreProps) {
 
           {matchingPosts.length > 0 && (
             <section className="grid gap-3">
-              <h2 className="text-body-md font-semibold text-fg">Kiriman</h2>
+              <Heading as="h2" size="body-md">
+                Kiriman
+              </Heading>
               {matchingPosts.map((post) => (
                 <Card key={post.id}>
                   <CardBody>
-                    <p className="text-body-sm text-fg-secondary">
+                    <Text size="sm">
                       {people[post.handle]?.name ?? post.handle} · {post.when}
-                    </p>
-                    <p className="mt-1 text-body-md text-pretty text-fg">{post.text}</p>
+                    </Text>
+                    <Text tone="primary" className="mt-1 text-pretty">
+                      {post.text}
+                    </Text>
                   </CardBody>
                 </Card>
               ))}

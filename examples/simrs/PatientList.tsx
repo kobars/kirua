@@ -3,8 +3,12 @@ import {
   Badge,
   Button,
   EmptyState,
+  Heading,
   Input,
   Label,
+  Link,
+  PlusIcon,
+  SearchIcon,
   Select,
   SelectContent,
   SelectItem,
@@ -17,8 +21,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  PlusIcon,
-  SearchIcon,
 } from 'kirua';
 import { age, patients } from './data';
 
@@ -42,7 +44,9 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
   return (
     <div className="grid content-start gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-heading-md font-semibold text-fg">Daftar pasien</h1>
+        <Heading as="h1" size="heading-md">
+          Daftar pasien
+        </Heading>
         <Button leadingIcon={<PlusIcon />} onClick={onNewVisit}>
           Kunjungan baru
         </Button>
@@ -113,13 +117,14 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
               <TableRow key={patient.rm}>
                 <TableCell className="tabular-nums">{patient.rm}</TableCell>
                 <TableCell>
-                  <a
+                  <Link
+                    variant="block"
                     href={`#/pasien/${patient.rm}`}
                     onClick={() => onOpen(patient.rm)}
-                    className="rounded-xs font-medium text-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="font-medium text-fg"
                   >
                     {patient.name}
-                  </a>
+                  </Link>
                 </TableCell>
                 <TableCell className="tabular-nums">{age(patient.born)}</TableCell>
                 <TableCell>{patient.sex}</TableCell>

@@ -6,6 +6,8 @@ import {
   Button,
   Card,
   CardBody,
+  Container,
+  Heading,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -13,10 +15,17 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPInput,
+  InputOTPSeparator,
   InputOTPSlot,
   Label,
   Spinner,
+  Stepper,
+  StepperItem,
+  Text,
 } from 'kirua';
+
+/** The stepper announces its own state, and this app speaks Indonesian. */
+const STEP_LABELS = { done: 'Selesai', current: 'Langkah saat ini', upcoming: 'Belum mulai' };
 
 const LENGTH = 6;
 /** The code the demo accepts. A real shop would never know it. */
@@ -54,13 +63,27 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-md grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-10 md:px-8">
+    <Container width="md" pad="lg">
       <div>
-        <h1 className="text-heading-md font-semibold text-fg">Masuk</h1>
-        <p className="mt-1 text-body-sm text-fg-secondary">
+        <Heading as="h1" size="heading-md">
+          Masuk
+        </Heading>
+        <Text size="sm" className="mt-1">
           Kami kirim kode sekali pakai ke nomor kamu.
-        </p>
+        </Text>
       </div>
+
+      {/* The page had always been two steps and had never said which one you
+          were on. `aria-current="step"` is the half of that a drawing cannot
+          carry. */}
+      <Stepper aria-label="Langkah masuk">
+        <StepperItem status={sent ? 'done' : 'current'} index={1} labels={STEP_LABELS}>
+          Nomor telepon
+        </StepperItem>
+        <StepperItem status={sent ? 'current' : 'upcoming'} index={2} labels={STEP_LABELS}>
+          Kode sekali pakai
+        </StepperItem>
+      </Stepper>
 
       <Card>
         <CardBody className="grid gap-5">
@@ -107,14 +130,28 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                       submit(next);
                     }}
                   />
+                  {/* Two groups of three with a separator between them. A code
+                      is read aloud in threes, and six unbroken boxes make the
+                      reader count. */}
                   <InputOTPGroup>
-                    {Array.from({ length: LENGTH }, (_, index) => (
+                    {Array.from({ length: LENGTH / 2 }, (_, index) => (
                       <InputOTPSlot
                         key={index}
                         char={code[index]}
                         isActive={code.length === index}
                       />
                     ))}
+                    <InputOTPSeparator />
+                    {Array.from({ length: LENGTH / 2 }, (_, offset) => {
+                      const index = offset + LENGTH / 2;
+                      return (
+                        <InputOTPSlot
+                          key={index}
+                          char={code[index]}
+                          isActive={code.length === index}
+                        />
+                      );
+                    })}
                   </InputOTPGroup>
                 </InputOTP>
               </div>
@@ -141,6 +178,6 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
           )}
         </CardBody>
       </Card>
-    </div>
+    </Container>
   );
 }

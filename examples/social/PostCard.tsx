@@ -1,43 +1,72 @@
+import { useState } from 'react';
 import {
   AspectRatio,
   Avatar,
   AvatarFallback,
+  AvatarImage,
+  BookmarkIcon,
   Card,
+  CommentIcon,
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
-  IconButton,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Separator,
-  Toggle,
-  BookmarkIcon,
-  CommentIcon,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   HeartIcon,
+  IconButton,
   MoreIcon,
+  Separator,
   ShareIcon,
+  Text,
+  Toggle,
 } from 'kirua';
 import { PersonLink } from './PersonCard';
+import { SURFACE_PROPS, type CardSurface } from './experiment';
+import { cn } from './cn';
 import { compactCount, initials, people, type Post } from './data';
 
 export interface PostCardProps {
   post: Post;
   /** Offered on the card's own menu. Omit it and the entry is not drawn. */
   onDelete?: (id: string) => void;
+  /** TEMPORARY — see `experiment.tsx`. Remove with the experiment. */
+  surface?: CardSurface | undefined;
 }
 
-export function PostCard({ post, onDelete }: PostCardProps) {
+/** How the replies under a post are ordered. Two answers, so a radio group. */
+const REPLY_ORDERS = [
+  { value: 'terbaru', label: 'Balasan terbaru dulu' },
+  { value: 'terpopuler', label: 'Balasan terpopuler dulu' },
+];
+
+export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) {
+  const [muted, setMuted] = useState(false);
+  const [replyOrder, setReplyOrder] = useState('terbaru');
   const person = people[post.handle];
   if (!person) return null;
 
+  const look = SURFACE_PROPS[surface];
+
   const card = (
-    <Card className="grid gap-3 p-4">
+    <Card variant={look.variant} className={cn('grid gap-3 p-4', look.className)}>
       <header className="flex items-start gap-3">
         <Avatar size="md">
+          {/* Half the people here have a portrait and half do not, which is the
+              only way to see that both halves of `Avatar` work. `alt=""` — the
+              name is right beside it, and reading it twice helps nobody. */}
+          {person.photo && <AvatarImage src={person.photo} alt="" />}
           <AvatarFallback>{initials(person.name)}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
@@ -47,8 +76,14 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             <span className="text-fg-muted">· {post.when}</span>
           </p>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
+        {/* A menu of commands, so `DropdownMenu` rather than a `Popover` of
+            buttons: a menu answers the arrow keys, jumps to an item by its
+            first letter, closes on Escape, and reports itself as a `menu` of
+            `menuitem`s. The same four commands are `ContextMenuItem`s at the
+            bottom of this file for the right-click path, so the two paths share
+            one keyboard model. */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <IconButton
               aria-label={`Opsi untuk kiriman ${person.name}`}
               variant="ghost"
@@ -56,33 +91,35 @@ export function PostCard({ post, onDelete }: PostCardProps) {
             >
               <MoreIcon />
             </IconButton>
-          </PopoverTrigger>
-          <PopoverContent aria-label="Opsi kiriman" className="w-56 p-2">
-            <div className="grid">
-              {['Salin tautan', 'Sematkan', 'Laporkan'].map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  className="rounded-sm px-3 py-2 text-start text-body-sm text-fg hover:bg-ghost-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-                >
-                  {label}
-                </button>
-              ))}
-              {onDelete && (
-                <button
-                  type="button"
-                  onClick={() => onDelete(post.id)}
-                  className="rounded-sm px-3 py-2 text-start text-body-sm text-danger-fg hover:bg-ghost-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-                >
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            {/* Grouped, because the three commands, the two settings and the
+                destructive one are three different kinds of thing and a menu
+                that does not say so is a list of six. */}
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Salin tautan</DropdownMenuItem>
+              <DropdownMenuItem>Sematkan</DropdownMenuItem>
+              <DropdownMenuItem>Laporkan</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
+              Bisukan @{person.handle}
+            </DropdownMenuCheckboxItem>
+            {onDelete && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
                   Hapus kiriman
-                </button>
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
-      <p className="text-body-md text-pretty text-fg">{post.text}</p>
+      <Text tone="primary" className="text-pretty">
+        {post.text}
+      </Text>
 
       {post.media && (
         // The box is reserved before the picture arrives, so the feed cannot
@@ -132,16 +169,35 @@ export function PostCard({ post, onDelete }: PostCardProps) {
     <ContextMenu>
       <ContextMenuTrigger asChild>{card}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem>
-          Salin tautan
-          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>Sematkan</ContextMenuItem>
-        <ContextMenuItem>Laporkan</ContextMenuItem>
+        <ContextMenuGroup>
+          <ContextMenuItem>
+            Salin tautan
+            <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem>Sematkan</ContextMenuItem>
+          <ContextMenuItem>Laporkan</ContextMenuItem>
+        </ContextMenuGroup>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
+          Bisukan @{person.handle}
+        </ContextMenuCheckboxItem>
+        <ContextMenuSeparator />
+        {/* The right-click path carries the same commands as the button menu
+            above, so the two share one keyboard model. The reply order lives
+            here as well for that reason. */}
+        <ContextMenuRadioGroup value={replyOrder} onValueChange={setReplyOrder}>
+          {REPLY_ORDERS.map((order) => (
+            <ContextMenuRadioItem key={order.value} value={order.value}>
+              {order.label}
+            </ContextMenuRadioItem>
+          ))}
+        </ContextMenuRadioGroup>
         {onDelete && (
           <>
             <ContextMenuSeparator />
-            <ContextMenuItem onSelect={() => onDelete(post.id)}>Hapus kiriman</ContextMenuItem>
+            <ContextMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
+              Hapus kiriman
+            </ContextMenuItem>
           </>
         )}
       </ContextMenuContent>
