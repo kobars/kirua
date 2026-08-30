@@ -27,8 +27,16 @@ export function Appointments() {
     <div className="grid content-start gap-5">
       <h1 className="text-heading-md font-semibold text-fg">Jadwal kunjungan</h1>
 
-      <div className="grid gap-5 lg:grid-cols-[auto_1fr]">
-        <Card className="h-max p-3">
+      {/* `minmax(0,1fr)` below `lg`, because a grid item keeps `min-width:
+          auto` and the calendar below is `w-max` — without it the column takes
+          the calendar's full width and drags the page sideways.
+
+          The calendar itself cannot reflow: seven 40-pixel columns plus its own
+          padding need 304 pixels, and a 320-wide phone leaves 288 after the
+          page padding. A month grid has no narrower honest shape, so it scrolls
+          inside its own card rather than making the document scroll. */}
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[auto_1fr]">
+        <Card className="h-max overflow-x-auto p-3">
           <Calendar
             locale="id-ID"
             month={month}

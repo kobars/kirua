@@ -90,7 +90,14 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
             return (
               <li key={order.id}>
                 <Card>
-                  <CardBody className="grid gap-4">
+                  {/* `minmax(0,1fr)`, because an `Item` row cannot shrink on
+                      its own. `ItemContent` truncates, so its min-content is the
+                      whole untruncated title, and a flex row's min-content is
+                      the sum of its children's — 294 pixels against 246 of card.
+                      `min-w-0` lets the title shrink once the row has a width;
+                      it does not stop an `auto` grid column asking for the row's
+                      min-content in the first place. */}
+                  <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
                         <h2 className="text-body-md font-semibold text-fg">{order.id}</h2>

@@ -75,7 +75,10 @@ export function OrderPage({ order }: OrderPageProps) {
       </div>
 
       <Card>
-        <CardBody className="grid gap-4">
+        {/* Same reason as the order list: an `Item` row's min-content is the
+            sum of its children's, so an `auto` grid column sizes itself to the
+            untruncated title rather than to the card. */}
+        <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
           <h2 className="text-body-md font-semibold text-fg">Barang</h2>
           <ItemGroup>
             {order.lines.map((line, index) => {
