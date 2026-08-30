@@ -5,8 +5,26 @@ Community and turns it into a working design system: a three-layer token
 architecture, a component library built on Radix Primitives, and a rebuild of the
 original screen made entirely from that library.
 
-**Reference design:** *Figma Anime Website UI Design: Futuristic & Interactive
-Hero Section* (Figma Community).
+**Reference design:** _Figma Anime Website UI Design: Futuristic & Interactive
+Hero Section_ (Figma Community).
+
+## Deployed
+
+Five production deployments on Vercel. Storybook is the system; the four
+applications are the evidence that it works, and every one of them imports
+kirua through the bare specifier `kirua` — never a relative path into `src`.
+
+|                        | What it is                                                         | URL                                  |
+| ---------------------- | ------------------------------------------------------------------ | ------------------------------------ |
+| **Storybook**          | The system itself: every component, every foundation page          | <https://kirua-storybook.vercel.app> |
+| **Claude web clone**   | A full-height chat shell where only the middle scrolls             | <https://kirua-claude.vercel.app>    |
+| **Senja (e-commerce)** | Faceted catalogue, cart, and a checkout form that really validates | <https://kirua-shop.vercel.app>      |
+| **SIMRS**              | A hospital record screen — dense, keyboard-driven, printable       | <https://kirua-simrs.vercel.app>     |
+| **Ruang (social)**     | A phone-first feed, designed at 375px and widened                  | <https://kirua-social.vercel.app>    |
+
+Each app was chosen because it forces a different part of the system into
+existence. Where a screen could not be built, that was the app naming the next
+component — which is how thirty of the fifty-one arrived.
 
 ## Running it
 
@@ -19,20 +37,27 @@ pnpm test        # render every story in Chromium and assert no a11y violations
 pnpm test:webkit # run the unit tests again in WebKit, the second declared engine
 pnpm lint        # oxlint
 pnpm check       # the whole gate: types, lint, format, every test, coverage
+
+pnpm example:claude   # the four example apps, one Vite root each
+pnpm example:shop
+pnpm example:simrs
+pnpm example:social
+pnpm build:examples   # build all four
+pnpm check:responsive # build them, then measure every route at 375px
 ```
 
 ## What was measured, exactly
 
 Read from the Figma file rather than sampled from a screenshot:
 
-| Property | Measured value |
-| --- | --- |
-| Brand blue (hero panel fill) | `#0A84FF` |
-| Hero panel corner radius | `32px` |
-| Nav bar fill / radius / height | `#000000` / `22px` / `70px` |
-| Display face | Luckiest Guy, 65px / 67px line height |
-| Text face | Fredoka, 18px / 20px, white at 80% opacity |
-| Call-to-action height | `54px` |
+| Property                       | Measured value                             |
+| ------------------------------ | ------------------------------------------ |
+| Brand blue (hero panel fill)   | `#0A84FF`                                  |
+| Hero panel corner radius       | `32px`                                     |
+| Nav bar fill / radius / height | `#000000` / `22px` / `70px`                |
+| Display face                   | Luckiest Guy, 65px / 67px line height      |
+| Text face                      | Fredoka, 18px / 20px, white at 80% opacity |
+| Call-to-action height          | `54px`                                     |
 
 ## The deliberate deviations
 
@@ -54,15 +79,22 @@ change with it.
 
 ## What it weighs
 
-Measured from the application build on 2026-08-20, and re-measured on every
+Measured from the application build on 2026-08-30, and re-measured on every
 `pnpm build` — `tools/size-budget.mjs` runs as the last step and **exits
 non-zero** when a budget is crossed. A warning in a build log is a budget nobody
 has ever been stopped by.
 
-| Asset | Raw | Gzip | Budget (gzip) |
-| --- | --- | --- | --- |
-| JavaScript | 329.58 kB | **104.16 kB** | 115 kB |
-| CSS | 48.64 kB | **8.88 kB** | 12 kB |
+| Asset      | Raw       | Gzip          | Budget (gzip) | Headroom    |
+| ---------- | --------- | ------------- | ------------- | ----------- |
+| JavaScript | 333.13 kB | **105.10 kB** | 115 kB        | 9.9 kB      |
+| CSS        | 64.38 kB  | **11.41 kB**  | 12 kB         | **0.59 kB** |
+
+**The CSS budget is nearly spent, and that is reported rather than raised.**
+Thirty components arrived in one push and each brought utilities with it. The
+next few can still land; a large one cannot. Raising the number to make a build
+pass would turn the budget into decoration, so the honest options are to spend
+the remaining 0.59 kB deliberately or to re-baseline once, in its own commit,
+with the reason written beside it.
 
 That JavaScript figure includes React and ReactDOM, because it is the rebuilt
 hero page rather than a library bundle. It catches "something heavy entered the
@@ -73,7 +105,7 @@ library output that does not exist yet.
 `src/components` carries a `"use client"` directive — asserted, not remembered,
 by `src/components/server.node.test.tsx` — so the components render on the
 server and ship none of themselves to the browser. What a consumer still pays is
-the stylesheet: **8.88 kB gzip** for the whole system, tokens included.
+the stylesheet: **11.41 kB gzip** for the whole system, tokens included.
 
 ## Browser support
 
@@ -84,15 +116,15 @@ layers and `color-mix()`, and states its own requirement: Safari 16.4, Chrome
 111, Firefox 128. Nothing here can go below that, whatever this system uses.
 
 **`:dir()` raises Chrome from 111 to 120.** It is the only selector that follows
-*inherited* direction, and the `CornerGlint` mirror needs it to re-invert inside
+_inherited_ direction, and the `CornerGlint` mirror needs it to re-invert inside
 a right-to-left document. Chrome shipped it in 120; Safari shipped it in 16.4,
 which is already the Tailwind floor, so Safari does not move.
 
-| Engine | Floor | Set by |
-| --- | --- | --- |
-| Chrome / Edge | **120** | `:dir()` — Tailwind alone would allow 111 |
-| Safari | **16.4** | Tailwind 4. `:dir()` lands in the same release |
-| Firefox | **128** | Tailwind 4 |
+| Engine        | Floor    | Set by                                         |
+| ------------- | -------- | ---------------------------------------------- |
+| Chrome / Edge | **120**  | `:dir()` — Tailwind alone would allow 111      |
+| Safari        | **16.4** | Tailwind 4. `:dir()` lands in the same release |
+| Firefox       | **128**  | Tailwind 4                                     |
 
 Declared once, as `browserslist` in `package.json`. Vite does not read that key —
 it reads `build.target` — so `src/styles/browsers.test.ts` asserts the two agree
@@ -102,7 +134,7 @@ ignores is worse than no matrix, because it reads like a guarantee.
 **Two engines are actually run.** The suite is Chromium by default;
 `pnpm test:webkit` runs the unit tests again in WebKit, which is the engine that
 differs most from Chromium. Story and visual runs stay Chromium-only — a
-screenshot is a baseline *for* an engine, and a second set would double the
+screenshot is a baseline _for_ an engine, and a second set would double the
 pictures without doubling what they tell you.
 
 ## Token architecture
@@ -134,27 +166,50 @@ switch propagates.
 
 ## What is here
 
-**Presentational** — Button, IconButton, Chip, AvatarStack, Badge, Card,
-NavBar, Stat / StatRow, DotGrid, CornerGlint, SpotlightPanel.
+Fifty-one components. The grouping is by what supplies the behaviour, because
+that is what decides how much of each one this repository is responsible for.
 
-**Radix-backed** — Dialog, DropdownMenu, Tooltip, Tabs, ScrollArea. Radix supplies focus
-trapping, focus restore, typeahead, roving tabindex, collision-aware
-positioning, and the correct ARIA wiring. This repo supplies appearance only.
+**Presentational** — Button, IconButton, Badge, Chip, Card, Alert, Stat /
+StatRow, AvatarStack, Kbd, Separator, Skeleton, Spinner, Progress, EmptyState,
+Table, Breadcrumb, Pagination, QuantityStepper, CodeBlock, NavBar, DotGrid,
+CornerGlint, SpotlightPanel.
 
-**Forms** — Field, Label, Input, Textarea. Field connects a native control to
-its visible label, description, error, required state, and invalid state while
-remaining server-renderable.
+**Radix-backed** — Dialog, DropdownMenu, Tooltip, Popover, HoverCard, Sheet,
+Tabs, Accordion, Select, Slider, Switch, Checkbox, RadioGroup, Toggle,
+ToggleGroup, Toast, Avatar, AspectRatio, ScrollArea, Carousel, Combobox,
+Command. Radix supplies focus trapping, focus restore, typeahead, roving
+tabindex, collision-aware positioning, and the correct ARIA wiring. This repo
+supplies appearance only.
+
+**Forms** — Field, Label, Input, Textarea, Calendar, DatePicker. Field connects
+a native control to its visible label, description, error, required state, and
+invalid state while remaining server-renderable.
 
 **Pattern** — `AnimeHero`, the reference screen rebuilt from the system with no
 hard-coded hex values.
 
+### Every component is stateless, on purpose
+
+No file in `src/components` calls a hook or carries a `"use client"` directive.
+A component that holds state cannot render on a server, and the moment one does,
+a consumer's whole page stops being a Server Component.
+
+That has a cost, and it is written down rather than glossed. `Combobox`,
+`Command` and `Carousel` are **presentational shells**: they render the right
+elements with the right ARIA wiring, and the consumer owns the open state, the
+filtering and the current index from their own `"use client"` file. A component
+that filtered its own list would be smaller to use and impossible to
+server-render.
+
 ## Known gaps
 
-- No choice or selection controls yet (select, checkbox, radio, switch).
-- No loading or empty states.
+- `Combobox`, `Command` and `Carousel` need a consumer to drive them (above).
+- The CSS size budget has 0.59 kB of gzip headroom left.
 - Character artwork is not commercially licensed (see Attribution).
 - Visual baselines are Chromium-on-macOS only. They are committed PNGs, so a
   contributor on Linux will see diffs that are rasterisation, not regression.
+- Server rendering is asserted without a Next.js build in the loop, so a
+  framework-specific gap remains uncovered.
 
 ## Attribution and licensing
 
@@ -162,7 +217,7 @@ The hero uses two Killua Zoldyck cut-outs in `public/characters/`, downloaded
 from [NicePNG](https://www.nicepng.com/s/killua/). Both were post-processed
 before being committed: source watermarks cleared, transparent border trimmed.
 
-**Killua Zoldyck is a character from *Hunter × Hunter*, created by Yoshihiro
+**Killua Zoldyck is a character from _Hunter × Hunter_, created by Yoshihiro
 Togashi and published by Shueisha.** These renders are used here for a personal,
 non-commercial portfolio piece only. They are **not** licensed for a commercial
 product, a client deliverable, or anything sold.
