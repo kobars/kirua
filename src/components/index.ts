@@ -130,6 +130,7 @@ export {
   type ToastViewportProps,
 } from './Toast';
 export { toastVariants } from './Toast.variants';
+export { type NamedPanel } from './aria';
 export {
   Popover,
   PopoverTrigger,
