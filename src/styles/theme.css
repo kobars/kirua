@@ -88,6 +88,17 @@
   --color-info-fg: var(--color-status-info-fg);
   --color-info-solid: var(--color-status-info-solid);
 
+  /* The alias must not repeat the semantic token's name: `--color-chart-1:
+   * var(--color-chart-1)` is a variable pointing at itself, which resolves to
+   * nothing and paints nothing. Long name below, short name here. */
+  --color-chart-1: var(--color-chart-series-1);
+  --color-chart-2: var(--color-chart-series-2);
+  --color-chart-3: var(--color-chart-series-3);
+  --color-chart-4: var(--color-chart-series-4);
+  --color-chart-5: var(--color-chart-series-5);
+  --color-chart-grid: var(--color-chart-grid-line);
+  --color-chart-track: var(--color-chart-track-fill);
+
   /* Elevation IS context-dependent, unlike type, radius and easing — see the
    * reasoning beside the tokens. These must be `@theme inline` for the same
    * reason the colours are: without `inline` a utility freezes the value it had
