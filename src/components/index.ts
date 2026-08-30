@@ -209,4 +209,15 @@ export { InputGroup, InputGroupInput, InputGroupAddon, InputGroupText } from './
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsible';
 
+export {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from './AlertDialog';
+
 export * from './icons';
