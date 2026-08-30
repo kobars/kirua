@@ -85,7 +85,7 @@ export function Notifications() {
           }
         />
       ) : (
-        <ItemGroup className="rounded-lg border border-line-subtle">
+        <ItemGroup variant="outlined">
           {shown.map((notice, index) => {
             const person = people[notice.handle];
             const Icon = ICON[notice.kind];
