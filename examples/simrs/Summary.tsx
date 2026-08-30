@@ -57,15 +57,21 @@ export function Summary() {
         </Text>
       </div>
 
-      <StatRow>
-        <Stat icon={<CalendarIcon />} value={String(today.length)} label="Kunjungan hari ini" />
+      <StatRow variant="tile">
         <Stat
+          variant="tile"
+          icon={<CalendarIcon />}
+          value={String(today.length)}
+          label="Kunjungan hari ini"
+        />
+        <Stat
+          variant="tile"
           icon={<StethoscopeIcon />}
           value={String(inRoom.length)}
           label="Sedang diperiksa"
         />
-        <Stat value={String(waiting.length)} label="Menunggu" />
-        <Stat value={`${used}/${beds}`} label="Tempat tidur terpakai" />
+        <Stat variant="tile" value={String(waiting.length)} label="Menunggu" />
+        <Stat variant="tile" value={`${used}/${beds}`} label="Tempat tidur terpakai" />
       </StatRow>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

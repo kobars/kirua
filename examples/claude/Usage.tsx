@@ -36,10 +36,10 @@ export function Usage() {
           Usage
         </Heading>
 
-        <StatRow>
-          <Stat value={String(allConversations.length)} label="Conversations" />
-          <Stat value={String(turns)} label="Turns" />
-          <Stat value="95" label="This month" />
+        <StatRow variant="tile">
+          <Stat variant="tile" value={String(allConversations.length)} label="Conversations" />
+          <Stat variant="tile" value={String(turns)} label="Turns" />
+          <Stat variant="tile" value="95" label="This month" />
         </StatRow>
 
         <Card>
