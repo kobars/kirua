@@ -100,6 +100,17 @@
   --font-display: 'Luckiest Guy', 'Fredoka', system-ui, sans-serif;
   --font-text: 'Fredoka', ui-rounded, system-ui, -apple-system, sans-serif;
 
+  /* The third face, and the only one that ships nothing at all — every entry is
+   * already on the machine. A code block needs a monospace face, and downloading
+   * one to show four lines of shell in a transcript is a poor trade: the system
+   * fonts here are well drawn on every platform this repository supports.
+   *
+   * Named rather than left to Tailwind's own `font-mono` default, for the same
+   * reason the other two are named: a face this system uses is a decision it
+   * has made, and a decision belongs in the token layer where it can be read
+   * and changed in one place. `cn.ts` lists it beside the other two. */
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', monospace;
+
   --text-display-2xl: 4.5rem;
   --text-display-2xl--line-height: 4.5rem;
   --text-display-xl: 4.0625rem; /* 65px [FIGMA] */
