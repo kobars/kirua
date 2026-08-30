@@ -17,7 +17,21 @@ import { extendTailwindMerge } from 'tailwind-merge';
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      animate: ['fade-in', 'fade-out', 'pop-in', 'pop-out', 'slide-down'],
+      animate: [
+        'fade-in',
+        'fade-out',
+        'pop-in',
+        'pop-out',
+        'slide-down',
+        'slide-in-side',
+        'slide-out-side',
+        'slide-in-bottom',
+        'slide-out-bottom',
+        'accordion-down',
+        'accordion-up',
+        'pulse-soft',
+        'spin-steady',
+      ],
       shadow: ['brand', 'resting', 'raised', 'overlay'],
     },
     classGroups: {
@@ -39,7 +53,7 @@ const twMerge = extendTailwindMerge({
         },
       ],
       rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] }],
-      'font-family': [{ font: ['display', 'text'] }],
+      'font-family': [{ font: ['display', 'text', 'mono'] }],
       duration: [{ duration: ['fast', 'base', 'slow'] }],
       z: [
         {
