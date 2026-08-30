@@ -10,9 +10,12 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
   Card,
   CardBody,
   CartIcon,
+  ChevronEndIcon,
   Container,
   EmptyState,
   Heading,
@@ -62,6 +65,10 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
           Pesanan saya
         </Heading>
         <ButtonGroup aria-label="Saring pesanan">
+          {/* A static label sharing the group's shape. Hidden below `sm`,
+              where three buttons already fill the row. */}
+          <ButtonGroupText className="hidden sm:inline-flex">Tampilkan</ButtonGroupText>
+          <ButtonGroupSeparator className="hidden sm:block" />
           {(['semua', 'berjalan', 'selesai'] as const).map((value) => (
             <Button
               key={value}
@@ -149,7 +156,11 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                           Batalkan
                         </Button>
                       )}
-                      <Button variant="secondary" onClick={() => onOpen(order.id)}>
+                      <Button
+                        variant="secondary"
+                        trailingIcon={<ChevronEndIcon />}
+                        onClick={() => onOpen(order.id)}
+                      >
                         Lihat rincian
                       </Button>
                     </div>

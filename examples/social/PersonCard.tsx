@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Button,
   HoverCard,
   HoverCardContent,
@@ -34,6 +35,7 @@ export function PersonLink({ handle }: PersonLinkProps) {
         <div className="grid gap-3">
           <div className="flex items-center gap-3">
             <Avatar size="lg">
+              {person.photo && <AvatarImage src={person.photo} alt="" />}
               <AvatarFallback>{initials(person.name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">

@@ -15,6 +15,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPInput,
+  InputOTPSeparator,
   InputOTPSlot,
   Label,
   Spinner,
@@ -129,14 +130,28 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                       submit(next);
                     }}
                   />
+                  {/* Two groups of three with a separator between them. A code
+                      is read aloud in threes, and six unbroken boxes make the
+                      reader count. */}
                   <InputOTPGroup>
-                    {Array.from({ length: LENGTH }, (_, index) => (
+                    {Array.from({ length: LENGTH / 2 }, (_, index) => (
                       <InputOTPSlot
                         key={index}
                         char={code[index]}
                         isActive={code.length === index}
                       />
                     ))}
+                    <InputOTPSeparator />
+                    {Array.from({ length: LENGTH / 2 }, (_, offset) => {
+                      const index = offset + LENGTH / 2;
+                      return (
+                        <InputOTPSlot
+                          key={index}
+                          char={code[index]}
+                          isActive={code.length === index}
+                        />
+                      );
+                    })}
                   </InputOTPGroup>
                 </InputOTP>
               </div>

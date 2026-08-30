@@ -8,6 +8,7 @@ import {
   Card,
   CardBody,
   CardEyebrow,
+  CardFooter,
   CardTitle,
   CheckIcon,
   Chip,
@@ -18,9 +19,10 @@ import {
   List,
   ListItem,
   Popover,
+  PopoverAnchor,
+  PopoverClose,
   PopoverContent,
   PopoverTrigger,
-  ScrollArea,
   Section,
   Table,
   TableBody,
@@ -91,15 +93,17 @@ export function PricingPage() {
               ))}
             </List>
 
-            <Button
-              variant={plan.featured ? 'primary' : 'secondary'}
-              size="md"
-              className="mt-auto"
-              trailingIcon={<ArrowRightIcon />}
-              asChild
-            >
-              <a href="#/contact">Choose {plan.name}</a>
-            </Button>
+            <CardFooter>
+              <Button
+                variant={plan.featured ? 'primary' : 'secondary'}
+                size="md"
+                fullWidth
+                trailingIcon={<ArrowRightIcon />}
+                asChild
+              >
+                <a href="#/contact">Choose {plan.name}</a>
+              </Button>
+            </CardFooter>
           </Card>
         ))}
       </Section>
@@ -109,24 +113,30 @@ export function PricingPage() {
           What actually differs
         </Heading>
         <Card padding="md">
-          <ScrollArea orientation="horizontal">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Feature</TableHead>
-                  {PLANS.map((plan) => (
-                    <TableHead key={plan.id}>{plan.name}</TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {COMPARISON.map((row) => (
-                  <TableRow key={row.feature}>
-                    <TableCell className="whitespace-nowrap">
-                      {row.feature === 'Platform fee' ? (
-                        <span className="inline-flex items-center gap-1">
-                          Platform fee
-                          <Popover>
+          {/* No ScrollArea: `Table` wraps itself in its own focusable scroll
+              box, and a second one around it never scrolls. */}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Feature</TableHead>
+                {PLANS.map((plan) => (
+                  <TableHead key={plan.id}>{plan.name}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {COMPARISON.map((row) => (
+                <TableRow key={row.feature}>
+                  <TableCell className="whitespace-nowrap">
+                    {row.feature === 'Platform fee' ? (
+                      <Popover>
+                        {/* Anchored to the whole cell rather than to the
+                              small button that opens it, so the panel lines up
+                              with the row it explains instead of with a 24px
+                              target at the end of it. */}
+                        <PopoverAnchor asChild>
+                          <span className="inline-flex items-center gap-1">
+                            Platform fee
                             <PopoverTrigger asChild>
                               <IconButton
                                 aria-label="What the platform fee covers"
@@ -136,38 +146,42 @@ export function PricingPage() {
                                 <span aria-hidden="true">?</span>
                               </IconButton>
                             </PopoverTrigger>
-                            <PopoverContent aria-label="What the platform fee covers">
-                              <Text size="sm">
-                                Taken from a sale, never from a subscription. Payment processing
-                                is charged separately by the processor and Aozora does not add
-                                to it.
-                              </Text>
-                              <Text size="sm" className="mt-2">
-                                <Link href="#/contact">Ask about a studio rate</Link>
-                              </Text>
-                            </PopoverContent>
-                          </Popover>
-                        </span>
-                      ) : (
-                        row.feature
-                      )}
-                    </TableCell>
-                    <TableCell className="tabular-nums">{row.sketch}</TableCell>
-                    <TableCell className="tabular-nums">{row.studio}</TableCell>
-                    <TableCell className="tabular-nums">{row.atelier}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell>Billed</TableCell>
-                  <TableCell>—</TableCell>
-                  <TableCell>Monthly</TableCell>
-                  <TableCell>Monthly</TableCell>
+                          </span>
+                        </PopoverAnchor>
+                        <PopoverContent align="start" aria-label="What the platform fee covers">
+                          <Text size="sm">
+                            Taken from a sale, never from a subscription. Payment processing is
+                            charged separately by the processor and Aozora does not add to it.
+                          </Text>
+                          <Text size="sm" className="mt-2">
+                            <Link href="#/contact">Ask about a studio rate</Link>
+                          </Text>
+                          <PopoverClose asChild>
+                            <Button variant="ghost" size="sm" className="mt-3">
+                              Got it
+                            </Button>
+                          </PopoverClose>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      row.feature
+                    )}
+                  </TableCell>
+                  <TableCell className="tabular-nums">{row.sketch}</TableCell>
+                  <TableCell className="tabular-nums">{row.studio}</TableCell>
+                  <TableCell className="tabular-nums">{row.atelier}</TableCell>
                 </TableRow>
-              </TableFooter>
-            </Table>
-          </ScrollArea>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell>Billed</TableCell>
+                <TableCell>—</TableCell>
+                <TableCell>Monthly</TableCell>
+                <TableCell>Monthly</TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
         </Card>
       </Section>
 

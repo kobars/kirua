@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import {
   Button,
   DescriptionDetails,
@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTitle,
+  DialogTrigger,
   Field,
   Heading,
   Kbd,
@@ -28,20 +29,21 @@ import { shortcuts } from './data';
 import type { ThemePreference } from '../shared/useTheme';
 
 export interface SettingsDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  /**
+   * The control that opens it. Passing the trigger in rather than lifting
+   * `open` into the page is what `DialogTrigger` is for: Radix then owns the
+   * open state, restores focus to the trigger on close, and marks the trigger
+   * `aria-expanded` — three things the page was doing none of with a boolean.
+   */
+  trigger: ReactNode;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
 }
 
-export function SettingsDialog({
-  open,
-  onOpenChange,
-  theme,
-  onThemeChange,
-}: SettingsDialogProps) {
+export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogTitle>Settings</DialogTitle>
         <DialogDescription>Nothing here is saved. It is a sample screen.</DialogDescription>

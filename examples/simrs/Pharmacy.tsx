@@ -10,6 +10,8 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  ChevronDownIcon,
+  ChevronUpIcon,
   CloseIcon,
   ContextMenu,
   ContextMenuContent,
@@ -56,15 +58,38 @@ const tone = { habis: 'danger', menipis: 'warning', cukup: 'success' } as const;
  * a right-click *and* from the button at the end of the row — the right-click
  * is a shortcut, never the only way in.
  */
+/**
+ * The three columns worth sorting, and how each one compares. Ascending always
+ * means "the row a pharmacist should act on first": the soonest expiry, the
+ * smallest stock, the cheapest item.
+ */
+const COMPARE = {
+  stock: (a: Medicine, b: Medicine) => a.stock - b.stock,
+  expires: (a: Medicine, b: Medicine) => a.expires.localeCompare(b.expires),
+  price: (a: Medicine, b: Medicine) => a.price - b.price,
+};
+
+type SortKey = keyof typeof COMPARE;
+
+const SORTABLE: { key: SortKey; label: string }[] = [
+  { key: 'stock', label: 'Stok' },
+  { key: 'expires', label: 'Kedaluwarsa' },
+  { key: 'price', label: 'Harga' },
+];
+
 export function Pharmacy() {
   const [query, setQuery] = useState('');
   const [shelf, setShelf] = useState<Shelf>('semua');
   const [discarding, setDiscarding] = useState<Medicine | null>(null);
   const [discarded, setDiscarded] = useState<string[]>([]);
+  const [sort, setSort] = useState<{ by: SortKey; up: boolean }>({
+    by: 'expires',
+    up: true,
+  });
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return medicines.filter((item) => {
+    const kept = medicines.filter((item) => {
       if (discarded.includes(item.code)) return false;
       if (shelf === 'habis' && level(item) !== 'habis') return false;
       if (shelf === 'menipis' && level(item) !== 'menipis') return false;
@@ -72,7 +97,9 @@ export function Pharmacy() {
         q === '' || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q)
       );
     });
-  }, [query, shelf, discarded]);
+    const direction = sort.up ? 1 : -1;
+    return kept.sort((a, b) => direction * COMPARE[sort.by](a, b));
+  }, [query, shelf, discarded, sort]);
 
   /**
    * One list of commands, rendered twice. The right-click menu is a shortcut
@@ -169,9 +196,36 @@ export function Pharmacy() {
               <TableRow>
                 <TableHead>Obat</TableHead>
                 <TableHead>Rak</TableHead>
-                <TableHead>Stok</TableHead>
-                <TableHead>Kedaluwarsa</TableHead>
-                <TableHead>Harga</TableHead>
+                {SORTABLE.map(({ key, label }) => {
+                  const active = sort.by === key;
+                  return (
+                    // `aria-sort` is what a screen reader reads out, and it
+                    // belongs on the header cell rather than on the button
+                    // inside it. The arrow is the same fact for everybody else.
+                    <TableHead
+                      key={key}
+                      aria-sort={active ? (sort.up ? 'ascending' : 'descending') : 'none'}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="-mx-2"
+                        trailingIcon={
+                          active ? sort.up ? <ChevronUpIcon /> : <ChevronDownIcon /> : undefined
+                        }
+                        onClick={() =>
+                          setSort((current) =>
+                            current.by === key
+                              ? { by: key, up: !current.up }
+                              : { by: key, up: true },
+                          )
+                        }
+                      >
+                        {label}
+                      </Button>
+                    </TableHead>
+                  );
+                })}
                 <TableHead className="relative">
                   <span className="sr-only">Tindakan</span>
                 </TableHead>

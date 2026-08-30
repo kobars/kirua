@@ -8,6 +8,7 @@ import {
   CardTitle,
   Chip,
   Container,
+  CornerGlint,
   DotGrid,
   Heading,
   HeartIcon,
@@ -95,6 +96,23 @@ export function HomePage() {
           </Card>
         ))}
       </Section>
+
+      {/* A band rather than a Card, which is why the glints are placed by
+          hand: `Card` and `SpotlightPanel` take a `glint` prop and draw their
+          own, and `CornerGlint` is exported for the surface that is neither. */}
+      <div className="ctx-brand relative overflow-hidden rounded-xl bg-brand p-8 md:p-12">
+        <CornerGlint corner="top-start" radius={32} inset={14} />
+        <CornerGlint corner="bottom-end" radius={32} inset={14} />
+        <blockquote className="mx-auto max-w-176 text-center">
+          <Text size="lg" tone="primary" className="text-balance">
+            “I moved four years of commissions across in an afternoon, and the export convinced
+            me before the import did.”
+          </Text>
+          <Text size="sm" tone="secondary" className="mt-3">
+            — Mei Tsukino, illustrator
+          </Text>
+        </blockquote>
+      </div>
 
       <Section gap="lg" className="lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Heading as="h2" className="sr-only">

@@ -24,6 +24,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarLabel,
   SidebarMenu,
   SidebarMenuButton,
@@ -200,8 +201,25 @@ export function App() {
       </header>
 
       <div className="mx-auto flex w-full max-w-7xl">
-        <div className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block print:hidden">
+        {/* An `aside`, not a `div`. `SidebarContent` is the `nav` landmark, so
+            the unit line above it would otherwise be page content belonging to
+            no landmark at all — which is what axe reports as `region`, once per
+            route. The rail really is complementary context: which unit and
+            shift you are working in, beside the navigation that serves it. */}
+        <aside
+          aria-label="Unit dan bagian"
+          className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block print:hidden"
+        >
           <Sidebar open={railOpen} collapsible="icon" className="border-e-0 bg-transparent">
+            {/* Which unit and shift this rail belongs to. The icon carries it
+                when the rail collapses; the words are a `SidebarLabel`, which
+                goes off the screen rather than out of the accessibility tree. */}
+            <SidebarHeader className="h-12">
+              <UserIcon aria-hidden="true" className="text-fg-accent" />
+              <SidebarLabel className="text-body-sm font-medium">
+                Rawat Jalan · pagi
+              </SidebarLabel>
+            </SidebarHeader>
             <SidebarContent aria-label="Bagian">{destinations()}</SidebarContent>
             <SidebarFooter className="border-t-0">
               <SidebarMenuButton onClick={() => setRailOpen(!railOpen)}>
@@ -210,7 +228,7 @@ export function App() {
               </SidebarMenuButton>
             </SidebarFooter>
           </Sidebar>
-        </div>
+        </aside>
 
         <main className="min-w-0 flex-1 px-4 py-6 md:px-8">
           {record ? (

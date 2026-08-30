@@ -3,6 +3,7 @@ import {
   AspectRatio,
   Badge,
   Breadcrumb,
+  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -45,7 +46,14 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
             <BreadcrumbLink href="#/">Katalog</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
+          {/* Three crumbs do not fit beside a product name at 320px, so the
+              middle one collapses to an ellipsis there. It is `aria-hidden`,
+              and the brand is a link on the page below, so nothing is lost to
+              a screen reader — the crumb it replaces was a duplicate. */}
+          <BreadcrumbItem className="sm:hidden">
+            <BreadcrumbEllipsis />
+          </BreadcrumbItem>
+          <BreadcrumbItem className="hidden sm:flex">
             <BreadcrumbLink href="#/">{product.brand}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

@@ -1,7 +1,16 @@
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   AspectRatio,
   Avatar,
   AvatarFallback,
+  AvatarImage,
   AvatarStack,
   BarChart,
   Button,
@@ -41,9 +50,34 @@ export function Profile({ person, surface }: ProfileProps) {
         <div className="grid gap-3 px-4 pb-4">
           <div className="-mt-12 flex items-end justify-between gap-3">
             <Avatar size="xl" className="ring-4 ring-page">
+              {person.photo && <AvatarImage src={person.photo} alt="" />}
               <AvatarFallback>{initials(person.name)}</AvatarFallback>
             </Avatar>
-            <Button size="sm">Ikuti</Button>
+            {/* `AlertDialogTrigger` and not a boolean: Radix owns the open
+                state, marks the trigger `aria-expanded`, and returns focus to
+                it on cancel. Blocking is the one action on this page that has
+                to be confirmed. */}
+            <div className="flex items-center gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="ghost">
+                    Blokir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogTitle>Blokir @{person.handle}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Kalian tidak akan saling melihat kiriman. Ini contoh, jadi tidak ada yang
+                    benar-benar diblokir.
+                  </AlertDialogDescription>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction>Blokir</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Button size="sm">Ikuti</Button>
+            </div>
           </div>
 
           <div>

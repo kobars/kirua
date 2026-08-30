@@ -28,9 +28,14 @@ import {
   Heading,
   LineChart,
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
+  MenubarGroup,
   MenubarItem,
+  MenubarLabel,
   MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
@@ -60,7 +65,15 @@ export function PatientRecord({ patient }: PatientRecordProps) {
   const [cancelled, setCancelled] = useState<string[]>([]);
   const [cancelling, setCancelling] = useState<string | null>(null);
 
-  const history = visits.filter((v) => v.rm === patient.rm);
+  // The view menu drives the visit table below. A menubar earns its place only
+  // when its items do something, so these are real state and not decoration.
+  const [order, setOrder] = useState('baru');
+  const [showCancelled, setShowCancelled] = useState(true);
+
+  const history = visits
+    .filter((v) => v.rm === patient.rm)
+    .filter((v) => showCancelled || !(cancelled.includes(v.id) || v.status === 'batal'))
+    .sort((a, b) => (order === 'baru' ? b.at.localeCompare(a.at) : a.at.localeCompare(b.at)));
   const measurements = vitals[patient.rm] ?? [];
   const latest = measurements[0];
   const orders = labResults.filter((order) => order.rm === patient.rm);
@@ -128,6 +141,30 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 <MenubarItem>Buat kunjungan baru</MenubarItem>
                 <MenubarItem>Minta pemeriksaan lab</MenubarItem>
                 <MenubarItem>Tulis resep</MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger>Tampilan</MenubarTrigger>
+              <MenubarContent>
+                {/* A group with a label, rather than a separator and a heading:
+                    the label names the radio set for a screen reader too. */}
+                <MenubarGroup>
+                  <MenubarLabel>Urutan kunjungan</MenubarLabel>
+                  <MenubarRadioGroup value={order} onValueChange={setOrder}>
+                    <MenubarRadioItem value="baru">Terbaru dulu</MenubarRadioItem>
+                    <MenubarRadioItem value="lama">Terlama dulu</MenubarRadioItem>
+                  </MenubarRadioGroup>
+                </MenubarGroup>
+                <MenubarSeparator />
+                <MenubarGroup>
+                  <MenubarLabel>Tampilkan</MenubarLabel>
+                  <MenubarCheckboxItem
+                    checked={showCancelled}
+                    onCheckedChange={setShowCancelled}
+                  >
+                    Kunjungan yang dibatalkan
+                  </MenubarCheckboxItem>
+                </MenubarGroup>
               </MenubarContent>
             </MenubarMenu>
           </Menubar>

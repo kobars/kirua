@@ -44,7 +44,6 @@ import { useHashRoute } from '../shared/useHashRoute';
 export function App() {
   const [route, navigate] = useHashRoute(allConversations[0]!.id);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -128,18 +127,20 @@ export function App() {
             {route === 'penggunaan' ? 'Back to chat' : 'Usage'}
           </Button>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                aria-label="Settings"
-                variant="ghost"
-                onClick={() => setSettingsOpen(true)}
-              >
-                <MoreIcon />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>Settings</TooltipContent>
-          </Tooltip>
+          <SettingsDialog
+            theme={preference}
+            onThemeChange={choose}
+            trigger={
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <IconButton aria-label="Settings" variant="ghost">
+                    <MoreIcon />
+                  </IconButton>
+                </TooltipTrigger>
+                <TooltipContent>Settings</TooltipContent>
+              </Tooltip>
+            }
+          />
 
           {/* The one app of the four written in English, so the one that has to
               pass the labels the shared menu takes as a parameter. */}
@@ -196,12 +197,6 @@ export function App() {
       </AlertDialog>
 
       <SearchPalette open={searchOpen} onOpenChange={setSearchOpen} onPick={pick} />
-      <SettingsDialog
-        open={settingsOpen}
-        onOpenChange={setSettingsOpen}
-        theme={preference}
-        onThemeChange={choose}
-      />
     </div>
   );
 }
