@@ -220,4 +220,18 @@ export {
   AlertDialogCancel,
 } from './AlertDialog';
 
+export {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuGroup,
+  ContextMenuRadioGroup,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuCheckboxItem,
+  ContextMenuRadioItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+} from './ContextMenu';
+
 export * from './icons';
