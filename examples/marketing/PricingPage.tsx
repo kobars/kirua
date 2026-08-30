@@ -15,6 +15,8 @@ import {
   Heading,
   IconButton,
   Link,
+  List,
+  ListItem,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -77,17 +79,17 @@ export function PricingPage() {
 
             <CardBody>{plan.blurb}</CardBody>
 
-            <ul className="grid gap-2">
+            {/* `plain`, because each item carries its own check. Still a
+                list: a screen reader should say "list, 5 items", and dropping
+                to a <div> to lose a bullet is how that gets thrown away. */}
+            <List variant="plain" size="sm">
               {plan.includes.map((line) => (
-                <li
-                  key={line}
-                  className="flex items-start gap-2 text-body-sm text-fg-secondary"
-                >
+                <ListItem key={line} className="flex items-start gap-2">
                   <CheckIcon size="sm" aria-hidden="true" className="mt-0.5 shrink-0" />
                   {line}
-                </li>
+                </ListItem>
               ))}
-            </ul>
+            </List>
 
             <Button
               variant={plan.featured ? 'primary' : 'secondary'}

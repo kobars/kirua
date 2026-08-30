@@ -13,6 +13,8 @@ import {
   Heading,
   IconButton,
   Kbd,
+  List,
+  ListItem,
   Section,
   Separator,
   Text,
@@ -54,19 +56,19 @@ export function GuidePage() {
         <Heading as="h2" size="heading-md">
           The four steps
         </Heading>
-        <ol className="grid gap-3">
-          {PUBLISH_STEPS.map((step, index) => (
-            <li key={step.title} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
-              <span className="flex size-7 items-center justify-center rounded-pill bg-brand-subtle text-body-sm font-semibold text-fg-accent tabular-nums">
-                {index + 1}
-              </span>
-              <span className="grid gap-1">
-                <span className="text-body-md font-medium text-fg">{step.title}</span>
-                <span className="text-body-md text-fg-secondary">{step.body}</span>
-              </span>
-            </li>
+        {/* The numbers were drawn by hand here — a pill, a background token
+            and a hand-kept index. They are the list's own markers now, which
+            is what `List` is for. */}
+        <List variant="number">
+          {PUBLISH_STEPS.map((step) => (
+            <ListItem key={step.title}>
+              <Text inline tone="primary" className="font-medium">
+                {step.title}.
+              </Text>{' '}
+              {step.body}
+            </ListItem>
           ))}
-        </ol>
+        </List>
 
         <Alert status="info">
           <AlertTitle>Nothing is published until you say so</AlertTitle>
