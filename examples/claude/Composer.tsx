@@ -3,6 +3,7 @@ import {
   Button,
   IconButton,
   Kbd,
+  Label,
   Textarea,
   Tooltip,
   TooltipContent,
@@ -50,9 +51,12 @@ export function Composer({ onSend, busy }: ComposerProps) {
           send();
         }}
       >
-        <label htmlFor="composer" className="sr-only">
+        {/* `sr-only` rather than `hidden`, so the name stays in the
+            accessibility tree while the placeholder carries the meaning on the
+            screen. */}
+        <Label htmlFor="composer" className="sr-only">
           Message the assistant
-        </label>
+        </Label>
         <Textarea
           id="composer"
           ref={box}

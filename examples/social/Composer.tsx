@@ -4,6 +4,7 @@ import {
   AvatarFallback,
   Button,
   Card,
+  Label,
   Textarea,
   ToggleGroup,
   ToggleGroupItem,
@@ -29,9 +30,9 @@ export function Composer() {
           <AvatarFallback>KS</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <label htmlFor="compose" className="sr-only">
+          <Label htmlFor="compose" className="sr-only">
             Tulis kiriman
-          </label>
+          </Label>
           <Textarea
             id="compose"
             rows={3}
