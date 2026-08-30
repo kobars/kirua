@@ -1,4 +1,8 @@
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   ArrowRightIcon,
   Button,
   Card,
@@ -7,6 +11,7 @@ import {
   CardTitle,
   CheckIcon,
   Chip,
+  Heading,
   IconButton,
   Popover,
   PopoverContent,
@@ -19,10 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+  Text,
 } from 'kirua';
 import { COMPARISON, FAQ, PLANS } from './data';
 
@@ -39,17 +41,19 @@ export function PricingPage() {
   return (
     <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-6 md:px-8">
       <div className="grid gap-3">
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">
+        <Heading as="h1" size="heading-lg">
           Three plans, and the free one is not a trial
-        </h1>
-        <p className="max-w-176 text-body-lg text-fg-secondary">
+        </Heading>
+        <Text size="lg" className="max-w-176">
           Every plan carries the same gallery. What changes is how many you get, whether the
           address is yours, and whether Aozora handles the money.
-        </p>
+        </Text>
       </div>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
-        <h2 className="sr-only">The plans</h2>
+        <Heading as="h2" className="sr-only">
+          The plans
+        </Heading>
         {PLANS.map((plan) => (
           <Card
             key={plan.id}
@@ -96,7 +100,9 @@ export function PricingPage() {
       </section>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <h2 className="text-heading-md font-semibold text-fg">What actually differs</h2>
+        <Heading as="h2" size="heading-md">
+          What actually differs
+        </Heading>
         <Card padding="md">
           <ScrollArea orientation="horizontal">
             <Table>
@@ -126,11 +132,11 @@ export function PricingPage() {
                               </IconButton>
                             </PopoverTrigger>
                             <PopoverContent aria-label="What the platform fee covers">
-                              <p className="text-body-sm text-fg-secondary">
+                              <Text size="sm">
                                 Taken from a sale, never from a subscription. Payment processing
                                 is charged separately by the processor and Aozora does not add
                                 to it.
-                              </p>
+                              </Text>
                               <p className="mt-2 text-body-sm">
                                 <a
                                   href="#/contact"
@@ -166,7 +172,9 @@ export function PricingPage() {
       </section>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-3">
-        <h2 className="text-heading-md font-semibold text-fg">Questions we are asked</h2>
+        <Heading as="h2" size="heading-md">
+          Questions we are asked
+        </Heading>
         <Card padding="md">
           <Accordion type="single" collapsible defaultValue={FAQ[0].question}>
             {FAQ.map((entry) => (

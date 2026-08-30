@@ -5,6 +5,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  Text,
 } from 'kirua';
 import { compactCount, initials, people } from './data';
 
@@ -42,7 +43,9 @@ export function PersonLink({ handle }: PersonLinkProps) {
               <p className="truncate text-body-sm text-fg-muted">@{person.handle}</p>
             </div>
           </div>
-          <p className="text-body-sm text-pretty text-fg-secondary">{person.bio}</p>
+          <Text size="sm" className="text-pretty">
+            {person.bio}
+          </Text>
           <p className="flex gap-4 text-body-sm text-fg-secondary">
             <span>
               <strong className="font-semibold text-fg tabular-nums">

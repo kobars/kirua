@@ -6,7 +6,9 @@ import {
   Button,
   Card,
   Checkbox,
+  CheckIcon,
   Field,
+  Heading,
   Input,
   Label,
   RadioGroup,
@@ -17,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  CheckIcon,
 } from 'kirua';
 import { rupiah } from './data';
 import type { CartLine } from './CartSheet';
@@ -64,7 +65,9 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-6 px-4 py-6 md:px-8">
-      <h1 className="text-heading-lg font-semibold text-fg">Checkout</h1>
+      <Heading as="h1" size="heading-lg">
+        Checkout
+      </Heading>
 
       {/* `Alert` supplies no live-region role: announcing is the consumer's
           choice. `<output>` is already a polite live region. */}
@@ -147,7 +150,9 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
         </div>
 
         <Card className="grid h-max gap-3 p-5">
-          <h2 className="text-body-md font-semibold text-fg">Ringkasan</h2>
+          <Heading as="h2" size="body-md">
+            Ringkasan
+          </Heading>
           <Separator />
           <dl className="grid gap-2 text-body-sm">
             <div className="flex justify-between gap-4">

@@ -5,6 +5,12 @@ import {
   Badge,
   Button,
   Card,
+  ChevronStartIcon,
+  Heading,
+  IconButton,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
   Item,
   ItemActions,
   ItemContent,
@@ -13,14 +19,9 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
   ResizableGroup,
   ResizableHandle,
   ResizablePanel,
-  IconButton,
-  ChevronStartIcon,
   SendIcon,
 } from 'kirua';
 import { initials, people, threads } from './data';
@@ -154,7 +155,9 @@ export function Messages() {
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
-      <h1 className="text-heading-sm font-semibold text-fg">Pesan</h1>
+      <Heading as="h1" size="heading-sm">
+        Pesan
+      </Heading>
 
       {/* Phone: one pane at a time, chosen by whether a thread is open. */}
       <Card className="overflow-hidden md:hidden">{openId === '' ? list : conversation}</Card>

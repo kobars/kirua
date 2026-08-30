@@ -1,5 +1,5 @@
 /** TEMPORARY — the control for the experiment in `experiment.ts`. */
-import { Badge, Button, ButtonGroup } from 'kirua';
+import { Badge, Button, ButtonGroup, Text } from 'kirua';
 import { SURFACES, type CardSurface } from './experiment';
 
 export interface ExperimentBarProps {
@@ -37,9 +37,9 @@ export function ExperimentBar({ value, onChange }: ExperimentBarProps) {
         </ButtonGroup>
       </div>
 
-      <p className="text-caption text-fg-muted">
+      <Text size="caption" tone="muted">
         {current?.note} — ganti terang/gelap di menu tema untuk melihat keduanya.
-      </p>
+      </Text>
     </aside>
   );
 }

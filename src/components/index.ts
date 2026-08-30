@@ -16,6 +16,10 @@ export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
 export { CARD_RADIUS_PX, PANEL_RADIUS_PX, PANEL_GLINT_INSET_PX } from '@/lib/radius';
+export { Heading, type HeadingProps } from './Heading';
+export { headingVariants } from './Heading.variants';
+export { Text, Eyebrow, type TextProps } from './Text';
+export { textVariants } from './Text.variants';
 export { Stat, StatRow, type StatProps } from './Stat';
 export { NavBar, type NavBarProps, type NavItem } from './NavBar';
 export {

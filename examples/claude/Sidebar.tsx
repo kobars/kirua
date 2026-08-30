@@ -3,6 +3,7 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  CloseIcon,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -19,7 +20,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
   Kbd,
+  MoreIcon,
+  PlusIcon,
   ScrollArea,
+  SearchIcon,
   Separator,
   SidebarGroup,
   SidebarGroupLabel,
@@ -27,10 +31,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  CloseIcon,
-  MoreIcon,
-  PlusIcon,
-  SearchIcon,
+  Text,
 } from 'kirua';
 import { allConversations, type Conversation } from './data';
 
@@ -132,7 +133,9 @@ export function Sidebar({ current, onPick, onSearch, onDelete, hidden }: Sidebar
       <ScrollArea className="min-h-0 flex-1">
         <nav aria-label="Conversations" className="grid gap-4 pe-2">
           {Object.entries(grouped).length === 0 ? (
-            <p className="px-3 text-body-sm text-fg-secondary">Nothing matches “{query}”.</p>
+            <Text size="sm" className="px-3">
+              Nothing matches “{query}”.
+            </Text>
           ) : (
             Object.entries(grouped).map(([when, items]) => (
               <SidebarGroup key={when}>

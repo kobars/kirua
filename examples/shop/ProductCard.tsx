@@ -1,4 +1,13 @@
-import { AspectRatio, Badge, Button, Card, CardTitle, CartIcon, StarIcon } from 'kirua';
+import {
+  AspectRatio,
+  Badge,
+  Button,
+  Card,
+  CardTitle,
+  CartIcon,
+  Eyebrow,
+  StarIcon,
+} from 'kirua';
 import { rupiah, type Product } from './data';
 
 export interface ProductCardProps {
@@ -22,7 +31,7 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
 
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-caption text-fg-muted uppercase">{product.brand}</p>
+          <Eyebrow>{product.brand}</Eyebrow>
           {/* `h2`, because the only place this card is used is the grid
               directly under the catalogue's `h1` — a bare `h3` skipped a level
               there. `CardTitle` rather than a raw heading so the name keeps its

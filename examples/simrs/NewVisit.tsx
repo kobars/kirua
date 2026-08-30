@@ -6,8 +6,10 @@ import {
   Button,
   Card,
   Checkbox,
+  CheckIcon,
   DatePicker,
   Field,
+  Heading,
   Input,
   Label,
   Select,
@@ -17,7 +19,6 @@ import {
   SelectValue,
   Separator,
   Textarea,
-  CheckIcon,
 } from 'kirua';
 import { clinics, doctors, patients } from './data';
 
@@ -52,7 +53,9 @@ export function NewVisit() {
 
   return (
     <div className="grid content-start gap-5">
-      <h1 className="text-heading-md font-semibold text-fg">Kunjungan baru</h1>
+      <Heading as="h1" size="heading-md">
+        Kunjungan baru
+      </Heading>
 
       {saved && (
         <output className="block">

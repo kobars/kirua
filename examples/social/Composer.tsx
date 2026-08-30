@@ -5,10 +5,10 @@ import {
   Button,
   Card,
   Label,
+  SendIcon,
   Textarea,
   ToggleGroup,
   ToggleGroupItem,
-  SendIcon,
 } from 'kirua';
 
 const LIMIT = 280;

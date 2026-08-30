@@ -5,14 +5,16 @@ import {
   AccordionTrigger,
   Button,
   Checkbox,
+  Heading,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   Label,
   RadioGroup,
   RadioGroupItem,
-  Slider,
   SearchIcon,
+  Slider,
+  Text,
 } from 'kirua';
 import { brands, categories, colours, rupiah, sizes, type Category } from './data';
 import { emptyFilters, type FilterState } from './filterState';
@@ -56,7 +58,9 @@ export function Filters({
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-body-md font-semibold text-fg">Filter</h2>
+        <Heading as="h2" size="body-md">
+          Filter
+        </Heading>
         <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)}>
           Reset
         </Button>
@@ -113,9 +117,9 @@ export function Filters({
                   onChange({ ...value, price: [low ?? 0, high ?? 800000] })
                 }
               />
-              <p className="text-body-sm text-fg-secondary tabular-nums">
+              <Text size="sm" className="tabular-nums">
                 {rupiah(value.price[0])} – {rupiah(value.price[1])}
-              </p>
+              </Text>
             </div>
           </AccordionContent>
         </AccordionItem>

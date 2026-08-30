@@ -139,6 +139,24 @@
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
 
+  /* LETTER SPACING. The system had exactly one declaration — 0.01em on
+   * `.font-display`, because Luckiest Guy has very tight sidebearings — and no
+   * scale, so an uppercase eyebrow had nothing to reach for and every one was
+   * set by eye or not at all.
+   *
+   * Four steps, and the names are Tailwind's own on purpose: `tailwind-merge`
+   * already models `tracking-tight | normal | wide | wider`, so two of them
+   * cancel with no entry in `cn.ts`. Inventing a `tracking-caps` would have
+   * meant a fifth class group for one value.
+   *
+   * `wider` is the eyebrow: caption-size text set in capitals loses the word
+   * shapes a reader matches on, and the spacing is what gives them back.
+   * Anything above 0.1em starts reading as separate letters rather than a word. */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;

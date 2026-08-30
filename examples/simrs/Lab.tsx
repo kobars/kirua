@@ -4,10 +4,12 @@ import {
   Button,
   Card,
   CardBody,
+  ChevronDownIcon,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
   EmptyState,
+  Heading,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -15,6 +17,7 @@ import {
   ItemContent,
   ItemDescription,
   ItemTitle,
+  SearchIcon,
   Spinner,
   Table,
   TableBody,
@@ -22,8 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  ChevronDownIcon,
-  SearchIcon,
+  Text,
 } from 'kirua';
 import { flagTone, labResults, patients } from './data';
 
@@ -52,8 +54,12 @@ export function Lab() {
     <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-heading-md font-semibold text-fg">Laboratorium</h1>
-          <p className="mt-1 text-body-sm text-fg-secondary">{orders.length} pemeriksaan</p>
+          <Heading as="h1" size="heading-md">
+            Laboratorium
+          </Heading>
+          <Text size="sm" className="mt-1">
+            {orders.length} pemeriksaan
+          </Text>
         </div>
         <div className="w-full sm:w-72">
           <InputGroup>

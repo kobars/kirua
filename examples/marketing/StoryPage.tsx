@@ -2,11 +2,14 @@ import {
   Card,
   CardBody,
   CardTitle,
+  Eyebrow,
+  Heading,
   Separator,
   Table,
   TableBody,
   TableCell,
   TableRow,
+  Text,
 } from 'kirua';
 import { MILESTONES, PRINCIPLES } from './data';
 
@@ -21,35 +24,39 @@ export function StoryPage() {
   return (
     <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
       <div className="grid gap-3">
-        <p className="text-caption font-medium text-fg-muted uppercase">Our story</p>
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">
+        <Eyebrow>Our story</Eyebrow>
+        <Heading as="h1" size="heading-lg">
           We built the thing we kept failing to do by hand
-        </h1>
-        <p className="text-body-lg text-fg-secondary">
+        </Heading>
+        <Text size="lg">
           Aozora started as a shared spreadsheet between two illustrators, and it exists because
           that spreadsheet lost work. Not files — commissions. About one in ten briefs ended in
           a message nobody answered.
-        </p>
+        </Text>
       </div>
 
       <Separator />
 
       <div className="grid gap-4">
-        <h2 className="text-heading-md font-semibold text-fg">How it began</h2>
-        <p className="text-body-md text-fg-secondary">
+        <Heading as="h2" size="heading-md">
+          How it began
+        </Heading>
+        <Text>
           In 2021 Mei was drawing chibi commissions in the evenings and Rangga was inking short
           comics. They took briefs in four places at once: two social inboxes, an email address
           and, occasionally, a message written on a phone screen and photographed. The
           spreadsheet was the attempt to put those four in one column, and it worked exactly as
           well as a spreadsheet does.
-        </p>
-        <p className="text-body-md text-fg-secondary">
+        </Text>
+        <Text>
           What it could not do was tell an artist what was owed and by whom. That is the
           question every artist we have spoken to since asks first, and it is the question the
           first version of Aozora answered before it could do anything else.
-        </p>
+        </Text>
 
-        <h3 className="text-heading-sm font-semibold text-fg">What we kept from that year</h3>
+        <Heading as="h3" size="heading-sm">
+          What we kept from that year
+        </Heading>
         <ul className="grid gap-2">
           {PRINCIPLES.map((principle) => (
             <li key={principle.title} className="text-body-md text-fg-secondary">
@@ -62,12 +69,14 @@ export function StoryPage() {
       <Separator />
 
       <div className="grid gap-4">
-        <h2 className="text-heading-md font-semibold text-fg">Four years, four changes</h2>
-        <p className="text-body-md text-fg-secondary">
+        <Heading as="h2" size="heading-md">
+          Four years, four changes
+        </Heading>
+        <Text>
           The list below is deliberately short. Most of what happened in between was
           maintenance, and a company history that reads like a changelog is a company history
           nobody finishes.
-        </p>
+        </Text>
 
         {/* Chronological, and a sequence rather than a comparison — the shape a
             Timeline is for. It is a table until that component exists. */}

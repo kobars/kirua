@@ -12,7 +12,9 @@ import {
   ButtonGroup,
   Card,
   CardBody,
+  CartIcon,
   EmptyState,
+  Heading,
   Item,
   ItemActions,
   ItemContent,
@@ -21,7 +23,7 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  CartIcon,
+  Text,
 } from 'kirua';
 import { orderTone, orders, products, rupiah, type Order } from './data';
 
@@ -55,7 +57,9 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
   return (
     <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-6 md:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="text-heading-md font-semibold text-fg">Pesanan saya</h1>
+        <Heading as="h1" size="heading-md">
+          Pesanan saya
+        </Heading>
         <ButtonGroup aria-label="Saring pesanan">
           {(['semua', 'berjalan', 'selesai'] as const).map((value) => (
             <Button
@@ -100,10 +104,12 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                   <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h2 className="text-body-md font-semibold text-fg">{order.id}</h2>
-                        <p className="text-body-sm text-fg-secondary tabular-nums">
+                        <Heading as="h2" size="body-md">
+                          {order.id}
+                        </Heading>
+                        <Text size="sm" className="tabular-nums">
                           Dipesan {order.placed} · {rupiah(total(order))}
-                        </p>
+                        </Text>
                       </div>
                       <Badge status={orderTone[status]}>{status}</Badge>
                     </div>

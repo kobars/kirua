@@ -4,12 +4,12 @@ import {
   IconButton,
   Kbd,
   Label,
+  SendIcon,
+  SparkleIcon,
   Textarea,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  SendIcon,
-  SparkleIcon,
 } from 'kirua';
 
 export interface ComposerProps {

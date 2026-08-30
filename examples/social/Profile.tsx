@@ -9,11 +9,13 @@ import {
   CardBody,
   Chart,
   ChartCaption,
+  Heading,
   Separator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  Text,
 } from 'kirua';
 import { PostCard } from './PostCard';
 import type { CardSurface } from './experiment';
@@ -45,11 +47,15 @@ export function Profile({ person, surface }: ProfileProps) {
           </div>
 
           <div>
-            <h1 className="text-heading-sm font-semibold text-fg">{person.name}</h1>
-            <p className="text-body-sm text-fg-muted">@{person.handle}</p>
+            <Heading as="h1" size="heading-sm">
+              {person.name}
+            </Heading>
+            <Text size="sm" tone="muted">
+              @{person.handle}
+            </Text>
           </div>
 
-          <p className="text-body-md text-pretty text-fg-secondary">{person.bio}</p>
+          <Text className="text-pretty">{person.bio}</Text>
 
           <p className="flex flex-wrap gap-4 text-body-sm text-fg-secondary">
             <span>
@@ -74,7 +80,7 @@ export function Profile({ person, surface }: ProfileProps) {
               items={others.map((p) => ({ name: p.name }))}
               className="[--icon-size:var(--icon-sm)]"
             />
-            <p className="text-body-sm text-fg-secondary">Diikuti oleh orang yang kamu ikuti</p>
+            <Text size="sm">Diikuti oleh orang yang kamu ikuti</Text>
           </div>
         </div>
       </Card>

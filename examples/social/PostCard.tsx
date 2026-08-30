@@ -2,7 +2,9 @@ import {
   AspectRatio,
   Avatar,
   AvatarFallback,
+  BookmarkIcon,
   Card,
+  CommentIcon,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -14,14 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  IconButton,
-  Separator,
-  Toggle,
-  BookmarkIcon,
-  CommentIcon,
   HeartIcon,
+  IconButton,
   MoreIcon,
+  Separator,
   ShareIcon,
+  Text,
+  Toggle,
 } from 'kirua';
 import { PersonLink } from './PersonCard';
 import { SURFACE_PROPS, type CardSurface } from './experiment';
@@ -87,7 +88,9 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
         </DropdownMenu>
       </header>
 
-      <p className="text-body-md text-pretty text-fg">{post.text}</p>
+      <Text tone="primary" className="text-pretty">
+        {post.text}
+      </Text>
 
       {post.media && (
         // The box is reserved before the picture arrives, so the feed cannot

@@ -1,6 +1,6 @@
 import {
-  AvatarStack,
   ArrowRightIcon,
+  AvatarStack,
   BookmarkIcon,
   Button,
   Card,
@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   GridIcon,
+  Heading,
   HeartIcon,
   IconButton,
   NavBar,
@@ -27,6 +28,7 @@ import {
   SpotlightPanel,
   Stat,
   StatRow,
+  Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -136,15 +138,19 @@ export function AnimeHero() {
             </SpotlightMedia>
 
             <SpotlightContent className="max-w-176 gap-6">
-              <h1 className="font-display text-display-md text-fg md:text-display-lg xl:text-display-xl">
+              <Heading
+                as="h1"
+                size="display-md"
+                className="md:text-display-lg xl:text-display-xl"
+              >
                 Bring your anime worlds to life
-              </h1>
+              </Heading>
 
-              <p className="font-text text-body-lg text-fg-secondary">
+              <Text size="lg">
                 Whether you create chibi characters, digital comics, or lively cartoon
                 animations, we give you the tools to design, display, and sell your work
                 beautifully.
-              </p>
+              </Text>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size="lg">

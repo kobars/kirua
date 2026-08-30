@@ -11,6 +11,9 @@ import {
   Button,
   Carousel,
   CarouselItem,
+  CartIcon,
+  Eyebrow,
+  Heading,
   QuantityStepper,
   Separator,
   StarIcon,
@@ -18,9 +21,9 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Text,
   ToggleGroup,
   ToggleGroupItem,
-  CartIcon,
 } from 'kirua';
 import { rupiah, type Product } from './data';
 
@@ -66,10 +69,10 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
 
         <div className="grid content-start gap-5">
           <div className="grid gap-1">
-            <p className="text-caption text-fg-muted uppercase">{product.brand}</p>
-            <h1 className="text-heading-lg font-semibold text-balance text-fg">
+            <Eyebrow>{product.brand}</Eyebrow>
+            <Heading as="h1" size="heading-lg">
               {product.name}
-            </h1>
+            </Heading>
             <p className="flex items-center gap-1.5 text-body-sm text-fg-secondary [--icon-size:var(--icon-sm)]">
               <StarIcon aria-hidden="true" className="text-warning-solid" />
               <span className="tabular-nums">{product.rating.toFixed(1)}</span>
@@ -91,7 +94,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
             </Badge>
           </p>
 
-          <p className="text-body-md text-pretty text-fg-secondary">{product.blurb}</p>
+          <Text className="text-pretty">{product.blurb}</Text>
 
           <Separator />
 

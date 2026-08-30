@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardBody,
+  Heading,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -16,6 +17,7 @@ import {
   InputOTPSlot,
   Label,
   Spinner,
+  Text,
 } from 'kirua';
 
 const LENGTH = 6;
@@ -56,10 +58,12 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
   return (
     <div className="mx-auto grid w-full max-w-md grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-10 md:px-8">
       <div>
-        <h1 className="text-heading-md font-semibold text-fg">Masuk</h1>
-        <p className="mt-1 text-body-sm text-fg-secondary">
+        <Heading as="h1" size="heading-md">
+          Masuk
+        </Heading>
+        <Text size="sm" className="mt-1">
           Kami kirim kode sekali pakai ke nomor kamu.
-        </p>
+        </Text>
       </div>
 
       <Card>

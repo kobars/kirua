@@ -9,7 +9,12 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
+  CommentIcon,
+  GridIcon,
+  Heading,
+  HeartIcon,
   IconButton,
+  SearchIcon,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -18,14 +23,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   Skeleton,
+  SparkleIcon,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  CommentIcon,
-  GridIcon,
-  HeartIcon,
-  SearchIcon,
-  SparkleIcon,
   UserIcon,
 } from 'kirua';
 import { Composer } from './Composer';
@@ -159,7 +160,9 @@ export function App() {
                   timeline does not, so the page needs a heading it never shows.
                   `sr-only` rather than `hidden`, which would take it out of the
                   accessibility tree and leave the page unnamed either way. */}
-              <h1 className="sr-only">Beranda</h1>
+              <Heading as="h1" className="sr-only">
+                Beranda
+              </Heading>
 
               <ExperimentBar
                 value={surface}

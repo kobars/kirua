@@ -8,6 +8,7 @@ import {
   CardTitle,
   Chip,
   DotGrid,
+  Heading,
   HeartIcon,
   SendIcon,
   SpotlightContent,
@@ -15,6 +16,7 @@ import {
   SpotlightPanel,
   Stat,
   StatRow,
+  Text,
 } from 'kirua';
 import { CHARACTERS } from './characters';
 import { PRINCIPLES } from './data';
@@ -44,15 +46,15 @@ export function HomePage() {
         <SpotlightContent className="max-w-176 gap-6">
           <Chip size="sm">For anime and cartoon artists</Chip>
 
-          <h1 className="font-display text-display-md text-fg md:text-display-lg xl:text-display-xl">
+          <Heading as="h1" size="display-md" className="md:text-display-lg xl:text-display-xl">
             Bring your anime worlds to life
-          </h1>
+          </Heading>
 
-          <p className="font-text text-body-lg text-fg-secondary">
+          <Text size="lg">
             Aozora gives you one place to design a gallery, show it at the size you drew it, and
             sell prints and commissions from the same page. No storefront to wire up, and no
             theme to fight.
-          </p>
+          </Text>
 
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="primary" size="lg" asChild>
@@ -72,7 +74,9 @@ export function HomePage() {
       </SpotlightPanel>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
-        <h2 className="sr-only">What Aozora stands for</h2>
+        <Heading as="h2" className="sr-only">
+          What Aozora stands for
+        </Heading>
         {PRINCIPLES.map((principle, index) => (
           <Card
             key={principle.title}
@@ -91,7 +95,9 @@ export function HomePage() {
       </section>
 
       <section className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <h2 className="sr-only">Aozora in numbers</h2>
+        <Heading as="h2" className="sr-only">
+          Aozora in numbers
+        </Heading>
         <Card padding="lg" className="justify-between gap-6">
           <CardBody className="text-body-lg">
             Eleven thousand artists publish on Aozora, and last year they were paid for a little

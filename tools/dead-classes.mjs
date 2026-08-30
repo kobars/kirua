@@ -61,13 +61,49 @@ function callRanges(source) {
 }
 
 /**
+ * The character ranges of every `defaultVariants: { … }` object.
+ *
+ * Its values are variant *names*, not class lists. Most names have no hyphen
+ * and were skipped by accident; `Heading`'s are the type scale's own step
+ * names, so `defaultVariants: { size: 'heading-md' }` looked exactly like a
+ * class that generates nothing.
+ */
+function defaultVariantRanges(source) {
+  const ranges = [];
+  for (const match of source.matchAll(/\bdefaultVariants\s*:\s*\{/g)) {
+    let depth = 0;
+    for (let i = match.index + match[0].length - 1; i < source.length; i += 1) {
+      if (source[i] === '{') depth += 1;
+      else if (source[i] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          ranges.push([match.index, i]);
+          break;
+        }
+      }
+    }
+  }
+  return ranges;
+}
+
+/**
  * Class tokens, taken only from positions that really are class lists: a string
  * literal inside `cn()` or `cva()`, or a plain `className="..."`. Reading every
  * string in the file instead would flag product slugs and ARIA attribute names.
+ *
+ * A quoted **object key** is not a class list, and inside `cva()` it is the
+ * name of a variant value. Most of them need no quotes and so were invisible
+ * here — until `Heading.variants.ts` named its sizes after the type scale's own
+ * steps (`'heading-lg'`, `'display-md'`), which do need quotes and were then
+ * reported as eight dead classes that had never been classes at all. A key is
+ * a string with a colon straight after its closing quote.
  */
 function classTokens(source) {
   const ranges = callRanges(source);
   const inCall = (index) => ranges.some(([start, end]) => index > start && index < end);
+  const isKey = (endIndex) => /^\s*:/.test(source.slice(endIndex));
+  const defaults = defaultVariantRanges(source);
+  const isDefault = (index) => defaults.some(([start, end]) => index > start && index < end);
   const tokens = new Set();
 
   const take = (text) => {
@@ -81,7 +117,8 @@ function classTokens(source) {
   };
 
   for (const match of source.matchAll(/'([^'\n]*)'/g)) {
-    if (inCall(match.index)) take(match[1]);
+    const end = match.index + match[0].length;
+    if (inCall(match.index) && !isKey(end) && !isDefault(match.index)) take(match[1]);
   }
   for (const match of source.matchAll(/className="([^"\n]*)"/g)) take(match[1]);
 

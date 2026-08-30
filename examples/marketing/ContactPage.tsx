@@ -5,7 +5,10 @@ import {
   CardBody,
   CardTitle,
   Checkbox,
+  CheckIcon,
+  Eyebrow,
   Field,
+  Heading,
   Input,
   Label,
   Select,
@@ -13,13 +16,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Text,
   Textarea,
   Toast,
   ToastClose,
   ToastDescription,
   ToastTitle,
   ToastViewport,
-  CheckIcon,
 } from 'kirua';
 import { STUDIO, TOPICS } from './data';
 
@@ -49,14 +52,14 @@ export function ContactPage() {
   return (
     <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
       <div className="grid gap-3">
-        <p className="text-caption font-medium text-fg-muted uppercase">Contact</p>
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">
+        <Eyebrow>Contact</Eyebrow>
+        <Heading as="h1" size="heading-lg">
           Tell us what you are trying to do
-        </h1>
-        <p className="text-body-lg text-fg-secondary">
+        </Heading>
+        <Text size="lg">
           A person reads every message. If you are moving a studio across, say how many artists
           and we will answer with a plan rather than a price list.
-        </p>
+        </Text>
       </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">

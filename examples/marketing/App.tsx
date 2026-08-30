@@ -5,6 +5,7 @@ import {
   NavBar,
   SearchIcon,
   SparkleIcon,
+  Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -93,9 +94,9 @@ export function App() {
             Aozora
           </span>
           <span className="flex-1" />
-          <p className="text-body-sm text-fg-secondary">
+          <Text size="sm">
             An example application. Every pixel comes from the kirua design system.
-          </p>
+          </Text>
         </div>
       </footer>
     </div>

@@ -10,6 +10,7 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  CloseIcon,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -24,11 +25,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   EmptyState,
+  Heading,
   IconButton,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  MoreIcon,
   Progress,
+  SearchIcon,
   Table,
   TableBody,
   TableCaption,
@@ -36,9 +40,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  CloseIcon,
-  MoreIcon,
-  SearchIcon,
+  Text,
 } from 'kirua';
 import { medicines, rupiah, type Medicine } from './data';
 
@@ -87,10 +89,12 @@ export function Pharmacy() {
     <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-heading-md font-semibold text-fg">Farmasi</h1>
-          <p className="mt-1 text-body-sm text-fg-secondary">
+          <Heading as="h1" size="heading-md">
+            Farmasi
+          </Heading>
+          <Text size="sm" className="mt-1">
             {rows.length} dari {medicines.length - discarded.length} item
-          </p>
+          </Text>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
