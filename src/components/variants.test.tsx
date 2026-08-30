@@ -33,13 +33,26 @@ type StoryModule = Parameters<typeof composeStories>[0];
 const variantModules = import.meta.glob<VariantModule>('./*.variants.ts', { eager: true });
 const storyModules = import.meta.glob<StoryModule>('./*.stories.tsx', { eager: true });
 
-/** `SpotlightPanel.variants.ts` → `spotlight-panel`, the `data-slot` convention. */
-const slotOf = (path: string) =>
-  path
-    .replace(/^\.\//, '')
-    .replace(/\.variants\.ts$/, '')
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .toLowerCase();
+/** `SpotlightPanel.variants.ts` → `SpotlightPanel`. */
+const baseOf = (path: string) => path.replace(/^\.\//, '').replace(/\.variants\.ts$/, '');
+
+/** `SpotlightPanel` → `spotlight-panel`, the `data-slot` convention. */
+const slotOf = (base: string) => base.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+/**
+ * Where a variant module's stories live. Same basename, except when a
+ * sub-component owns the variants: `SheetContent.variants.ts` is documented in
+ * `Sheet.stories.tsx`. So try the full name, then drop one capitalised word at
+ * a time.
+ */
+function storiesFor(base: string): string | null {
+  const words = base.match(/[A-Z][a-z0-9]*/g) ?? [base];
+  for (let end = words.length; end > 0; end -= 1) {
+    const candidate = `./${words.slice(0, end).join('')}.stories.tsx`;
+    if (candidate in storyModules) return candidate;
+  }
+  return null;
+}
 
 const hasVariants = (
   value: unknown,
@@ -47,6 +60,7 @@ const hasVariants = (
   typeof value === 'function' && 'variants' in value;
 
 const entries = Object.entries(variantModules).map(([path, module]) => {
+  const base = baseOf(path);
   const axes = Object.values(module)
     .filter(hasVariants)
     .flatMap(({ variants }) =>
@@ -62,8 +76,8 @@ const entries = Object.entries(variantModules).map(([path, module]) => {
     );
   return {
     path,
-    stories: path.replace(/\.variants\.ts$/, '.stories.tsx'),
-    slot: slotOf(path),
+    stories: storiesFor(base) ?? `./${base}.stories.tsx`,
+    slot: slotOf(base),
     axes,
   };
 });
