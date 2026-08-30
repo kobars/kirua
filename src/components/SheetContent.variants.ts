@@ -2,6 +2,9 @@ import { cva } from '@/lib/cva';
 
 /**
  * Three sides. The horizontal two are logical — `inset-s-0` is the start edge.
+ * The block axis uses `inset-y-0`, which compiles to `inset-block`; there is no
+ * `inset-block-*` utility, and writing one produces no CSS at all, which leaves
+ * the panel at its static position instead of pinned to the viewport.
  *
  * The arrival animation cannot be, because `transform` is physical. The variant
  * contributes a sign, `--sheet-side`, which `styles/kirua.css` multiplies by
@@ -13,12 +16,12 @@ export const sheetContentVariants = cva(
     variants: {
       side: {
         start: [
-          'inset-block-0 inset-s-0 h-full w-[min(20rem,calc(100vw-3rem))] p-6',
+          'inset-y-0 inset-s-0 h-full w-[min(20rem,calc(100vw-3rem))] p-6',
           'border-e border-line-subtle [--sheet-side:1]',
           'data-open:animate-slide-in-side data-closed:animate-slide-out-side',
         ],
         end: [
-          'inset-block-0 inset-e-0 h-full w-[min(24rem,calc(100vw-3rem))] p-6',
+          'inset-y-0 inset-e-0 h-full w-[min(24rem,calc(100vw-3rem))] p-6',
           'border-s border-line-subtle [--sheet-side:-1]',
           'data-open:animate-slide-in-side data-closed:animate-slide-out-side',
         ],
