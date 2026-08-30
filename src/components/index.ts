@@ -234,4 +234,19 @@ export {
   ContextMenuShortcut,
 } from './ContextMenu';
 
+export {
+  Menubar,
+  MenubarMenu,
+  MenubarGroup,
+  MenubarRadioGroup,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+  MenubarCheckboxItem,
+  MenubarRadioItem,
+  MenubarLabel,
+  MenubarSeparator,
+  MenubarShortcut,
+} from './Menubar';
+
 export * from './icons';
