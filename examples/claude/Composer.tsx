@@ -1,0 +1,94 @@
+import { useRef } from 'react';
+import {
+  Button,
+  IconButton,
+  Kbd,
+  Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  SendIcon,
+  SparkleIcon,
+} from 'kirua';
+
+export interface ComposerProps {
+  onSend: (text: string) => void;
+  busy: boolean;
+}
+
+/**
+ * The sticky bottom region. The textarea grows with its content up to a cap by
+ * writing to `style.height` — application behaviour, so it lives here rather
+ * than in `Textarea`.
+ */
+export function Composer({ onSend, busy }: ComposerProps) {
+  const box = useRef<HTMLTextAreaElement>(null);
+
+  const grow = () => {
+    const el = box.current;
+    if (!el) return;
+    // Reset first, or the box can only get taller: scrollHeight is measured
+    // against the height already set.
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 240)}px`;
+  };
+
+  const send = () => {
+    const el = box.current;
+    if (!el || el.value.trim() === '') return;
+    onSend(el.value.trim());
+    el.value = '';
+    grow();
+  };
+
+  return (
+    <div className="border-t border-line-subtle bg-page p-4 md:px-8">
+      <form
+        className="mx-auto grid w-full max-w-3xl gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          send();
+        }}
+      >
+        <label htmlFor="composer" className="sr-only">
+          Message the assistant
+        </label>
+        <Textarea
+          id="composer"
+          ref={box}
+          rows={1}
+          placeholder="Ask about tokens, contrast, or right-to-left…"
+          className="max-h-60 min-h-11 resize-none"
+          onInput={grow}
+          onKeyDown={(event) => {
+            // Enter sends, Shift+Enter makes a new line.
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault();
+              send();
+            }
+          }}
+        />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="flex items-center gap-1.5 text-caption text-fg-muted">
+            <Kbd>⇧</Kbd>
+            <Kbd>⏎</Kbd>
+            <span>for a new line</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconButton aria-label="Suggest a prompt" variant="ghost">
+                  <SparkleIcon />
+                </IconButton>
+              </TooltipTrigger>
+              <TooltipContent>Suggest a prompt</TooltipContent>
+            </Tooltip>
+            <Button type="submit" trailingIcon={<SendIcon />} disabled={busy}>
+              Send
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}
