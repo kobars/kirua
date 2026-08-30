@@ -30,6 +30,13 @@
   --animate-accordion-down: accordion-down var(--duration-base) var(--ease-out);
   --animate-accordion-up: accordion-up var(--duration-fast) var(--ease-out);
 
+  /* Collapsible publishes the same measurement under its own name, and a
+   * keyframe cannot choose between two variables — an unset one makes `height`
+   * invalid, which reads as "the animation stopped working". Two more
+   * keyframes is the whole cost of not guessing. */
+  --animate-collapsible-down: collapsible-down var(--duration-base) var(--ease-out);
+  --animate-collapsible-up: collapsible-up var(--duration-fast) var(--ease-out);
+
   /* `pulse-soft` is Skeleton: it breathes rather than sweeps, because a sweep
    * needs a gradient the width of an element the consumer sizes. `spin-steady`
    * is Spinner, and linear on purpose — an eased spin looks like it keeps
@@ -93,6 +100,24 @@
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
     }
     to {
       height: 0;
