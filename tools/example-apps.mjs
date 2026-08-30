@@ -1,5 +1,5 @@
 /**
- * The four example applications, and how to serve their builds.
+ * The five example applications, and how to serve their builds.
  *
  * Three tools walk the same routes — `responsive-check`, `a11y-check` and
  * `perf-check`. The table is here rather than in any one of them because a
@@ -59,6 +59,10 @@ export const APPS = [
     slug: 'social',
     routes: ['', 'jelajah', 'notifikasi', 'pesan', 'profil/rin', 'profil/maya', 'profil/eko'],
   },
+  {
+    slug: 'marketing',
+    routes: ['', 'pricing', 'story', 'guide', 'contact'],
+  },
 ];
 
 /** How many route views the whole sweep covers, for a tool's summary line. */
@@ -69,6 +73,7 @@ const TYPES = {
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml',
+  '.png': 'image/png',
 };
 
 /** A static server for one app's `dist`, on an ephemeral port. */

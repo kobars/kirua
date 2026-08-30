@@ -5,7 +5,7 @@
  *
  * ## What the example apps are for
  *
- * The four applications under `examples/` are the proof that this design system
+ * The five applications under `examples/` are the proof that this design system
  * can be built with. Each one imports the bare specifier `kirua`, exactly as an
  * outside consumer would, and cannot reach into `src`. That only means anything
  * while the applications keep using the system — an example that reaches past a
