@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   Button,
   Card,
@@ -7,6 +7,9 @@ import {
   Checkbox,
   CheckIcon,
   Container,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Eyebrow,
   Field,
   Heading,
@@ -151,14 +154,14 @@ export function ContactPage() {
             We are in one room in Yogyakarta, and the address is real. Post reaches us slower
             than email does.
           </CardBody>
-          <dl className="grid gap-2 text-body-sm">
+          <DescriptionList layout="stacked" gap="lg">
             {STUDIO.map((entry) => (
-              <div key={entry.term} className="grid gap-0.5">
-                <dt className="text-fg-muted">{entry.term}</dt>
-                <dd className="text-fg">{entry.value}</dd>
-              </div>
+              <Fragment key={entry.term}>
+                <DescriptionTerm>{entry.term}</DescriptionTerm>
+                <DescriptionDetails>{entry.value}</DescriptionDetails>
+              </Fragment>
             ))}
-          </dl>
+          </DescriptionList>
         </Card>
       </div>
 

@@ -16,6 +16,15 @@ export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
 export { CARD_RADIUS_PX, PANEL_RADIUS_PX, PANEL_GLINT_INSET_PX } from '@/lib/radius';
+export {
+  DescriptionList,
+  DescriptionTerm,
+  DescriptionDetails,
+  type DescriptionListProps,
+  type DescriptionTermProps,
+  type DescriptionDetailsProps,
+} from './DescriptionList';
+export { descriptionListVariants } from './DescriptionList.variants';
 export { Container, type ContainerProps } from './Container';
 export { containerVariants } from './Container.variants';
 export { Section, type SectionProps } from './Section';

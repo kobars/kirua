@@ -1,5 +1,9 @@
+import { Fragment } from 'react';
 import {
   Button,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Dialog,
   DialogClose,
   DialogContent,
@@ -92,18 +96,20 @@ export function SettingsDialog({
             <Heading as="h3" size="body-sm">
               Keyboard shortcuts
             </Heading>
-            <dl className="grid gap-2">
+            <DescriptionList>
               {shortcuts.map(({ keys, what }) => (
-                <div key={what} className="flex items-center justify-between gap-4">
-                  <dt className="text-body-sm text-fg-secondary">{what}</dt>
-                  <dd className="flex items-center gap-1">
-                    {keys.map((key) => (
-                      <Kbd key={key}>{key}</Kbd>
-                    ))}
-                  </dd>
-                </div>
+                <Fragment key={what}>
+                  <DescriptionTerm>{what}</DescriptionTerm>
+                  <DescriptionDetails>
+                    <span className="inline-flex items-center gap-1">
+                      {keys.map((key) => (
+                        <Kbd key={key}>{key}</Kbd>
+                      ))}
+                    </span>
+                  </DescriptionDetails>
+                </Fragment>
               ))}
-            </dl>
+            </DescriptionList>
           </div>
         </div>
 
