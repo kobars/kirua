@@ -60,5 +60,7 @@ export { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './Tool
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
 export { ScrollArea, ScrollBar, type ScrollAreaProps, type ScrollBarProps } from './ScrollArea';
 export { Separator, type SeparatorProps } from './Separator';
+export { Kbd, type KbdProps } from './Kbd';
+export { kbdVariants } from './Kbd.variants';
 
 export * from './icons';
