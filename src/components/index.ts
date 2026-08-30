@@ -74,6 +74,7 @@ export {
   type RadioGroupItemProps,
 } from './RadioGroup';
 export { Switch, type SwitchProps } from './Switch';
+export { Progress, type ProgressProps } from './Progress';
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
