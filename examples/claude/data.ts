@@ -5,7 +5,31 @@ export interface Turn {
   from: 'you' | 'assistant';
   text: string;
   code?: { language: string; source: string };
+  /**
+   * What the assistant worked through before answering. Shown in a collapsed
+   * panel, because it is the thing a reader wants available and not in the way.
+   */
+  reasoning?: string;
 }
+
+/** How many conversations to draw in the usage chart, by month. */
+export const usageByMonth = [
+  { label: 'Okt', value: 34 },
+  { label: 'Nov', value: 51 },
+  { label: 'Des', value: 28 },
+  { label: 'Jan', value: 66 },
+  { label: 'Feb', value: 72 },
+  { label: 'Mar', value: 95 },
+];
+
+/** Where those conversations went. */
+export const usageByTopic = [
+  { label: 'Tokens', value: 42 },
+  { label: 'A11y', value: 31 },
+  { label: 'Layout', value: 24 },
+  { label: 'Testing', value: 18 },
+  { label: 'Build', value: 11 },
+];
 
 export interface Conversation {
   id: string;
@@ -112,3 +136,151 @@ export const shortcuts = [
   { keys: ['⌘', '⏎'], what: 'Send the message' },
   { keys: ['⇧', 'Esc'], what: 'Start a new conversation' },
 ];
+
+/**
+ * Six more conversations, so the sidebar has something to group, search and
+ * scroll. Same shape as the four above, written out rather than generated so
+ * every line is readable in a diff.
+ */
+export const moreConversations: Conversation[] = [
+  {
+    id: 'forced-colors',
+    title: 'Why high contrast mode erases my cards',
+    when: 'Yesterday',
+    turns: [
+      {
+        id: 'f1',
+        from: 'you',
+        text: 'On Windows high contrast every card in our app loses its edge and the whole page turns into one flat sheet. Nothing in our CSS changed.',
+      },
+      {
+        id: 'f2',
+        from: 'assistant',
+        reasoning:
+          'Two mechanisms are at play. Forced colors replaces every author colour with a user-chosen palette, and separately it drops box-shadow entirely. If a design separates surfaces by fill and elevation, both go at once.',
+        text: "Nothing in your CSS changed — the browser changed it for you.\n\nForced colors mode replaces every colour you declared with one from the user's palette, and it also drops `box-shadow` completely. If your cards are separated from the page by a fill and a shadow, both of those disappear in the same instant, and a page of cards becomes a page.\n\nThe fix is to give the boundary a `border`, which forced colors keeps and recolours. Put the rule outside `@layer` so it beats the utility layer.",
+        code: {
+          language: 'css',
+          source:
+            "@media (forced-colors: active) {\n  [data-slot='card'],\n  [data-slot='dialog-content'] {\n    border: 1px solid CanvasText;\n  }\n}",
+        },
+      },
+      {
+        id: 'f3',
+        from: 'you',
+        text: 'How do I keep it working? I cannot check it by hand every release.',
+      },
+      {
+        id: 'f4',
+        from: 'assistant',
+        text: 'Make it a test project rather than a checklist item. A Playwright context takes `forcedColors: "active"`, so the mode is a property of the browser the tests run in — which means no test can accidentally turn it off, and a component that loses its edge fails the run.',
+      },
+    ],
+  },
+  {
+    id: 'dead-classes',
+    title: 'A misspelt Tailwind class is completely silent',
+    when: 'Yesterday',
+    turns: [
+      {
+        id: 'd1',
+        from: 'you',
+        text: 'We shipped a panel that never appeared. Turned out the class was `inset-block-0`, which is not a Tailwind utility. No tool said a word.',
+      },
+      {
+        id: 'd2',
+        from: 'assistant',
+        reasoning:
+          'A class that generates no rule leaves the markup unchanged and the declaration absent. Type checking cannot see it, the linter has no list of real utilities, and a visual test only fails if a baseline happens to cover it.',
+        text: 'That failure mode is the worst kind: the component renders, and renders wrong.\n\nThere is no list of valid utilities to lint against, because the valid set depends on your theme, your plugins and your own `@utility` rules. So the only authority is Tailwind itself.\n\nCollect every class token your source names, write them into a probe stylesheet, compile it against your real entry point, and report the ones that produced no rule.',
+        code: {
+          language: 'bash',
+          source:
+            'node tools/dead-classes.mjs\n# dead-classes: checked 473 class tokens.\n# dead-classes: every class generates a rule.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'stateless',
+    title: 'Can a component library ship zero JavaScript?',
+    when: 'This week',
+    turns: [
+      {
+        id: 's1',
+        from: 'you',
+        text: 'We want our Card to cost nothing in a React Server Component. Is that realistic when the library uses Radix?',
+      },
+      {
+        id: 's2',
+        from: 'assistant',
+        reasoning:
+          'The question is really about where the client boundary sits. Radix packages carry their own "use client". A wrapper that adds none stays a Server Component, and a Card that wraps nothing interactive never reaches the client bundle at all.',
+        text: 'Yes, and the rule that makes it true is narrower than it sounds: no component of yours reads `window` or `document` during render, none holds state, and none writes `"use client"`.\n\nRadix ships its own client boundaries, so an interactive component still works. What changes is that a Card — which wraps nothing interactive — stays on the server and costs nothing.\n\nAssert it rather than remember it. Render the barrel with no browser present, and reject a `"use client"` directive in a static scan.',
+      },
+    ],
+  },
+  {
+    id: 'logical-props',
+    title: 'Logical properties, and the one thing they cannot do',
+    when: 'This week',
+    turns: [
+      {
+        id: 'l1',
+        from: 'you',
+        text: 'We switched every `pl-` to `ps-`. Is that all of it?',
+      },
+      {
+        id: 'l2',
+        from: 'assistant',
+        text: 'Almost. `transform` has no logical form, so a horizontal flip stays horizontal in a right-to-left page — a switch thumb slides out of its track, and a mirrored corner ornament points the wrong way.\n\nKeep the sign in CSS, keyed on a data attribute, so it can re-invert under `:dir(rtl)`. And check it rather than trust it: render each component both ways and compare the computed values.',
+        code: {
+          language: 'css',
+          source:
+            "[data-slot='switch-thumb'] {\n  --switch-dir: 1;\n}\n\n:dir(rtl) [data-slot='switch-thumb'] {\n  --switch-dir: -1;\n}",
+        },
+      },
+    ],
+  },
+  {
+    id: 'overlays',
+    title: 'Which overlay goes on top of which',
+    when: 'This week',
+    turns: [
+      {
+        id: 'o1',
+        from: 'you',
+        text: 'Our z-index numbers are 9999, 10000 and 100000. I would like to stop.',
+      },
+      {
+        id: 'o2',
+        from: 'assistant',
+        reasoning:
+          'With z-index the name is the meaning, so the values belong in the semantic layer rather than the primitive one. Nine named layers cover every case that has come up.',
+        text: 'Name the layers and forbid the numbers. Nine is enough: base, raised, ornament, sticky, scrim, modal, popover, tooltip, toast.\n\nTwo orderings are worth arguing about once and then never again. A tooltip sits above a popover, because a tooltip can label a menu item. And an ornament sits above raised content, because a corner flourish has to stay over artwork that overhangs the panel edge.\n\nThen make `grep -rn "z-[0-9]" src/` returning nothing a rule you actually run.',
+      },
+    ],
+  },
+  {
+    id: 'axe-open',
+    title: 'A closed menu passes every accessibility check',
+    when: 'Earlier',
+    turns: [
+      {
+        id: 'a1',
+        from: 'you',
+        text: 'Our axe run has been green for a year. I do not entirely trust it.',
+      },
+      {
+        id: 'a2',
+        from: 'assistant',
+        reasoning:
+          'axe only inspects what is in the DOM. Overlay components render nothing until opened, so a suite whose stories never open one has been checking an empty document.',
+        text: "You are right not to. axe reads the DOM, and a closed dialog, menu or tooltip is not in it — so a story that never opens one has been asserting nothing for a year.\n\nOpen them in the story. The first time we did, a menu reported `aria-hidden-focus`: Radix defaults a dropdown to modal, which marks the page — including the menu's own trigger — `aria-hidden` while the trigger stays focusable. That was real, and a year of green runs had never touched it.",
+      },
+    ],
+  },
+];
+
+/** Everything the sidebar lists, in the order it lists them. */
+export const allConversations: Conversation[] = [...conversations, ...moreConversations];

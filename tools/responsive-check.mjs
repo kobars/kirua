@@ -23,7 +23,19 @@ const HEIGHT = 812;
 
 /** Every route each app can show. Hash routes, so one document each. */
 const APPS = [
-  { slug: 'claude', routes: ['', 'tokens', 'contrast', 'rtl'] },
+  {
+    slug: 'claude',
+    routes: [
+      '',
+      'tokens',
+      'contrast',
+      'rtl',
+      'forced-colors',
+      'dead-classes',
+      'overlays',
+      'penggunaan',
+    ],
+  },
   {
     slug: 'shop',
     routes: [
