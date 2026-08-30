@@ -249,4 +249,13 @@ export {
   MenubarShortcut,
 } from './Menubar';
 
+export {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+} from './NavigationMenu';
+
 export * from './icons';
