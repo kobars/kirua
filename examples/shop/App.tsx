@@ -117,7 +117,7 @@ export function App() {
 
           <span className="min-w-0 flex-1" />
 
-          <IconButton aria-label="Cari" variant="ghost" className="sm:hidden">
+          <IconButton aria-label="Cari" variant="ghost">
             <SearchIcon />
           </IconButton>
 
@@ -132,21 +132,28 @@ export function App() {
                 Filter
               </Button>
             </SheetTrigger>
-            <SheetContent side="start" className="overflow-y-auto">
+            {/* `pt-14` clears the sheet's own close control, which is
+                absolutely positioned in the top-end corner and would otherwise
+                sit on top of the panel's Reset button. */}
+            <SheetContent side="start" className="overflow-y-auto pt-14">
               <SheetTitle className="sr-only">Filter</SheetTitle>
               {filterPanel}
             </SheetContent>
           </Sheet>
 
+          {/* The label is dropped below `sm`. At 375 the row is a logo, a
+              search control, Filter and this; keeping every word left six
+              pixels of clearance, which reads as a clipped edge. */}
           <Button
             variant="secondary"
             size="sm"
             leadingIcon={<CartIcon />}
             onClick={() => setCartOpen(true)}
+            aria-label="Keranjang"
           >
-            Keranjang
+            <span className="hidden sm:inline">Keranjang</span>
             {count > 0 && (
-              <Badge status="info" className="ms-1">
+              <Badge status="info" className="sm:ms-1">
                 {count}
               </Badge>
             )}
@@ -257,12 +264,15 @@ export function App() {
 
       <ToastViewport>
         {toast !== null && (
-          <Toast status="success" icon={<CheckIcon />}>
+          <Toast
+            status="success"
+            icon={<CheckIcon />}
+            close={<ToastClose label="Tutup" onClick={() => setToast(null)} />}
+          >
             <ToastTitle>Masuk keranjang</ToastTitle>
             <ToastDescription>{toast}</ToastDescription>
           </Toast>
         )}
-        {toast !== null && <ToastClose onClick={() => setToast(null)} />}
       </ToastViewport>
     </div>
   );
