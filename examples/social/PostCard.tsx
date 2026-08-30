@@ -3,6 +3,12 @@ import {
   Avatar,
   AvatarFallback,
   Card,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
   IconButton,
   Popover,
   PopoverContent,
@@ -20,13 +26,15 @@ import { compactCount, initials, people, type Post } from './data';
 
 export interface PostCardProps {
   post: Post;
+  /** Offered on the card's own menu. Omit it and the entry is not drawn. */
+  onDelete?: (id: string) => void;
 }
 
-export function PostCard({ post }: PostCardProps) {
+export function PostCard({ post, onDelete }: PostCardProps) {
   const person = people[post.handle];
   if (!person) return null;
 
-  return (
+  const card = (
     <Card className="grid gap-3 p-4">
       <header className="flex items-start gap-3">
         <Avatar size="md">
@@ -60,6 +68,15 @@ export function PostCard({ post }: PostCardProps) {
                   {label}
                 </button>
               ))}
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={() => onDelete(post.id)}
+                  className="rounded-sm px-3 py-2 text-start text-body-sm text-danger-fg hover:bg-ghost-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                >
+                  Hapus kiriman
+                </button>
+              )}
             </div>
           </PopoverContent>
         </Popover>
@@ -104,5 +121,30 @@ export function PostCard({ post }: PostCardProps) {
         </Toggle>
       </footer>
     </Card>
+  );
+
+  /**
+   * The right-click menu repeats what the card's own "more" button already
+   * offers. It is a shortcut for a mouse and never the only way in — a
+   * right-click has no keyboard equivalent and none at all on a touch screen.
+   */
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>{card}</ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem>
+          Salin tautan
+          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem>Sematkan</ContextMenuItem>
+        <ContextMenuItem>Laporkan</ContextMenuItem>
+        {onDelete && (
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem onSelect={() => onDelete(post.id)}>Hapus kiriman</ContextMenuItem>
+          </>
+        )}
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
