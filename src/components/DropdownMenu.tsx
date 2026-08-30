@@ -2,6 +2,14 @@ import * as MenuPrimitive from '@radix-ui/react-dropdown-menu';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 import { CheckIcon } from './icons';
+import {
+  menuContentStyles,
+  menuIndicatorItemStyles,
+  menuIndicatorStyles,
+  menuItemStyles,
+  menuLabelStyles,
+  menuSeparatorStyles,
+} from './menu.styles';
 
 /**
  * Radix supplies typeahead, roving focus, Home/End, the menu/menuitem roles,
@@ -43,15 +51,6 @@ export const DropdownMenuTrigger = MenuPrimitive.Trigger;
 export const DropdownMenuGroup = MenuPrimitive.Group;
 export const DropdownMenuRadioGroup = MenuPrimitive.RadioGroup;
 
-const itemStyles = [
-  'relative flex cursor-pointer select-none items-center gap-2.5',
-  'rounded-sm px-3 py-2.5 font-text text-body-sm text-fg outline-none',
-  '[--icon-size:var(--icon-sm)]',
-  'transition-colors duration-fast ease-out',
-  'data-[highlighted]:bg-ghost-hover',
-  'data-[disabled]:pointer-events-none data-[disabled]:text-fg-muted',
-];
-
 export function DropdownMenuContent({
   className,
   sideOffset = 8,
@@ -66,12 +65,7 @@ export function DropdownMenuContent({
       <MenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
-        className={cn(
-          'z-popover min-w-52 rounded-md bg-raised p-1.5 shadow-overlay',
-          'border border-line-subtle',
-          'data-open:animate-pop-in data-closed:animate-pop-out',
-          className,
-        )}
+        className={cn(menuContentStyles, className)}
         {...props}
       />
     </MenuPrimitive.Portal>
@@ -85,7 +79,7 @@ export function DropdownMenuItem({
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
-      className={cn(itemStyles, className)}
+      className={cn(menuItemStyles, className)}
       {...props}
     />
   );
@@ -99,10 +93,10 @@ export function DropdownMenuCheckboxItem({
   return (
     <MenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
-      className={cn(itemStyles, 'ps-9', className)}
+      className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className="absolute inset-s-3 flex items-center">
+      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
         <CheckIcon />
       </MenuPrimitive.ItemIndicator>
       {children}
@@ -118,10 +112,10 @@ export function DropdownMenuRadioItem({
   return (
     <MenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
-      className={cn(itemStyles, 'ps-9', className)}
+      className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className="absolute inset-s-3 flex items-center">
+      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
         <span className="size-2 rounded-pill bg-fg" />
       </MenuPrimitive.ItemIndicator>
       {children}
@@ -136,7 +130,7 @@ export function DropdownMenuLabel({
   return (
     <MenuPrimitive.Label
       data-slot="dropdown-menu-label"
-      className={cn('px-3 py-2 font-text text-caption font-medium text-fg-muted', className)}
+      className={cn(menuLabelStyles, className)}
       {...props}
     />
   );
@@ -149,7 +143,7 @@ export function DropdownMenuSeparator({
   return (
     <MenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn('my-1.5 h-px bg-line-subtle', className)}
+      className={cn(menuSeparatorStyles, className)}
       {...props}
     />
   );
