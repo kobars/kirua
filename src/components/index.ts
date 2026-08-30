@@ -77,6 +77,12 @@ export { Switch, type SwitchProps } from './Switch';
 export { Progress, type ProgressProps } from './Progress';
 export { Toggle, type ToggleProps } from './Toggle';
 export { toggleVariants } from './Toggle.variants';
+export {
+  ToggleGroup,
+  ToggleGroupItem,
+  type ToggleGroupProps,
+  type ToggleGroupItemProps,
+} from './ToggleGroup';
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
