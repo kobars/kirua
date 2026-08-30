@@ -35,10 +35,10 @@ import { Explore } from './Explore';
 import { Messages } from './Messages';
 import { Notifications } from './Notifications';
 import { PostCard } from './PostCard';
-import { ThemeMenu } from './ThemeMenu';
+import { ThemeMenu } from '../shared/ThemeMenu';
 import { Profile } from './Profile';
 import { notices, people, posts } from './data';
-import { useHashRoute } from './useHashRoute';
+import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, shared by the rail, the header and the bottom bar. */
 const nav = [
@@ -155,6 +155,12 @@ export function App() {
             <Messages />
           ) : (
             <>
+              {/* The other four routes name themselves on the screen and a
+                  timeline does not, so the page needs a heading it never shows.
+                  `sr-only` rather than `hidden`, which would take it out of the
+                  accessibility tree and leave the page unnamed either way. */}
+              <h1 className="sr-only">Beranda</h1>
+
               <ExperimentBar
                 value={surface}
                 onChange={(next) => {

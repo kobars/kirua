@@ -105,7 +105,12 @@ export function Messages() {
             <span
               className={[
                 'max-w-[80%] rounded-lg px-3 py-2 text-body-sm',
-                message.from === 'me' ? 'bg-brand text-on-primary' : 'bg-sunken text-fg',
+                // `ctx-brand` is what makes the text legible on a brand fill, and
+                // it is the recipe `Card`'s own brand variant uses. `text-on-primary`
+                // belongs to the *action* family, not the surface family: under
+                // `.dark` it inverts to near-black while `bg-brand` stays a dark
+                // blue, so the pair reads only in light mode.
+                message.from === 'me' ? 'ctx-brand bg-brand text-fg' : 'bg-sunken text-fg',
               ].join(' ')}
             >
               {message.text}

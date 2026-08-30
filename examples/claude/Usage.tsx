@@ -40,7 +40,7 @@ export function Usage() {
 
         <Card>
           <CardBody>
-            <CardTitle>Conversations per month</CardTitle>
+            <CardTitle as="h2">Conversations per month</CardTitle>
             <div className="mt-4">
               <Chart label="Conversations started per month, October to March">
                 <BarChart data={usageByMonth} showValues />
@@ -52,7 +52,7 @@ export function Usage() {
 
         <Card>
           <CardBody>
-            <CardTitle>The same six months as a line</CardTitle>
+            <CardTitle as="h2">The same six months as a line</CardTitle>
             <div className="mt-4">
               <Chart label="Conversations per month drawn as a line">
                 <LineChart data={usageByMonth} filled series={2} />
@@ -64,7 +64,7 @@ export function Usage() {
 
         <Card>
           <CardBody>
-            <CardTitle>What they were about</CardTitle>
+            <CardTitle as="h2">What they were about</CardTitle>
             <div className="mt-4">
               <Table>
                 <TableHeader>

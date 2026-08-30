@@ -21,15 +21,16 @@ import {
   SparkleIcon,
 } from 'kirua';
 import { Composer } from './Composer';
-import { ThemeMenu } from './ThemeMenu';
-import { useTheme } from './useTheme';
+import { ThemeMenu } from '../shared/ThemeMenu';
+import { EN } from '../shared/themeLabels';
+import { useTheme } from '../shared/useTheme';
 import { SearchPalette } from './SearchPalette';
 import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
 import { Transcript } from './Transcript';
 import { Usage } from './Usage';
 import { allConversations } from './data';
-import { useHashRoute } from './useHashRoute';
+import { useHashRoute } from '../shared/useHashRoute';
 
 /**
  * A full-height three-region shell: a fixed sidebar, a scrolling transcript, a
@@ -140,24 +141,33 @@ export function App() {
             <TooltipContent>Settings</TooltipContent>
           </Tooltip>
 
-          <ThemeMenu />
+          {/* The one app of the four written in English, so the one that has to
+              pass the labels the shared menu takes as a parameter. */}
+          <ThemeMenu labels={EN} />
         </header>
 
-        {route === 'penggunaan' ? (
-          <Usage />
-        ) : (
-          <>
-            <Transcript conversation={conversation} pending={pending} />
+        {/* Every heading and turn below has to sit inside a landmark, or axe
+            reports `region` for each one on top of `landmark-one-main`. This
+            repeats the outer column's flex classes rather than replacing the
+            `<div>`: the transcript scrolls and the composer does not, so the
+            route content stays a `min-h-0` flex column of its own. */}
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col">
+          {route === 'penggunaan' ? (
+            <Usage />
+          ) : (
+            <>
+              <Transcript conversation={conversation} pending={pending} />
 
-            <Composer
-              busy={pending}
-              onSend={() => {
-                setPending(true);
-                window.setTimeout(() => setPending(false), 1400);
-              }}
-            />
-          </>
-        )}
+              <Composer
+                busy={pending}
+                onSend={() => {
+                  setPending(true);
+                  window.setTimeout(() => setPending(false), 1400);
+                }}
+              />
+            </>
+          )}
+        </main>
       </div>
 
       <AlertDialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>

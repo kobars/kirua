@@ -65,7 +65,7 @@ export function Summary() {
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle>Kunjungan per bulan</CardTitle>
+            <CardTitle as="h2">Kunjungan per bulan</CardTitle>
             <div className="mt-4">
               <Chart label="Kunjungan selesai per bulan, April 2025 sampai Maret 2026">
                 <BarChart data={monthlyVisits} showValues={false} />
@@ -79,7 +79,7 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle>Tren dua belas bulan</CardTitle>
+            <CardTitle as="h2">Tren dua belas bulan</CardTitle>
             <div className="mt-4">
               <Chart label="Tren kunjungan bulanan sebagai garis">
                 <LineChart data={monthlyVisits} filled series={2} />
@@ -92,7 +92,7 @@ export function Summary() {
 
       <Card>
         <CardBody>
-          <CardTitle>Beban poliklinik</CardTitle>
+          <CardTitle as="h2">Beban poliklinik</CardTitle>
           <div className="mt-4 overflow-x-auto">
             <Table>
               <TableHeader>
@@ -121,7 +121,7 @@ export function Summary() {
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle>Hunian ruang rawat</CardTitle>
+            <CardTitle as="h2">Hunian ruang rawat</CardTitle>
             <ul className="mt-4 grid gap-4">
               {wards.map((ward) => (
                 <li key={ward.name} className="grid gap-1.5">
@@ -143,7 +143,7 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle>Antrean berikutnya</CardTitle>
+            <CardTitle as="h2">Antrean berikutnya</CardTitle>
             <ItemGroup className="mt-3">
               {waiting.slice(0, 5).map((visit, index) => {
                 const patient = patients.find((p) => p.rm === visit.rm);
