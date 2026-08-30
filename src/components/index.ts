@@ -62,6 +62,7 @@ export { ScrollArea, ScrollBar, type ScrollAreaProps, type ScrollBarProps } from
 export { AspectRatio, type AspectRatioProps } from './AspectRatio';
 export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
+export { Spinner, type SpinnerProps } from './Spinner';
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
