@@ -143,6 +143,18 @@ const PAIRS: Pair[] = [
     fg: 'var(--color-neutral-500)',
     bg: 'var(--color-neutral-0)',
   },
+  {
+    label: 'The accent edge on the page (non-text, needs 3:1)',
+    fg: 'var(--color-border-accent)',
+    bg: 'var(--color-surface-page)',
+    note: 'The only edge in this system that is not grey. WCAG 1.4.11 puts a meaningful boundary at 3:1 — and an edge is drawn between two colours, so the row below is the other half. blue-400 passes neither and looks perfectly reasonable in a swatch.',
+  },
+  {
+    label: 'The accent edge on its own fill (non-text, needs 3:1)',
+    fg: 'var(--color-border-accent)',
+    bg: 'var(--color-surface-brand-subtle)',
+    note: 'Picking an edge against the page alone is the trap: it passes, and then vanishes on the inside of the box. src/styles/accent-edge.test.tsx asserts both halves in all four contexts.',
+  },
 ];
 
 const badgeFor: Record<WcagLevel, 'success' | 'info' | 'warning' | 'danger'> = {

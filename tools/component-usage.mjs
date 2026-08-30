@@ -59,6 +59,7 @@ const EXEMPT = {
   descriptionListVariants: 'Same as buttonVariants.',
   headingVariants: 'Same as buttonVariants.',
   itemVariants: 'Same as buttonVariants.',
+  itemGroupVariants: 'Same as buttonVariants.',
   kbdVariants: 'Same as buttonVariants.',
   linkVariants: 'Same as buttonVariants.',
   listVariants: 'Same as buttonVariants.',
