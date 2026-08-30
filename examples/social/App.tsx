@@ -13,6 +13,7 @@ import {
 } from 'kirua';
 import { Composer } from './Composer';
 import { PostCard } from './PostCard';
+import { ThemeMenu } from './ThemeMenu';
 import { Profile } from './Profile';
 import { people, posts } from './data';
 import { useHashRoute } from './useHashRoute';
@@ -71,6 +72,8 @@ export function App() {
             </TooltipTrigger>
             <TooltipContent>Profil</TooltipContent>
           </Tooltip>
+
+          <ThemeMenu />
         </div>
       </header>
 

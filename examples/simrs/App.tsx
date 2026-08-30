@@ -26,6 +26,7 @@ import { Appointments } from './Appointments';
 import { NewVisit } from './NewVisit';
 import { PatientList } from './PatientList';
 import { PatientRecord } from './PatientRecord';
+import { ThemeMenu } from './ThemeMenu';
 import { patients } from './data';
 import { useHashRoute } from './useHashRoute';
 
@@ -147,6 +148,8 @@ export function App() {
               </span>
             </TooltipContent>
           </Tooltip>
+
+          <ThemeMenu />
         </div>
       </header>
 

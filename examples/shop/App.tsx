@@ -32,6 +32,7 @@ import {
 import { CartSheet, type CartLine } from './CartSheet';
 import { CheckoutPage } from './CheckoutPage';
 import { Filters } from './Filters';
+import { ThemeMenu } from './ThemeMenu';
 import { emptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
 import { ProductPage } from './ProductPage';
@@ -120,6 +121,8 @@ export function App() {
           <IconButton aria-label="Cari" variant="ghost">
             <SearchIcon />
           </IconButton>
+
+          <ThemeMenu />
 
           <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
             <SheetTrigger asChild>
