@@ -1,0 +1,254 @@
+/* The design system's own layers — everything except `@import 'tailwindcss'`
+ * and the `@source` list, which is per entry point.
+ *
+ * Split out of `src/index.css` so an entry point can decide what Tailwind
+ * scans while inheriting every layer unchanged. Tailwind emits one stylesheet
+ * per scanned source set, so the hero page and an example app must not share
+ * one; `tools/size-budget.mjs` holds the budget that enforces it.
+ *
+ * Import order is the token architecture: primitives -> semantic -> aliases.
+ *
+ * No remote `@import` here. A font fetched from inside this file costs three
+ * sequential round trips before text is drawn in the intended face, and makes
+ * every consumer inherit a runtime dependency on another origin. kirua names
+ * its typefaces and does not ship them; `--font-display` and `--font-text`
+ * both end in a system fallback. */
+
+@import './tokens.primitives.css';
+@import './tokens.semantic.css';
+@import './theme.css';
+@import './animations.css';
+
+/* The .dark class re-points semantic tokens, so most components need no `dark:`
+ * variants at all. This exists for the rare case where dark mode changes layout
+ * or opacity rather than colour. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Components name a state, not a vendor's spelling of it. Radix writes
+ * `data-state="open"`; Base UI writes a bare `data-open`. Both are matched here
+ * so swapping primitives is a change of import, not a rewrite.
+ *
+ * Radix's tooltip is the reason `data-open` lists three values: it never emits a
+ * plain "open", only "delayed-open" after its hover delay or "instant-open" when
+ * a neighbouring tooltip was already showing. */
+@custom-variant data-open {
+  &:where(
+    [data-state='open'],
+    [data-state='delayed-open'],
+    [data-state='instant-open'],
+    [data-open]:not([data-open='false'])
+  ) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state='closed'], [data-closed]:not([data-closed='false'])) {
+    @slot;
+  }
+}
+
+/* The choice controls. Radix spells a checkbox's three states
+ * `data-state="checked|unchecked|indeterminate"`, and a toggle's two
+ * `data-state="on|off"` — four vendor spellings for two ideas. Named here for
+ * the same reason `data-open` is: a component says what it means, and swapping
+ * primitives stays a change of import.
+ *
+ * `data-on` is deliberately NOT folded into `data-checked`. A toggle that is on
+ * is *pressed*; a checkbox that is checked is *selected*. They look alike and
+ * they are different promises, and a shared variant would quietly let a
+ * pressed-state style leak onto a selection. */
+@custom-variant data-checked {
+  &:where([data-state='checked'], [data-checked]:not([data-checked='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state='unchecked'], [data-unchecked]:not([data-unchecked='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-indeterminate {
+  &:where(
+    [data-state='indeterminate'],
+    [data-indeterminate]:not([data-indeterminate='false'])
+  ) {
+    @slot;
+  }
+}
+
+@custom-variant data-on {
+  &:where([data-state='on'], [data-on]:not([data-on='false'])) {
+    @slot;
+  }
+}
+
+/* Radix marks a disabled item inside an overlay with a bare `data-disabled`
+ * rather than the `disabled` attribute, because the item is a div and a div
+ * cannot be disabled. `:disabled` therefore never matches it, which is a
+ * silent hole: the style simply does not apply and the item looks enabled. */
+@custom-variant data-disabled {
+  &:where([data-disabled]:not([data-disabled='false'])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state='active'], [data-active]:not([data-active='false'])) {
+    @slot;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-surface-page);
+    color: var(--color-text-primary);
+    font-family: var(--font-text);
+    font-size: var(--text-body-md);
+    line-height: var(--text-body-md--line-height);
+    font-weight: var(--font-weight-regular);
+  }
+
+  /* Components may restyle the ring, but none may remove it. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* The CornerGlint blade is drawn once, for the start-top corner, and flipped
+   * into the other three. `transform` is physical — it knows nothing about
+   * reading direction — so in a right-to-left document every horizontal flip
+   * has to invert again, which is what `--glint-dir` does. Keeping this in CSS
+   * rather than in the inline style is the only way the component can stay
+   * direction-agnostic. */
+  [data-slot='corner-glint'] {
+    --glint-x: 1;
+    --glint-y: 1;
+    --glint-dir: 1;
+    transform: scale(calc(var(--glint-x) * var(--glint-dir)), var(--glint-y));
+  }
+
+  [data-slot='corner-glint'][data-corner$='-end'] {
+    --glint-x: -1;
+  }
+
+  [data-slot='corner-glint'][data-corner^='bottom-'] {
+    --glint-y: -1;
+  }
+
+  :dir(rtl) [data-slot='corner-glint'] {
+    --glint-dir: -1;
+  }
+
+  /* The switch thumb, mirrored like the corner glint above. `transform` is the
+   * only property that can move it smoothly and it is physical, so the
+   * component sets no direction and the sign lives here. Asserted in
+   * `direction.test.tsx`. */
+  [data-slot='switch-thumb'] {
+    --switch-dir: 1;
+    --switch-travel: 0rem;
+    transform: translateX(calc(var(--switch-travel) * var(--switch-dir)));
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  [data-state='checked'] > [data-slot='switch-thumb'] {
+    --switch-travel: 1.25rem;
+  }
+
+  :dir(rtl) [data-slot='switch-thumb'] {
+    --switch-dir: -1;
+  }
+
+  /* `SheetContent` places itself with logical insets but cannot animate
+   * logically. The variant sets `--sheet-side` (+1 start, -1 end); this sets
+   * the other factor, so one @keyframes covers all four combinations. */
+  [data-slot='sheet-content'] {
+    --sheet-rtl: 1;
+  }
+
+  :dir(rtl) [data-slot='sheet-content'] {
+    --sheet-rtl: -1;
+  }
+
+  /* Luckiest Guy has no lowercase design of its own and very tight sidebearings. */
+  .font-display {
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* WINDOWS HIGH CONTRAST. Forced-colors mode replaces every colour on the page
+ * with a small user-chosen palette, for people who cannot read the colours a
+ * designer picked. A token system is the thing it overrides hardest, and none
+ * of it is visible in a normal render.
+ *
+ * Measured, not guessed. Under emulation `bg-brand` computes to plain white
+ * and `shadow-overlay` computes to `none` — so the two ways this system
+ * separates one surface from another, fill and elevation, both stop working
+ * at once. Everything below restores a boundary that forced colours KEEPS.
+ *
+ * `outline` with a negative offset rather than `border`, so nothing moves: a
+ * border would add a pixel to every one of these boxes in this mode only.
+ *
+ * DELIBERATELY OUTSIDE `@layer base`. Unlayered CSS beats every cascade layer,
+ * and these rules have to beat Tailwind's `utilities` layer — the first attempt
+ * put them in `base`, where `display: none` lost to `DotGrid`'s own
+ * `inline-block` and the ornament kept rendering. */
+@media (forced-colors: active) {
+  [data-slot='badge'],
+  [data-slot='chip'],
+  [data-slot='card'],
+  [data-slot='nav-bar'],
+  [data-slot='spotlight-panel'],
+  [data-slot='dialog-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='tooltip-content'] {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+
+  /* A scrollbar thumb is nothing but a fill. Measured: `bg-line-strong`
+     computes to Canvas here, so the thumb vanishes into the track. A system
+     colour is the one kind of fill the mode keeps. */
+  [data-slot='scroll-bar-thumb'] {
+    background-color: CanvasText;
+  }
+
+  /* The scrim is a translucent fill, so it is dropped, and the dialog would
+     otherwise float over a fully legible page with nothing marking it modal. */
+  [data-slot='dialog-content'] {
+    background-color: Canvas;
+  }
+
+  /* The focus ring is the one thing that must never be what disappears.
+     `Highlight` is the system's own selection colour, so it is guaranteed to
+     contrast with `Canvas` whatever palette the user chose. */
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  /* Ornament only. In forced colours both resolve to CanvasText and become
+     solid marks competing with the text they sit behind. */
+  [data-slot='dot-grid'],
+  [data-slot='corner-glint'] {
+    display: none;
+  }
+}
