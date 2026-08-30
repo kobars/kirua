@@ -258,4 +258,11 @@ export {
   NavigationMenuLink,
 } from './NavigationMenu';
 
+export {
+  ResizableGroup,
+  ResizablePanel,
+  ResizableHandle,
+  type ResizableHandleProps,
+} from './Resizable';
+
 export * from './icons';
