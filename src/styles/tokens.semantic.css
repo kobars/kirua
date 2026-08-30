@@ -224,7 +224,17 @@
    * Dividers, dot grid, icon ornament. Never copy. */
   --color-text-muted: color-mix(in srgb, var(--color-neutral-0) 72%, transparent);
 
-  --color-text-accent: var(--color-blue-100);
+  /* White, and for the same reason `text-secondary` is white: nothing in the
+   * blue ramp reaches 4.5:1 on blue-600. Measured against this surface —
+   * blue-100 3.82:1, blue-50 4.33:1, white 4.67:1. It was blue-100 until the
+   * first component actually set *text* in it: `Link`'s inline variant, whose
+   * four-surface story failed axe at 3.82.
+   *
+   * The consequence is worth stating rather than discovering. On a brand
+   * surface, accent cannot be a hue — the surface already is the accent — so
+   * an inline link there is told apart by its underline alone. That is why the
+   * underline is permanent and not a hover state. */
+  --color-text-accent: var(--color-neutral-0);
   --color-text-inverse: var(--color-neutral-1000);
 
   --color-border-subtle: color-mix(in srgb, var(--color-neutral-0) 24%, transparent);

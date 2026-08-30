@@ -13,6 +13,7 @@ import {
   Chip,
   Heading,
   IconButton,
+  Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -137,14 +138,9 @@ export function PricingPage() {
                                 is charged separately by the processor and Aozora does not add
                                 to it.
                               </Text>
-                              <p className="mt-2 text-body-sm">
-                                <a
-                                  href="#/contact"
-                                  className="rounded-xs font-medium text-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                                >
-                                  Ask about a studio rate
-                                </a>
-                              </p>
+                              <Text size="sm" className="mt-2">
+                                <Link href="#/contact">Ask about a studio rate</Link>
+                              </Text>
                             </PopoverContent>
                           </Popover>
                         </span>
