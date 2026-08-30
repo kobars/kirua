@@ -87,6 +87,17 @@ export {
   type BreadcrumbProps,
 } from './Breadcrumb';
 export {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+  type PaginationProps,
+  type PaginationLinkProps,
+} from './Pagination';
+export {
   Popover,
   PopoverTrigger,
   PopoverAnchor,
