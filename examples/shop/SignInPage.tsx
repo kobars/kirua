@@ -18,8 +18,13 @@ import {
   InputOTPSlot,
   Label,
   Spinner,
+  Stepper,
+  StepperItem,
   Text,
 } from 'kirua';
+
+/** The stepper announces its own state, and this app speaks Indonesian. */
+const STEP_LABELS = { done: 'Selesai', current: 'Langkah saat ini', upcoming: 'Belum mulai' };
 
 const LENGTH = 6;
 /** The code the demo accepts. A real shop would never know it. */
@@ -66,6 +71,18 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
           Kami kirim kode sekali pakai ke nomor kamu.
         </Text>
       </div>
+
+      {/* The page had always been two steps and had never said which one you
+          were on. `aria-current="step"` is the half of that a drawing cannot
+          carry. */}
+      <Stepper aria-label="Langkah masuk">
+        <StepperItem status={sent ? 'done' : 'current'} index={1} labels={STEP_LABELS}>
+          Nomor telepon
+        </StepperItem>
+        <StepperItem status={sent ? 'current' : 'upcoming'} index={2} labels={STEP_LABELS}>
+          Kode sekali pakai
+        </StepperItem>
+      </Stepper>
 
       <Card>
         <CardBody className="grid gap-5">

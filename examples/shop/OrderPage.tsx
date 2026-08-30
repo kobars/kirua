@@ -27,13 +27,10 @@ import {
   ItemTitle,
   PrintIcon,
   Separator,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   Text,
+  Timeline,
+  TimelineItem,
+  TimelineTime,
 } from 'kirua';
 import { orderTone, products, rupiah, type Order } from './data';
 
@@ -156,24 +153,22 @@ export function OrderPage({ order }: OrderPageProps) {
               </CollapsibleTrigger>
             </div>
             <CollapsibleContent className="pt-3">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Waktu</TableHead>
-                    <TableHead>Kejadian</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {order.events.map((event) => (
-                    <TableRow key={event.at}>
-                      <TableCell className="whitespace-nowrap tabular-nums">
-                        {event.at}
-                      </TableCell>
-                      <TableCell>{event.what}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              {/* A Timeline and not a Table. Two columns of time and event is a
+                  sequence, and a table invites you to compare across rows. The
+                  simrs visit history stays a table for the opposite reason: six
+                  columns you genuinely do compare. */}
+              <Timeline>
+                {order.events.map((event) => (
+                  <TimelineItem key={event.at}>
+                    <TimelineTime dateTime={event.at.replace(' ', 'T')}>
+                      {event.at}
+                    </TimelineTime>
+                    <Text size="sm" tone="primary">
+                      {event.what}
+                    </Text>
+                  </TimelineItem>
+                ))}
+              </Timeline>
             </CollapsibleContent>
           </Collapsible>
 
