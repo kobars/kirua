@@ -5,17 +5,30 @@ import {
   AccordionTrigger,
   Button,
   Checkbox,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
   Label,
   RadioGroup,
   RadioGroupItem,
   Slider,
+  SearchIcon,
 } from 'kirua';
-import { brands, colours, rupiah, sizes } from './data';
+import { brands, categories, colours, rupiah, sizes, type Category } from './data';
 import { emptyFilters, type FilterState } from './filterState';
 
 export interface FiltersProps {
   value: FilterState;
   onChange: (next: FilterState) => void;
+  /**
+   * The search box and the category list live here as well as in the header,
+   * because the header hides both below `lg` and this panel is what a phone
+   * gets instead. One control in two places beats a phone that cannot search.
+   */
+  query: string;
+  onQueryChange: (next: string) => void;
+  category: Category | 'semua';
+  onCategoryChange: (next: Category | 'semua') => void;
 }
 
 /**
@@ -24,7 +37,14 @@ export interface FiltersProps {
  * filter to open the colour filter would be maddening on a phone, which is the
  * whole difference between `single` and `multiple`.
  */
-export function Filters({ value, onChange }: FiltersProps) {
+export function Filters({
+  value,
+  onChange,
+  query,
+  onQueryChange,
+  category,
+  onCategoryChange,
+}: FiltersProps) {
   const toggle = (key: 'brands' | 'colours' | 'sizes', item: string) =>
     onChange({
       ...value,
@@ -42,7 +62,43 @@ export function Filters({ value, onChange }: FiltersProps) {
         </Button>
       </div>
 
-      <Accordion type="multiple" defaultValue={['harga', 'merek', 'ukuran']}>
+      <div className="lg:hidden">
+        <InputGroup>
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+          <InputGroupInput
+            value={query}
+            aria-label="Cari barang"
+            placeholder="Cari barang"
+            onChange={(event) => onQueryChange(event.target.value)}
+          />
+        </InputGroup>
+      </div>
+
+      <Accordion type="multiple" defaultValue={['kategori', 'harga', 'merek', 'ukuran']}>
+        <AccordionItem value="kategori">
+          <AccordionTrigger>Kategori</AccordionTrigger>
+          <AccordionContent>
+            <RadioGroup
+              value={category}
+              onValueChange={(next) => onCategoryChange(next as Category | 'semua')}
+              className="grid gap-2 pt-2"
+            >
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="semua" id="kategori-semua" />
+                <Label htmlFor="kategori-semua">Semua</Label>
+              </div>
+              {categories.map((item) => (
+                <div key={item.id} className="flex items-center gap-2">
+                  <RadioGroupItem value={item.id} id={`kategori-${item.id}`} />
+                  <Label htmlFor={`kategori-${item.id}`}>{item.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </AccordionContent>
+        </AccordionItem>
+
         <AccordionItem value="harga">
           <AccordionTrigger>Harga</AccordionTrigger>
           <AccordionContent>
