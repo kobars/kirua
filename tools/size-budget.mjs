@@ -22,9 +22,7 @@
  * This measures the **application** build — the rebuilt hero page — which
  * includes React and ReactDOM. It therefore catches "something heavy entered
  * the graph" and cannot answer "what does one Button cost". A per-component
- * figure needs tree-shaken library output, which does not exist yet; see
- * `board/tasks/library-build.md`. Measuring the wrong thing precisely would be
- * worse than measuring this thing and saying so.
+ * figure needs tree-shaken library output, which does not exist yet.
  */
 import { gzipSync } from 'node:zlib';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -62,6 +60,11 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * 9.27 kB with `ScrollArea`: the component's own utilities, its forced-colours
  * rule, and the story-only classes that ride along as above.
  *
+ * 104.38 / 9.34 kB after installing fourteen more Radix primitives. Not the
+ * stylesheet split that landed alongside it: building both commits against the
+ * same `node_modules` produced byte-identical asset hashes, so the split is
+ * output-neutral.
+ *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
  * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
@@ -77,8 +80,8 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * it, and say why in the message.
  */
 const BUDGETS = {
-  javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 9.27, gzipLimitKb: 12 },
+  javascript: { extension: '.js', measured: 104.38, gzipLimitKb: 115 },
+  css: { extension: '.css', measured: 9.34, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;
