@@ -13,6 +13,7 @@ import {
   Card,
   CardBody,
   CartIcon,
+  Container,
   EmptyState,
   Heading,
   Item,
@@ -55,7 +56,7 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
   });
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-6 md:px-8">
+    <Container>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <Heading as="h1" size="heading-md">
           Pesanan saya
@@ -188,6 +189,6 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Container>
   );
 }

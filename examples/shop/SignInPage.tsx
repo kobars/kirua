@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardBody,
+  Container,
   Heading,
   InputGroup,
   InputGroupAddon,
@@ -56,7 +57,7 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-md grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-10 md:px-8">
+    <Container width="md" pad="lg">
       <div>
         <Heading as="h1" size="heading-md">
           Masuk
@@ -145,6 +146,6 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
           )}
         </CardBody>
       </Card>
-    </div>
+    </Container>
   );
 }

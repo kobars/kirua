@@ -5,6 +5,7 @@ import {
   CartIcon,
   CheckIcon,
   CloseIcon,
+  Container,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -322,7 +323,7 @@ export function App() {
         ) : route === 'checkout' ? (
           <CheckoutPage lines={lines} onPlaced={() => setLines([])} />
         ) : (
-          <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 md:grid-cols-[16rem_1fr] md:px-8">
+          <Container width="6xl" className="md:grid-cols-[16rem_1fr]">
             <aside className="hidden md:block">{filterPanel}</aside>
 
             <div className="grid content-start gap-5">
@@ -417,7 +418,7 @@ export function App() {
                 </>
               )}
             </div>
-          </div>
+          </Container>
         )}
       </main>
 
