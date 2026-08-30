@@ -13,6 +13,108 @@
   --animate-pop-out: pop-out var(--duration-fast) var(--ease-out);
   --animate-slide-down: slide-down var(--duration-base) var(--ease-out);
 
+  /* Side-anchored panels. One horizontal keyframe covers all four cases,
+   * because `transform` is physical and only the sign differs:
+   *
+   *   --sheet-side  +1 start edge, -1 end edge. Set in SheetContent.variants.ts
+   *   --sheet-rtl   -1 in a right-to-left document. Set in kirua.css, the only
+   *                 place that can see `:dir()`. */
+  --animate-slide-in-side: slide-in-side var(--duration-base) var(--ease-out);
+  --animate-slide-out-side: slide-out-side var(--duration-fast) var(--ease-out);
+  --animate-slide-in-bottom: slide-in-bottom var(--duration-base) var(--ease-out);
+  --animate-slide-out-bottom: slide-out-bottom var(--duration-fast) var(--ease-out);
+
+  /* Radix publishes the content's natural height as
+   * `--radix-accordion-content-height` during the animation, which is what
+   * allows a panel to animate open to `auto`. */
+  --animate-accordion-down: accordion-down var(--duration-base) var(--ease-out);
+  --animate-accordion-up: accordion-up var(--duration-fast) var(--ease-out);
+
+  /* `pulse-soft` is Skeleton: it breathes rather than sweeps, because a sweep
+   * needs a gradient the width of an element the consumer sizes. `spin-steady`
+   * is Spinner, and linear on purpose — an eased spin looks like it keeps
+   * stopping. */
+  --animate-pulse-soft: pulse-soft 1.6s var(--ease-in-out) infinite;
+  --animate-spin-steady: spin-steady 900ms linear infinite;
+
+  @keyframes slide-in-side {
+    from {
+      opacity: 0;
+      transform: translateX(calc(-100% * var(--sheet-side, 1) * var(--sheet-rtl, 1)));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-side {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(calc(-100% * var(--sheet-side, 1) * var(--sheet-rtl, 1)));
+    }
+  }
+
+  @keyframes slide-in-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-bottom {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes spin-steady {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;
