@@ -1,5 +1,6 @@
 import {
   Button,
+  Container,
   DotGrid,
   IconButton,
   NavBar,
@@ -87,17 +88,19 @@ export function App() {
         )}
       </main>
 
-      <footer className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)] gap-4 px-4 py-10 md:px-8">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line-subtle pt-6">
-          <span className="flex items-center gap-2 text-body-md font-semibold text-fg [--icon-size:var(--icon-lg)]">
-            <SparkleIcon aria-hidden="true" className="text-fg-accent" />
-            Aozora
-          </span>
-          <span className="flex-1" />
-          <Text size="sm">
-            An example application. Every pixel comes from the kirua design system.
-          </Text>
-        </div>
+      <footer>
+        <Container width="7xl" gap="sm" pad="lg">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line-subtle pt-6">
+            <span className="flex items-center gap-2 text-body-md font-semibold text-fg [--icon-size:var(--icon-lg)]">
+              <SparkleIcon aria-hidden="true" className="text-fg-accent" />
+              Aozora
+            </span>
+            <span className="flex-1" />
+            <Text size="sm">
+              An example application. Every pixel comes from the kirua design system.
+            </Text>
+          </div>
+        </Container>
       </footer>
     </div>
   );

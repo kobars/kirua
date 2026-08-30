@@ -7,6 +7,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Container,
   CopyIcon,
   Heading,
   IconButton,
@@ -31,7 +32,7 @@ export interface TranscriptProps {
 export function Transcript({ conversation, pending }: TranscriptProps) {
   return (
     <ScrollArea className="min-h-0 flex-1">
-      <div className="mx-auto grid w-full max-w-3xl gap-8 px-4 py-8 md:px-8">
+      <Container width="3xl" gap="lg" pad="md">
         <Heading as="h1" size="heading-lg">
           {conversation.title}
         </Heading>
@@ -113,7 +114,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
             <Skeleton className="h-4 w-2/3" />
           </output>
         )}
-      </div>
+      </Container>
     </ScrollArea>
   );
 }

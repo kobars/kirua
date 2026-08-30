@@ -2,8 +2,10 @@ import {
   Card,
   CardBody,
   CardTitle,
+  Container,
   Eyebrow,
   Heading,
+  Section,
   Separator,
   Table,
   TableBody,
@@ -22,8 +24,8 @@ import { MILESTONES, PRINCIPLES } from './data';
  */
 export function StoryPage() {
   return (
-    <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
-      <div className="grid gap-3">
+    <Container width="3xl" pad="md">
+      <Section>
         <Eyebrow>Our story</Eyebrow>
         <Heading as="h1" size="heading-lg">
           We built the thing we kept failing to do by hand
@@ -33,7 +35,7 @@ export function StoryPage() {
           that spreadsheet lost work. Not files — commissions. About one in ten briefs ended in
           a message nobody answered.
         </Text>
-      </div>
+      </Section>
 
       <Separator />
 
@@ -109,6 +111,6 @@ export function StoryPage() {
           kept by friction.
         </CardBody>
       </Card>
-    </div>
+    </Container>
   );
 }

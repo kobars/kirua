@@ -12,6 +12,7 @@ import {
   Carousel,
   CarouselItem,
   CartIcon,
+  Container,
   Eyebrow,
   Heading,
   QuantityStepper,
@@ -37,7 +38,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
   const [quantity, setQuantity] = useState(1);
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-6 md:px-8">
+    <Container width="6xl" gap="lg">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -162,6 +163,6 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
           </p>
         </TabsContent>
       </Tabs>
-    </div>
+    </Container>
   );
 }

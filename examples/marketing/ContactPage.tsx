@@ -6,11 +6,13 @@ import {
   CardTitle,
   Checkbox,
   CheckIcon,
+  Container,
   Eyebrow,
   Field,
   Heading,
   Input,
   Label,
+  Section,
   Select,
   SelectContent,
   SelectItem,
@@ -50,8 +52,8 @@ export function ContactPage() {
     submitted && message.trim().length < 10 ? 'Tell us a little more than that.' : undefined;
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
-      <div className="grid gap-3">
+    <Container pad="md">
+      <Section>
         <Eyebrow>Contact</Eyebrow>
         <Heading as="h1" size="heading-lg">
           Tell us what you are trying to do
@@ -60,7 +62,7 @@ export function ContactPage() {
           A person reads every message. If you are moving a studio across, say how many artists
           and we will answer with a plan rather than a price list.
         </Text>
-      </div>
+      </Section>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Card padding="lg">
@@ -174,6 +176,6 @@ export function ContactPage() {
           </Toast>
         )}
       </ToastViewport>
-    </div>
+    </Container>
   );
 }

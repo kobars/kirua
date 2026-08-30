@@ -6,11 +6,13 @@ import {
   CardBody,
   CardTitle,
   CodeBlock,
+  Container,
   CopyIcon,
   Eyebrow,
   Heading,
   IconButton,
   Kbd,
+  Section,
   Separator,
   Text,
 } from 'kirua';
@@ -33,8 +35,8 @@ const MANIFEST = `{
  */
 export function GuidePage() {
   return (
-    <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
-      <div className="grid gap-3">
+    <Container width="3xl" pad="md">
+      <Section>
         <Eyebrow>Guide</Eyebrow>
         <Heading as="h1" size="heading-lg">
           Publishing your first gallery
@@ -43,7 +45,7 @@ export function GuidePage() {
           Four steps, and none of them needs a developer. The last section is for the people who
           want their files back out again, which is everyone eventually.
         </Text>
-      </div>
+      </Section>
 
       <Separator />
 
@@ -117,6 +119,6 @@ export function GuidePage() {
           every message, and the reply time is one working day.
         </CardBody>
       </Card>
-    </div>
+    </Container>
   );
 }

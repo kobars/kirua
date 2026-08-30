@@ -13,6 +13,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Container,
   Heading,
   Item,
   ItemContent,
@@ -43,7 +44,7 @@ export function OrderPage({ order }: OrderPageProps) {
   const subtotal = order.lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl grid-cols-[minmax(0,1fr)] content-start gap-5 px-4 py-6 md:px-8">
+    <Container>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -189,6 +190,6 @@ export function OrderPage({ order }: OrderPageProps) {
           </div>
         </CardBody>
       </Card>
-    </div>
+    </Container>
   );
 }

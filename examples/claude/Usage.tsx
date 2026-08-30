@@ -6,6 +6,7 @@ import {
   Chart,
   ChartCaption,
   ChartLegend,
+  Container,
   Heading,
   LineChart,
   ScrollArea,
@@ -30,7 +31,7 @@ export function Usage() {
 
   return (
     <ScrollArea className="min-h-0 flex-1">
-      <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] gap-6 px-4 py-8 md:px-8">
+      <Container width="3xl" pad="md">
         <Heading as="h1" size="heading-lg">
           Usage
         </Heading>
@@ -96,7 +97,7 @@ export function Usage() {
             </div>
           </CardBody>
         </Card>
-      </div>
+      </Container>
     </ScrollArea>
   );
 }

@@ -11,6 +11,7 @@ import {
   CardTitle,
   CheckIcon,
   Chip,
+  Container,
   Heading,
   IconButton,
   Link,
@@ -18,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -40,8 +42,8 @@ import { COMPARISON, FAQ, PLANS } from './data';
  */
 export function PricingPage() {
   return (
-    <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-6 md:px-8">
-      <div className="grid gap-3">
+    <Container width="6xl">
+      <Section>
         <Heading as="h1" size="heading-lg">
           Three plans, and the free one is not a trial
         </Heading>
@@ -49,9 +51,9 @@ export function PricingPage() {
           Every plan carries the same gallery. What changes is how many you get, whether the
           address is yours, and whether Aozora handles the money.
         </Text>
-      </div>
+      </Section>
 
-      <section className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
+      <Section gap="lg" className="md:grid-cols-3">
         <Heading as="h2" className="sr-only">
           The plans
         </Heading>
@@ -98,9 +100,9 @@ export function PricingPage() {
             </Button>
           </Card>
         ))}
-      </section>
+      </Section>
 
-      <section className="grid grid-cols-[minmax(0,1fr)] gap-3">
+      <Section>
         <Heading as="h2" size="heading-md">
           What actually differs
         </Heading>
@@ -165,9 +167,9 @@ export function PricingPage() {
             </Table>
           </ScrollArea>
         </Card>
-      </section>
+      </Section>
 
-      <section className="grid grid-cols-[minmax(0,1fr)] gap-3">
+      <Section>
         <Heading as="h2" size="heading-md">
           Questions we are asked
         </Heading>
@@ -181,7 +183,7 @@ export function PricingPage() {
             ))}
           </Accordion>
         </Card>
-      </section>
-    </div>
+      </Section>
+    </Container>
   );
 }

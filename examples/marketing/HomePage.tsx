@@ -7,9 +7,11 @@ import {
   CardEyebrow,
   CardTitle,
   Chip,
+  Container,
   DotGrid,
   Heading,
   HeartIcon,
+  Section,
   SendIcon,
   SpotlightContent,
   SpotlightMedia,
@@ -31,7 +33,7 @@ import { PRINCIPLES } from './data';
  */
 export function HomePage() {
   return (
-    <div className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-6 md:px-8">
+    <Container width="7xl">
       <SpotlightPanel padding="lg" mediaWidth="30%" className="md:min-h-[480px]">
         <SpotlightMedia side="end" overhang="both" width="42%" className="inset-e-[-6%]">
           <img
@@ -73,7 +75,7 @@ export function HomePage() {
         />
       </SpotlightPanel>
 
-      <section className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
+      <Section gap="lg" className="md:grid-cols-3">
         <Heading as="h2" className="sr-only">
           What Aozora stands for
         </Heading>
@@ -92,9 +94,9 @@ export function HomePage() {
             <CardBody>{principle.body}</CardBody>
           </Card>
         ))}
-      </section>
+      </Section>
 
-      <section className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <Section gap="lg" className="lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Heading as="h2" className="sr-only">
           Aozora in numbers
         </Heading>
@@ -123,7 +125,7 @@ export function HomePage() {
             <a href="#/pricing">Compare the plans</a>
           </Button>
         </Card>
-      </section>
-    </div>
+      </Section>
+    </Container>
   );
 }

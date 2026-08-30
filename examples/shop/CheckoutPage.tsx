@@ -7,6 +7,7 @@ import {
   Card,
   Checkbox,
   CheckIcon,
+  Container,
   Field,
   Heading,
   Input,
@@ -64,7 +65,7 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl gap-6 px-4 py-6 md:px-8">
+    <Container>
       <Heading as="h1" size="heading-lg">
         Checkout
       </Heading>
@@ -176,6 +177,6 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           </Button>
         </Card>
       </form>
-    </div>
+    </Container>
   );
 }
