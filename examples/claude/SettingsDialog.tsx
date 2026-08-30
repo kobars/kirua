@@ -20,7 +20,7 @@ import {
   Switch,
 } from 'kirua';
 import { shortcuts } from './data';
-import type { ThemePreference } from './useTheme';
+import type { ThemePreference } from '../shared/useTheme';
 
 export interface SettingsDialogProps {
   open: boolean;

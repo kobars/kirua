@@ -41,9 +41,9 @@ import { PatientList } from './PatientList';
 import { PatientRecord } from './PatientRecord';
 import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
-import { ThemeMenu } from './ThemeMenu';
+import { ThemeMenu } from '../shared/ThemeMenu';
 import { patients } from './data';
-import { useHashRoute } from './useHashRoute';
+import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, grouped the way the building is. */
 const sections = [

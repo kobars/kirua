@@ -1,10 +1,16 @@
 /* This app's stylesheet. Tailwind emits one stylesheet per scanned source set,
  * and automatic detection starts at the Vite root — this directory — so the
  * design system's own classes are named explicitly below and no other
- * example's are. `src/index.css` carries the matching `@source not`. */
+ * example's are. `src/index.css` carries the matching `@source not`.
+ *
+ * `../shared` has to be named for the same reason. A file outside every
+ * `@source` is invisible: its classes are never generated, nothing reports an
+ * error, and the component simply renders unstyled. Adding a directory under
+ * `examples/` means adding a line to four stylesheets. */
 @import 'tailwindcss';
 
 @source '.';
+@source '../shared';
 @source '../../src/components';
 @source '../../src/lib';
 
