@@ -69,6 +69,14 @@ export { Spinner, type SpinnerProps } from './Spinner';
 export { Calendar, type CalendarProps } from './Calendar';
 export { DatePicker, type DatePickerProps } from './DatePicker';
 export {
+  Combobox,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+  type ComboboxItemProps,
+} from './Combobox';
+export {
   Table,
   TableCaption,
   TableHeader,
