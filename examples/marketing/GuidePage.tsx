@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardTitle,
+  Code,
   CodeBlock,
   Container,
   CopyIcon,
@@ -88,9 +89,10 @@ export function GuidePage() {
         </Heading>
         <Text>
           Every gallery exports as a folder. Inside it is one file per piece at the resolution
-          you uploaded, and a manifest listing them. The manifest is documented, not
-          reverse-engineered, and it is the same shape whether you have four pieces or four
-          hundred.
+          you uploaded, and a <Code>manifest.json</Code> listing them. Each entry carries a{' '}
+          <Code>file</Code>, a <Code>title</Code> and whether the piece is <Code>sold</Code>.
+          The manifest is documented, not reverse-engineered, and it is the same shape whether
+          you have four pieces or four hundred.
         </Text>
 
         <CodeBlock
@@ -105,7 +107,8 @@ export function GuidePage() {
         </CodeBlock>
 
         <Text>
-          Anything that can read a folder can read the export. Opening it needs no Aozora
+          Anything that can read a folder can read the export — including{' '}
+          <Code>python -m http.server</Code> in the folder itself. Opening it needs no Aozora
           account, and it keeps working after the account is closed.
         </Text>
       </div>

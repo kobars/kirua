@@ -117,6 +117,7 @@ export {
 export { Carousel, CarouselItem, type CarouselProps } from './Carousel';
 export { QuantityStepper, type QuantityStepperProps } from './QuantityStepper';
 export { CodeBlock, type CodeBlockProps } from './CodeBlock';
+export { Code } from './Code';
 export {
   Table,
   TableCaption,
