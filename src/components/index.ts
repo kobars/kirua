@@ -282,4 +282,13 @@ export {
 } from './Sidebar';
 export { sidebarVariants } from './Sidebar.variants';
 
+export {
+  InputOTP,
+  InputOTPInput,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  type InputOTPSlotProps,
+} from './InputOTP';
+
 export * from './icons';
