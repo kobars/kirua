@@ -87,6 +87,7 @@ export {
 } from './Command';
 export { Carousel, CarouselItem, type CarouselProps } from './Carousel';
 export { QuantityStepper, type QuantityStepperProps } from './QuantityStepper';
+export { CodeBlock, type CodeBlockProps } from './CodeBlock';
 export {
   Table,
   TableCaption,
