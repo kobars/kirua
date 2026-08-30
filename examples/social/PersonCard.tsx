@@ -1,0 +1,67 @@
+import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from 'kirua';
+import { compactCount, initials, people } from './data';
+
+export interface PersonLinkProps {
+  handle: string;
+}
+
+/**
+ * A profile preview on hover — and the trigger is a real link, because a hover
+ * card never opens on focus or on touch. For a keyboard user and for everyone
+ * on a phone, the link IS the feature.
+ */
+export function PersonLink({ handle }: PersonLinkProps) {
+  const person = people[handle];
+  if (!person) return null;
+
+  return (
+    <HoverCard openDelay={150}>
+      <HoverCardTrigger asChild>
+        <a
+          href={`#/profil/${handle}`}
+          className="rounded-xs font-semibold text-fg underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          {person.name}
+        </a>
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <div className="grid gap-3">
+          <div className="flex items-center gap-3">
+            <Avatar size="lg">
+              <AvatarFallback>{initials(person.name)}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="truncate text-body-md font-semibold text-fg">{person.name}</p>
+              <p className="truncate text-body-sm text-fg-muted">@{person.handle}</p>
+            </div>
+          </div>
+          <p className="text-body-sm text-pretty text-fg-secondary">{person.bio}</p>
+          <p className="flex gap-4 text-body-sm text-fg-secondary">
+            <span>
+              <strong className="font-semibold text-fg tabular-nums">
+                {compactCount(person.followers)}
+              </strong>{' '}
+              pengikut
+            </span>
+            <span>
+              <strong className="font-semibold text-fg tabular-nums">
+                {compactCount(person.following)}
+              </strong>{' '}
+              diikuti
+            </span>
+          </p>
+          <Button size="sm" fullWidth>
+            Ikuti
+          </Button>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
