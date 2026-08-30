@@ -66,6 +66,7 @@ export { AspectRatio, type AspectRatioProps } from './AspectRatio';
 export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner';
+export { Calendar, type CalendarProps } from './Calendar';
 export {
   Table,
   TableCaption,
