@@ -265,4 +265,21 @@ export {
   type ResizableHandleProps,
 } from './Resizable';
 
+export {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarLabel,
+  SidebarSeparator,
+  type SidebarProps,
+  type SidebarMenuButtonProps,
+} from './Sidebar';
+export { sidebarVariants } from './Sidebar.variants';
+
 export * from './icons';
