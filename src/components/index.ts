@@ -97,6 +97,7 @@ export {
   SelectSeparator,
   type SelectContentProps,
 } from './Select';
+export { Slider, type SliderProps } from './Slider';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export {
   RadioGroup,
