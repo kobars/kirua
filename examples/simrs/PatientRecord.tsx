@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -22,6 +22,9 @@ import {
   Button,
   Card,
   Chart,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Heading,
   LineChart,
   Menubar,
@@ -167,7 +170,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 Identitas
               </Heading>
               <Separator />
-              <dl className="grid gap-2 text-body-sm">
+              <DescriptionList layout="aligned">
                 {(
                   [
                     ['Tanggal lahir', patient.born],
@@ -176,12 +179,12 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                     ['Alamat', patient.address],
                   ] as const
                 ).map(([term, value]) => (
-                  <div key={term} className="grid grid-cols-[8rem_1fr] gap-3">
-                    <dt className="text-fg-secondary">{term}</dt>
-                    <dd className="text-pretty text-fg">{value}</dd>
-                  </div>
+                  <Fragment key={term}>
+                    <DescriptionTerm>{term}</DescriptionTerm>
+                    <DescriptionDetails>{value}</DescriptionDetails>
+                  </Fragment>
                 ))}
-              </dl>
+              </DescriptionList>
             </Card>
 
             <Card className="grid gap-3 p-5">

@@ -8,6 +8,9 @@ import {
   Checkbox,
   CheckIcon,
   Container,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Field,
   Heading,
   Input,
@@ -155,23 +158,24 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
             Ringkasan
           </Heading>
           <Separator />
-          <dl className="grid gap-2 text-body-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">Subtotal</dt>
-              <dd className="text-fg tabular-nums">{rupiah(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">Ongkir</dt>
-              <dd className="text-fg tabular-nums">
-                {shipping === 0 ? 'Gratis' : rupiah(shipping)}
-              </dd>
-            </div>
-          </dl>
+          <DescriptionList>
+            <DescriptionTerm>Subtotal</DescriptionTerm>
+            <DescriptionDetails numeric>{rupiah(subtotal)}</DescriptionDetails>
+            <DescriptionTerm>Ongkir</DescriptionTerm>
+            <DescriptionDetails numeric>
+              {shipping === 0 ? 'Gratis' : rupiah(shipping)}
+            </DescriptionDetails>
+          </DescriptionList>
           <Separator />
-          <p className="flex justify-between gap-4 text-body-md font-semibold text-fg">
-            <span>Total</span>
-            <span className="tabular-nums">{rupiah(subtotal + shipping)}</span>
-          </p>
+          {/* The total is part of the same list semantically, but a Separator
+              between two rows would break the grid — so it is its own list of
+              one pair, which is also what the markup said before. */}
+          <DescriptionList>
+            <DescriptionTerm emphasis>Total</DescriptionTerm>
+            <DescriptionDetails emphasis numeric>
+              {rupiah(subtotal + shipping)}
+            </DescriptionDetails>
+          </DescriptionList>
           <Button type="submit" fullWidth size="lg">
             Bayar
           </Button>

@@ -14,6 +14,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Container,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Heading,
   Item,
   ItemContent,
@@ -126,20 +129,16 @@ export function OrderPage({ order }: OrderPageProps) {
 
           <Separator />
 
-          <dl className="grid gap-2 text-body-sm">
-            <div className="flex justify-between">
-              <dt className="text-fg-secondary">Subtotal</dt>
-              <dd className="text-fg tabular-nums">{rupiah(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-fg-secondary">Ongkos kirim</dt>
-              <dd className="text-fg tabular-nums">{rupiah(DELIVERY)}</dd>
-            </div>
-            <div className="flex justify-between text-body-md font-semibold">
-              <dt className="text-fg">Total</dt>
-              <dd className="text-fg tabular-nums">{rupiah(subtotal + DELIVERY)}</dd>
-            </div>
-          </dl>
+          <DescriptionList>
+            <DescriptionTerm>Subtotal</DescriptionTerm>
+            <DescriptionDetails numeric>{rupiah(subtotal)}</DescriptionDetails>
+            <DescriptionTerm>Ongkos kirim</DescriptionTerm>
+            <DescriptionDetails numeric>{rupiah(DELIVERY)}</DescriptionDetails>
+            <DescriptionTerm emphasis>Total</DescriptionTerm>
+            <DescriptionDetails emphasis numeric>
+              {rupiah(subtotal + DELIVERY)}
+            </DescriptionDetails>
+          </DescriptionList>
         </CardBody>
       </Card>
 
