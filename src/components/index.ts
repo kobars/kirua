@@ -77,6 +77,15 @@ export {
   type ComboboxItemProps,
 } from './Combobox';
 export {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandGroup,
+  CommandItem,
+  CommandEmpty,
+  type CommandItemProps,
+} from './Command';
+export {
   Table,
   TableCaption,
   TableHeader,
