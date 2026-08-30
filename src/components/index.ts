@@ -207,4 +207,6 @@ export { buttonGroupVariants } from './ButtonGroup.variants';
 
 export { InputGroup, InputGroupInput, InputGroupAddon, InputGroupText } from './InputGroup';
 
+export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsible';
+
 export * from './icons';
