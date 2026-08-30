@@ -1,12 +1,14 @@
 import {
-  BarChart,
   Badge,
+  BarChart,
+  CalendarIcon,
   Card,
   CardBody,
   CardTitle,
   Chart,
   ChartCaption,
   ChartLegend,
+  Heading,
   Item,
   ItemActions,
   ItemContent,
@@ -16,18 +18,18 @@ import {
   ItemSeparator,
   ItemTitle,
   LineChart,
-  Progress,
+  Meter,
   Sparkline,
   Stat,
   StatRow,
+  StethoscopeIcon,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  CalendarIcon,
-  StethoscopeIcon,
+  Text,
 } from 'kirua';
 import { clinicLoad, monthlyVisits, statusTone, visits, wards, patients } from './data';
 
@@ -47,25 +49,35 @@ export function Summary() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-6">
       <div>
-        <h1 className="text-heading-md font-semibold text-fg">Ringkasan hari ini</h1>
-        <p className="mt-1 text-body-sm text-fg-secondary">Kamis, 12 Maret 2026</p>
+        <Heading as="h1" size="heading-md">
+          Ringkasan hari ini
+        </Heading>
+        <Text size="sm" className="mt-1">
+          Kamis, 12 Maret 2026
+        </Text>
       </div>
 
-      <StatRow>
-        <Stat icon={<CalendarIcon />} value={String(today.length)} label="Kunjungan hari ini" />
+      <StatRow variant="tile">
         <Stat
+          variant="tile"
+          icon={<CalendarIcon />}
+          value={String(today.length)}
+          label="Kunjungan hari ini"
+        />
+        <Stat
+          variant="tile"
           icon={<StethoscopeIcon />}
           value={String(inRoom.length)}
           label="Sedang diperiksa"
         />
-        <Stat value={String(waiting.length)} label="Menunggu" />
-        <Stat value={`${used}/${beds}`} label="Tempat tidur terpakai" />
+        <Stat variant="tile" value={String(waiting.length)} label="Menunggu" />
+        <Stat variant="tile" value={`${used}/${beds}`} label="Tempat tidur terpakai" />
       </StatRow>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle>Kunjungan per bulan</CardTitle>
+            <CardTitle as="h2">Kunjungan per bulan</CardTitle>
             <div className="mt-4">
               <Chart label="Kunjungan selesai per bulan, April 2025 sampai Maret 2026">
                 <BarChart data={monthlyVisits} showValues={false} />
@@ -79,7 +91,7 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle>Tren dua belas bulan</CardTitle>
+            <CardTitle as="h2">Tren dua belas bulan</CardTitle>
             <div className="mt-4">
               <Chart label="Tren kunjungan bulanan sebagai garis">
                 <LineChart data={monthlyVisits} filled series={2} />
@@ -92,7 +104,7 @@ export function Summary() {
 
       <Card>
         <CardBody>
-          <CardTitle>Beban poliklinik</CardTitle>
+          <CardTitle as="h2">Beban poliklinik</CardTitle>
           <div className="mt-4 overflow-x-auto">
             <Table>
               <TableHeader>
@@ -121,7 +133,7 @@ export function Summary() {
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle>Hunian ruang rawat</CardTitle>
+            <CardTitle as="h2">Hunian ruang rawat</CardTitle>
             <ul className="mt-4 grid gap-4">
               {wards.map((ward) => (
                 <li key={ward.name} className="grid gap-1.5">
@@ -131,9 +143,20 @@ export function Summary() {
                       {ward.used} / {ward.beds}
                     </span>
                   </div>
-                  <Progress
-                    value={Math.round((ward.used / ward.beds) * 100)}
-                    aria-label={`Hunian ruang ${ward.name}`}
+                  {/* A measurement, not a task, and the one screen that
+                      wanted thresholds: amber past 85% of the ward, red past
+                      95%. Written in beds rather than percent, because a
+                      threshold as a percentage means something different the
+                      moment `min` stops being zero. */}
+                  <Meter
+                    value={ward.used}
+                    max={ward.beds}
+                    label={`Hunian ruang ${ward.name}`}
+                    valueText={`${ward.used} dari ${ward.beds} tempat tidur`}
+                    thresholds={{
+                      warning: Math.round(ward.beds * 0.85),
+                      danger: Math.round(ward.beds * 0.95),
+                    }}
                   />
                 </li>
               ))}
@@ -143,7 +166,7 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle>Antrean berikutnya</CardTitle>
+            <CardTitle as="h2">Antrean berikutnya</CardTitle>
             <ItemGroup className="mt-3">
               {waiting.slice(0, 5).map((visit, index) => {
                 const patient = patients.find((p) => p.rm === visit.rm);

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -5,14 +6,19 @@ import {
   AccordionTrigger,
   Button,
   Checkbox,
+  Heading,
+  IconButton,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   Label,
+  MinusIcon,
+  PlusIcon,
   RadioGroup,
   RadioGroupItem,
-  Slider,
   SearchIcon,
+  Slider,
+  Text,
 } from 'kirua';
 import { brands, categories, colours, rupiah, sizes, type Category } from './data';
 import { emptyFilters, type FilterState } from './filterState';
@@ -37,6 +43,9 @@ export interface FiltersProps {
  * filter to open the colour filter would be maddening on a phone, which is the
  * whole difference between `single` and `multiple`.
  */
+/** Every collapsible section, so "open all" has something to name. */
+const SECTIONS = ['kategori', 'harga', 'merek', 'ukuran'] as const;
+
 export function Filters({
   value,
   onChange,
@@ -45,6 +54,8 @@ export function Filters({
   category,
   onCategoryChange,
 }: FiltersProps) {
+  const [open, setOpen] = useState<string[]>([...SECTIONS]);
+
   const toggle = (key: 'brands' | 'colours' | 'sizes', item: string) =>
     onChange({
       ...value,
@@ -56,10 +67,25 @@ export function Filters({
   return (
     <div className="grid gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-body-md font-semibold text-fg">Filter</h2>
-        <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)}>
-          Reset
-        </Button>
+        <Heading as="h2" size="body-md">
+          Filter
+        </Heading>
+        <div className="flex items-center gap-1">
+          {/* Plus and minus, because the control does the opposite of what it
+              shows: a minus closes what is open. A chevron would say
+              "expand this one" and this one is all of them. */}
+          <IconButton
+            aria-label={open.length === 0 ? 'Buka semua bagian' : 'Tutup semua bagian'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setOpen(open.length === 0 ? [...SECTIONS] : [])}
+          >
+            {open.length === 0 ? <PlusIcon /> : <MinusIcon />}
+          </IconButton>
+          <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)}>
+            Reset
+          </Button>
+        </div>
       </div>
 
       <div className="lg:hidden">
@@ -76,7 +102,7 @@ export function Filters({
         </InputGroup>
       </div>
 
-      <Accordion type="multiple" defaultValue={['kategori', 'harga', 'merek', 'ukuran']}>
+      <Accordion type="multiple" value={open} onValueChange={setOpen}>
         <AccordionItem value="kategori">
           <AccordionTrigger>Kategori</AccordionTrigger>
           <AccordionContent>
@@ -113,9 +139,9 @@ export function Filters({
                   onChange({ ...value, price: [low ?? 0, high ?? 800000] })
                 }
               />
-              <p className="text-body-sm text-fg-secondary tabular-nums">
+              <Text size="sm" className="tabular-nums">
                 {rupiah(value.price[0])} – {rupiah(value.price[1])}
-              </p>
+              </Text>
             </div>
           </AccordionContent>
         </AccordionItem>

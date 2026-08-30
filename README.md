@@ -10,13 +10,14 @@ Hero Section_ (Figma Community).
 
 ## Deployed
 
-Five production deployments on Vercel. Storybook is the system; the four
+Six production deployments on Vercel. Storybook is the system; the five
 applications are the evidence that it works, and every one of them imports
 kirua through the bare specifier `kirua` — never a relative path into `src`.
 
 |                        | What it is                                                         | URL                                  |
 | ---------------------- | ------------------------------------------------------------------ | ------------------------------------ |
 | **Storybook**          | The system itself: every component, every foundation page          | <https://kirua-storybook.vercel.app> |
+| **Aozora (marketing)** | A five-page product site — the only screens made of body copy      | <https://kirua-marketing.vercel.app> |
 | **Claude web clone**   | A full-height chat shell where only the middle scrolls             | <https://kirua-claude.vercel.app>    |
 | **Senja (e-commerce)** | Faceted catalogue, cart, and a checkout form that really validates | <https://kirua-shop.vercel.app>      |
 | **SIMRS**              | A hospital record screen — dense, keyboard-driven, printable       | <https://kirua-simrs.vercel.app>     |
@@ -24,7 +25,9 @@ kirua through the bare specifier `kirua` — never a relative path into `src`.
 
 Each app was chosen because it forces a different part of the system into
 existence. Where a screen could not be built, that was the app naming the next
-component — which is how thirty of the fifty-one arrived.
+component. The marketing site is the clearest case: the system was
+reverse-engineered from a marketing hero and had no marketing screen, so its
+whole spotlight family was shipped and placed nowhere until Aozora existed.
 
 ## Running it
 
@@ -38,12 +41,13 @@ pnpm test:webkit # run the unit tests again in WebKit, the second declared engin
 pnpm lint        # oxlint
 pnpm check       # the whole gate: types, lint, format, every test, coverage
 
-pnpm example:claude   # the four example apps, one Vite root each
+pnpm example:claude    # the five example apps, one Vite root each
+pnpm example:marketing
 pnpm example:shop
 pnpm example:simrs
 pnpm example:social
-pnpm build:examples   # build all four
-pnpm check:responsive # build them, then measure every route at 375px
+pnpm build:examples    # build all five
+pnpm check:responsive  # build them, then measure every route at five widths
 ```
 
 ## What was measured, exactly
@@ -79,22 +83,23 @@ change with it.
 
 ## What it weighs
 
-Measured from the application build on 2026-08-30, and re-measured on every
+Measured from the application build on 2026-08-31, and re-measured on every
 `pnpm build` — `tools/size-budget.mjs` runs as the last step and **exits
 non-zero** when a budget is crossed. A warning in a build log is a budget nobody
 has ever been stopped by.
 
 | Asset      | Raw       | Gzip          | Budget (gzip) | Headroom    |
 | ---------- | --------- | ------------- | ------------- | ----------- |
-| JavaScript | 333.13 kB | **105.10 kB** | 115 kB        | 9.9 kB      |
-| CSS        | 64.38 kB  | **11.41 kB**  | 12 kB         | **0.59 kB** |
+| JavaScript | 338.43 kB | **106.50 kB** | 115 kB        | 8.5 kB      |
+| CSS        | 78.98 kB  | **13.51 kB**  | 14 kB         | **0.49 kB** |
 
 **The CSS budget is nearly spent, and that is reported rather than raised.**
-Thirty components arrived in one push and each brought utilities with it. The
-next few can still land; a large one cannot. Raising the number to make a build
-pass would turn the budget into decoration, so the honest options are to spend
-the remaining 0.59 kB deliberately or to re-baseline once, in its own commit,
-with the reason written beside it.
+Components arrived in large pushes and each brought utilities with it. The next
+few can still land; a large one cannot. Raising the number to make a build pass
+would turn the budget into decoration — it has been re-baselined exactly once,
+from 12 kB to 14 kB, in its own commit and with the reason beside it, and the
+0.49 kB left is again meant to be spent deliberately rather than legislated
+away.
 
 That JavaScript figure includes React and ReactDOM, because it is the rebuilt
 hero page rather than a library bundle. It catches "something heavy entered the
@@ -105,7 +110,7 @@ library output that does not exist yet.
 `src/components` carries a `"use client"` directive — asserted, not remembered,
 by `src/components/server.node.test.tsx` — so the components render on the
 server and ship none of themselves to the browser. What a consumer still pays is
-the stylesheet: **11.41 kB gzip** for the whole system, tokens included.
+the stylesheet: **13.51 kB gzip** for the whole system, tokens included.
 
 ## Browser support
 
@@ -166,22 +171,30 @@ switch propagates.
 
 ## What is here
 
-Fifty-one components. The grouping is by what supplies the behaviour, because
+Seventy-four components. The grouping is by what supplies the behaviour, because
 that is what decides how much of each one this repository is responsible for.
 
-**Presentational** — Button, IconButton, Badge, Chip, Card, Alert, Stat /
-StatRow, AvatarStack, Kbd, Separator, Skeleton, Spinner, Progress, EmptyState,
-Table, Breadcrumb, Pagination, QuantityStepper, CodeBlock, NavBar, DotGrid,
-CornerGlint, SpotlightPanel.
+**Text and layout** — Heading, Text, Eyebrow, Link, List, Code, Container,
+Section, DescriptionList, Timeline, Stepper, Meter, Item. The typographic ones
+arrived last, and late: for most of this system's life every application wrote
+its own `<h2 className="text-heading-md">`, which is a component nobody had
+written down.
 
-**Radix-backed** — Dialog, DropdownMenu, Tooltip, Popover, HoverCard, Sheet,
-Tabs, Accordion, Select, Slider, Switch, Checkbox, RadioGroup, Toggle,
-ToggleGroup, Toast, Avatar, AspectRatio, ScrollArea, Carousel, Combobox,
-Command. Radix supplies focus trapping, focus restore, typeahead, roving
-tabindex, collision-aware positioning, and the correct ARIA wiring. This repo
-supplies appearance only.
+**Presentational** — Button, IconButton, ButtonGroup, Badge, Chip, Card, Alert,
+Stat / StatRow, AvatarStack, Kbd, Separator, Skeleton, Spinner, Progress,
+EmptyState, Table, Chart, Breadcrumb, Pagination, QuantityStepper, CodeBlock,
+NavBar, Sidebar, DotGrid, CornerGlint, SpotlightPanel.
 
-**Forms** — Field, Label, Input, Textarea, Calendar, DatePicker. Field connects
+**Radix-backed** — Dialog, AlertDialog, DropdownMenu, ContextMenu, Menubar,
+NavigationMenu, Tooltip, Popover, HoverCard, Sheet, Tabs, Accordion,
+Collapsible, Select, Slider, Switch, Checkbox, RadioGroup, Toggle, ToggleGroup,
+Toast, Avatar, AspectRatio, ScrollArea, Resizable, Carousel, Combobox, Command.
+Radix supplies focus trapping, focus restore, typeahead, roving tabindex,
+collision-aware positioning, and the correct ARIA wiring. This repo supplies
+appearance only.
+
+**Forms** — Field, Label, Input, InputGroup, InputOTP, Textarea, Calendar,
+DatePicker. Field connects
 a native control to its visible label, description, error, required state, and
 invalid state while remaining server-renderable.
 
@@ -204,7 +217,7 @@ server-render.
 ## Known gaps
 
 - `Combobox`, `Command` and `Carousel` need a consumer to drive them (above).
-- The CSS size budget has 0.59 kB of gzip headroom left.
+- The CSS size budget has 0.49 kB of gzip headroom left.
 - Character artwork is not commercially licensed (see Attribution).
 - Visual baselines are Chromium-on-macOS only. They are committed PNGs, so a
   contributor on Linux will see diffs that are rasterisation, not regression.

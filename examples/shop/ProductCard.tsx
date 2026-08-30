@@ -1,4 +1,14 @@
-import { AspectRatio, Badge, Button, Card, CartIcon, StarIcon } from 'kirua';
+import {
+  AspectRatio,
+  Badge,
+  Button,
+  Card,
+  CardTitle,
+  CartIcon,
+  Eyebrow,
+  Link,
+  StarIcon,
+} from 'kirua';
 import { rupiah, type Product } from './data';
 
 export interface ProductCardProps {
@@ -22,15 +32,18 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
 
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-caption text-fg-muted uppercase">{product.brand}</p>
-          <h3 className="text-body-md font-semibold text-balance text-fg">
-            <a
-              href={`#/produk/${product.id}`}
-              className="rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
+          <Eyebrow>{product.brand}</Eyebrow>
+          {/* `h2`, because the only place this card is used is the grid
+              directly under the catalogue's `h1` — a bare `h3` skipped a level
+              there. `CardTitle` rather than a raw heading so the name keeps its
+              `data-slot="card-title"`, which is public API a consumer may
+              select on; the size is overridden because a product name in a grid
+              of nine is not display type. */}
+          <CardTitle as="h2" className="text-body-md font-semibold text-balance">
+            <Link href={`#/produk/${product.id}`} variant="block">
               {product.name}
-            </a>
-          </h3>
+            </Link>
+          </CardTitle>
         </div>
         {product.condition === 'used' && <Badge status="warning">Bekas</Badge>}
       </div>

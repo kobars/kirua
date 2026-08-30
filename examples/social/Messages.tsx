@@ -5,6 +5,12 @@ import {
   Badge,
   Button,
   Card,
+  ChevronStartIcon,
+  Heading,
+  IconButton,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
   Item,
   ItemActions,
   ItemContent,
@@ -13,14 +19,9 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
   ResizableGroup,
   ResizableHandle,
   ResizablePanel,
-  IconButton,
-  ChevronStartIcon,
   SendIcon,
 } from 'kirua';
 import { initials, people, threads } from './data';
@@ -105,7 +106,12 @@ export function Messages() {
             <span
               className={[
                 'max-w-[80%] rounded-lg px-3 py-2 text-body-sm',
-                message.from === 'me' ? 'bg-brand text-on-primary' : 'bg-sunken text-fg',
+                // `ctx-brand` is what makes the text legible on a brand fill, and
+                // it is the recipe `Card`'s own brand variant uses. `text-on-primary`
+                // belongs to the *action* family, not the surface family: under
+                // `.dark` it inverts to near-black while `bg-brand` stays a dark
+                // blue, so the pair reads only in light mode.
+                message.from === 'me' ? 'ctx-brand bg-brand text-fg' : 'bg-sunken text-fg',
               ].join(' ')}
             >
               {message.text}
@@ -149,7 +155,9 @@ export function Messages() {
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
-      <h1 className="text-heading-sm font-semibold text-fg">Pesan</h1>
+      <Heading as="h1" size="heading-sm">
+        Pesan
+      </Heading>
 
       {/* Phone: one pane at a time, chosen by whether a thread is open. */}
       <Card className="overflow-hidden md:hidden">{openId === '' ? list : conversation}</Card>

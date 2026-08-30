@@ -6,6 +6,8 @@ import {
   Chart,
   ChartCaption,
   ChartLegend,
+  Container,
+  Heading,
   LineChart,
   ScrollArea,
   Sparkline,
@@ -29,18 +31,20 @@ export function Usage() {
 
   return (
     <ScrollArea className="min-h-0 flex-1">
-      <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] gap-6 px-4 py-8 md:px-8">
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">Usage</h1>
+      <Container width="3xl" pad="md">
+        <Heading as="h1" size="heading-lg">
+          Usage
+        </Heading>
 
-        <StatRow>
-          <Stat value={String(allConversations.length)} label="Conversations" />
-          <Stat value={String(turns)} label="Turns" />
-          <Stat value="95" label="This month" />
+        <StatRow variant="tile">
+          <Stat variant="tile" value={String(allConversations.length)} label="Conversations" />
+          <Stat variant="tile" value={String(turns)} label="Turns" />
+          <Stat variant="tile" value="95" label="This month" />
         </StatRow>
 
         <Card>
           <CardBody>
-            <CardTitle>Conversations per month</CardTitle>
+            <CardTitle as="h2">Conversations per month</CardTitle>
             <div className="mt-4">
               <Chart label="Conversations started per month, October to March">
                 <BarChart data={usageByMonth} showValues />
@@ -52,7 +56,7 @@ export function Usage() {
 
         <Card>
           <CardBody>
-            <CardTitle>The same six months as a line</CardTitle>
+            <CardTitle as="h2">The same six months as a line</CardTitle>
             <div className="mt-4">
               <Chart label="Conversations per month drawn as a line">
                 <LineChart data={usageByMonth} filled series={2} />
@@ -64,7 +68,7 @@ export function Usage() {
 
         <Card>
           <CardBody>
-            <CardTitle>What they were about</CardTitle>
+            <CardTitle as="h2">What they were about</CardTitle>
             <div className="mt-4">
               <Table>
                 <TableHeader>
@@ -93,7 +97,7 @@ export function Usage() {
             </div>
           </CardBody>
         </Card>
-      </div>
+      </Container>
     </ScrollArea>
   );
 }

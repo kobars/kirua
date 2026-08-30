@@ -1,14 +1,16 @@
 import {
   Button,
+  CartIcon,
   EmptyState,
   QuantityStepper,
   Separator,
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetTitle,
-  CartIcon,
+  Text,
 } from 'kirua';
 import { rupiah, type Product } from './data';
 
@@ -65,9 +67,9 @@ export function CartSheet({
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-body-sm font-medium text-fg">{product.name}</p>
-                  <p className="text-body-sm text-fg-secondary tabular-nums">
+                  <Text size="sm" className="tabular-nums">
                     {rupiah(product.price)}
-                  </p>
+                  </Text>
                   <div className="mt-2">
                     <QuantityStepper
                       label={`Jumlah, ${product.name}`}
@@ -95,6 +97,14 @@ export function CartSheet({
           <Button fullWidth disabled={lines.length === 0} onClick={onCheckout}>
             Checkout
           </Button>
+          {/* `SheetClose` and not an `onOpenChange(false)`: Radix closes the
+              sheet and puts focus back on the control that opened it, which a
+              state setter does not do. */}
+          <SheetClose asChild>
+            <Button variant="ghost" fullWidth>
+              Lanjut belanja
+            </Button>
+          </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>

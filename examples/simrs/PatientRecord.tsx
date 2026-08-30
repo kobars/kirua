@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   Alert,
+  AlertDescription,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -8,7 +9,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
-  AlertDescription,
   AlertTitle,
   Avatar,
   AvatarFallback,
@@ -22,15 +22,25 @@ import {
   Button,
   Card,
   Chart,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+  Heading,
   LineChart,
   Menubar,
+  MenubarCheckboxItem,
   MenubarContent,
+  MenubarGroup,
   MenubarItem,
+  MenubarLabel,
   MenubarMenu,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
-  Progress,
+  Meter,
+  PrintIcon,
   Separator,
   Table,
   TableBody,
@@ -43,7 +53,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  PrintIcon,
+  Text,
 } from 'kirua';
 import { age, flagTone, labResults, statusTone, vitals, visits, type Patient } from './data';
 
@@ -55,7 +65,15 @@ export function PatientRecord({ patient }: PatientRecordProps) {
   const [cancelled, setCancelled] = useState<string[]>([]);
   const [cancelling, setCancelling] = useState<string | null>(null);
 
-  const history = visits.filter((v) => v.rm === patient.rm);
+  // The view menu drives the visit table below. A menubar earns its place only
+  // when its items do something, so these are real state and not decoration.
+  const [order, setOrder] = useState('baru');
+  const [showCancelled, setShowCancelled] = useState(true);
+
+  const history = visits
+    .filter((v) => v.rm === patient.rm)
+    .filter((v) => showCancelled || !(cancelled.includes(v.id) || v.status === 'batal'))
+    .sort((a, b) => (order === 'baru' ? b.at.localeCompare(a.at) : a.at.localeCompare(b.at)));
   const measurements = vitals[patient.rm] ?? [];
   const latest = measurements[0];
   const orders = labResults.filter((order) => order.rm === patient.rm);
@@ -94,11 +112,13 @@ export function PatientRecord({ patient }: PatientRecordProps) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-heading-md font-semibold text-fg">{patient.name}</h1>
-            <p className="text-body-sm text-fg-secondary tabular-nums">
+            <Heading as="h1" size="heading-md">
+              {patient.name}
+            </Heading>
+            <Text size="sm" className="tabular-nums">
               {patient.rm} · {age(patient.born)} tahun ·{' '}
               {patient.sex === 'P' ? 'Perempuan' : 'Laki-laki'}
-            </p>
+            </Text>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -121,6 +141,30 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 <MenubarItem>Buat kunjungan baru</MenubarItem>
                 <MenubarItem>Minta pemeriksaan lab</MenubarItem>
                 <MenubarItem>Tulis resep</MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger>Tampilan</MenubarTrigger>
+              <MenubarContent>
+                {/* A group with a label, rather than a separator and a heading:
+                    the label names the radio set for a screen reader too. */}
+                <MenubarGroup>
+                  <MenubarLabel>Urutan kunjungan</MenubarLabel>
+                  <MenubarRadioGroup value={order} onValueChange={setOrder}>
+                    <MenubarRadioItem value="baru">Terbaru dulu</MenubarRadioItem>
+                    <MenubarRadioItem value="lama">Terlama dulu</MenubarRadioItem>
+                  </MenubarRadioGroup>
+                </MenubarGroup>
+                <MenubarSeparator />
+                <MenubarGroup>
+                  <MenubarLabel>Tampilkan</MenubarLabel>
+                  <MenubarCheckboxItem
+                    checked={showCancelled}
+                    onCheckedChange={setShowCancelled}
+                  >
+                    Kunjungan yang dibatalkan
+                  </MenubarCheckboxItem>
+                </MenubarGroup>
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
@@ -159,9 +203,11 @@ export function PatientRecord({ patient }: PatientRecordProps) {
         <TabsContent value="ringkasan">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="grid gap-3 p-5">
-              <h2 className="text-body-md font-semibold text-fg">Identitas</h2>
+              <Heading as="h2" size="body-md">
+                Identitas
+              </Heading>
               <Separator />
-              <dl className="grid gap-2 text-body-sm">
+              <DescriptionList layout="aligned">
                 {(
                   [
                     ['Tanggal lahir', patient.born],
@@ -170,35 +216,45 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                     ['Alamat', patient.address],
                   ] as const
                 ).map(([term, value]) => (
-                  <div key={term} className="grid grid-cols-[8rem_1fr] gap-3">
-                    <dt className="text-fg-secondary">{term}</dt>
-                    <dd className="text-pretty text-fg">{value}</dd>
-                  </div>
+                  <Fragment key={term}>
+                    <DescriptionTerm>{term}</DescriptionTerm>
+                    <DescriptionDetails>{value}</DescriptionDetails>
+                  </Fragment>
                 ))}
-              </dl>
+              </DescriptionList>
             </Card>
 
             <Card className="grid gap-3 p-5">
-              <h2 className="text-body-md font-semibold text-fg">Kelengkapan berkas</h2>
+              <Heading as="h2" size="body-md">
+                Kelengkapan berkas
+              </Heading>
               <Separator />
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
                   <span className="text-fg-secondary">Rekam medis</span>
                   <span className="text-fg tabular-nums">82%</span>
                 </p>
-                <Progress value={82} aria-label="Kelengkapan rekam medis" />
+                <Meter
+                  value={82}
+                  label="Kelengkapan rekam medis"
+                  valueText="82 dari 100 persen"
+                />
               </div>
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
                   <span className="text-fg-secondary">Berkas penjamin</span>
                   <span className="text-fg tabular-nums">100%</span>
                 </p>
-                <Progress value={100} aria-label="Kelengkapan berkas penjamin" />
+                <Meter
+                  value={100}
+                  label="Kelengkapan berkas penjamin"
+                  valueText="100 dari 100 persen"
+                />
               </div>
               {latest && (
-                <p className="mt-2 text-body-sm text-fg-secondary tabular-nums">
+                <Text size="sm" className="mt-2 tabular-nums">
                   Terakhir diukur {latest.at} — {latest.systolic}/{latest.diastolic} mmHg
-                </p>
+                </Text>
               )}
             </Card>
           </div>
@@ -253,7 +309,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="vital">
           {measurements.length === 0 ? (
-            <p className="text-body-sm text-fg-secondary">Belum ada pengukuran.</p>
+            <Text size="sm">Belum ada pengukuran.</Text>
           ) : (
             <div className="grid gap-6">
               <Card className="p-5">
@@ -294,22 +350,22 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="lab">
           {orders.length === 0 ? (
-            <p className="text-body-sm text-fg-secondary">
-              Belum ada pemeriksaan laboratorium.
-            </p>
+            <Text size="sm">Belum ada pemeriksaan laboratorium.</Text>
           ) : (
             <div className="grid gap-4">
               {orders.map((order) => (
                 <Card key={order.id} className="grid gap-3 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-body-md font-semibold text-fg">{order.panel}</h2>
+                    <Heading as="h2" size="body-md">
+                      {order.panel}
+                    </Heading>
                     <span className="text-body-sm text-fg-secondary tabular-nums">
                       {order.id} · {order.at}
                     </span>
                   </div>
                   <Separator />
                   {order.rows.length === 0 ? (
-                    <p className="text-body-sm text-fg-secondary">Hasil belum keluar.</p>
+                    <Text size="sm">Hasil belum keluar.</Text>
                   ) : (
                     <div className="overflow-x-auto">
                       <Table>

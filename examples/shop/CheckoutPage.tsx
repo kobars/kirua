@@ -6,7 +6,13 @@ import {
   Button,
   Card,
   Checkbox,
+  CheckIcon,
+  Container,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Field,
+  Heading,
   Input,
   Label,
   RadioGroup,
@@ -17,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  CheckIcon,
 } from 'kirua';
 import { rupiah } from './data';
 import type { CartLine } from './CartSheet';
@@ -63,8 +68,10 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-4xl gap-6 px-4 py-6 md:px-8">
-      <h1 className="text-heading-lg font-semibold text-fg">Checkout</h1>
+    <Container>
+      <Heading as="h1" size="heading-lg">
+        Checkout
+      </Heading>
 
       {/* `Alert` supplies no live-region role: announcing is the consumer's
           choice. `<output>` is already a polite live region. */}
@@ -147,30 +154,33 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
         </div>
 
         <Card className="grid h-max gap-3 p-5">
-          <h2 className="text-body-md font-semibold text-fg">Ringkasan</h2>
+          <Heading as="h2" size="body-md">
+            Ringkasan
+          </Heading>
           <Separator />
-          <dl className="grid gap-2 text-body-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">Subtotal</dt>
-              <dd className="text-fg tabular-nums">{rupiah(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">Ongkir</dt>
-              <dd className="text-fg tabular-nums">
-                {shipping === 0 ? 'Gratis' : rupiah(shipping)}
-              </dd>
-            </div>
-          </dl>
+          <DescriptionList>
+            <DescriptionTerm>Subtotal</DescriptionTerm>
+            <DescriptionDetails numeric>{rupiah(subtotal)}</DescriptionDetails>
+            <DescriptionTerm>Ongkir</DescriptionTerm>
+            <DescriptionDetails numeric>
+              {shipping === 0 ? 'Gratis' : rupiah(shipping)}
+            </DescriptionDetails>
+          </DescriptionList>
           <Separator />
-          <p className="flex justify-between gap-4 text-body-md font-semibold text-fg">
-            <span>Total</span>
-            <span className="tabular-nums">{rupiah(subtotal + shipping)}</span>
-          </p>
+          {/* The total is part of the same list semantically, but a Separator
+              between two rows would break the grid — so it is its own list of
+              one pair, which is also what the markup said before. */}
+          <DescriptionList>
+            <DescriptionTerm emphasis>Total</DescriptionTerm>
+            <DescriptionDetails emphasis numeric>
+              {rupiah(subtotal + shipping)}
+            </DescriptionDetails>
+          </DescriptionList>
           <Button type="submit" fullWidth size="lg">
             Bayar
           </Button>
         </Card>
       </form>
-    </div>
+    </Container>
   );
 }

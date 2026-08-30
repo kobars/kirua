@@ -16,7 +16,36 @@ export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
 export { CARD_RADIUS_PX, PANEL_RADIUS_PX, PANEL_GLINT_INSET_PX } from '@/lib/radius';
-export { Stat, StatRow, type StatProps } from './Stat';
+export {
+  DescriptionList,
+  DescriptionTerm,
+  DescriptionDetails,
+  type DescriptionListProps,
+  type DescriptionTermProps,
+  type DescriptionDetailsProps,
+} from './DescriptionList';
+export { descriptionListVariants } from './DescriptionList.variants';
+export {
+  Timeline,
+  TimelineItem,
+  TimelineTime,
+  type TimelineItemProps,
+  type TimelineTimeProps,
+} from './Timeline';
+export { Stepper, StepperItem, type StepperProps, type StepperItemProps } from './Stepper';
+export { Container, type ContainerProps } from './Container';
+export { containerVariants } from './Container.variants';
+export { Section, type SectionProps } from './Section';
+export { sectionVariants } from './Section.variants';
+export { Link, type LinkProps } from './Link';
+export { linkVariants } from './Link.variants';
+export { Heading, type HeadingProps } from './Heading';
+export { headingVariants } from './Heading.variants';
+export { Text, Eyebrow, type TextProps } from './Text';
+export { textVariants } from './Text.variants';
+export { Stat, StatRow, type StatProps, type StatRowProps } from './Stat';
+export { statVariants } from './Stat.variants';
+export { statRowVariants } from './StatRow.variants';
 export { NavBar, type NavBarProps, type NavItem } from './NavBar';
 export {
   Card,
@@ -88,6 +117,9 @@ export {
 export { Carousel, CarouselItem, type CarouselProps } from './Carousel';
 export { QuantityStepper, type QuantityStepperProps } from './QuantityStepper';
 export { CodeBlock, type CodeBlockProps } from './CodeBlock';
+export { Code } from './Code';
+export { List, ListItem, type ListProps } from './List';
+export { listVariants } from './List.variants';
 export {
   Table,
   TableCaption,
@@ -173,6 +205,8 @@ export {
 } from './RadioGroup';
 export { Switch, type SwitchProps } from './Switch';
 export { Progress, type ProgressProps } from './Progress';
+export { Meter, type MeterProps } from './Meter';
+export { meterVariants } from './Meter.variants';
 export { Toggle, type ToggleProps } from './Toggle';
 export { toggleVariants } from './Toggle.variants';
 export {

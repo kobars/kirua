@@ -2,19 +2,21 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  ChevronDownIcon,
   CodeBlock,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Container,
+  CopyIcon,
+  Heading,
   IconButton,
   ScrollArea,
   Skeleton,
+  SparkleIcon,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  ChevronDownIcon,
-  CopyIcon,
-  SparkleIcon,
 } from 'kirua';
 import type { Conversation } from './data';
 
@@ -30,10 +32,10 @@ export interface TranscriptProps {
 export function Transcript({ conversation, pending }: TranscriptProps) {
   return (
     <ScrollArea className="min-h-0 flex-1">
-      <div className="mx-auto grid w-full max-w-3xl gap-8 px-4 py-8 md:px-8">
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">
+      <Container width="3xl" gap="lg" pad="md">
+        <Heading as="h1" size="heading-lg">
           {conversation.title}
-        </h1>
+        </Heading>
 
         {conversation.turns.map((turn) => (
           <article key={turn.id} className="grid gap-3">
@@ -47,9 +49,9 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                   <SparkleIcon />
                 </span>
               )}
-              <h2 className="text-body-sm font-semibold text-fg">
+              <Heading as="h2" size="body-sm">
                 {turn.from === 'you' ? 'You' : 'Assistant'}
-              </h2>
+              </Heading>
             </div>
 
             <div className="grid gap-4 ps-8">
@@ -112,7 +114,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
             <Skeleton className="h-4 w-2/3" />
           </output>
         )}
-      </div>
+      </Container>
     </ScrollArea>
   );
 }

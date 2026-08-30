@@ -1,185 +1,252 @@
 #!/usr/bin/env node
 /**
- * Opens every route of every example application at 375 pixels wide and fails
- * if the page scrolls sideways.
+ * Opens every route of every example application at five widths and fails on
+ * either of two defects: a page that scrolls sideways, or a control too small
+ * to hit with a finger.
  *
  * The `storybook:*` projects run every story at three widths, but a story is
  * one component. They cannot catch a shell whose sticky header is wider than
  * the viewport, or a table that scrolls its page instead of itself.
  *
- * The measurement is `scrollWidth === clientWidth` on the scrolling element.
- * On a failure the widest offending element is named, with its `data-slot`.
+ * ## Why five widths and not one
+ *
+ * A single width tests the size a phone *usually* is and none of the sizes
+ * where a layout actually changes. A responsive shell does not stretch — it
+ * swaps at a breakpoint, and a swap is where a layout breaks. The five widths
+ * here are each a distinct question:
+ *
+ *   - **320** — the real floor. A Galaxy Fold's cover screen and an iPhone SE
+ *     in a larger text size both land here, and 55 pixels below 375 is enough
+ *     to overrun a row of `shrink-0` buttons that fits at 375.
+ *   - **375** — the width the sweep already had, kept so its history compares.
+ *   - **768** — `md`. Rails expand, drawers become sidebars.
+ *   - **1024** — `lg`. The second column appears.
+ *   - **1440** — a laptop. Catches a `max-w` that was never set, so a line of
+ *     text runs the full width of the screen.
+ *
+ * ## The two assertions
+ *
+ * **Sideways scroll** is `scrollWidth === clientWidth` on the scrolling
+ * element. On a failure the widest offending element is named, with its
+ * `data-slot`.
+ *
+ * **Target size** is WCAG 2.5.8 (AA, 2.2): an interactive control must be at
+ * least 24x24 CSS pixels, unless another target's centre is 24 pixels away or
+ * it is an inline link in a sentence. Checked at the two phone widths only,
+ * because the criterion is about a finger and a pointer is exempt. It is a
+ * separate assertion from sideways scroll because the fixes are opposite: a
+ * layout that overflows is usually fixed by making something smaller, and this
+ * is fixed by making something bigger.
  *
  *     pnpm build:examples && node tools/responsive-check.mjs
  */
-import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { chromium } from 'playwright';
+import { eachRoute, ROUTE_COUNT } from './example-apps.mjs';
 
-const REPO = path.join(import.meta.dirname, '..');
-const WIDTH = 375;
-const HEIGHT = 812;
-
-/** Every route each app can show. Hash routes, so one document each. */
-const APPS = [
-  {
-    slug: 'claude',
-    routes: [
-      '',
-      'tokens',
-      'contrast',
-      'rtl',
-      'forced-colors',
-      'dead-classes',
-      'overlays',
-      'penggunaan',
-    ],
-  },
-  {
-    slug: 'shop',
-    routes: [
-      '',
-      'produk/kacamata-bulat',
-      'produk/jaket-denim',
-      'produk/koper-kabin',
-      'pesanan',
-      'pesanan/SNJ-24810',
-      'masuk',
-      'checkout',
-    ],
-  },
-  {
-    slug: 'simrs',
-    routes: [
-      '',
-      'pasien',
-      'jadwal',
-      'kunjungan-baru',
-      'farmasi',
-      'lab',
-      'pasien/RM-004128',
-      'pasien/RM-004130',
-    ],
-  },
-  {
-    slug: 'social',
-    routes: ['', 'jelajah', 'notifikasi', 'pesan', 'profil/rin', 'profil/maya', 'profil/eko'],
-  },
+const WIDTHS = [
+  { width: 320, height: 812, phone: true },
+  { width: 375, height: 812, phone: true },
+  { width: 768, height: 1024, phone: false },
+  { width: 1024, height: 800, phone: false },
+  { width: 1440, height: 900, phone: false },
 ];
 
-const TYPES = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.svg': 'image/svg+xml',
-};
-
-/** A static server for one app's `dist`, on an ephemeral port. */
-function serve(root) {
-  return new Promise((resolve) => {
-    const server = createServer(async (request, response) => {
-      const url = new URL(request.url ?? '/', 'http://localhost');
-      const file = url.pathname === '/' ? '/index.html' : url.pathname;
-      try {
-        const body = await readFile(path.join(root, file));
-        response.writeHead(200, {
-          'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
-        });
-        response.end(body);
-      } catch {
-        response.writeHead(404).end('not found');
-      }
-    });
-    server.listen(0, '127.0.0.1', () => resolve(server));
-  });
-}
+/** WCAG 2.5.8 Target Size (Minimum), AA in WCAG 2.2. */
+const MIN_TARGET = 24;
 
 const browser = await chromium.launch();
-const context = await browser.newContext({
-  viewport: { width: WIDTH, height: HEIGHT },
-  deviceScaleFactor: 2,
-  isMobile: true,
-  hasTouch: true,
-});
-const page = await context.newPage();
-
 const rows = [];
-const failures = [];
+const overflows = [];
+const targets = [];
 
-for (const { slug, routes } of APPS) {
-  const server = await serve(path.join(REPO, 'examples', slug, 'dist'));
-  const { port } = server.address();
+for (const size of WIDTHS) {
+  const context = await browser.newContext({
+    viewport: { width: size.width, height: size.height },
+    deviceScaleFactor: size.phone ? 2 : 1,
+    isMobile: size.phone,
+    hasTouch: size.phone,
+  });
+  const page = await context.newPage();
 
-  for (const route of routes) {
-    await page.goto(`http://127.0.0.1:${port}/#/${route}`, { waitUntil: 'load' });
+  await eachRoute(async ({ slug, label, url }) => {
+    await page.goto(url, { waitUntil: 'load' });
     // A hash change does not reload the document, so give React a frame to
     // render the new route before measuring.
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(200);
 
-    const result = await page.evaluate(() => {
-      const root = document.scrollingElement ?? document.documentElement;
-      // An element inside a horizontal scroller reports its full width from
-      // `getBoundingClientRect` even though the page never scrolls for it, so
-      // the widest box on the page is usually a table that is behaving. Skip
-      // anything an ancestor clips, and what is left is the actual cause.
-      const clipped = (el) => {
-        for (
-          let node = el.parentElement;
-          node && node !== document.body;
-          node = node.parentElement
-        ) {
-          const style = getComputedStyle(node);
-          if (style.overflowX !== 'visible' || style.overflowY !== 'visible') return true;
+    const result = await page.evaluate(
+      ({ minTarget, checkTargets }) => {
+        const root = document.scrollingElement ?? document.documentElement;
+
+        // An element inside a horizontal scroller reports its full width from
+        // `getBoundingClientRect` even though the page never scrolls for it, so
+        // the widest box on the page is usually a table that is behaving. Skip
+        // anything an ancestor clips, and what is left is the actual cause.
+        const clipped = (el) => {
+          for (
+            let node = el.parentElement;
+            node && node !== document.body;
+            node = node.parentElement
+          ) {
+            const style = getComputedStyle(node);
+            if (style.overflowX !== 'visible' || style.overflowY !== 'visible') return true;
+          }
+          return false;
+        };
+
+        const widest = [...document.querySelectorAll('body *')]
+          .filter((el) => !clipped(el))
+          .map((el) => ({
+            tag: el.tagName.toLowerCase(),
+            slot: el.getAttribute('data-slot'),
+            right: Math.round(el.getBoundingClientRect().right),
+          }))
+          .filter((el) => el.right > root.clientWidth + 1)
+          .sort((a, b) => b.right - a.right)[0];
+
+        const small = [];
+        if (checkTargets) {
+          const CONTROLS =
+            'a[href], button, input, select, textarea, [role="button"], [tabindex]';
+
+          // Everything a finger can actually aim at, which is not everything
+          // that matches the selector. Three kinds are excluded, and each
+          // exclusion is a rule rather than a convenience:
+          //
+          //  - **Hidden from the accessibility tree.** Radix renders a real
+          //    `<select>` behind its own listbox so a form still submits. It is
+          //    `aria-hidden` and 1x1, and nobody taps it.
+          //  - **A label that owns a control.** Clicking a `<label>` activates
+          //    its input, so a 20-pixel checkbox beside a 40-pixel label is one
+          //    40-pixel target, not a 20-pixel one.
+          //  - **An inline link in a sentence**, which WCAG 2.5.8 exempts by
+          //    name: its height is the line height of the prose around it and
+          //    cannot be raised without respacing the paragraph.
+          const hidden = (el) => el.closest('[aria-hidden="true"]') !== null;
+
+          const inSentence = (el) => {
+            if (el.tagName !== 'A') return false;
+            if (!getComputedStyle(el).display.startsWith('inline')) return false;
+            const parent = el.parentElement;
+            if (!parent) return false;
+            // Text in the parent that is not this link's own — a sentence.
+            return parent.textContent.replace(el.textContent, '').trim().length > 0;
+          };
+
+          const boxOf = (el) => {
+            const own = el.getBoundingClientRect();
+            const label = el.id
+              ? document.querySelector(`label[for="${CSS.escape(el.id)}"]`)
+              : null;
+            const wrapping = el.closest('label');
+            const partner = label ?? wrapping;
+            if (!partner) return own;
+            const both = partner.getBoundingClientRect();
+            return {
+              width: Math.max(own.width, both.width),
+              height: Math.max(own.height, both.height),
+              x: Math.min(own.x, both.x),
+              y: Math.min(own.y, both.y),
+            };
+          };
+
+          const aimed = [];
+          for (const el of document.querySelectorAll(CONTROLS)) {
+            const style = getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden') continue;
+            if (hidden(el) || inSentence(el)) continue;
+            const box = boxOf(el);
+            // Off the screen entirely — a closed drawer, or an `sr-only` label.
+            if (box.width === 0 || box.height === 0) continue;
+            aimed.push({ el, box });
+          }
+
+          // WCAG 2.5.8's spacing exception: an undersized target still passes
+          // when a 24-pixel circle centred on it touches no other target's
+          // circle. Two centres 24 pixels apart is the same statement, and it
+          // is why a row of 20-pixel checkboxes with air around them is not a
+          // failure while two crowded ones are.
+          const centre = (b) => ({ x: b.x + b.width / 2, y: b.y + b.height / 2 });
+          for (const { el, box } of aimed) {
+            if (box.width >= minTarget && box.height >= minTarget) continue;
+            const a = centre(box);
+            const crowded = aimed.some(({ el: other, box: otherBox }) => {
+              if (other === el) return false;
+              const b = centre(otherBox);
+              return Math.hypot(a.x - b.x, a.y - b.y) < minTarget;
+            });
+            if (!crowded) continue;
+            small.push({
+              tag: el.tagName.toLowerCase(),
+              slot: el.getAttribute('data-slot'),
+              name: (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 32),
+              w: Math.round(box.width),
+              h: Math.round(box.height),
+            });
+          }
         }
-        return false;
-      };
 
-      const widest = [...document.querySelectorAll('body *')]
-        .filter((el) => !clipped(el))
-        .map((el) => ({
-          tag: el.tagName.toLowerCase(),
-          slot: el.getAttribute('data-slot'),
-          right: Math.round(el.getBoundingClientRect().right),
-        }))
-        .filter((el) => el.right > root.clientWidth + 1)
-        .sort((a, b) => b.right - a.right)[0];
-
-      return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth, widest };
-    });
+        return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth, widest, small };
+      },
+      { minTarget: MIN_TARGET, checkTargets: size.phone },
+    );
 
     const ok = result.scrollWidth === result.clientWidth;
     rows.push({
       app: slug,
-      route: route === '' ? '(index)' : route,
+      route: label,
+      width: size.width,
       scrollWidth: result.scrollWidth,
-      clientWidth: result.clientWidth,
+      small: result.small.length,
       status: ok ? 'ok' : 'OVERFLOWS',
     });
 
     if (!ok) {
       const w = result.widest;
-      failures.push(
-        `${slug} #/${route}: scrollWidth ${result.scrollWidth} > clientWidth ${result.clientWidth}` +
+      overflows.push(
+        `${slug} #/${label} at ${size.width}px: scrollWidth ${result.scrollWidth} > clientWidth ${result.clientWidth}` +
           (w
             ? ` — widest is <${w.tag}${w.slot ? ` data-slot="${w.slot}"` : ''}> ending at ${w.right}px`
             : ''),
       );
     }
-  }
 
-  server.close();
+    for (const s of result.small) {
+      targets.push(
+        `${slug} #/${label} at ${size.width}px: <${s.tag}${s.slot ? ` data-slot="${s.slot}"` : ''}>` +
+          ` "${s.name}" is ${s.w}x${s.h}, under ${MIN_TARGET}x${MIN_TARGET}`,
+      );
+    }
+  });
+
+  await context.close();
 }
 
 await browser.close();
 
-console.log(`\nEvery route at ${WIDTH}x${HEIGHT}, scrollWidth vs clientWidth:\n`);
-console.table(rows);
+console.log(
+  `\n${ROUTE_COUNT} routes at ${WIDTHS.map((w) => w.width).join(', ')} pixels wide:\n`,
+);
+console.table(rows.filter((r) => r.status !== 'ok' || r.small > 0));
 
-if (failures.length > 0) {
-  console.error('\nresponsive-check: a page scrolls sideways on a phone.\n');
-  for (const failure of failures) console.error(`  - ${failure}`);
-  process.exit(1);
+if (overflows.length > 0) {
+  console.error('\nresponsive-check: a page scrolls sideways.\n');
+  for (const failure of overflows) console.error(`  - ${failure}`);
 }
 
-console.log(`\nresponsive-check: ${rows.length} routes, none scroll sideways.`);
+if (targets.length > 0) {
+  console.error(
+    `\nresponsive-check: a control is under ${MIN_TARGET}x${MIN_TARGET} on a phone.\n`,
+  );
+  // The same control on every route is one defect, so collapse by description.
+  for (const failure of [...new Set(targets.map((t) => t.replace(/#\/\S+/, '#/…')))]) {
+    console.error(`  - ${failure}`);
+  }
+}
+
+if (overflows.length > 0 || targets.length > 0) process.exit(1);
+
+console.log(
+  `\nresponsive-check: ${rows.length} route views, none scroll sideways, ` +
+    `every control at least ${MIN_TARGET}x${MIN_TARGET} on a phone.`,
+);

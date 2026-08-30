@@ -1,42 +1,49 @@
+import { Fragment, type ReactNode } from 'react';
 import {
   Button,
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
   Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogTitle,
+  DialogTrigger,
   Field,
+  Heading,
   Kbd,
   Label,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  RadioGroup,
-  RadioGroupItem,
   Separator,
   Switch,
 } from 'kirua';
 import { shortcuts } from './data';
-import type { ThemePreference } from './useTheme';
+import type { ThemePreference } from '../shared/useTheme';
 
 export interface SettingsDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  /**
+   * The control that opens it. Passing the trigger in rather than lifting
+   * `open` into the page is what `DialogTrigger` is for: Radix then owns the
+   * open state, restores focus to the trigger on close, and marks the trigger
+   * `aria-expanded` — three things the page was doing none of with a boolean.
+   */
+  trigger: ReactNode;
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
 }
 
-export function SettingsDialog({
-  open,
-  onOpenChange,
-  theme,
-  onThemeChange,
-}: SettingsDialogProps) {
+export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogTitle>Settings</DialogTitle>
         <DialogDescription>Nothing here is saved. It is a sample screen.</DialogDescription>
@@ -88,19 +95,23 @@ export function SettingsDialog({
           <Separator />
 
           <div className="grid gap-3">
-            <h3 className="text-body-sm font-semibold text-fg">Keyboard shortcuts</h3>
-            <dl className="grid gap-2">
+            <Heading as="h3" size="body-sm">
+              Keyboard shortcuts
+            </Heading>
+            <DescriptionList>
               {shortcuts.map(({ keys, what }) => (
-                <div key={what} className="flex items-center justify-between gap-4">
-                  <dt className="text-body-sm text-fg-secondary">{what}</dt>
-                  <dd className="flex items-center gap-1">
-                    {keys.map((key) => (
-                      <Kbd key={key}>{key}</Kbd>
-                    ))}
-                  </dd>
-                </div>
+                <Fragment key={what}>
+                  <DescriptionTerm>{what}</DescriptionTerm>
+                  <DescriptionDetails>
+                    <span className="inline-flex items-center gap-1">
+                      {keys.map((key) => (
+                        <Kbd key={key}>{key}</Kbd>
+                      ))}
+                    </span>
+                  </DescriptionDetails>
+                </Fragment>
               ))}
-            </dl>
+            </DescriptionList>
           </div>
         </div>
 
