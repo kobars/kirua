@@ -1,0 +1,11 @@
+/* This app's stylesheet. Tailwind emits one stylesheet per scanned source set,
+ * and automatic detection starts at the Vite root — this directory — so the
+ * design system's own classes are named explicitly below and no other
+ * example's are. `src/index.css` carries the matching `@source not`. */
+@import 'tailwindcss';
+
+@source '.';
+@source '../../src/components';
+@source '../../src/lib';
+
+@import '../../src/styles/kirua.css';
