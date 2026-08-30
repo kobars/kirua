@@ -22,20 +22,26 @@ import {
   ShareIcon,
 } from 'kirua';
 import { PersonLink } from './PersonCard';
+import { SURFACE_PROPS, type CardSurface } from './experiment';
+import { cn } from './cn';
 import { compactCount, initials, people, type Post } from './data';
 
 export interface PostCardProps {
   post: Post;
   /** Offered on the card's own menu. Omit it and the entry is not drawn. */
   onDelete?: (id: string) => void;
+  /** TEMPORARY — see `experiment.tsx`. Remove with the experiment. */
+  surface?: CardSurface | undefined;
 }
 
-export function PostCard({ post, onDelete }: PostCardProps) {
+export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) {
   const person = people[post.handle];
   if (!person) return null;
 
+  const look = SURFACE_PROPS[surface];
+
   const card = (
-    <Card className="grid gap-3 p-4">
+    <Card variant={look.variant} className={cn('grid gap-3 p-4', look.className)}>
       <header className="flex items-start gap-3">
         <Avatar size="md">
           <AvatarFallback>{initials(person.name)}</AvatarFallback>
