@@ -5,6 +5,7 @@ import { Chip } from './Chip';
 import { CornerGlint } from './CornerGlint';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { SpotlightContent, SpotlightMedia } from './SpotlightPanel';
+import { Switch } from './Switch';
 
 afterEach(cleanup);
 
@@ -56,6 +57,34 @@ describe('padding follows the reading direction', () => {
 
     expect(ltr.paddingLeft).toBe(rtl.paddingRight);
     expect(ltr.paddingRight).toBe(rtl.paddingLeft);
+  });
+});
+
+describe('a transform that has to be mirrored, is', () => {
+  /**
+   * `transform` has no logical form, so an unmirrored thumb slides out of the
+   * track in a right-to-left document. The sign lives in `styles/kirua.css`
+   * keyed on `data-slot`; read here as a matrix, so deleting the rule fails
+   * rather than renaming a class.
+   */
+  it('Switch moves its thumb towards the end, whichever side that is', () => {
+    const checked = <Switch checked aria-label="On" />;
+    const [ltr, rtl] = bothWays(checked, '[data-slot="switch-thumb"]');
+
+    // matrix(a, b, c, d, tx, ty) — the fifth value is the horizontal travel.
+    const travel = (transform: string) => Number(transform.split(', ')[4]);
+
+    expect(travel(ltr.transform)).toBeGreaterThan(0);
+    expect(travel(rtl.transform)).toBe(-travel(ltr.transform));
+  });
+
+  it('Switch leaves the thumb at the start when it is off', () => {
+    const [ltr] = bothWays(
+      <Switch checked={false} aria-label="Off" />,
+      '[data-slot="switch-thumb"]',
+    );
+
+    expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(ltr.transform);
   });
 });
 
