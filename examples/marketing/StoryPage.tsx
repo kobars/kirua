@@ -7,11 +7,10 @@ import {
   Heading,
   Section,
   Separator,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
   Text,
+  Timeline,
+  TimelineItem,
+  TimelineTime,
 } from 'kirua';
 import { MILESTONES, PRINCIPLES } from './data';
 
@@ -80,25 +79,17 @@ export function StoryPage() {
           nobody finishes.
         </Text>
 
-        {/* Chronological, and a sequence rather than a comparison — the shape a
-            Timeline is for. It is a table until that component exists. */}
-        <Table>
-          <TableBody>
-            {MILESTONES.map((milestone) => (
-              <TableRow key={milestone.at}>
-                <TableCell className="align-top whitespace-nowrap tabular-nums">
-                  <time dateTime={milestone.at}>{milestone.when}</time>
-                </TableCell>
-                <TableCell className="align-top">
-                  <span className="block font-medium text-fg">{milestone.what}</span>
-                  <span className="block text-body-sm text-fg-secondary">
-                    {milestone.detail}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <Timeline>
+          {MILESTONES.map((milestone) => (
+            <TimelineItem key={milestone.at}>
+              <TimelineTime dateTime={milestone.at}>{milestone.when}</TimelineTime>
+              <Text size="md" tone="primary" className="font-medium">
+                {milestone.what}
+              </Text>
+              <Text size="sm">{milestone.detail}</Text>
+            </TimelineItem>
+          ))}
+        </Timeline>
       </div>
 
       <Card variant="brand" padding="lg" glint={['top-start', 'bottom-end']}>

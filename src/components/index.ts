@@ -25,6 +25,14 @@ export {
   type DescriptionDetailsProps,
 } from './DescriptionList';
 export { descriptionListVariants } from './DescriptionList.variants';
+export {
+  Timeline,
+  TimelineItem,
+  TimelineTime,
+  type TimelineItemProps,
+  type TimelineTimeProps,
+} from './Timeline';
+export { Stepper, StepperItem, type StepperProps, type StepperItemProps } from './Stepper';
 export { Container, type ContainerProps } from './Container';
 export { containerVariants } from './Container.variants';
 export { Section, type SectionProps } from './Section';
