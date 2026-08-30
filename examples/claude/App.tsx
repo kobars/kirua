@@ -13,6 +13,8 @@ import {
   SparkleIcon,
 } from 'kirua';
 import { Composer } from './Composer';
+import { ThemeMenu } from './ThemeMenu';
+import { useTheme } from './useTheme';
 import { SearchPalette } from './SearchPalette';
 import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
@@ -35,14 +37,9 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pending, setPending] = useState(false);
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
+  const { preference, choose } = useTheme();
 
   const conversation = conversations.find((c) => c.id === route) ?? conversations[0]!;
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('kirua-theme', dark ? 'dark' : 'light');
-  }, [dark]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -108,6 +105,8 @@ export function App() {
             </TooltipTrigger>
             <TooltipContent>Settings</TooltipContent>
           </Tooltip>
+
+          <ThemeMenu />
         </header>
 
         <Transcript conversation={conversation} pending={pending} />
@@ -125,8 +124,8 @@ export function App() {
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        dark={dark}
-        onDarkChange={setDark}
+        theme={preference}
+        onThemeChange={choose}
       />
     </div>
   );
