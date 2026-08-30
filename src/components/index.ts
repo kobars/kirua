@@ -61,6 +61,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
 export { ScrollArea, ScrollBar, type ScrollAreaProps, type ScrollBarProps } from './ScrollArea';
 export { AspectRatio, type AspectRatioProps } from './AspectRatio';
 export { Separator, type SeparatorProps } from './Separator';
+export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Kbd, type KbdProps } from './Kbd';
 export { kbdVariants } from './Kbd.variants';
 
