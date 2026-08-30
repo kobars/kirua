@@ -12,29 +12,60 @@ import {
   SheetContent,
   SheetTitle,
   SheetTrigger,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   CalendarIcon,
+  GridIcon,
   MenuIcon,
+  PillIcon,
   PlusIcon,
   SearchIcon,
   StethoscopeIcon,
   UserIcon,
 } from 'kirua';
 import { Appointments } from './Appointments';
+import { Lab } from './Lab';
 import { NewVisit } from './NewVisit';
 import { PatientList } from './PatientList';
 import { PatientRecord } from './PatientRecord';
+import { Pharmacy } from './Pharmacy';
+import { Summary } from './Summary';
 import { ThemeMenu } from './ThemeMenu';
 import { patients } from './data';
 import { useHashRoute } from './useHashRoute';
 
-const nav = [
-  { route: '', label: 'Pasien', icon: UserIcon },
-  { route: 'jadwal', label: 'Jadwal', icon: CalendarIcon },
-  { route: 'kunjungan-baru', label: 'Kunjungan baru', icon: PlusIcon },
+/** The destinations, grouped the way the building is. */
+const sections = [
+  {
+    label: 'Klinik',
+    items: [
+      { route: '', label: 'Ringkasan', icon: GridIcon },
+      { route: 'pasien', label: 'Pasien', icon: UserIcon },
+      { route: 'jadwal', label: 'Jadwal', icon: CalendarIcon },
+      { route: 'kunjungan-baru', label: 'Kunjungan baru', icon: PlusIcon },
+    ],
+  },
+  {
+    label: 'Penunjang',
+    items: [
+      { route: 'lab', label: 'Laboratorium', icon: StethoscopeIcon },
+      { route: 'farmasi', label: 'Farmasi', icon: PillIcon },
+    ],
+  },
 ] as const;
+
+const nav = sections.flatMap((section) => [...section.items]);
 
 export function App() {
   const [route, navigate] = useHashRoute('');
@@ -42,6 +73,7 @@ export function App() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [railOpen, setRailOpen] = useState(true);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -56,7 +88,11 @@ export function App() {
 
   const actions = useMemo(() => {
     const all = [
-      ...nav.map((item) => ({ id: item.route || 'pasien', label: item.label, go: item.route })),
+      ...nav.map((item) => ({
+        id: item.route || 'ringkasan',
+        label: item.label,
+        go: item.route,
+      })),
       ...patients.map((p) => ({
         id: p.rm,
         label: `${p.name} — ${p.rm}`,
@@ -80,28 +116,34 @@ export function App() {
     ? patients.find((p) => p.rm === route.slice('pasien/'.length))
     : undefined;
 
-  const menu = (
-    <nav aria-label="Bagian" className="grid gap-1">
-      {nav.map(({ route: target, label, icon: Icon }) => (
-        <a
-          key={label}
-          href={`#/${target}`}
-          aria-current={route === target ? 'page' : undefined}
-          onClick={() => setDrawerOpen(false)}
-          className={[
-            'flex items-center gap-2 rounded-md px-3 py-2 text-body-sm',
-            'transition-colors duration-fast ease-out [--icon-size:var(--icon-md)]',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-            route === target
-              ? 'bg-selected font-medium text-on-selected'
-              : 'text-fg-secondary hover:bg-ghost-hover hover:text-fg',
-          ].join(' ')}
-        >
-          <Icon aria-hidden="true" />
-          {label}
-        </a>
+  /**
+   * One list of destinations, rendered twice: as the rail on a wide screen and
+   * inside a `Sheet` on a phone. A 64px icon rail is still 64px a phone does
+   * not have, so the small screen gets the drawer instead of the rail.
+   */
+  const destinations = (onNavigate?: () => void) => (
+    <>
+      {sections.map((section, index) => (
+        <div key={section.label} className="contents">
+          {index > 0 && <SidebarSeparator />}
+          <SidebarGroup>
+            <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
+            <SidebarMenu>
+              {section.items.map(({ route: target, label, icon: Icon }) => (
+                <SidebarMenuItem key={label}>
+                  <SidebarMenuButton asChild isActive={route === target}>
+                    <a href={`#/${target}`} onClick={onNavigate}>
+                      <Icon aria-hidden="true" />
+                      <SidebarLabel>{label}</SidebarLabel>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </div>
       ))}
-    </nav>
+    </>
   );
 
   return (
@@ -114,9 +156,11 @@ export function App() {
                 <MenuIcon />
               </IconButton>
             </SheetTrigger>
-            <SheetContent side="start">
+            <SheetContent side="start" className="overflow-y-auto pt-14">
               <SheetTitle>SIMRS Sehat Bersama</SheetTitle>
-              <div className="mt-4">{menu}</div>
+              <nav aria-label="Bagian" className="mt-4 grid gap-4">
+                {destinations(() => setDrawerOpen(false))}
+              </nav>
             </SheetContent>
           </Sheet>
 
@@ -153,21 +197,37 @@ export function App() {
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 md:grid-cols-[13rem_1fr] md:px-8">
-        <aside className="hidden md:block print:hidden">{menu}</aside>
+      <div className="mx-auto flex w-full max-w-7xl">
+        <div className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block print:hidden">
+          <Sidebar open={railOpen} collapsible="icon" className="border-e-0 bg-transparent">
+            <SidebarContent aria-label="Bagian">{destinations()}</SidebarContent>
+            <SidebarFooter className="border-t-0">
+              <SidebarMenuButton onClick={() => setRailOpen(!railOpen)}>
+                <MenuIcon aria-hidden="true" />
+                <SidebarLabel>{railOpen ? 'Perkecil menu' : 'Perbesar menu'}</SidebarLabel>
+              </SidebarMenuButton>
+            </SidebarFooter>
+          </Sidebar>
+        </div>
 
-        <main className="min-w-0">
+        <main className="min-w-0 flex-1 px-4 py-6 md:px-8">
           {record ? (
             <PatientRecord patient={record} />
           ) : route === 'jadwal' ? (
             <Appointments />
           ) : route === 'kunjungan-baru' ? (
             <NewVisit />
-          ) : (
+          ) : route === 'farmasi' ? (
+            <Pharmacy />
+          ) : route === 'lab' ? (
+            <Lab />
+          ) : route === 'pasien' ? (
             <PatientList
               onOpen={(rm) => navigate(`pasien/${rm}`)}
               onNewVisit={() => navigate('kunjungan-baru')}
             />
+          ) : (
+            <Summary />
           )}
         </main>
       </div>

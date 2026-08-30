@@ -27,7 +27,16 @@ const APPS = [
   { slug: 'shop', routes: ['', 'produk/kacamata-bulat', 'produk/jaket-denim', 'checkout'] },
   {
     slug: 'simrs',
-    routes: ['', 'jadwal', 'kunjungan-baru', 'pasien/RM-004128', 'pasien/RM-004130'],
+    routes: [
+      '',
+      'pasien',
+      'jadwal',
+      'kunjungan-baru',
+      'farmasi',
+      'lab',
+      'pasien/RM-004128',
+      'pasien/RM-004130',
+    ],
   },
   { slug: 'social', routes: ['', 'profil/rin', 'profil/maya'] },
 ];
@@ -83,7 +92,24 @@ for (const { slug, routes } of APPS) {
 
     const result = await page.evaluate(() => {
       const root = document.scrollingElement ?? document.documentElement;
+      // An element inside a horizontal scroller reports its full width from
+      // `getBoundingClientRect` even though the page never scrolls for it, so
+      // the widest box on the page is usually a table that is behaving. Skip
+      // anything an ancestor clips, and what is left is the actual cause.
+      const clipped = (el) => {
+        for (
+          let node = el.parentElement;
+          node && node !== document.body;
+          node = node.parentElement
+        ) {
+          const style = getComputedStyle(node);
+          if (style.overflowX !== 'visible' || style.overflowY !== 'visible') return true;
+        }
+        return false;
+      };
+
       const widest = [...document.querySelectorAll('body *')]
+        .filter((el) => !clipped(el))
         .map((el) => ({
           tag: el.tagName.toLowerCase(),
           slot: el.getAttribute('data-slot'),
