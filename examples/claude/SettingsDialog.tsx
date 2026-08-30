@@ -14,23 +14,26 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  RadioGroup,
+  RadioGroupItem,
   Separator,
   Switch,
 } from 'kirua';
 import { shortcuts } from './data';
+import type { ThemePreference } from './useTheme';
 
 export interface SettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  dark: boolean;
-  onDarkChange: (dark: boolean) => void;
+  theme: ThemePreference;
+  onThemeChange: (theme: ThemePreference) => void;
 }
 
 export function SettingsDialog({
   open,
   onOpenChange,
-  dark,
-  onDarkChange,
+  theme,
+  onThemeChange,
 }: SettingsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,10 +42,30 @@ export function SettingsDialog({
         <DialogDescription>Nothing here is saved. It is a sample screen.</DialogDescription>
 
         <div className="mt-6 grid gap-6">
-          <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="dark-mode">Dark mode</Label>
-            <Switch id="dark-mode" checked={dark} onCheckedChange={onDarkChange} />
-          </div>
+          {/* Three states, not a switch: "system" is a real choice and a
+              two-position control cannot say it. The same value backs the
+              header menu — one owner, one key. */}
+          <fieldset className="grid gap-3">
+            <legend className="mb-1 text-body-sm font-medium text-fg">Appearance</legend>
+            <RadioGroup
+              value={theme}
+              onValueChange={(value) => onThemeChange(value as ThemePreference)}
+              aria-label="Appearance"
+            >
+              {(
+                [
+                  ['light', 'Light'],
+                  ['dark', 'Dark'],
+                  ['system', 'Follow the system'],
+                ] as const
+              ).map(([value, label]) => (
+                <div key={value} className="flex items-center gap-2">
+                  <RadioGroupItem value={value} id={`theme-${value}`} />
+                  <Label htmlFor={`theme-${value}`}>{label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </fieldset>
 
           <div className="flex items-center justify-between gap-4">
             <Label htmlFor="sounds">Sound on reply</Label>
