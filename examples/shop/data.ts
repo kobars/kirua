@@ -1,9 +1,12 @@
 /** Fixed catalogue. Prices in rupiah, formatted with Intl at the call site. */
 
+export type Category = 'tas' | 'sepatu' | 'pakaian' | 'aksesori';
+
 export interface Product {
   id: string;
   name: string;
   brand: string;
+  category: Category;
   price: number;
   was?: number;
   rating: number;
@@ -18,6 +21,7 @@ export interface Product {
 export const products: Product[] = [
   {
     id: 'kacamata-bulat',
+    category: 'aksesori',
     name: 'Kacamata Bulat',
     brand: 'Senja',
     price: 289000,
@@ -32,6 +36,7 @@ export const products: Product[] = [
   },
   {
     id: 'topi-bucket',
+    category: 'aksesori',
     name: 'Topi Bucket Kanvas',
     brand: 'Rimba',
     price: 165000,
@@ -45,6 +50,7 @@ export const products: Product[] = [
   },
   {
     id: 'tas-selempang',
+    category: 'tas',
     name: 'Tas Selempang Harian',
     brand: 'Senja',
     price: 420000,
@@ -58,6 +64,7 @@ export const products: Product[] = [
   },
   {
     id: 'sepatu-kanvas',
+    category: 'sepatu',
     name: 'Sepatu Kanvas Rendah',
     brand: 'Langkah',
     price: 535000,
@@ -72,6 +79,7 @@ export const products: Product[] = [
   },
   {
     id: 'jaket-denim',
+    category: 'pakaian',
     name: 'Jaket Denim Klasik',
     brand: 'Rimba',
     price: 725000,
@@ -85,6 +93,7 @@ export const products: Product[] = [
   },
   {
     id: 'kaos-polos',
+    category: 'pakaian',
     name: 'Kaos Polos Katun',
     brand: 'Langkah',
     price: 119000,
@@ -98,6 +107,7 @@ export const products: Product[] = [
   },
   {
     id: 'celana-kargo',
+    category: 'pakaian',
     name: 'Celana Kargo',
     brand: 'Rimba',
     price: 389000,
@@ -111,6 +121,7 @@ export const products: Product[] = [
   },
   {
     id: 'dompet-kulit',
+    category: 'aksesori',
     name: 'Dompet Kulit Lipat',
     brand: 'Senja',
     price: 245000,
@@ -124,6 +135,7 @@ export const products: Product[] = [
   },
   {
     id: 'syal-rajut',
+    category: 'aksesori',
     name: 'Syal Rajut',
     brand: 'Langkah',
     price: 179000,
@@ -134,6 +146,223 @@ export const products: Product[] = [
     condition: 'used',
     stock: 4,
     blurb: 'Lambswool, ribbed, and long enough to actually wrap twice.',
+  },
+
+  {
+    id: 'ransel-harian',
+    category: 'tas',
+    name: 'Ransel Harian 22L',
+    brand: 'Rimba',
+    price: 540000,
+    rating: 4.5,
+    reviews: 203,
+    colour: 'Hitam',
+    size: ['M'],
+    condition: 'new',
+    stock: 9,
+    blurb: 'One laptop sleeve, one bottle pocket, and a back panel that breathes.',
+  },
+  {
+    id: 'tote-kanvas',
+    category: 'tas',
+    name: 'Tote Kanvas Tebal',
+    brand: 'Senja',
+    price: 185000,
+    was: 229000,
+    rating: 4.1,
+    reviews: 77,
+    colour: 'Krem',
+    size: ['L'],
+    condition: 'new',
+    stock: 31,
+    blurb: 'Twelve-ounce canvas, boxed corners, and handles long enough for a shoulder.',
+  },
+  {
+    id: 'tas-pinggang',
+    category: 'tas',
+    name: 'Tas Pinggang Ringkas',
+    brand: 'Langkah',
+    price: 215000,
+    rating: 4.0,
+    reviews: 45,
+    colour: 'Biru',
+    size: ['S', 'M'],
+    condition: 'new',
+    stock: 14,
+    blurb: 'A phone, a wallet, keys. Deliberately nothing more.',
+  },
+  {
+    id: 'koper-kabin',
+    category: 'tas',
+    name: 'Koper Kabin 20 inci',
+    brand: 'Rimba',
+    price: 1250000,
+    was: 1490000,
+    rating: 4.6,
+    reviews: 118,
+    colour: 'Hitam',
+    size: ['L'],
+    condition: 'new',
+    stock: 5,
+    blurb: 'Cabin size on four airlines we have measured, with wheels that do not sing.',
+  },
+  {
+    id: 'sneaker-lari',
+    category: 'sepatu',
+    name: 'Sneaker Lari Ringan',
+    brand: 'Langkah',
+    price: 680000,
+    rating: 4.4,
+    reviews: 266,
+    colour: 'Putih',
+    size: ['M', 'L', 'XL'],
+    condition: 'new',
+    stock: 12,
+    blurb: 'A 220-gram shoe with a foam midsole that has not gone flat after 400 km.',
+  },
+  {
+    id: 'sandal-gunung',
+    category: 'sepatu',
+    name: 'Sandal Gunung',
+    brand: 'Rimba',
+    price: 320000,
+    was: 389000,
+    rating: 4.2,
+    reviews: 91,
+    colour: 'Hijau',
+    size: ['M', 'L'],
+    condition: 'new',
+    stock: 18,
+    blurb: 'Three straps, a grippy sole, and a footbed that dries overnight.',
+  },
+  {
+    id: 'sepatu-kulit',
+    category: 'sepatu',
+    name: 'Sepatu Kulit Derby',
+    brand: 'Senja',
+    price: 890000,
+    rating: 4.7,
+    reviews: 143,
+    colour: 'Cokelat',
+    size: ['M', 'L'],
+    condition: 'new',
+    stock: 7,
+    blurb: 'Goodyear welted, so it can be resoled instead of replaced.',
+  },
+  {
+    id: 'boot-hujan',
+    category: 'sepatu',
+    name: 'Boot Hujan Pendek',
+    brand: 'Langkah',
+    price: 420000,
+    rating: 3.9,
+    reviews: 29,
+    colour: 'Hitam',
+    size: ['M', 'L'],
+    condition: 'used',
+    stock: 3,
+    blurb: 'Second-hand, cleaned, and honest about the scuff on the left heel.',
+  },
+  {
+    id: 'kemeja-flanel',
+    category: 'pakaian',
+    name: 'Kemeja Flanel',
+    brand: 'Rimba',
+    price: 295000,
+    was: 349000,
+    rating: 4.3,
+    reviews: 112,
+    colour: 'Merah',
+    size: ['S', 'M', 'L'],
+    condition: 'new',
+    stock: 21,
+    blurb: 'Brushed cotton, a chest pocket, and a hem that stays tucked.',
+  },
+  {
+    id: 'sweter-rajut',
+    category: 'pakaian',
+    name: 'Sweter Rajut Polos',
+    brand: 'Senja',
+    price: 385000,
+    rating: 4.5,
+    reviews: 88,
+    colour: 'Krem',
+    size: ['M', 'L', 'XL'],
+    condition: 'new',
+    stock: 13,
+    blurb: 'Merino blend, ribbed cuffs, and no logo anywhere on it.',
+  },
+  {
+    id: 'celana-chino',
+    category: 'pakaian',
+    name: 'Celana Chino',
+    brand: 'Langkah',
+    price: 330000,
+    rating: 4.1,
+    reviews: 64,
+    colour: 'Biru',
+    size: ['S', 'M', 'L'],
+    condition: 'new',
+    stock: 26,
+    blurb: 'A mid rise that sits where it says it will, with a little stretch.',
+  },
+  {
+    id: 'jaket-hujan',
+    category: 'pakaian',
+    name: 'Jaket Hujan Lipat',
+    brand: 'Rimba',
+    price: 575000,
+    was: 699000,
+    rating: 4.6,
+    reviews: 157,
+    colour: 'Hijau',
+    size: ['M', 'L', 'XL'],
+    condition: 'new',
+    stock: 8,
+    blurb: 'Taped seams, a hood that stays up, and it folds into its own pocket.',
+  },
+  {
+    id: 'topi-baseball',
+    category: 'aksesori',
+    name: 'Topi Baseball Katun',
+    brand: 'Senja',
+    price: 145000,
+    rating: 4.0,
+    reviews: 52,
+    colour: 'Hitam',
+    size: ['M'],
+    condition: 'new',
+    stock: 40,
+    blurb: 'Six panels, a curved brim, and a metal buckle rather than plastic.',
+  },
+  {
+    id: 'sarung-tangan',
+    category: 'aksesori',
+    name: 'Sarung Tangan Kulit',
+    brand: 'Langkah',
+    price: 260000,
+    rating: 4.4,
+    reviews: 33,
+    colour: 'Cokelat',
+    size: ['S', 'M', 'L'],
+    condition: 'new',
+    stock: 11,
+    blurb: 'Unlined lambskin that gives a little after a fortnight.',
+  },
+  {
+    id: 'kaus-kaki',
+    category: 'aksesori',
+    name: 'Kaus Kaki Wol (3 pasang)',
+    brand: 'Rimba',
+    price: 135000,
+    was: 169000,
+    rating: 4.2,
+    reviews: 204,
+    colour: 'Krem',
+    size: ['M', 'L'],
+    condition: 'new',
+    stock: 55,
+    blurb: 'Merino, cushioned heel, and they have survived thirty washes here.',
   },
 ];
 
@@ -147,3 +376,136 @@ export const rupiah = (value: number) =>
     currency: 'IDR',
     maximumFractionDigits: 0,
   }).format(value);
+
+/** What the header's navigation menu groups by, with wording for each. */
+export const categories: { id: Category; label: string; blurb: string }[] = [
+  { id: 'tas', label: 'Tas', blurb: 'Ransel, tote, koper kabin' },
+  { id: 'sepatu', label: 'Sepatu', blurb: 'Lari, kulit, sandal' },
+  { id: 'pakaian', label: 'Pakaian', blurb: 'Kemeja, jaket, celana' },
+  { id: 'aksesori', label: 'Aksesori', blurb: 'Topi, dompet, kaus kaki' },
+];
+
+/** One order a signed-in customer can look back at. */
+export interface Order {
+  id: string;
+  placed: string;
+  status: 'diproses' | 'dikirim' | 'tiba' | 'batal';
+  courier: string;
+  tracking: string;
+  address: string;
+  lines: { productId: string; quantity: number; price: number }[];
+  events: { at: string; what: string }[];
+}
+
+export const orders: Order[] = [
+  {
+    id: 'SNJ-24810',
+    placed: '2026-03-08',
+    status: 'dikirim',
+    courier: 'Kilat Nusantara',
+    tracking: 'KN8841203377',
+    address: 'Jl. Cihampelas 112, Bandung 40131',
+    lines: [
+      { productId: 'ransel-harian', quantity: 1, price: 540000 },
+      { productId: 'kaus-kaki', quantity: 2, price: 135000 },
+    ],
+    events: [
+      { at: '2026-03-11 09:12', what: 'Tiba di gudang Bandung' },
+      { at: '2026-03-10 18:40', what: 'Berangkat dari Jakarta' },
+      { at: '2026-03-09 11:05', what: 'Diserahkan ke kurir' },
+      { at: '2026-03-08 16:22', what: 'Pesanan dibayar' },
+    ],
+  },
+  {
+    id: 'SNJ-24796',
+    placed: '2026-02-26',
+    status: 'tiba',
+    courier: 'Kilat Nusantara',
+    tracking: 'KN8839114520',
+    address: 'Jl. Cihampelas 112, Bandung 40131',
+    lines: [
+      { productId: 'sepatu-kulit', quantity: 1, price: 890000 },
+      { productId: 'dompet-kulit', quantity: 1, price: 245000 },
+    ],
+    events: [
+      { at: '2026-03-01 13:44', what: 'Diterima oleh penerima' },
+      { at: '2026-02-28 08:10', what: 'Dalam pengantaran' },
+      { at: '2026-02-27 07:55', what: 'Diserahkan ke kurir' },
+      { at: '2026-02-26 20:31', what: 'Pesanan dibayar' },
+    ],
+  },
+  {
+    id: 'SNJ-24771',
+    placed: '2026-02-14',
+    status: 'diproses',
+    courier: 'Antar Cepat',
+    tracking: '—',
+    address: 'Jl. Braga 8, Bandung 40111',
+    lines: [{ productId: 'jaket-hujan', quantity: 1, price: 575000 }],
+    events: [{ at: '2026-02-14 10:02', what: 'Pesanan dibayar' }],
+  },
+  {
+    id: 'SNJ-24702',
+    placed: '2026-01-19',
+    status: 'batal',
+    courier: '—',
+    tracking: '—',
+    address: 'Jl. Braga 8, Bandung 40111',
+    lines: [{ productId: 'koper-kabin', quantity: 1, price: 1250000 }],
+    events: [
+      { at: '2026-01-20 09:30', what: 'Dibatalkan atas permintaan pembeli' },
+      { at: '2026-01-19 21:18', what: 'Menunggu pembayaran' },
+    ],
+  },
+];
+
+/** The order status ramp, mapped once so no screen invents its own colours. */
+export const orderTone = {
+  diproses: 'info',
+  dikirim: 'warning',
+  tiba: 'success',
+  batal: 'danger',
+} as const;
+
+/** A few reviews per product, so the detail page has something to show. */
+export const reviews: Record<
+  string,
+  { by: string; stars: number; at: string; body: string }[]
+> = {
+  'ransel-harian': [
+    {
+      by: 'Fajar',
+      stars: 5,
+      at: '2026-02-20',
+      body: 'Sudah tiga bulan dipakai harian, jahitan masih rapi.',
+    },
+    {
+      by: 'Melati',
+      stars: 4,
+      at: '2026-01-30',
+      body: 'Muat laptop 14 inci, tapi saku botolnya agak sempit.',
+    },
+  ],
+  'sepatu-kulit': [
+    {
+      by: 'Rangga',
+      stars: 5,
+      at: '2026-02-02',
+      body: 'Butuh dua minggu untuk nyaman, setelah itu enak sekali.',
+    },
+  ],
+  'kacamata-bulat': [
+    {
+      by: 'Sinta',
+      stars: 4,
+      at: '2026-01-12',
+      body: 'Ringan dan tidak melorot. Casing-nya kokoh.',
+    },
+    {
+      by: 'Bimo',
+      stars: 5,
+      at: '2025-12-28',
+      body: 'Engselnya per, jadi aman kalau ketiban tas.',
+    },
+  ],
+};
