@@ -247,3 +247,24 @@ export const PillIcon = (p: IconProps) => (
     <path d="M9.2 9.2l5.6 5.6" />
   </Icon>
 );
+
+export const SunIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" />
+  </Icon>
+);
+
+export const MoonIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2Z" />
+  </Icon>
+);
+
+/** The "follow the operating system" choice, beside `SunIcon` and `MoonIcon`. */
+export const MonitorIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="4.5" width="18" height="12" rx="2" />
+    <path d="M9 20h6M12 16.5V20" />
+  </Icon>
+);
