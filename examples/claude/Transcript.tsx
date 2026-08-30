@@ -46,18 +46,22 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                 /* A single disclosure, not an accordion: there is one panel, and
                    an accordion here would put a heading in the page outline
                    that means nothing. */
-                <Collapsible className="rounded-md border border-line-subtle bg-sunken">
+                /* A rule down the leading edge, and no fill. It is an aside,
+                   not a container, and while it was a filled box it looked
+                   exactly like the CodeBlock below it and the question above
+                   it — three meanings wearing one appearance. */
+                <Collapsible className="border-s-2 border-line-subtle ps-3">
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-between"
+                      className="w-full justify-between px-3"
                       trailingIcon={<ChevronDownIcon />}
                     >
                       How it got there
                     </Button>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="px-4 pb-3">
+                  <CollapsibleContent className="px-3 pb-2 text-body-sm text-fg-secondary">
                     {turn.reasoning}
                   </CollapsibleContent>
                 </Collapsible>
@@ -104,10 +108,16 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                    the reading direction, so it moves to the left edge in a
                    right-to-left language rather than staying put.
 
-                   `bg-sunken` is the only quiet surface that reads on this page
-                   in both themes — `surface-raised` is the same neutral-0 as
-                   the page itself in light mode, and would be invisible. */
-                <div className="ms-auto grid max-w-[85%] gap-4 rounded-lg border border-line-subtle bg-sunken px-4 py-3">
+                   The fill and the edge are the brand family, not the neutral
+                   one: `bg-sunken` is what a CodeBlock and a Sidebar are made
+                   of, so a question wearing it was claiming to be furniture.
+
+                   `rounded-ee-xs` squares the end-bottom corner, and it is the
+                   only cue here that survives Windows high contrast — that mode
+                   replaces every fill and drops every shadow, but keeps borders
+                   and geometry. A difference made only of colour disappears in
+                   the one mode this very conversation is about. */
+                <div className="ms-auto grid max-w-[85%] gap-4 rounded-lg rounded-ee-xs border border-line-accent bg-brand-subtle px-4 py-3">
                   {body}
                 </div>
               ) : (

@@ -23,6 +23,7 @@
   --color-line-subtle: var(--color-border-subtle);
   --color-line: var(--color-border-default);
   --color-line-strong: var(--color-border-strong);
+  --color-line-accent: var(--color-border-accent);
   --color-ring: var(--color-focus-ring);
   --color-ring-offset: var(--color-focus-ring-offset);
   --color-scrim: var(--color-overlay-scrim);
