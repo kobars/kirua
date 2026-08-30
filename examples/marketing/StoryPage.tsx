@@ -5,6 +5,8 @@ import {
   Container,
   Eyebrow,
   Heading,
+  List,
+  ListItem,
   Section,
   Separator,
   Text,
@@ -58,13 +60,16 @@ export function StoryPage() {
         <Heading as="h3" size="heading-sm">
           What we kept from that year
         </Heading>
-        <ul className="grid gap-2">
+        <List>
           {PRINCIPLES.map((principle) => (
-            <li key={principle.title} className="text-body-md text-fg-secondary">
-              <span className="font-medium text-fg">{principle.title}.</span> {principle.body}
-            </li>
+            <ListItem key={principle.title}>
+              <Text inline tone="primary" className="font-medium">
+                {principle.title}.
+              </Text>{' '}
+              {principle.body}
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </div>
 
       <Separator />
