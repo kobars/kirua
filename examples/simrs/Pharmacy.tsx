@@ -30,8 +30,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Meter,
   MoreIcon,
-  Progress,
   SearchIcon,
   Table,
   TableBody,
@@ -195,12 +195,19 @@ export function Pharmacy() {
                             <span className="tabular-nums">{item.stock}</span>
                             <Badge status={tone[level(item)]}>{level(item)}</Badge>
                           </div>
-                          <Progress
-                            value={Math.min(
-                              100,
-                              Math.round((item.stock / (item.reorder * 3)) * 100),
-                            )}
-                            aria-label={`Stok ${item.name}`}
+                          {/* `sm`, because this sits in a table cell beside the
+                              number it measures. No thresholds: a Meter's
+                              thresholds are crossed upward, and here it is a
+                              LOW stock that is the problem. The Badge above
+                              already carries that meaning, and a second claim
+                              in a second colour would only be able to disagree
+                              with it. */}
+                          <Meter
+                            size="sm"
+                            value={item.stock}
+                            max={item.reorder * 3}
+                            label={`Stok ${item.name}`}
+                            valueText={`${item.stock} dari ${item.reorder * 3}`}
                           />
                         </div>
                       </TableCell>

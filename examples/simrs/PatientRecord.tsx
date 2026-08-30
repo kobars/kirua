@@ -34,8 +34,8 @@ import {
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
+  Meter,
   PrintIcon,
-  Progress,
   Separator,
   Table,
   TableBody,
@@ -197,14 +197,22 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                   <span className="text-fg-secondary">Rekam medis</span>
                   <span className="text-fg tabular-nums">82%</span>
                 </p>
-                <Progress value={82} aria-label="Kelengkapan rekam medis" />
+                <Meter
+                  value={82}
+                  label="Kelengkapan rekam medis"
+                  valueText="82 dari 100 persen"
+                />
               </div>
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
                   <span className="text-fg-secondary">Berkas penjamin</span>
                   <span className="text-fg tabular-nums">100%</span>
                 </p>
-                <Progress value={100} aria-label="Kelengkapan berkas penjamin" />
+                <Meter
+                  value={100}
+                  label="Kelengkapan berkas penjamin"
+                  valueText="100 dari 100 persen"
+                />
               </div>
               {latest && (
                 <Text size="sm" className="mt-2 tabular-nums">
