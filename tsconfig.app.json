@@ -11,7 +11,14 @@
     /* Bundler mode */
     /* Paths resolve relative to this file — `baseUrl` is deprecated in TS 6. */
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      /* The example apps import the bare specifier an outside consumer would.
+       * Only they are meant to use it — `src` keeps `@/`, and an app that
+       * reached into `src/lib` would fail the grep in
+       * `examples/vite.shared.ts`. The alias is deleted, here and there, the
+       * day kirua is a published package. */
+      "kirua": ["./src/components/index.ts"],
+      "kirua/styles.css": ["./src/index.css"]
     },
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -35,5 +42,9 @@
   /* `vitest.shims.d.ts` is named explicitly because it sits outside `src` and
    * carries the browser-matcher type references the test suite needs. It was
    * present but unreachable until this line existed. */
-  "include": ["src", "vitest.shims.d.ts"]
+  "include": ["src", "examples", "vitest.shims.d.ts"],
+  /* The example Vite configs belong to the NODE project — they import `vite`
+   * and run under Node, not in the browser. Listed in both they would be
+   * compiled twice under two different `module` settings. */
+  "exclude": ["examples/vite.shared.ts", "examples/*/vite.config.ts"]
 }

@@ -62,6 +62,14 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * 9.27 kB with `ScrollArea`: the component's own utilities, its forced-colours
  * rule, and the story-only classes that ride along as above.
  *
+ * 104.38 / 9.34 kB after installing fourteen more Radix primitives, and NOT
+ * because of the stylesheet split that landed in the same commit. Measured
+ * rather than assumed: building the previous commit against the new
+ * `node_modules` produced byte-identical asset hashes to building the split
+ * against it, so the split is output-neutral and the drift is entirely the
+ * install refreshing transitive versions of the Radix packages already here.
+ * Worth the two minutes — the obvious suspect was innocent.
+ *
  * Vite's own build log prints 105.30 and 8.55 for the same two files. The
  * difference is the compression level each side happens to use, and it is
  * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
@@ -77,8 +85,8 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  * it, and say why in the message.
  */
 const BUDGETS = {
-  javascript: { extension: '.js', measured: 104.16, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 9.27, gzipLimitKb: 12 },
+  javascript: { extension: '.js', measured: 104.38, gzipLimitKb: 115 },
+  css: { extension: '.css', measured: 9.34, gzipLimitKb: 12 },
 };
 
 const kb = (bytes) => bytes / 1000;

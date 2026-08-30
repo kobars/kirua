@@ -1,182 +1,30 @@
-/* Import order is the token architecture: primitives -> semantic -> aliases.
+/* THE APPLICATION ENTRY POINT — Tailwind, the source list, then every layer.
  *
- * NO REMOTE @import HERE. A font fetched from inside this file costs three
- * sequential round trips before text is drawn in the intended face: the browser
- * downloads index.css, parses it, discovers a second stylesheet on another
- * origin, fetches that, and only then learns the font file URLs. It also makes
- * every consumer of kirua inherit a runtime dependency on Google's CDN, which
- * is not a design system's choice to make.
+ * This file stays the path every tool names: Storybook's preview imports it,
+ * `prettier.config.mjs` reads it as `tailwindStylesheet`, and `.oxlintrc.json`
+ * points `better-tailwindcss` at it as `entryPoint`. The layers moved to
+ * `styles/kirua.css`; this file did not, so none of them had to learn a new
+ * path.
  *
- * kirua NAMES its typefaces and does not ship them. `--font-display` and
- * `--font-text` both end in a system fallback, so a host that loads nothing
- * still gets a working page. See `board/tasks/font-delivery.md`. */
+ * WHAT IT SCANS IS THE WHOLE REASON FOR THE SPLIT. Tailwind finds classes by
+ * scanning source TEXT, and emits one stylesheet per source set. Both `@source
+ * not` lines below exist because something that is not this application would
+ * otherwise put its utilities in this application's bundle — and
+ * `tools/size-budget.mjs` fails the build on the size of that bundle. */
 @import 'tailwindcss';
 
-/* Tailwind scans source *text*, and the sample board bundle under src/board is
- * prose that will grow. A sentence saying "when to use a table" is a candidate
- * for the `table` utility. A fence, not a repair: measured on the day it was
- * added, the CSS hash was identical with and without this line, because every
- * utility-shaped word the sample uses today is already emitted by real source. */
+/* The sample board bundle under src/board is prose that will grow. A sentence
+ * saying "when to use a table" is a candidate for the `table` utility. A fence,
+ * not a repair: measured on the day it was added, the CSS hash was identical
+ * with and without this line, because every utility-shaped word the sample uses
+ * today is already emitted by real source. */
 @source not './board/sample';
 
-@import './styles/tokens.primitives.css';
-@import './styles/tokens.semantic.css';
-@import './styles/theme.css';
-@import './styles/animations.css';
+/* The four example applications, which have their own entry points at
+ * `examples/<slug>/styles.css` and their own `@source` lists. This one is NOT a
+ * fence — it is load-bearing. A product grid, a clinical table and a chat shell
+ * are thousands of utility usages, and without this line every one of them
+ * ships here. See `board/decisions/example-apps-in-one-repo.md`. */
+@source not '../examples';
 
-/* The .dark class re-points semantic tokens, so most components need no `dark:`
- * variants at all. This exists for the rare case where dark mode changes layout
- * or opacity rather than colour. */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Components name a state, not a vendor's spelling of it. Radix writes
- * `data-state="open"`; Base UI writes a bare `data-open`. Both are matched here
- * so swapping primitives is a change of import, not a rewrite.
- *
- * Radix's tooltip is the reason `data-open` lists three values: it never emits a
- * plain "open", only "delayed-open" after its hover delay or "instant-open" when
- * a neighbouring tooltip was already showing. */
-@custom-variant data-open {
-  &:where(
-    [data-state='open'],
-    [data-state='delayed-open'],
-    [data-state='instant-open'],
-    [data-open]:not([data-open='false'])
-  ) {
-    @slot;
-  }
-}
-
-@custom-variant data-closed {
-  &:where([data-state='closed'], [data-closed]:not([data-closed='false'])) {
-    @slot;
-  }
-}
-
-@custom-variant data-active {
-  &:where([data-state='active'], [data-active]:not([data-active='false'])) {
-    @slot;
-  }
-}
-
-@layer base {
-  html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    background-color: var(--color-surface-page);
-    color: var(--color-text-primary);
-    font-family: var(--font-text);
-    font-size: var(--text-body-md);
-    line-height: var(--text-body-md--line-height);
-    font-weight: var(--font-weight-regular);
-  }
-
-  /* Components may restyle the ring, but none may remove it. */
-  :focus-visible {
-    outline: 2px solid var(--color-focus-ring);
-    outline-offset: 2px;
-  }
-
-  /* The CornerGlint blade is drawn once, for the start-top corner, and flipped
-   * into the other three. `transform` is physical — it knows nothing about
-   * reading direction — so in a right-to-left document every horizontal flip
-   * has to invert again, which is what `--glint-dir` does. Keeping this in CSS
-   * rather than in the inline style is the only way the component can stay
-   * direction-agnostic. */
-  [data-slot='corner-glint'] {
-    --glint-x: 1;
-    --glint-y: 1;
-    --glint-dir: 1;
-    transform: scale(calc(var(--glint-x) * var(--glint-dir)), var(--glint-y));
-  }
-
-  [data-slot='corner-glint'][data-corner$='-end'] {
-    --glint-x: -1;
-  }
-
-  [data-slot='corner-glint'][data-corner^='bottom-'] {
-    --glint-y: -1;
-  }
-
-  :dir(rtl) [data-slot='corner-glint'] {
-    --glint-dir: -1;
-  }
-
-  /* Luckiest Guy has no lowercase design of its own and very tight sidebearings. */
-  .font-display {
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-}
-
-/* WINDOWS HIGH CONTRAST. Forced-colors mode replaces every colour on the page
- * with a small user-chosen palette, for people who cannot read the colours a
- * designer picked. A token system is the thing it overrides hardest, and none
- * of it is visible in a normal render.
- *
- * Measured, not guessed. Under emulation `bg-brand` computes to plain white
- * and `shadow-overlay` computes to `none` — so the two ways this system
- * separates one surface from another, fill and elevation, both stop working
- * at once. Everything below restores a boundary that forced colours KEEPS.
- *
- * `outline` with a negative offset rather than `border`, so nothing moves: a
- * border would add a pixel to every one of these boxes in this mode only.
- *
- * DELIBERATELY OUTSIDE `@layer base`. Unlayered CSS beats every cascade layer,
- * and these rules have to beat Tailwind's `utilities` layer — the first attempt
- * put them in `base`, where `display: none` lost to `DotGrid`'s own
- * `inline-block` and the ornament kept rendering. */
-@media (forced-colors: active) {
-  [data-slot='badge'],
-  [data-slot='chip'],
-  [data-slot='card'],
-  [data-slot='nav-bar'],
-  [data-slot='spotlight-panel'],
-  [data-slot='dialog-content'],
-  [data-slot='dropdown-menu-content'],
-  [data-slot='tooltip-content'] {
-    outline: 1px solid CanvasText;
-    outline-offset: -1px;
-  }
-
-  /* A scrollbar thumb is nothing but a fill. Measured: `bg-line-strong`
-     computes to Canvas here, so the thumb vanishes into the track. A system
-     colour is the one kind of fill the mode keeps. */
-  [data-slot='scroll-bar-thumb'] {
-    background-color: CanvasText;
-  }
-
-  /* The scrim is a translucent fill, so it is dropped, and the dialog would
-     otherwise float over a fully legible page with nothing marking it modal. */
-  [data-slot='dialog-content'] {
-    background-color: Canvas;
-  }
-
-  /* The focus ring is the one thing that must never be what disappears.
-     `Highlight` is the system's own selection colour, so it is guaranteed to
-     contrast with `Canvas` whatever palette the user chose. */
-  :focus-visible {
-    outline: 3px solid Highlight;
-    outline-offset: 2px;
-  }
-
-  /* Ornament only. In forced colours both resolve to CanvasText and become
-     solid marks competing with the text they sit behind. */
-  [data-slot='dot-grid'],
-  [data-slot='corner-glint'] {
-    display: none;
-  }
-}
+@import './styles/kirua.css';
