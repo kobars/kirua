@@ -205,4 +205,6 @@ export {
 } from './ButtonGroup';
 export { buttonGroupVariants } from './ButtonGroup.variants';
 
+export { InputGroup, InputGroupInput, InputGroupAddon, InputGroupText } from './InputGroup';
+
 export * from './icons';
