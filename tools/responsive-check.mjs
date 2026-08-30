@@ -50,7 +50,10 @@ const APPS = [
       'pasien/RM-004130',
     ],
   },
-  { slug: 'social', routes: ['', 'profil/rin', 'profil/maya'] },
+  {
+    slug: 'social',
+    routes: ['', 'jelajah', 'notifikasi', 'pesan', 'profil/rin', 'profil/maya', 'profil/eko'],
+  },
 ];
 
 const TYPES = {

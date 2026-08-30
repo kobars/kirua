@@ -3,8 +3,12 @@ import {
   Avatar,
   AvatarFallback,
   AvatarStack,
+  BarChart,
   Button,
   Card,
+  CardBody,
+  Chart,
+  ChartCaption,
   Separator,
   Tabs,
   TabsContent,
@@ -12,7 +16,7 @@ import {
   TabsTrigger,
 } from 'kirua';
 import { PostCard } from './PostCard';
-import { compactCount, initials, people, posts, type Person } from './data';
+import { compactCount, initials, people, posts, postsPerMonth, type Person } from './data';
 
 export interface ProfileProps {
   person: Person;
@@ -23,7 +27,7 @@ export function Profile({ person }: ProfileProps) {
   const others = Object.values(people).filter((p) => p.handle !== person.handle);
 
   return (
-    <div className="grid gap-4">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <Card className="grid gap-4 overflow-hidden p-0">
         <AspectRatio ratio={16 / 5} className="bg-brand-subtle">
           <div className="size-full" aria-hidden="true" />
@@ -77,6 +81,7 @@ export function Profile({ person }: ProfileProps) {
           <TabsTrigger value="kiriman">Kiriman</TabsTrigger>
           <TabsTrigger value="media">Media</TabsTrigger>
           <TabsTrigger value="suka">Suka</TabsTrigger>
+          <TabsTrigger value="aktivitas">Aktivitas</TabsTrigger>
         </TabsList>
 
         <TabsContent value="kiriman" className="grid gap-4">
@@ -99,6 +104,19 @@ export function Profile({ person }: ProfileProps) {
 
         <TabsContent value="suka" className="text-body-sm text-fg-secondary">
           <p>Kiriman yang disukai bersifat pribadi di layar contoh ini.</p>
+        </TabsContent>
+
+        <TabsContent value="aktivitas">
+          <Card>
+            <CardBody>
+              <Chart label={`Kiriman ${person.name} per bulan, dua belas bulan terakhir`}>
+                <BarChart data={postsPerMonth} series={2} />
+                <ChartCaption>
+                  Angka-angka ini dibuat untuk contoh, bukan diukur dari mana pun.
+                </ChartCaption>
+              </Chart>
+            </CardBody>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
