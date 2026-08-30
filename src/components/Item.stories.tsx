@@ -102,9 +102,15 @@ export const Sizes: Story = {
   ),
 };
 
+/**
+ * `variant="outlined"` rather than three utilities typed onto `className`. This
+ * story used to write `rounded-lg border border-line-subtle` by hand, and so
+ * did two screens in the social example — the same decoration written three
+ * times is a variant that had not been declared yet.
+ */
 export const InAGroup: Story = {
   render: (args) => (
-    <ItemGroup className="w-96 rounded-lg border border-line-subtle bg-raised">
+    <ItemGroup variant="outlined" className="w-96">
       <Item {...args} interactive>
         <ItemMedia>
           <Avatar size="sm">
@@ -140,6 +146,16 @@ export const InAGroup: Story = {
       </Item>
     </ItemGroup>
   ),
+  /**
+   * `overflow-hidden` is the part of the variant that would fail silently. A
+   * row's hover fill is a rectangle, so without clipping it paints over the
+   * corner it is meant to sit inside — visible only while a pointer is over the
+   * first or last row, which is exactly when nobody is looking at the corner.
+   */
+  play: async ({ canvasElement }) => {
+    const group = canvasElement.querySelector('[data-slot="item-group"]') as HTMLElement;
+    await expect(getComputedStyle(group).overflow).toBe('hidden');
+  },
 };
 
 /**

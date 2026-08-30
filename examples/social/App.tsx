@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
+  Card,
   CommentIcon,
   GridIcon,
   Heading,
@@ -180,11 +181,12 @@ export function App() {
 
               {loadingMore && (
                 <output aria-busy="true" aria-label="Memuat kiriman" className="grid gap-4">
+                  {/* A `Card`, because the thing it stands in for is a `Card`.
+                      This was three utilities typed by hand, which happened to
+                      draw a box the same size and shape and would have drifted
+                      away from PostCard the first time either changed. */}
                   {[0, 1].map((n) => (
-                    <div
-                      key={n}
-                      className="grid gap-3 rounded-lg border border-line-subtle p-4"
-                    >
+                    <Card key={n} radius="lg" padding="none" className="grid gap-3 p-4">
                       <div className="flex items-center gap-3">
                         <Skeleton className="size-10 rounded-pill" />
                         <div className="grid gap-2">
@@ -195,7 +197,7 @@ export function App() {
                       <Skeleton className="h-3 w-full" />
                       <Skeleton className="h-3 w-4/5" />
                       <Skeleton className="h-44 w-full rounded-md" />
-                    </div>
+                    </Card>
                   ))}
                 </output>
               )}
