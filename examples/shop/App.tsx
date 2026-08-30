@@ -2,8 +2,23 @@ import { useMemo, useState } from 'react';
 import {
   Badge,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   EmptyState,
   IconButton,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -26,17 +41,22 @@ import {
   ToastViewport,
   CartIcon,
   CheckIcon,
+  CloseIcon,
   FilterIcon,
   SearchIcon,
+  UserIcon,
 } from 'kirua';
 import { CartSheet, type CartLine } from './CartSheet';
 import { CheckoutPage } from './CheckoutPage';
+import { OrderPage } from './OrderPage';
+import { OrdersPage } from './OrdersPage';
+import { SignInPage } from './SignInPage';
 import { Filters } from './Filters';
 import { ThemeMenu } from './ThemeMenu';
 import { emptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
 import { ProductPage } from './ProductPage';
-import { products, type Product } from './data';
+import { categories, orders, products, type Category, type Product } from './data';
 import { useHashRoute } from './useHashRoute';
 
 const PER_PAGE = 6;
@@ -50,9 +70,16 @@ export function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState<Category | 'semua'>('semua');
+  const [signedIn, setSignedIn] = useState(false);
 
   const matches = useMemo(() => {
+    const q = query.trim().toLowerCase();
     const kept = products.filter((p) => {
+      if (category !== 'semua' && p.category !== category) return false;
+      if (q !== '' && !`${p.name} ${p.brand} ${p.colour}`.toLowerCase().includes(q))
+        return false;
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false;
       if (filters.colours.length > 0 && !filters.colours.includes(p.colour)) return false;
       if (filters.sizes.length > 0 && !p.size.some((s) => filters.sizes.includes(s)))
@@ -65,7 +92,7 @@ export function App() {
     if (sort === 'mahal') sorted.sort((a, b) => b.price - a.price);
     if (sort === 'nilai') sorted.sort((a, b) => b.rating - a.rating);
     return sorted;
-  }, [filters, sort]);
+  }, [filters, sort, query, category]);
 
   const pages = Math.max(1, Math.ceil(matches.length / PER_PAGE));
   const current = Math.min(page, pages);
@@ -94,12 +121,25 @@ export function App() {
   const detail = route.startsWith('produk/')
     ? products.find((p) => p.id === route.slice('produk/'.length))
     : undefined;
+  const order = route.startsWith('pesanan/')
+    ? orders.find((o) => o.id === route.slice('pesanan/'.length))
+    : undefined;
 
   const filterPanel = (
     <Filters
       value={filters}
       onChange={(next) => {
         setFilters(next);
+        setPage(1);
+      }}
+      query={query}
+      onQueryChange={(next) => {
+        setQuery(next);
+        setPage(1);
+      }}
+      category={category}
+      onCategoryChange={(next) => {
+        setCategory(next);
         setPage(1);
       }}
     />
@@ -116,11 +156,106 @@ export function App() {
             Senja
           </a>
 
+          {/* A `<nav>` of links, not a menu of commands: these go somewhere.
+              Hidden below `md`, where the same categories are reachable from the
+              filter sheet. */}
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Katalog</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid w-md grid-cols-2 gap-1">
+                    <NavigationMenuLink
+                      href="#/"
+                      onClick={() => {
+                        setCategory('semua');
+                        setPage(1);
+                      }}
+                    >
+                      <span className="font-medium">Semua barang</span>
+                      <span className="text-caption text-fg-muted">
+                        {products.length} item di katalog
+                      </span>
+                    </NavigationMenuLink>
+                    {categories.map((item) => (
+                      <NavigationMenuLink
+                        key={item.id}
+                        href="#/"
+                        onClick={() => {
+                          setCategory(item.id);
+                          setPage(1);
+                        }}
+                      >
+                        <span className="font-medium">{item.label}</span>
+                        <span className="text-caption text-fg-muted">{item.blurb}</span>
+                      </NavigationMenuLink>
+                    ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#/pesanan" className="px-4">
+                  Pesanan
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+
           <span className="min-w-0 flex-1" />
 
-          <IconButton aria-label="Cari" variant="ghost">
-            <SearchIcon />
-          </IconButton>
+          <div className="hidden w-56 lg:block">
+            <InputGroup className="h-9">
+              <InputGroupAddon>
+                <SearchIcon />
+              </InputGroupAddon>
+              <InputGroupInput
+                value={query}
+                aria-label="Cari barang"
+                placeholder="Cari barang"
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setPage(1);
+                }}
+              />
+              {query !== '' && (
+                <InputGroupAddon>
+                  <IconButton
+                    aria-label="Hapus pencarian"
+                    size="sm"
+                    variant="ghost"
+                    className="-me-1.5"
+                    onClick={() => setQuery('')}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </InputGroupAddon>
+              )}
+            </InputGroup>
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <IconButton aria-label="Akun" variant="ghost">
+                <UserIcon />
+              </IconButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                {signedIn ? 'Masuk sebagai 0812…' : 'Belum masuk'}
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <a href="#/pesanan">Pesanan saya</a>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {signedIn ? (
+                <DropdownMenuItem onSelect={() => setSignedIn(false)}>Keluar</DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem asChild>
+                  <a href="#/masuk">Masuk</a>
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <ThemeMenu />
 
@@ -167,6 +302,17 @@ export function App() {
       <main>
         {detail ? (
           <ProductPage product={detail} onAdd={add} />
+        ) : order ? (
+          <OrderPage order={order} />
+        ) : route === 'pesanan' ? (
+          <OrdersPage onOpen={(id) => navigate(`pesanan/${id}`)} />
+        ) : route === 'masuk' ? (
+          <SignInPage
+            onSignedIn={() => {
+              setSignedIn(true);
+              navigate('pesanan');
+            }}
+          />
         ) : route === 'checkout' ? (
           <CheckoutPage lines={lines} onPlaced={() => setLines([])} />
         ) : (
@@ -175,12 +321,27 @@ export function App() {
 
             <div className="grid content-start gap-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h1 className="text-heading-md font-semibold text-fg">
-                  Katalog{' '}
-                  <span className="text-body-md font-normal text-fg-muted tabular-nums">
-                    ({matches.length})
-                  </span>
-                </h1>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-heading-md font-semibold text-fg">
+                    {categories.find((c) => c.id === category)?.label ?? 'Katalog'}{' '}
+                    <span className="text-body-md font-normal text-fg-muted tabular-nums">
+                      ({matches.length})
+                    </span>
+                  </h1>
+                  {(category !== 'semua' || query !== '') && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setCategory('semua');
+                        setQuery('');
+                        setPage(1);
+                      }}
+                    >
+                      Hapus penyaringan
+                    </Button>
+                  )}
+                </div>
                 <div className="w-48">
                   <Select value={sort} onValueChange={setSort}>
                     <SelectTrigger aria-label="Urutkan">
