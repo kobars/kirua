@@ -86,6 +86,17 @@ export {
   type SheetContentProps,
 } from './Sheet';
 export { sheetContentVariants } from './SheetContent.variants';
+export {
+  Select,
+  SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  type SelectContentProps,
+} from './Select';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export {
   RadioGroup,
