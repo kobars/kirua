@@ -5,7 +5,10 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  CommentIcon,
   EmptyState,
+  Heading,
+  HeartIcon,
   Item,
   ItemActions,
   ItemContent,
@@ -14,10 +17,8 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-  HeartIcon,
-  CommentIcon,
-  UserIcon,
   SparkleIcon,
+  UserIcon,
 } from 'kirua';
 import { initials, notices, people, type Notice } from './data';
 
@@ -48,14 +49,14 @@ export function Notifications() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-heading-sm font-semibold text-fg">
+        <Heading as="h1" size="heading-sm">
           Notifikasi{' '}
           {unread > 0 && (
             <Badge status="info" className="ms-1">
               {unread} baru
             </Badge>
           )}
-        </h1>
+        </Heading>
         <ButtonGroup aria-label="Saring notifikasi">
           {(['semua', 'belum'] as const).map((value) => (
             <Button

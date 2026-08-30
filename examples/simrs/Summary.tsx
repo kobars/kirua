@@ -1,12 +1,14 @@
 import {
-  BarChart,
   Badge,
+  BarChart,
+  CalendarIcon,
   Card,
   CardBody,
   CardTitle,
   Chart,
   ChartCaption,
   ChartLegend,
+  Heading,
   Item,
   ItemActions,
   ItemContent,
@@ -20,14 +22,14 @@ import {
   Sparkline,
   Stat,
   StatRow,
+  StethoscopeIcon,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  CalendarIcon,
-  StethoscopeIcon,
+  Text,
 } from 'kirua';
 import { clinicLoad, monthlyVisits, statusTone, visits, wards, patients } from './data';
 
@@ -47,8 +49,12 @@ export function Summary() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-6">
       <div>
-        <h1 className="text-heading-md font-semibold text-fg">Ringkasan hari ini</h1>
-        <p className="mt-1 text-body-sm text-fg-secondary">Kamis, 12 Maret 2026</p>
+        <Heading as="h1" size="heading-md">
+          Ringkasan hari ini
+        </Heading>
+        <Text size="sm" className="mt-1">
+          Kamis, 12 Maret 2026
+        </Text>
       </div>
 
       <StatRow>

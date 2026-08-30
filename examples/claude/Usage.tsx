@@ -6,6 +6,7 @@ import {
   Chart,
   ChartCaption,
   ChartLegend,
+  Heading,
   LineChart,
   ScrollArea,
   Sparkline,
@@ -30,7 +31,9 @@ export function Usage() {
   return (
     <ScrollArea className="min-h-0 flex-1">
       <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] gap-6 px-4 py-8 md:px-8">
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">Usage</h1>
+        <Heading as="h1" size="heading-lg">
+          Usage
+        </Heading>
 
         <StatRow>
           <Stat value={String(allConversations.length)} label="Conversations" />

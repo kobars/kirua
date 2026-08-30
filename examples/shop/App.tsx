@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import {
   Badge,
   Button,
+  CartIcon,
+  CheckIcon,
+  CloseIcon,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,6 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   EmptyState,
+  FilterIcon,
+  Heading,
   IconButton,
   InputGroup,
   InputGroupAddon,
@@ -25,6 +30,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  SearchIcon,
   Select,
   SelectContent,
   SelectItem,
@@ -39,11 +45,6 @@ import {
   ToastDescription,
   ToastTitle,
   ToastViewport,
-  CartIcon,
-  CheckIcon,
-  CloseIcon,
-  FilterIcon,
-  SearchIcon,
   UserIcon,
 } from 'kirua';
 import { CartSheet, type CartLine } from './CartSheet';
@@ -329,12 +330,12 @@ export function App() {
             <div className="grid content-start gap-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-heading-md font-semibold text-fg">
+                  <Heading as="h1" size="heading-md">
                     {categories.find((c) => c.id === category)?.label ?? 'Katalog'}{' '}
                     <span className="text-body-md font-normal text-fg-muted tabular-nums">
                       ({matches.length})
                     </span>
-                  </h1>
+                  </Heading>
                   {(category !== 'semua' || query !== '') && (
                     <Button
                       variant="ghost"

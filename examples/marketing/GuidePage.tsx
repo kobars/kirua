@@ -7,9 +7,12 @@ import {
   CardTitle,
   CodeBlock,
   CopyIcon,
+  Eyebrow,
+  Heading,
   IconButton,
   Kbd,
   Separator,
+  Text,
 } from 'kirua';
 import { PUBLISH_STEPS } from './data';
 
@@ -32,20 +35,22 @@ export function GuidePage() {
   return (
     <div className="mx-auto grid w-full max-w-3xl grid-cols-[minmax(0,1fr)] content-start gap-6 px-4 py-8 md:px-8">
       <div className="grid gap-3">
-        <p className="text-caption font-medium text-fg-muted uppercase">Guide</p>
-        <h1 className="text-heading-lg font-semibold text-balance text-fg">
+        <Eyebrow>Guide</Eyebrow>
+        <Heading as="h1" size="heading-lg">
           Publishing your first gallery
-        </h1>
-        <p className="text-body-lg text-fg-secondary">
+        </Heading>
+        <Text size="lg">
           Four steps, and none of them needs a developer. The last section is for the people who
           want their files back out again, which is everyone eventually.
-        </p>
+        </Text>
       </div>
 
       <Separator />
 
       <div className="grid gap-4">
-        <h2 className="text-heading-md font-semibold text-fg">The four steps</h2>
+        <Heading as="h2" size="heading-md">
+          The four steps
+        </Heading>
         <ol className="grid gap-3">
           {PUBLISH_STEPS.map((step, index) => (
             <li key={step.title} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
@@ -76,13 +81,15 @@ export function GuidePage() {
       <Separator />
 
       <div className="grid gap-4">
-        <h2 className="text-heading-md font-semibold text-fg">Getting your files back out</h2>
-        <p className="text-body-md text-fg-secondary">
+        <Heading as="h2" size="heading-md">
+          Getting your files back out
+        </Heading>
+        <Text>
           Every gallery exports as a folder. Inside it is one file per piece at the resolution
           you uploaded, and a manifest listing them. The manifest is documented, not
           reverse-engineered, and it is the same shape whether you have four pieces or four
           hundred.
-        </p>
+        </Text>
 
         <CodeBlock
           language="json"
@@ -95,10 +102,10 @@ export function GuidePage() {
           {MANIFEST}
         </CodeBlock>
 
-        <p className="text-body-md text-fg-secondary">
+        <Text>
           Anything that can read a folder can read the export. Opening it needs no Aozora
           account, and it keeps working after the account is closed.
-        </p>
+        </Text>
       </div>
 
       <Card variant="dark" padding="lg" glint="top-end">

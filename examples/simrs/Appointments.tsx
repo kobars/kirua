@@ -3,6 +3,7 @@ import {
   Badge,
   Calendar,
   Card,
+  Heading,
   Separator,
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Text,
   ToggleGroup,
   ToggleGroupItem,
 } from 'kirua';
@@ -25,7 +27,9 @@ export function Appointments() {
 
   return (
     <div className="grid content-start gap-5">
-      <h1 className="text-heading-md font-semibold text-fg">Jadwal kunjungan</h1>
+      <Heading as="h1" size="heading-md">
+        Jadwal kunjungan
+      </Heading>
 
       {/* `minmax(0,1fr)` below `lg`, because a grid item keeps `min-width:
           auto` and the calendar below is `w-max` — without it the column takes
@@ -47,11 +51,11 @@ export function Appointments() {
             className="bg-transparent p-0"
           />
           <Separator className="my-3" />
-          <p className="px-1 text-body-sm text-fg-secondary">
+          <Text size="sm" className="px-1">
             {day === undefined
               ? 'Pilih tanggal.'
               : new Intl.DateTimeFormat('id-ID', { dateStyle: 'full' }).format(day)}
-          </p>
+          </Text>
         </Card>
 
         <div className="grid content-start gap-4">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Alert,
+  AlertDescription,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -8,7 +9,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
-  AlertDescription,
   AlertTitle,
   Avatar,
   AvatarFallback,
@@ -22,6 +22,7 @@ import {
   Button,
   Card,
   Chart,
+  Heading,
   LineChart,
   Menubar,
   MenubarContent,
@@ -30,6 +31,7 @@ import {
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
+  PrintIcon,
   Progress,
   Separator,
   Table,
@@ -43,7 +45,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  PrintIcon,
+  Text,
 } from 'kirua';
 import { age, flagTone, labResults, statusTone, vitals, visits, type Patient } from './data';
 
@@ -94,11 +96,13 @@ export function PatientRecord({ patient }: PatientRecordProps) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-heading-md font-semibold text-fg">{patient.name}</h1>
-            <p className="text-body-sm text-fg-secondary tabular-nums">
+            <Heading as="h1" size="heading-md">
+              {patient.name}
+            </Heading>
+            <Text size="sm" className="tabular-nums">
               {patient.rm} · {age(patient.born)} tahun ·{' '}
               {patient.sex === 'P' ? 'Perempuan' : 'Laki-laki'}
-            </p>
+            </Text>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -159,7 +163,9 @@ export function PatientRecord({ patient }: PatientRecordProps) {
         <TabsContent value="ringkasan">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="grid gap-3 p-5">
-              <h2 className="text-body-md font-semibold text-fg">Identitas</h2>
+              <Heading as="h2" size="body-md">
+                Identitas
+              </Heading>
               <Separator />
               <dl className="grid gap-2 text-body-sm">
                 {(
@@ -179,7 +185,9 @@ export function PatientRecord({ patient }: PatientRecordProps) {
             </Card>
 
             <Card className="grid gap-3 p-5">
-              <h2 className="text-body-md font-semibold text-fg">Kelengkapan berkas</h2>
+              <Heading as="h2" size="body-md">
+                Kelengkapan berkas
+              </Heading>
               <Separator />
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
@@ -196,9 +204,9 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 <Progress value={100} aria-label="Kelengkapan berkas penjamin" />
               </div>
               {latest && (
-                <p className="mt-2 text-body-sm text-fg-secondary tabular-nums">
+                <Text size="sm" className="mt-2 tabular-nums">
                   Terakhir diukur {latest.at} — {latest.systolic}/{latest.diastolic} mmHg
-                </p>
+                </Text>
               )}
             </Card>
           </div>
@@ -253,7 +261,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="vital">
           {measurements.length === 0 ? (
-            <p className="text-body-sm text-fg-secondary">Belum ada pengukuran.</p>
+            <Text size="sm">Belum ada pengukuran.</Text>
           ) : (
             <div className="grid gap-6">
               <Card className="p-5">
@@ -294,22 +302,22 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="lab">
           {orders.length === 0 ? (
-            <p className="text-body-sm text-fg-secondary">
-              Belum ada pemeriksaan laboratorium.
-            </p>
+            <Text size="sm">Belum ada pemeriksaan laboratorium.</Text>
           ) : (
             <div className="grid gap-4">
               {orders.map((order) => (
                 <Card key={order.id} className="grid gap-3 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h2 className="text-body-md font-semibold text-fg">{order.panel}</h2>
+                    <Heading as="h2" size="body-md">
+                      {order.panel}
+                    </Heading>
                     <span className="text-body-sm text-fg-secondary tabular-nums">
                       {order.id} · {order.at}
                     </span>
                   </div>
                   <Separator />
                   {order.rows.length === 0 ? (
-                    <p className="text-body-sm text-fg-secondary">Hasil belum keluar.</p>
+                    <Text size="sm">Hasil belum keluar.</Text>
                   ) : (
                     <div className="overflow-x-auto">
                       <Table>

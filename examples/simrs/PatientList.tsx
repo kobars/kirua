@@ -3,8 +3,11 @@ import {
   Badge,
   Button,
   EmptyState,
+  Heading,
   Input,
   Label,
+  PlusIcon,
+  SearchIcon,
   Select,
   SelectContent,
   SelectItem,
@@ -17,8 +20,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  PlusIcon,
-  SearchIcon,
 } from 'kirua';
 import { age, patients } from './data';
 
@@ -42,7 +43,9 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
   return (
     <div className="grid content-start gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-heading-md font-semibold text-fg">Daftar pasien</h1>
+        <Heading as="h1" size="heading-md">
+          Daftar pasien
+        </Heading>
         <Button leadingIcon={<PlusIcon />} onClick={onNewVisit}>
           Kunjungan baru
         </Button>

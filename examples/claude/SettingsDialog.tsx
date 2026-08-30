@@ -7,15 +7,16 @@ import {
   DialogFooter,
   DialogTitle,
   Field,
+  Heading,
   Kbd,
   Label,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  RadioGroup,
-  RadioGroupItem,
   Separator,
   Switch,
 } from 'kirua';
@@ -88,7 +89,9 @@ export function SettingsDialog({
           <Separator />
 
           <div className="grid gap-3">
-            <h3 className="text-body-sm font-semibold text-fg">Keyboard shortcuts</h3>
+            <Heading as="h3" size="body-sm">
+              Keyboard shortcuts
+            </Heading>
             <dl className="grid gap-2">
               {shortcuts.map(({ keys, what }) => (
                 <div key={what} className="flex items-center justify-between gap-4">

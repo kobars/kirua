@@ -9,9 +9,11 @@ import {
   Button,
   Card,
   CardBody,
+  ChevronDownIcon,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Heading,
   Item,
   ItemContent,
   ItemDescription,
@@ -19,6 +21,7 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
+  PrintIcon,
   Separator,
   Table,
   TableBody,
@@ -26,8 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  ChevronDownIcon,
-  PrintIcon,
+  Text,
 } from 'kirua';
 import { orderTone, products, rupiah, type Order } from './data';
 
@@ -56,10 +58,12 @@ export function OrderPage({ order }: OrderPageProps) {
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-heading-md font-semibold text-fg">{order.id}</h1>
-          <p className="mt-1 text-body-sm text-fg-secondary tabular-nums">
+          <Heading as="h1" size="heading-md">
+            {order.id}
+          </Heading>
+          <Text size="sm" className="mt-1 tabular-nums">
             Dipesan {order.placed} · {order.courier} {order.tracking}
-          </p>
+          </Text>
         </div>
         <div className="flex items-center gap-3">
           <Badge status={orderTone[order.status]}>{order.status}</Badge>
@@ -79,7 +83,9 @@ export function OrderPage({ order }: OrderPageProps) {
             sum of its children's, so an `auto` grid column sizes itself to the
             untruncated title rather than to the card. */}
         <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
-          <h2 className="text-body-md font-semibold text-fg">Barang</h2>
+          <Heading as="h2" size="body-md">
+            Barang
+          </Heading>
           <ItemGroup>
             {order.lines.map((line, index) => {
               const product = products.find((p) => p.id === line.productId);
@@ -140,7 +146,9 @@ export function OrderPage({ order }: OrderPageProps) {
         <CardBody className="grid gap-3">
           <Collapsible defaultOpen>
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-body-md font-semibold text-fg">Riwayat pengiriman</h2>
+              <Heading as="h2" size="body-md">
+                Riwayat pengiriman
+              </Heading>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm" trailingIcon={<ChevronDownIcon />}>
                   Rincian
@@ -172,8 +180,12 @@ export function OrderPage({ order }: OrderPageProps) {
           <Separator />
 
           <div>
-            <h3 className="text-body-sm font-medium text-fg">Dikirim ke</h3>
-            <p className="mt-1 text-body-sm text-fg-secondary">{order.address}</p>
+            <Heading as="h3" size="body-sm">
+              Dikirim ke
+            </Heading>
+            <Text size="sm" className="mt-1">
+              {order.address}
+            </Text>
           </div>
         </CardBody>
       </Card>
