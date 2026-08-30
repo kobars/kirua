@@ -4,6 +4,20 @@ import { cleanup, render } from '@/test/render';
 import {
   Alert,
   AlertDescription,
+  AspectRatio,
+  Avatar,
+  AvatarFallback,
+  Breadcrumb,
+  Calendar,
+  Carousel,
+  CarouselItem,
+  CodeBlock,
+  Combobox,
+  ComboboxInput,
+  ComboboxList,
+  BreadcrumbList,
+  Checkbox,
+  EmptyState,
   AlertTitle,
   AvatarStack,
   Badge,
@@ -19,6 +33,16 @@ import {
   Field,
   IconButton,
   Input,
+  Kbd,
+  Pagination,
+  QuantityStepper,
+  PaginationContent,
+  Progress,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  RadioGroup,
+  RadioGroupItem,
   Label,
   NavBar,
   ScrollArea,
@@ -26,9 +50,24 @@ import {
   SpotlightContent,
   SpotlightMedia,
   SpotlightPanel,
+  Separator,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Slider,
+  Switch,
+  Spinner,
   Stat,
   StatRow,
   Textarea,
+  Toast,
+  ToastTitle,
+  ToastViewport,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
 } from './index';
 
 afterEach(cleanup);
@@ -40,6 +79,10 @@ type Case = [name: string, render: (extra: Extra) => ReactElement, tag: string];
  * Every hand-written component is listed. That is the point — the defect this
  * file replaces was that not one of them accepted a ref, and a list with holes
  * in it would have passed then too.
+ *
+ * `AvatarImage` is deliberately absent: Radix does not mount the `<img>` until
+ * the file has loaded, so no element exists for a ref to reach when `render()`
+ * returns. Its behaviour is covered by `Avatar.stories.tsx`.
  */
 const cases: Case[] = [
   ['Button', (p) => <Button {...p}>Go</Button>, 'BUTTON'],
@@ -84,6 +127,120 @@ const cases: Case[] = [
     'DIV',
   ],
   ['CornerGlint', (p) => <CornerGlint {...p} />, 'SPAN'],
+  ['Avatar', (p) => <Avatar {...p} />, 'SPAN'],
+  [
+    'AvatarFallback',
+    (p) => (
+      <Avatar>
+        <AvatarFallback {...p}>RK</AvatarFallback>
+      </Avatar>
+    ),
+    'SPAN',
+  ],
+  ['AspectRatio', (p) => <AspectRatio ratio={1} {...p} />, 'DIV'],
+  ['Separator', (p) => <Separator {...p} />, 'DIV'],
+  ['Skeleton', (p) => <Skeleton {...p} />, 'DIV'],
+  // `OUTPUT`: an <output> is already a polite live region.
+  ['Spinner', (p) => <Spinner {...p} />, 'OUTPUT'],
+  ['Kbd', (p) => <Kbd {...p}>K</Kbd>, 'KBD'],
+  ['Checkbox', (p) => <Checkbox {...p} />, 'BUTTON'],
+  ['Table', (p) => <Table {...p} />, 'TABLE'],
+  ['Calendar', (p) => <Calendar month={new Date(2026, 2, 1)} {...p} />, 'DIV'],
+  ['Carousel', (p) => <Carousel label="Photos" {...p} />, 'DIV'],
+  [
+    'CarouselItem',
+    (p) => (
+      <Carousel label="Photos">
+        <CarouselItem {...p} />
+      </Carousel>
+    ),
+    'DIV',
+  ],
+  ['CodeBlock', (p) => <CodeBlock {...p}>code</CodeBlock>, 'DIV'],
+  ['Combobox', (p) => <Combobox {...p} />, 'DIV'],
+  ['ComboboxInput', (p) => <ComboboxInput aria-label="Search" {...p} />, 'INPUT'],
+  ['ComboboxList', (p) => <ComboboxList aria-label="Results" {...p} />, 'UL'],
+  ['QuantityStepper', (p) => <QuantityStepper label="Quantity" value={1} {...p} />, 'DIV'],
+  [
+    'TableBody',
+    (p) => (
+      <Table>
+        <TableBody {...p} />
+      </Table>
+    ),
+    'TBODY',
+  ],
+  [
+    'TableRow',
+    (p) => (
+      <Table>
+        <TableBody>
+          <TableRow {...p} />
+        </TableBody>
+      </Table>
+    ),
+    'TR',
+  ],
+  [
+    'TableCell',
+    (p) => (
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell {...p} />
+          </TableRow>
+        </TableBody>
+      </Table>
+    ),
+    'TD',
+  ],
+  ['Breadcrumb', (p) => <Breadcrumb {...p} />, 'NAV'],
+  ['BreadcrumbList', (p) => <BreadcrumbList {...p} />, 'OL'],
+  ['Pagination', (p) => <Pagination {...p} />, 'NAV'],
+  ['PaginationContent', (p) => <PaginationContent {...p} />, 'UL'],
+  // `SECTION`: a <section> with a name is already a region.
+  ['ToastViewport', (p) => <ToastViewport {...p} />, 'SECTION'],
+  ['Toast', (p) => <Toast {...p} />, 'DIV'],
+  ['ToastTitle', (p) => <ToastTitle {...p}>Saved</ToastTitle>, 'P'],
+  ['Slider', (p) => <Slider defaultValue={[10]} aria-label="Volume" {...p} />, 'SPAN'],
+  ['EmptyState', (p) => <EmptyState title="Nothing here" {...p} />, 'DIV'],
+  [
+    'PopoverContent',
+    (p) => (
+      <Popover defaultOpen>
+        <PopoverTrigger>open</PopoverTrigger>
+        {/* `aria-label` is required in the type — a role="dialog" with no
+            accessible name is an axe failure, so the build fails first. */}
+        <PopoverContent aria-label="Panel" {...p}>
+          Panel
+        </PopoverContent>
+      </Popover>
+    ),
+    'DIV',
+  ],
+  ['RadioGroup', (p) => <RadioGroup {...p} />, 'DIV'],
+  [
+    'RadioGroupItem',
+    (p) => (
+      <RadioGroup>
+        <RadioGroupItem value="one" {...p} />
+      </RadioGroup>
+    ),
+    'BUTTON',
+  ],
+  ['Switch', (p) => <Switch {...p} />, 'BUTTON'],
+  ['Progress', (p) => <Progress value={40} aria-label="Loading" {...p} />, 'DIV'],
+  ['Toggle', (p) => <Toggle aria-label="Bold" {...p} />, 'BUTTON'],
+  ['ToggleGroup', (p) => <ToggleGroup type="single" aria-label="Layout" {...p} />, 'DIV'],
+  [
+    'ToggleGroupItem',
+    (p) => (
+      <ToggleGroup type="single" aria-label="Layout">
+        <ToggleGroupItem value="one" aria-label="One" {...p} />
+      </ToggleGroup>
+    ),
+    'BUTTON',
+  ],
   ['Card', (p) => <Card {...p} />, 'DIV'],
   ['CardEyebrow', (p) => <CardEyebrow {...p} />, 'P'],
   ['CardTitle', (p) => <CardTitle {...p} />, 'H3'],
