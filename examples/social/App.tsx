@@ -29,6 +29,8 @@ import {
   UserIcon,
 } from 'kirua';
 import { Composer } from './Composer';
+import { ExperimentBar } from './ExperimentBar';
+import { readSurface, writeSurface, type CardSurface } from './experiment';
 import { Explore } from './Explore';
 import { Messages } from './Messages';
 import { Notifications } from './Notifications';
@@ -57,6 +59,8 @@ export function App() {
   const [shown, setShown] = useState(3);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
+  /** TEMPORARY — see `experiment.tsx`. */
+  const [surface, setSurface] = useState<CardSurface>(readSurface);
 
   useEffect(() => {
     if (!loadingMore) return;
@@ -142,7 +146,7 @@ export function App() {
 
         <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 sm:pb-4">
           {profile ? (
-            <Profile person={profile} />
+            <Profile person={profile} surface={surface} />
           ) : route === 'jelajah' ? (
             <Explore onOpen={(handle) => navigate(`profil/${handle}`)} />
           ) : route === 'notifikasi' ? (
@@ -151,9 +155,16 @@ export function App() {
             <Messages />
           ) : (
             <>
+              <ExperimentBar
+                value={surface}
+                onChange={(next) => {
+                  setSurface(next);
+                  writeSurface(next);
+                }}
+              />
               <Composer />
               {feed.slice(0, shown).map((post) => (
-                <PostCard key={post.id} post={post} onDelete={setDeleting} />
+                <PostCard key={post.id} post={post} onDelete={setDeleting} surface={surface} />
               ))}
 
               {loadingMore && (

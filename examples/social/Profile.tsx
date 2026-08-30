@@ -16,13 +16,16 @@ import {
   TabsTrigger,
 } from 'kirua';
 import { PostCard } from './PostCard';
+import type { CardSurface } from './experiment';
 import { compactCount, initials, people, posts, postsPerMonth, type Person } from './data';
 
 export interface ProfileProps {
   person: Person;
+  /** TEMPORARY — see `experiment.tsx`. */
+  surface?: CardSurface | undefined;
 }
 
-export function Profile({ person }: ProfileProps) {
+export function Profile({ person, surface }: ProfileProps) {
   const theirs = posts.filter((p) => p.handle === person.handle);
   const others = Object.values(people).filter((p) => p.handle !== person.handle);
 
@@ -86,7 +89,7 @@ export function Profile({ person }: ProfileProps) {
 
         <TabsContent value="kiriman" className="grid gap-4">
           {theirs.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} surface={surface} />
           ))}
         </TabsContent>
 
