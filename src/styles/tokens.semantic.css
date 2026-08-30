@@ -41,6 +41,18 @@
   --color-border-subtle: var(--color-neutral-200);
   --color-border-default: var(--color-neutral-300);
   --color-border-strong: var(--color-neutral-1000);
+
+  /* The one edge that is not grey, for a box that belongs to the brand rather
+   * than to the page — a message the person wrote, beside one the machine did.
+   *
+   * `blue-600`, not the measured `blue-500`, for the reason `surface-brand`
+   * gives: WCAG 1.4.11 treats the boundary of a meaningful box as a non-text
+   * component and asks 3:1 against *everything it touches*, which here is two
+   * colours, not one. Measured on the shipped values — blue-600 is 4.67:1 on
+   * the page and 4.33:1 on `surface-brand-subtle`, its own fill; blue-500 is
+   * 3.65 and 3.38, which passes with almost nothing to spare, and blue-400 is
+   * 2.70 and 2.50, which fails both. */
+  --color-border-accent: var(--color-blue-600);
   --color-focus-ring: var(--color-blue-500);
   --color-focus-ring-offset: var(--color-neutral-0);
 
@@ -240,6 +252,10 @@
   --color-border-subtle: color-mix(in srgb, var(--color-neutral-0) 24%, transparent);
   --color-border-default: color-mix(in srgb, var(--color-neutral-0) 45%, transparent);
   --color-border-strong: var(--color-neutral-0);
+
+  /* White, exactly as `text-accent` is here: on a blue panel the accent colour
+   * *is* the panel, so a blue edge would vanish. 4.67:1 on blue-600. */
+  --color-border-accent: var(--color-neutral-0);
   --color-focus-ring: var(--color-neutral-0);
   --color-focus-ring-offset: var(--color-blue-600);
 
@@ -315,6 +331,11 @@
   --color-border-subtle: var(--color-neutral-800);
   --color-border-default: var(--color-neutral-700);
   --color-border-strong: var(--color-neutral-0);
+
+  /* Up the ramp, like `surface-brand-vivid`: blue-600 falls to 3.33:1 on the
+   * blue-950 fill and blue-700 to 2.41, which fails. blue-500 measures 5.34:1
+   * on the page and 4.27:1 on the fill. */
+  --color-border-accent: var(--color-blue-500);
   --color-focus-ring: var(--color-blue-400);
   --color-focus-ring-offset: var(--color-neutral-1000);
 
@@ -403,6 +424,11 @@
   --color-border-subtle: var(--color-neutral-800);
   --color-border-default: var(--color-neutral-700);
   --color-border-strong: var(--color-neutral-0);
+
+  /* Up the ramp, like `surface-brand-vivid`: blue-600 falls to 3.33:1 on the
+   * blue-950 fill and blue-700 to 2.41, which fails. blue-500 measures 5.34:1
+   * on the page and 4.27:1 on the fill. */
+  --color-border-accent: var(--color-blue-500);
   --color-focus-ring: var(--color-blue-400);
   --color-focus-ring-offset: var(--color-neutral-950);
 
