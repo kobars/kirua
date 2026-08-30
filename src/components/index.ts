@@ -98,6 +98,7 @@ export {
   type SelectContentProps,
 } from './Select';
 export { Slider, type SliderProps } from './Slider';
+export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export {
   RadioGroup,
