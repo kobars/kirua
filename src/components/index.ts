@@ -202,6 +202,8 @@ export {
 } from './RadioGroup';
 export { Switch, type SwitchProps } from './Switch';
 export { Progress, type ProgressProps } from './Progress';
+export { Meter, type MeterProps } from './Meter';
+export { meterVariants } from './Meter.variants';
 export { Toggle, type ToggleProps } from './Toggle';
 export { toggleVariants } from './Toggle.variants';
 export {

@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
   Button,
   Card,
   Label,
+  PlusIcon,
+  Progress,
   SendIcon,
+  Text,
   Textarea,
   ToggleGroup,
   ToggleGroupItem,
@@ -21,7 +24,21 @@ const LIMIT = 280;
 export function Composer() {
   const [text, setText] = useState('');
   const [audience, setAudience] = useState('semua');
+  const [uploaded, setUploaded] = useState<number | null>(null);
   const left = LIMIT - text.length;
+
+  // The one thing on this screen that is a task rather than a measurement, and
+  // therefore the one `Progress` in the example applications. Everything else
+  // that looked like a bar — bed occupancy, record completeness, a stock level
+  // — is a `Meter`.
+  useEffect(() => {
+    if (uploaded === null || uploaded >= 100) return;
+    const timer = window.setTimeout(
+      () => setUploaded((n) => Math.min(100, (n ?? 0) + 20)),
+      350,
+    );
+    return () => window.clearTimeout(timer);
+  }, [uploaded]);
 
   return (
     <Card className="grid gap-3 p-4">
@@ -45,6 +62,18 @@ export function Composer() {
         </div>
       </div>
 
+      {uploaded !== null && (
+        <div className="grid gap-1.5">
+          <div className="flex items-baseline justify-between">
+            <Text size="sm">{uploaded < 100 ? 'Mengunggah gambar…' : 'Gambar terunggah'}</Text>
+            <Text size="sm" tone="muted" inline className="tabular-nums">
+              {uploaded}%
+            </Text>
+          </div>
+          <Progress value={uploaded} aria-label="Unggahan gambar" />
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <ToggleGroup
           type="single"
@@ -66,6 +95,15 @@ export function Composer() {
         </ToggleGroup>
 
         <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            variant="ghost"
+            leadingIcon={<PlusIcon />}
+            disabled={uploaded !== null}
+            onClick={() => setUploaded(0)}
+          >
+            Gambar
+          </Button>
           <span
             aria-live={left <= 20 ? 'polite' : 'off'}
             className={[

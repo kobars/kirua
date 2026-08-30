@@ -18,7 +18,7 @@ import {
   ItemSeparator,
   ItemTitle,
   LineChart,
-  Progress,
+  Meter,
   Sparkline,
   Stat,
   StatRow,
@@ -143,9 +143,20 @@ export function Summary() {
                       {ward.used} / {ward.beds}
                     </span>
                   </div>
-                  <Progress
-                    value={Math.round((ward.used / ward.beds) * 100)}
-                    aria-label={`Hunian ruang ${ward.name}`}
+                  {/* A measurement, not a task, and the one screen that
+                      wanted thresholds: amber past 85% of the ward, red past
+                      95%. Written in beds rather than percent, because a
+                      threshold as a percentage means something different the
+                      moment `min` stops being zero. */}
+                  <Meter
+                    value={ward.used}
+                    max={ward.beds}
+                    label={`Hunian ruang ${ward.name}`}
+                    valueText={`${ward.used} dari ${ward.beds} tempat tidur`}
+                    thresholds={{
+                      warning: Math.round(ward.beds * 0.85),
+                      danger: Math.round(ward.beds * 0.95),
+                    }}
                   />
                 </li>
               ))}
