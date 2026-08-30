@@ -1,13 +1,18 @@
 import {
   Avatar,
   AvatarFallback,
+  Button,
   CodeBlock,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   IconButton,
   ScrollArea,
   Skeleton,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  ChevronDownIcon,
   CopyIcon,
   SparkleIcon,
 } from 'kirua';
@@ -48,6 +53,27 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
             </div>
 
             <div className="grid gap-4 ps-8">
+              {turn.reasoning && (
+                /* A single disclosure, not an accordion: there is one panel, and
+                   an accordion here would put a heading in the page outline
+                   that means nothing. */
+                <Collapsible className="rounded-md border border-line-subtle bg-sunken">
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-between"
+                      trailingIcon={<ChevronDownIcon />}
+                    >
+                      How it got there
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="px-4 pb-3">
+                    {turn.reasoning}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
               {turn.text.split('\n\n').map((paragraph) => (
                 <p key={paragraph.slice(0, 24)} className="text-body-md text-pretty text-fg">
                   {paragraph}

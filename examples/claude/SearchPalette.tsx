@@ -8,7 +8,7 @@ import {
   CommandList,
   Kbd,
 } from 'kirua';
-import { conversations } from './data';
+import { allConversations as conversations } from './data';
 
 export interface SearchPaletteProps {
   open: boolean;
