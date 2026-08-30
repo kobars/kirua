@@ -218,6 +218,36 @@ export const patients: Patient[] = [
 
 export const clinics = ['Poli Umum', 'Poli Gigi', 'Poli Anak', 'Poli Mata', 'Poli Jantung'];
 
+/**
+ * Clinics grouped by the department that runs them, which is how a hospital
+ * lists them and how the visit form now presents them. Fifteen entries in one
+ * flat menu is a scroll; two named groups is a choice.
+ */
+export const clinicGroups = [
+  { label: 'Layanan umum', clinics: ['Poli Umum', 'Poli Gigi'] },
+  { label: 'Spesialis', clinics: ['Poli Anak', 'Poli Mata', 'Poli Jantung'] },
+];
+
+/**
+ * A slice of ICD-10, which is the case a combobox exists for: a doctor knows
+ * the first letters and the list is far too long to scroll. Shortened to what
+ * the sample clinics see.
+ */
+export const diagnoses = [
+  { code: 'J06.9', label: 'Infeksi saluran napas atas akut' },
+  { code: 'J20.9', label: 'Bronkitis akut' },
+  { code: 'A09', label: 'Diare dan gastroenteritis' },
+  { code: 'I10', label: 'Hipertensi esensial' },
+  { code: 'E11.9', label: 'Diabetes melitus tipe 2' },
+  { code: 'K30', label: 'Dispepsia' },
+  { code: 'H10.9', label: 'Konjungtivitis' },
+  { code: 'K02.1', label: 'Karies dentin' },
+  { code: 'L20.9', label: 'Dermatitis atopik' },
+  { code: 'M54.5', label: 'Nyeri punggung bawah' },
+  { code: 'R50.9', label: 'Demam tanpa sebab jelas' },
+  { code: 'B34.9', label: 'Infeksi virus tidak spesifik' },
+];
+
 export const doctors: Record<string, string[]> = {
   'Poli Umum': ['dr. Andi Wijaya', 'dr. Sari Puspita'],
   'Poli Gigi': ['drg. Maya Kusuma'],

@@ -4,6 +4,13 @@ import {
   Calendar,
   Card,
   Heading,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   Separator,
   Table,
   TableBody,
@@ -18,12 +25,31 @@ import {
 } from 'kirua';
 import { clinics, statusTone, visits } from './data';
 
+const PER_PAGE = 8;
+
+/**
+ * Which page numbers a pager shows: always the first and the last, always the
+ * three around the current one, and an ellipsis wherever that leaves a gap.
+ * Forty-four visits over six pages is what makes the gap real.
+ */
+function pageWindow(current: number, total: number): (number | 'gap')[] {
+  const wanted = new Set([1, total, current - 1, current, current + 1]);
+  const shown = [...wanted].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  return shown.flatMap((n, index) =>
+    index > 0 && n - shown[index - 1]! > 1 ? ['gap' as const, n] : [n],
+  );
+}
+
 export function Appointments() {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
   const [day, setDay] = useState<Date | undefined>(new Date(2026, 2, 12));
   const [clinic, setClinic] = useState('semua');
+  const [page, setPage] = useState(1);
 
-  const rows = visits.filter((v) => clinic === 'semua' || v.clinic === clinic);
+  const all = visits.filter((v) => clinic === 'semua' || v.clinic === clinic);
+  const pages = Math.max(1, Math.ceil(all.length / PER_PAGE));
+  const current = Math.min(page, pages);
+  const rows = all.slice((current - 1) * PER_PAGE, current * PER_PAGE);
 
   return (
     <div className="grid content-start gap-5">
@@ -66,7 +92,11 @@ export function Appointments() {
             <ToggleGroup
               type="single"
               value={clinic}
-              onValueChange={(next) => next && setClinic(next)}
+              onValueChange={(next) => {
+                if (!next) return;
+                setClinic(next);
+                setPage(1);
+              }}
               aria-labelledby="clinic-filter"
               className="flex-wrap"
             >
@@ -83,7 +113,8 @@ export function Appointments() {
 
           <Table>
             <TableCaption>
-              {rows.length} kunjungan{clinic === 'semua' ? '' : ` di ${clinic}`}
+              {all.length} kunjungan{clinic === 'semua' ? '' : ` di ${clinic}`} · halaman{' '}
+              {current} dari {pages}
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -110,6 +141,45 @@ export function Appointments() {
               ))}
             </TableBody>
           </Table>
+
+          {/* Forty-four rows in one table was a list nobody reaches the end of.
+              The pager shows the first page, the last, and the three around the
+              current one — the ellipsis is what stands in for the rest. */}
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#/jadwal"
+                  label="Sebelumnya"
+                  onClick={() => setPage(Math.max(1, current - 1))}
+                />
+              </PaginationItem>
+              {pageWindow(current, pages).map((entry, index) =>
+                entry === 'gap' ? (
+                  <PaginationItem key={`gap-${index}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={entry}>
+                    <PaginationLink
+                      href="#/jadwal"
+                      isCurrent={entry === current}
+                      onClick={() => setPage(entry)}
+                    >
+                      {entry}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              )}
+              <PaginationItem>
+                <PaginationNext
+                  href="#/jadwal"
+                  label="Berikutnya"
+                  onClick={() => setPage(Math.min(pages, current + 1))}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

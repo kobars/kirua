@@ -1,18 +1,26 @@
+import { useState } from 'react';
 import {
   AspectRatio,
   Avatar,
   AvatarFallback,
+  AvatarImage,
   BookmarkIcon,
   Card,
   CommentIcon,
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuTrigger,
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -37,7 +45,15 @@ export interface PostCardProps {
   surface?: CardSurface | undefined;
 }
 
+/** How the replies under a post are ordered. Two answers, so a radio group. */
+const REPLY_ORDERS = [
+  { value: 'terbaru', label: 'Balasan terbaru dulu' },
+  { value: 'terpopuler', label: 'Balasan terpopuler dulu' },
+];
+
 export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) {
+  const [muted, setMuted] = useState(false);
+  const [replyOrder, setReplyOrder] = useState('terbaru');
   const person = people[post.handle];
   if (!person) return null;
 
@@ -47,6 +63,10 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
     <Card variant={look.variant} className={cn('grid gap-3 p-4', look.className)}>
       <header className="flex items-start gap-3">
         <Avatar size="md">
+          {/* Half the people here have a portrait and half do not, which is the
+              only way to see that both halves of `Avatar` work. `alt=""` — the
+              name is right beside it, and reading it twice helps nobody. */}
+          {person.photo && <AvatarImage src={person.photo} alt="" />}
           <AvatarFallback>{initials(person.name)}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
@@ -73,9 +93,18 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
             </IconButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem>Salin tautan</DropdownMenuItem>
-            <DropdownMenuItem>Sematkan</DropdownMenuItem>
-            <DropdownMenuItem>Laporkan</DropdownMenuItem>
+            {/* Grouped, because the three commands, the two settings and the
+                destructive one are three different kinds of thing and a menu
+                that does not say so is a list of six. */}
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Salin tautan</DropdownMenuItem>
+              <DropdownMenuItem>Sematkan</DropdownMenuItem>
+              <DropdownMenuItem>Laporkan</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
+              Bisukan @{person.handle}
+            </DropdownMenuCheckboxItem>
             {onDelete && (
               <>
                 <DropdownMenuSeparator />
@@ -140,12 +169,29 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
     <ContextMenu>
       <ContextMenuTrigger asChild>{card}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem>
-          Salin tautan
-          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuItem>Sematkan</ContextMenuItem>
-        <ContextMenuItem>Laporkan</ContextMenuItem>
+        <ContextMenuGroup>
+          <ContextMenuItem>
+            Salin tautan
+            <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem>Sematkan</ContextMenuItem>
+          <ContextMenuItem>Laporkan</ContextMenuItem>
+        </ContextMenuGroup>
+        <ContextMenuSeparator />
+        <ContextMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
+          Bisukan @{person.handle}
+        </ContextMenuCheckboxItem>
+        <ContextMenuSeparator />
+        {/* The right-click path carries the same commands as the button menu
+            above, so the two share one keyboard model. The reply order lives
+            here as well for that reason. */}
+        <ContextMenuRadioGroup value={replyOrder} onValueChange={setReplyOrder}>
+          {REPLY_ORDERS.map((order) => (
+            <ContextMenuRadioItem key={order.value} value={order.value}>
+              {order.label}
+            </ContextMenuRadioItem>
+          ))}
+        </ContextMenuRadioGroup>
         {onDelete && (
           <>
             <ContextMenuSeparator />
