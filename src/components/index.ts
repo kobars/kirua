@@ -74,6 +74,7 @@ export {
   PopoverContent,
   type PopoverContentProps,
 } from './Popover';
+export { HoverCard, HoverCardTrigger, HoverCardContent } from './HoverCard';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export {
   RadioGroup,
