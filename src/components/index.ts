@@ -291,4 +291,20 @@ export {
   type InputOTPSlotProps,
 } from './InputOTP';
 
+export {
+  Chart,
+  ChartCaption,
+  ChartLegend,
+  BarChart,
+  LineChart,
+  Sparkline,
+  type ChartProps,
+  type ChartPoint,
+  type ChartSeries,
+  type ChartLegendProps,
+  type BarChartProps,
+  type LineChartProps,
+  type SparklineProps,
+} from './Chart';
+
 export * from './icons';

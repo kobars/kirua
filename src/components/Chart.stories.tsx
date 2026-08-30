@@ -1,0 +1,166 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+import { BarChart, Chart, ChartCaption, ChartLegend, LineChart, Sparkline } from './Chart';
+import { Stat, StatRow } from './Stat';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './Table';
+
+const meta = {
+  title: 'Components/Chart',
+  component: Chart,
+  args: { label: 'Clinic visits per month, first half of 2026' },
+  argTypes: { label: { control: 'text' } },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Plain SVG and CSS — there is no charting library in this repository. The common cases are a few dozen lines of geometry, they render on a server with no JavaScript, and they read their colours from the token layer. Reach for a library when you need axes that pan or tens of thousands of points.',
+      },
+    },
+  },
+} satisfies Meta<typeof Chart>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const VISITS = [
+  { label: 'Jan', value: 182 },
+  { label: 'Feb', value: 214 },
+  { label: 'Mar', value: 268 },
+  { label: 'Apr', value: 241 },
+  { label: 'May', value: 302 },
+  { label: 'Jun', value: 355 },
+];
+
+export const Bars: Story = {
+  render: () => (
+    <Chart label="Clinic visits per month, first half of 2026" className="w-lg">
+      <BarChart data={VISITS} showValues />
+      <ChartLegend items={[{ label: 'Visits', series: 1 }]} />
+    </Chart>
+  ),
+};
+
+export const Line: Story = {
+  render: () => (
+    <Chart label="Clinic visits per month, first half of 2026" className="w-lg">
+      <LineChart data={VISITS} filled />
+      <ChartCaption>Six months to June. The dip in April was the Eid week.</ChartCaption>
+    </Chart>
+  ),
+};
+
+/** The five series, so a chart with more than one line can be read. */
+export const TheFiveSeries: Story = {
+  render: () => (
+    <Chart label="The five chart series" className="w-lg">
+      <div className="flex flex-col gap-2">
+        {([1, 2, 3, 4, 5] as const).map((series) => (
+          <BarChart key={series} series={series} data={VISITS} max={400} className="h-10" />
+        ))}
+      </div>
+      <ChartLegend
+        items={[
+          { label: 'One', series: 1 },
+          { label: 'Two', series: 2 },
+          { label: 'Three', series: 3 },
+          { label: 'Four', series: 4 },
+          { label: 'Five', series: 5 },
+        ]}
+      />
+    </Chart>
+  ),
+};
+
+/** Small enough to sit beside a number rather than under a heading. */
+export const InlineSparkline: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <StatRow>
+        <Stat label="Visits this month" value="355" />
+        <Stat label="Prescriptions" value="1.204" />
+      </StatRow>
+      <div className="flex items-center gap-6">
+        <Sparkline data={VISITS} />
+        <Sparkline data={VISITS} series={3} />
+        <Sparkline data={VISITS} series={5} />
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * A picture is not the numbers. The chart carries a name; the table beside it
+ * carries the values, and a reader using a screen reader gets the second one.
+ */
+export const WithTheNumbersBeside: Story = {
+  render: () => (
+    <Chart label="Clinic visits per month, first half of 2026" className="w-lg">
+      <BarChart data={VISITS} />
+      <ChartCaption>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Month</TableHead>
+              <TableHead>Visits</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {VISITS.map((point) => (
+              <TableRow key={point.label}>
+                <TableCell>{point.label}</TableCell>
+                <TableCell>{point.value}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </ChartCaption>
+    </Chart>
+  ),
+};
+
+/**
+ * Two bars in the same chart are comparable only if they share a ceiling, and
+ * two *charts* are comparable only if `max` is passed to both. The default —
+ * the largest value present — silently rescales, which is how a chart shows a
+ * fall as a rise.
+ */
+export const BarHeightsAreProportional: Story = {
+  render: () => (
+    <Chart label="Two values, one twice the other" className="w-64">
+      <BarChart
+        data={[
+          { label: 'One', value: 50 },
+          { label: 'Two', value: 100 },
+        ]}
+      />
+    </Chart>
+  ),
+  play: async ({ canvasElement }) => {
+    const bars = canvasElement.querySelectorAll('[data-slot="bar-chart-bar"]');
+    const heights = [...bars].map((bar) => bar.getBoundingClientRect().height);
+
+    await expect(bars).toHaveLength(2);
+    await expect(Math.abs((heights[1] ?? 0) / (heights[0] ?? 1) - 2)).toBeLessThan(0.05);
+  },
+};
+
+/**
+ * The chart has a name and the SVG inside it does not announce itself a second
+ * time. A picture with no name is announced as nothing at all; a picture
+ * announced twice is worse.
+ */
+export const ThePictureIsNamedOnce: Story = {
+  render: () => (
+    <Chart label="Clinic visits per month" className="w-96">
+      <LineChart data={VISITS} />
+    </Chart>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const figure = canvas.getByRole('figure', { name: 'Clinic visits per month' });
+    const svg = canvasElement.querySelector('[data-slot="line-chart"]') as SVGElement;
+
+    await expect(figure).toBeInTheDocument();
+    await expect(svg).toHaveAttribute('aria-hidden', 'true');
+  },
+};
