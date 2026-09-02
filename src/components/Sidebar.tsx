@@ -180,8 +180,8 @@ export function SidebarMenuButton({
  *
  * On the rail it becomes `sr-only`, **not** `hidden`, and the difference is the
  * whole component: `hidden` removes the text from the accessibility tree, which
- * leaves a row of icon-only buttons with no accessible name at all. Found by
- * the axe run on the collapsed story — every button reported `button-name`.
+ * leaves a row of icon-only buttons with no accessible name at all, and axe
+ * reports `button-name` for every one of them.
  */
 export function SidebarLabel({ className, ...props }: ComponentProps<'span'>) {
   return (
