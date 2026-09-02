@@ -13,11 +13,9 @@ import { cva } from '@/lib/cva';
  * uppercase-only, and a display size set in the text face is not a size the
  * system has an opinion about.
  *
- * Every heading balances. Before this component the examples wrote
- * `text-balance` three times out of four at the same level, and nobody had
- * chosen either way — so it is chosen here, once, and there is no prop to get
- * it wrong with. A balanced heading is right whenever the line count is small,
- * which is what a heading is.
+ * Every heading balances, and there is no prop to turn it off. A balanced
+ * heading is right whenever the line count is small, which is what a heading
+ * is.
  */
 export const headingVariants = cva('text-balance text-fg', {
   variants: {

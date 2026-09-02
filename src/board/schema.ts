@@ -6,7 +6,7 @@ import { type Document, parseBundle } from './okf';
  * definition. It parses; it does not enforce. `board/tools/validate.mjs`
  * decides whether a bundle is valid, runs in a pre-commit hook with zero
  * dependencies, and stays the authority — if the two disagree about what a
- * valid card is, this file is wrong. See `board/decisions/board-app-stack.md`.
+ * valid card is, this file is wrong.
  *
  * Every frontmatter value arrives as a string, because `okf.ts` reads the
  * same YAML subset `okf.mjs` does and neither guesses at types. The coercions
