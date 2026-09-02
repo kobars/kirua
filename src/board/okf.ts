@@ -6,8 +6,7 @@
  * fail to run is not one*. This file reads the same subset of YAML the same
  * way — scalars, inline lists, block lists, one level of nested map — and
  * throws on anything else with a line number, so a field shape nobody planned
- * for is loud here too. If the two ever disagree, this one is wrong. See
- * `board/decisions/board-app-stack.md`.
+ * for is loud here too. If the two ever disagree, this one is wrong.
  */
 
 export type YamlValue = string | null | YamlValue[] | { [key: string]: YamlValue };

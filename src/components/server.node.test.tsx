@@ -7,11 +7,11 @@ import * as kirua from './index';
 /**
  * The server-rendering guarantee, turned from a sentence into a check.
  *
- * `CLAUDE.md` claims this system prerenders static, server-renders dynamic, and
- * hydrates with a clean console — verified against one real Next.js 16 build,
- * on one day, by hand. It then names the three properties that keep the claim
- * true. Nothing checked any of them, and all three fail *silently* and land in
- * a consumer's build rather than in this one.
+ * The system prerenders static, server-renders dynamic, and hydrates with a
+ * clean console. Three properties keep that true: no component reads a browser
+ * API during render, none holds state, and none carries a `"use client"`
+ * directive. All three fail *silently* and land in a consumer's build rather
+ * than in this one, so each is asserted here.
  *
  * This file runs in the `node` project, which is the only one with no browser.
  * That is not a limitation to work around — it is the assertion. `window` and
@@ -241,10 +241,9 @@ describe('the barrel does not reach a browser-only module', () => {
 
   /**
    * `src/lib/contrast.ts` reads computed styles out of the shipped CSS, so it
-   * only works where a cascade exists. `CLAUDE.md` says it "must stay out of
-   * `src/components/index.ts`" — and until now a written rule was the entire
-   * mechanism. A rule guarded by memory is the same shape as the claim this
-   * whole file exists to replace.
+   * only works where a cascade exists and must stay unreachable from the public
+   * entry point. Walked statically rather than trusted: importing it into the
+   * barrel would break every consumer that renders on a server.
    */
   it('contrast.ts is not reachable from the public entry point', () => {
     const contrast = path.join(SRC_DIR, 'lib/contrast.ts');

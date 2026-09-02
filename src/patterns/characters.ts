@@ -2,18 +2,17 @@
  * Character artwork used by the hero pattern.
  *
  * LICENSING — read before shipping anything built on this.
- * Killua Zoldyck is a character from *Hunter x Hunter*, created by Yoshihiro
- * Togashi and published by Shueisha. These renders are fan-distributed cut-outs
- * downloaded from NicePNG. They are used here for a personal, non-commercial
- * portfolio piece only.
+ * These are fan-distributed renders of Killua Zoldyck, a character from
+ * *Hunter x Hunter* created by Yoshihiro Togashi and published by Shueisha.
+ * They are included only to demonstrate the hero pattern.
  *
- * They are NOT licensed for a commercial product, a client deliverable, or
- * anything sold. If this system is taken further than a portfolio POC, replace
- * every entry below with commissioned or licensed artwork. Nothing else has to
- * change — the layout only needs a tall figure on a transparent background.
+ * They are NOT licensed for commercial use of any kind. Replace every entry
+ * below with commissioned or licensed artwork before shipping. Nothing else
+ * has to change — the layout only needs a tall figure on a transparent
+ * background.
  *
- * Both files were post-processed before being committed: the source
- * watermarks were cleared and the transparent border trimmed so each image's
+ * Both files are post-processed: source watermarks cleared and the transparent
+ * border trimmed, so each image's
  * alpha bounding box hugs the character. That matters for the layout — the
  * SpotlightPanel anchors artwork to its bottom edge, so stray transparent
  * padding would push the figure out of position.

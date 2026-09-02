@@ -6,10 +6,9 @@ import { cn } from './cn';
 
 /**
  * Reads the token names out of the CSS that ships, so this file cannot fall
- * behind `tokens.primitives.css`. The rule in `CLAUDE.md` — add a scale name
- * there and you must list it in `cn.ts` too — is otherwise guarded by memory,
- * and the defect it prevents is silent: two conflicting classes both survive,
- * the CSS stays valid, and source order picks a winner.
+ * behind `tokens.primitives.css`. Adding a scale name there means listing it in
+ * `cn.ts` too, and the defect that rule prevents is silent: two conflicting
+ * classes both survive, the CSS stays valid, and source order picks a winner.
  */
 function tokenNames(css: string, namespace: string): string[] {
   const found = new Set<string>();

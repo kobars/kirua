@@ -208,9 +208,9 @@
  * border would add a pixel to every one of these boxes in this mode only.
  *
  * DELIBERATELY OUTSIDE `@layer base`. Unlayered CSS beats every cascade layer,
- * and these rules have to beat Tailwind's `utilities` layer — the first attempt
- * put them in `base`, where `display: none` lost to `DotGrid`'s own
- * `inline-block` and the ornament kept rendering. */
+ * and these rules have to beat Tailwind's `utilities` layer. Inside
+ * `@layer base` a `display: none` here loses to `DotGrid`'s own `inline-block`
+ * and the ornament keeps rendering. */
 @media (forced-colors: active) {
   [data-slot='badge'],
   [data-slot='chip'],
