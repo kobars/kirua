@@ -187,7 +187,7 @@
    * are written down. `responsive-tests` asserts behaviour at these widths.
    *
    * The reference design is one 1440px desktop frame, so no breakpoint here is
-   * [FIGMA]: every one was invented to make that single frame reflow. */
+   * [FIGMA]: each is chosen to make that single frame reflow. */
   --breakpoint-sm: 40rem; /* 640px */
   --breakpoint-md: 48rem; /* 768px — where the artwork rejoins the layout */
   --breakpoint-lg: 64rem; /* 1024px */

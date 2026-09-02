@@ -13,8 +13,7 @@ import { columnOf, computeReady, parseBoard } from './schema';
  * by path, neither of which a browser project can do.
  *
  * Two things are compared, both derived: which tasks are `ready`, and which
- * column every task lands in. If these ever differ, the app is wrong — see
- * `board/decisions/board-app-stack.md`.
+ * column every task lands in. If these ever differ, the app is wrong.
  */
 const ROOT = resolve(import.meta.dirname, '../..');
 const TOOLS = join(ROOT, 'board/tools/okf.mjs');

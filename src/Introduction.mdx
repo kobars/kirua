@@ -2,153 +2,156 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Introduction" />
 
-# Kirua — a design system from one Figma screen
+# kirua
 
-This is a proof of concept. It takes a single anime landing-page hero published
-on Figma Community and turns it into a working design system: a token
-architecture, a component library, and a rebuild of the original screen made
-entirely from that library.
+A React design system with a three-layer token architecture, built on
+[Radix Primitives](https://www.radix-ui.com/primitives). 74 components, all
+server-renderable, all tested against WCAG 2.1 AA.
 
-## What the reference actually was
+This Storybook **is** the documentation. Every component has a page, every
+foundation has a page, and every number quoted on those pages is computed in the
+browser from the tokens that actually ship.
 
-The source is one node in a Figma Community file called *"Figma Anime Website UI
-Design: Futuristic & Interactive Hero Section"*. It is worth being precise about
-what it contained, because it explains most of the decisions here.
+## The idea in one example
 
-- **Two frames**, `Desktop - 1` and `Desktop - 2`, near-identical.
-- **A flat layer list** — about twenty loose shapes named `Rectangle 32`,
-  `Rectangle 27`, and so on.
-- **No components. No variables. No styles.**
+Colour is decided by the surface a component sits on, not by a prop it is passed.
 
-So it was one marketing screen, not a design system. It had no form fields, no
-tables, no modals, no hover, focus, disabled, loading, empty, or error states, no
-mobile layout, and no dark mode. Roughly 85% of what appears here was invented,
-and the parts that were invented are labelled as such throughout.
+```tsx
+<Button variant="primary">Get started</Button>
 
-## What was measured, exactly
+<div className="ctx-brand bg-brand">
+  <Button variant="primary">Get started</Button>
+</div>
+```
 
-These values were read from the Figma file itself rather than sampled from a
-screenshot:
+The first renders as a blue pill on a white page. The second renders as a white
+pill on the brand panel. Same component, same props, no override, no `inverted`
+prop, no theme provider.
 
-{/* Written as HTML rather than a markdown table — Storybook's MDX pipeline does
-    not enable GFM, so pipe tables render as literal text. */}
+A surface declares its context with a class, and every semantic token inside that
+subtree is re-pointed for the whole tree below it. Dark mode is the same
+mechanism: one block of re-pointed variables and zero component changes.
+
+Use the **Surface** and **Mode** controls in the toolbar above to put any story
+on any surface, in either mode, without editing it.
+
+## Where to start
 
 <table>
-  <thead>
-    <tr><th align="left">Property</th><th align="left">Measured value</th></tr>
-  </thead>
   <tbody>
-    <tr><td>Brand blue (hero panel fill)</td><td><code>#0A84FF</code></td></tr>
-    <tr><td>Hero panel corner radius</td><td><code>32px</code></td></tr>
-    <tr><td>Nav bar fill / radius / height</td><td><code>#000000</code> / <code>22px</code> / <code>70px</code></td></tr>
-    <tr><td>Display face</td><td>Luckiest Guy, 65px / 67px line height</td></tr>
-    <tr><td>Text face</td><td>Fredoka, 18px / 20px line height, white at 80% opacity</td></tr>
-    <tr><td>Call-to-action height</td><td><code>54px</code></td></tr>
+    <tr>
+      <td><b>Foundations → Colour</b></td>
+      <td>The palette, and every contrast ratio recomputed live from the shipped tokens</td>
+    </tr>
+    <tr>
+      <td><b>Foundations → Surface contexts</b></td>
+      <td>One component set rendered on all four surfaces, side by side</td>
+    </tr>
+    <tr>
+      <td><b>Foundations → Scales</b></td>
+      <td>Spacing, radius, elevation, motion, breakpoints, icon sizes, stacking order</td>
+    </tr>
+    <tr>
+      <td><b>Foundations → Typography</b></td>
+      <td>The type scale, and which face each step carries</td>
+    </tr>
+    <tr>
+      <td><b>Foundations → Dark mode</b></td>
+      <td>How a consumer turns it on, including the snippet that prevents a flash</td>
+    </tr>
+    <tr>
+      <td><b>Components</b></td>
+      <td>All 74, each with an interactive page and a props table</td>
+    </tr>
+    <tr>
+      <td><b>Patterns → Anime Hero</b></td>
+      <td>A full screen assembled only from the system</td>
+    </tr>
   </tbody>
 </table>
-
-## The one thing that had to change
-
-White body copy on `#0A84FF` measures **3.65:1**. The reference actually sets it
-at 80% white, which measures **2.85:1**. WCAG AA requires **4.5:1** for body
-text.
-
-That is not a rounding error, and it is not fixable per component. The system
-therefore separates two blues:
-
-- `blue-500` — `#0A84FF`, the identity blue, kept exact. Used behind display
-  type, where AA Large's 3:1 threshold applies.
-- `blue-600` — `#0973DC`, the text-bearing surface. Measures **4.67:1** with
-  white.
-
-`--color-surface-brand` points at `blue-600`. That single line is the fix, and
-every component inherits it.
-
-See **Foundations → Colour → Contrast Audit**, where these ratios are computed in
-the browser from the shipped tokens rather than written down by hand.
 
 ## How the tokens are layered
 
 ```
-tokens.primitives.css   @theme        blue-500 is #0A84FF
+tokens.primitives.css   @theme          raw values      blue-500 = #0A84FF
         ↓
-tokens.semantic.css     :root/.ctx-*  surface-brand is blue-600
+tokens.semantic.css     :root / .ctx-*  meaning         surface-brand = blue-600
         ↓
-theme.css               @theme inline bg-brand → var(--color-surface-brand)
+theme.css               @theme inline   utility alias   bg-brand → surface-brand
         ↓
-components                            <SpotlightPanel /> uses bg-brand
+components                                              <Card variant="brand">
 ```
 
-Components read the semantic layer only. They never reference a primitive and
-never a raw hex. That indirection is what makes dark mode a single block of
-re-pointed variables and zero component edits.
+Components read the **semantic** layer only. They never reference a primitive and
+never a raw hex. That indirection is what turns a theme change into a variable
+change instead of a component change.
 
-## Surface contexts
+`@theme inline` is load-bearing rather than stylistic. It compiles utilities to
+literal `var(--color-…)` references instead of freezing the value at build time,
+which is what allows a context switch to propagate at runtime.
 
-A button on a white page and the same button on the blue panel need different
-colours but are the same component. Instead of threading an `inverted` prop
-through everything, a surface declares its context by class — `.ctx-brand`,
-`.ctx-inverse` — and re-points the semantic tokens for everything inside it.
+## Colour and contrast
 
-**Components → Button → Across Surfaces** shows the same component with the same
-props on three surfaces, with no overrides.
+The reference design's brand blue is `#0A84FF`. White body copy on it measures
+**3.65:1**, and at the reference's own 80% opacity it measures **2.85:1**. WCAG
+AA requires **4.5:1** for body text.
 
-## The corner glint
+That is not fixable per component, so the system separates two blues:
 
-The one ornament in the reference design is a small blade tucked into each
-rounded corner. It is easy to miss and it does a lot of work, so it is a
-component: `CornerGlint`.
+- **`blue-500`** — `#0A84FF`, the identity blue, kept exact. Used behind display
+  type, where AA Large's 3:1 threshold applies.
+- **`blue-600`** — `#0973DC`, the text-bearing surface. Measures **4.67:1**
+  against white.
 
-Two things about it are worth stating, because both were got wrong first.
+`--color-surface-brand` points at `blue-600`, and every component inherits it.
 
-**It is flat.** The first attempt drew it as a stroke with a soft gradient fade.
-That reads as a bevel highlight — a 3D lighting cue — which is wrong for a system
-whose whole character is flat 2D anime. The real thing is one solid fill, one
-colour, hard edges, no gradient.
+Every ratio above is recomputed in the browser on **Foundations → Colour**, so
+these pages cannot drift from the CSS.
 
-**Its colour is a rule, not a value.** Measured from Figma, the blade is always a
-lighter tint of the surface beneath it: `#6CB5FF` on the `#0A84FF` panel,
-`#555555` on the black card. Those look like two unrelated hexes. They are not —
-they are the same rule. `#6CB5FF` is exactly 40% white over the blue, and
-`#555555` is exactly 33.3% white over the black. So the token is translucent
-white, and one value is correct on every surface, including ones added later.
+## Behaviour comes from Radix
 
-**It is inset, not flush.** In Figma the card's corner arc is centred at
-`(872.41, 753)` and the glint's at `(871.25, 752.61)` — the same point. The blade
-is *concentric* with the corner and one radius smaller: 22 − 14, an 8px inset, so
-a band of surface shows between the border and the blade. Its tails then run out
-onto the straight edges and taper to points.
-
-Everything derives from the corner radius, so the blade tracks the corner rather
-than the box — the way `border-radius` does — and re-draws itself when a card
-uses a different radius.
-
-## Behaviour comes from Radix Primitives
-
-Dialog, DropdownMenu, Tooltip, and Tabs are built on
-[Radix Primitives](https://www.radix-ui.com/primitives) — headless components
-that supply behaviour and accessibility and no appearance at all.
+Dialog, DropdownMenu, Tooltip, Select, Tabs and the rest are built on Radix
+Primitives — headless components that supply behaviour and accessibility and no
+appearance at all.
 
 That split is why this system can look nothing like a default component library
-and still trap focus correctly, return focus to the trigger, support typeahead in
-a menu, and move through tabs with the correct keyboard model. Those are the
-parts nobody credits you for and almost everybody gets wrong.
+and still trap focus correctly, restore focus to the trigger, support typeahead
+in a menu, and move through tabs with the right keyboard model.
 
-## Known gaps
+## Every component is stateless
 
-Honest list, since a proof of concept that claims to be finished is lying:
+No component here calls a hook or carries a `"use client"` directive, so a Card
+inside a React Server Component ships no JavaScript to the browser at all. A test
+asserts this rather than a convention remembering it.
 
-- **The forms slice is text-entry only.** Field, Label, Input, and Textarea now
-  exist; select, checkbox, radio, and switch do not.
-- **No loading or empty states.**
-- **Artwork is not licensed for commercial use.** The hero uses fan-distributed
-  Killua Zoldyck cut-outs. Killua is Yoshihiro Togashi's character, published by
-  Shueisha. Fine for a personal portfolio piece; replace with commissioned or
-  licensed art before shipping or selling anything built on this. The layout only
-  needs a tall figure on a transparent background, so swapping is a one-line
-  change in `src/patterns/characters.ts`.
-- **Fredoka is a rounded, characterful face.** It suits this brand and would be
-  a poor choice for dense data tables.
-- **Visual baselines are Chromium-on-macOS only.** They are committed and fail
-  on a missing baseline, but another operating system can produce rasterisation
-  diffs that are not regressions.
+The trade-off is worth stating: `Combobox`, `Command` and `Carousel` are
+**presentational shells**. They render the right elements with the right ARIA
+wiring, and the consumer owns the open state, the filtering and the current
+index from their own client component. A component that filtered its own list
+would be smaller to use and impossible to server-render.
+
+## Accessibility is enforced, not reviewed
+
+Every story on this site runs axe with violations set to **error**, so an
+accessibility failure fails the build rather than printing a warning. Beyond
+that, dedicated test runs cover Windows high contrast, `prefers-reduced-motion`,
+target size under WCAG 2.5.8, and both reading directions.
+
+## The reference design
+
+The values marked `[FIGMA]` in the CSS are measured from *Figma Anime Website UI
+Design: Futuristic & Interactive Hero Section*, published on Figma Community.
+
+The reference is one desktop marketing frame: about twenty loose shapes, no
+components, no variables, no styles. It has no form fields, no tables, no modals,
+no hover, focus, disabled, loading, empty or error states, no mobile layout and
+no dark mode. Everything unmarked was designed to fill the gaps a single screen
+leaves, and the marking makes the difference visible everywhere it matters.
+
+## Artwork licensing
+
+The hero pattern uses fan-distributed renders of Killua Zoldyck, a character from
+*Hunter × Hunter* created by Yoshihiro Togashi and published by Shueisha. **They
+are not licensed for commercial use of any kind.** Replace them before shipping
+anything built on that pattern — the layout only needs a tall figure on a
+transparent background.
