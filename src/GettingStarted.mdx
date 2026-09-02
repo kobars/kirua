@@ -1,0 +1,161 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting started" />
+
+# Getting started
+
+kirua is **not yet published to npm.** It runs from source, and this Storybook is
+the documentation. The package is `private`, and a library build and package
+manifest are still to come.
+
+Read it, run it, and copy from it. Do not add it to `package.json` yet.
+
+## Run it locally
+
+Requires Node `^20.19 || ^22.12 || >=24`, and pnpm 10.
+
+```bash
+git clone https://github.com/kobars/kirua.git
+cd kirua
+pnpm install
+pnpm storybook
+```
+
+## Import a component
+
+Applications import the bare specifier `kirua`, and the stylesheet as
+`kirua/styles.css`.
+
+```tsx
+import { Card, CardTitle, CardBody, Button, Badge } from 'kirua';
+
+export function ReleaseCard() {
+  return (
+    <Card padding="md">
+      <Badge status="success">Shipped</Badge>
+      <CardTitle as="h2">Version 2.1</CardTitle>
+      <CardBody>Adds the field family and four form controls.</CardBody>
+      <Button variant="primary">Read the notes</Button>
+    </Card>
+  );
+}
+```
+
+Until the package is published, that specifier is an alias — one entry in
+`tsconfig.app.json` and one in `examples/vite.shared.ts`. Application code
+therefore reaches the library through a name rather than a relative path, and
+nothing has to move when the real package lands.
+
+## What the host document must provide
+
+Three things live outside the component layer, because no component can reach
+them.
+
+### 1. The stylesheet
+
+```ts
+import 'kirua/styles.css';
+```
+
+One file: primitives, semantic tokens and utility aliases. About 13.5 kB gzipped
+for the whole system.
+
+### 2. The typefaces
+
+kirua **names** its typefaces and does not ship them, so the host document loads
+them. Both `--font-display` and `--font-text` end in a system fallback, so a page
+that loads nothing still works — it simply loses the character.
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap"
+/>
+```
+
+### 3. The colour-mode class
+
+Dark mode is the `dark` class on `<html>`. See **Foundations → Dark mode** for
+the blocking snippet that prevents a flash of the wrong theme, and for the
+Next.js App Router version.
+
+## The prop contract
+
+Every component in the system behaves the same way, and these are the rules a
+consumer can rely on.
+
+<table>
+  <tbody>
+    <tr>
+      <td><code>ref</code></td>
+      <td>Reaches the rendered root element. React 19 treats it as an ordinary prop, so there is no <code>forwardRef</code> anywhere</td>
+    </tr>
+    <tr>
+      <td><code>className</code></td>
+      <td>Merges last, so a consumer always wins. It is a layout escape hatch — colour belongs to a surface context</td>
+    </tr>
+    <tr>
+      <td><code>...props</code></td>
+      <td>Spreads onto the same element that carries <code>data-slot</code>, so a ref, an <code>id</code> and a <code>data-*</code> attribute all land on one node</td>
+    </tr>
+    <tr>
+      <td><code>asChild</code></td>
+      <td>Only where the element's semantics may legitimately change. <code>Button</code> has it, because a button that navigates should be an <code>&lt;a&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>data-slot</code></td>
+      <td>On every element the system styles, named after the exported component in kebab-case. It is public API — select on it freely</td>
+    </tr>
+  </tbody>
+</table>
+
+Sub-components are **flat named exports**, never static properties. Import
+`SpotlightMedia`, not `SpotlightPanel.Media` — a static property resolves to
+`undefined` across a client boundary.
+
+Required props are required in the type. `IconButton` types `aria-label` as
+required, so the build fails rather than the user.
+
+## Server rendering
+
+No component calls a hook or carries a `"use client"` directive, so components
+render on the server and ship no JavaScript of their own. The Radix packages
+carry their own directives where they need them.
+
+Two consequences for a consumer:
+
+- **A handler needs your own client component.** Attaching `onClick` crosses a
+  React boundary, and that boundary is yours to declare.
+- **Three components need you to drive them.** `Combobox`, `Command` and
+  `Carousel` render the right elements with the right ARIA wiring, and the open
+  state, the filtering and the current index are the consumer's.
+
+## Right-to-left
+
+Every directional value in the system is logical — `ps-`, `pe-`, `ms-`, `me-`,
+`inset-s-`, `inset-e-` — and corners are named `top-start`, `top-end`,
+`bottom-start`, `bottom-end`. Set `dir="rtl"` on a container and the layout
+mirrors, including the corner ornament.
+
+## Browser support
+
+{/* HTML rather than a pipe table: Storybook's MDX pipeline does not enable
+    GFM, so a markdown table renders as literal text. */}
+
+<table>
+  <thead>
+    <tr><th align="left">Engine</th><th align="left">Minimum</th><th align="left">Set by</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Chrome / Edge</td><td><b>120</b></td><td><code>:dir()</code></td></tr>
+    <tr><td>Safari</td><td><b>16.4</b></td><td>Tailwind v4</td></tr>
+    <tr><td>Firefox</td><td><b>128</b></td><td>Tailwind v4</td></tr>
+  </tbody>
+</table>
+
+Tailwind CSS v4 compiles to `@property`, cascade layers and `color-mix()`, which
+sets three of these floors. `:dir()` raises Chrome, because it is the only
+selector that follows *inherited* direction and the corner ornament needs it to
+re-invert inside a right-to-left document.

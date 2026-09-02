@@ -5,7 +5,7 @@ import { sample } from './sources';
 import { useBoardView } from './view';
 
 const meta = {
-  title: 'Board/App',
+  title: 'Examples/Board',
   component: BoardApp,
   args: { source: sample },
   argTypes: { source: { control: false } },
@@ -18,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The board app is the second consumer of the design system, and the first one that is dense and data-driven. This story always renders the committed sample bundle, so it looks the same on every machine; `pnpm board` shows the real board where one exists.',
+          'A dense, data-driven screen assembled only from the system — `Card`, `Badge`, `Chip`, `ScrollArea`, `Field`, `Input`, `Select`, `Button` and `EmptyState`. It reads a folder of markdown files and renders them as six columns, which is the opposite kind of screen from the marketing hero the system was drawn from. This story renders a committed sample dataset, so it looks the same everywhere.',
       },
     },
   },
