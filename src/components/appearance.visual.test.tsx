@@ -18,11 +18,10 @@ afterEach(cleanup);
  * padding that shifted by one step, a colour that resolved differently under a
  * surface context, an ornament drawn for the wrong radius: all invisible.
  *
- * **Local baselines, not a hosted service.** Reasoning in
- * `board/tasks/visual-regression.md`. The short version: continuous integration
- * is already deferred on cost, so a subscription would be paying for a gate
- * nothing runs automatically, and a PNG in the repository is reviewed in the
- * same diff as the change that moved it.
+ * **Local baselines, not a hosted service.** Continuous integration is already
+ * deferred on cost, so a subscription would be paying for a gate nothing runs
+ * automatically, and a PNG in the repository is reviewed in the same diff as
+ * the change that moved it.
  *
  * One fixed width, and every surface context. Context is the axis worth
  * spending baselines on, because it is the axis where this system is unusual:
