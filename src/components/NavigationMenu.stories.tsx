@@ -22,8 +22,7 @@ const meta = {
       // It is a real finding about a real node, and the node is the vendor's.
       // Nothing in this file can remove it without removing the keyboard path
       // it exists to provide, so the one rule is turned off here rather than
-      // the whole run. Re-check it when Radix ships a fix; see
-      // `board/decisions/navigation-menu-focus-proxy.md`.
+      // the whole run. Re-check it when Radix ships a fix.
       config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
     },
     docs: {
