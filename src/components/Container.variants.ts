@@ -7,8 +7,8 @@ import { cva } from '@/lib/cva';
  * item keeps `min-width: auto`, so a single-column grid sizes its column to its
  * widest child — one wide table, or a four-tab `TabsList`, then stretches the
  * whole page past the viewport instead of scrolling inside its own wrapper.
- * That fix had to be remembered at every page root, and the responsive sweep
- * found five roots where it had not been.
+ * That fix had to be remembered at every page root, and was missing from five
+ * of them before this carried it.
  *
  * `content-start` is in the base for the same kind of reason: without it a
  * short page's rows stretch to fill the viewport height, which nobody chooses
