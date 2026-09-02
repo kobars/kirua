@@ -3,11 +3,8 @@ import { parseBoard } from './schema';
 import { sample } from './sources';
 import { ALL_EPICS, COLUMN_VIEW, epicTitles, filterTasks, slug, waitingOn } from './view';
 
-/**
- * The filter rules, against the committed sample bundle rather than fixtures.
- * A fixture would let the rules and the bundle drift apart, and the bundle is
- * the thing the view actually renders.
- */
+/** Against the committed sample bundle rather than fixtures, which would let
+ *  the rules and the bundle the view renders drift apart. */
 const board = parseBoard(sample.files);
 const titles = epicTitles(board.epics);
 const view = (over: Partial<{ query: string; epic: string }> = {}) => ({
@@ -39,8 +36,8 @@ describe('filterTasks', () => {
   });
 
   it('matches the slug, which no visible text repeats', () => {
-    // The file is `write-home-page.md`; the title is "Write the home page", so
-    // the hyphenated form only matches if the slug is in the haystack.
+    // The title is "Write the home page", so the hyphenated form matches only
+    // if the slug is in the haystack.
     expect(titlesOf({ query: 'write-home' })).toEqual(['Write the home page']);
   });
 
@@ -54,10 +51,7 @@ describe('filterTasks', () => {
   });
 
   it('keeps the priority order it was given, so a column stays ordered', () => {
-    // `parseBoard` sorts by priority; filtering must not re-order what it
-    // returns. Proved against a deliberately reversed input, because the
-    // sample's own order happens to match its alphabetical order and would
-    // pass either way.
+    // Reversed input, because the sample's own order would pass either way.
     const reversed = [...board.tasks].reverse();
     expect(filterTasks(reversed, titles, view()).map((task) => task.priority)).toEqual(
       reversed.map((task) => task.priority),
