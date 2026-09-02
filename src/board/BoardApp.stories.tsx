@@ -10,8 +10,7 @@ const meta = {
   args: { source: sample },
   argTypes: { source: { control: false } },
   // The store is a module singleton, so one story's typing would otherwise be
-  // the next story's starting state — and the three width projects render the
-  // same story in one iframe.
+  // the next story's starting state.
   beforeEach: () => {
     useBoardView.getState().clear();
   },
@@ -39,9 +38,8 @@ export const Sample: Story = {
       await expect(canvas.getByRole('heading', { level: 2, name })).toBeVisible();
     }
 
-    // `ready` is never written on a card. Two of the three stored `backlog`
-    // tasks have every dependency done, so seeing those two here — and the
-    // third still in Backlog — proves the graph was walked rather than read.
+    // `ready` is never written on a card: two of the three stored `backlog`
+    // tasks land here and the third does not, which only a graph walk decides.
     const inColumn = (name: string) =>
       within(canvas.getByRole('region', { name }))
         .getAllByRole('heading', { level: 3 })
@@ -50,12 +48,10 @@ export const Sample: Story = {
     await expect(inColumn('Ready')).toEqual(['Add a changelog page', 'Set up search']);
     await expect(inColumn('Backlog')).toEqual(['Write the prose style guide']);
 
-    // Priority order is asserted in `view.test.ts` instead: no column of the
-    // sample holds two cards whose priority order differs from their
-    // alphabetical order, so this screen cannot tell the two apart.
+    // Priority order is asserted in `view.test.ts`: no column of the sample
+    // holds two cards whose priority and alphabetical order differ.
 
-    // The card that is not ready says what it is waiting for, by slug. The
-    // anchor keeps the match on the line itself rather than an ancestor.
+    // Anchored, so the match is the line itself and not an ancestor.
     const backlog = canvas.getByRole('region', { name: 'Backlog' });
     await expect(within(backlog).getByText(/^waits on/)).toHaveTextContent(
       'waits on write-getting-started',
@@ -90,8 +86,7 @@ export const NoMatch: Story = {
 
     await expect(canvas.getByRole('heading', { name: 'No card matches' })).toBeVisible();
     await expect(canvas.queryByRole('region', { name: 'Ready' })).toBeNull();
-    // Exactly one way out, not two: the header's own control is hidden while
-    // the empty state carries it.
+    // One way out, not two: the header's control hides while this is up.
     await expect(canvas.getAllByRole('button', { name: 'Clear filters' })).toHaveLength(1);
   },
 };
