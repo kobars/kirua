@@ -15,7 +15,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A list a reader reads, as opposed to a list a layout happens to be. All eight `<ul>` elements in the example apps were the second kind, which is why this waited for a page with real prose.',
+          'A list a reader reads, as opposed to a list a layout happens to be. Reach for it when the items are prose; a stack of cards is a layout, and `<ul>` there buys nothing.',
       },
     },
   },
@@ -102,8 +102,7 @@ export const TwoLevelsDeep: Story = {
 
 /**
  * `plain` drops the marker and keeps the list. A screen reader still says
- * "list, 3 items" — dropping to a `<div>` to lose a bullet is how that gets
- * thrown away, and it is what the examples were doing.
+ * "list, 3 items". Dropping to a `<div>` to lose the bullet throws that away.
  */
 export const PlainIsStillAList: Story = {
   render: (args) => (

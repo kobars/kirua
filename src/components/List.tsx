@@ -32,9 +32,9 @@ export interface ListProps
 export function List({ className, variant, size, ...props }: ListProps) {
   // The element really is an `<ol>` for `number`, and the ref really reaches
   // it. Its *type* stays `HTMLUListElement`, because `variant` is a string and
-  // not a type parameter — the same limitation `asChild` has, recorded in
-  // `CLAUDE.md`. `HTMLOListElement` adds `start` and `reversed` and nothing a
-  // consumer reads off a ref.
+  // not a type parameter — the same limitation `asChild` has. A consumer
+  // needing the narrow type casts; `HTMLOListElement` adds only `start` and
+  // `reversed`, which nothing reads off a ref.
   const Comp = (variant === 'number' ? 'ol' : 'ul') as 'ul';
   return (
     <Comp

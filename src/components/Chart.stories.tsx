@@ -13,7 +13,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Plain SVG and CSS — there is no charting library in this repository. The common cases are a few dozen lines of geometry, they render on a server with no JavaScript, and they read their colours from the token layer. Reach for a library when you need axes that pan or tens of thousands of points.',
+          'Plain SVG and CSS — no charting dependency. The common cases are a few dozen lines of geometry, they render on a server with no JavaScript, and they read their colours from the token layer. Reach for a library when you need axes that pan or tens of thousands of points.',
       },
     },
   },

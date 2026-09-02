@@ -60,8 +60,8 @@ export const ItSitsOnTheLineItIsIn: Story = {
 };
 
 /**
- * A long name breaks the line rather than pushing its paragraph sideways —
- * the failure a wide table has already taught this repository twice.
+ * A long name breaks the line rather than pushing its paragraph sideways. An
+ * unbreakable token in a narrow column widens the whole page instead.
  */
 export const ALongNameWrapsRatherThanOverflows: Story = {
   render: (args) => (

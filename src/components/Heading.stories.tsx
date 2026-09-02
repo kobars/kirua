@@ -75,9 +75,9 @@ export const LevelIsNotSize: Story = {
 };
 
 /**
- * A hidden heading stays in the accessibility tree. `hidden` would take it out
- * of both, which is the mistake `SidebarLabel` already made once — see the
- * `sr-only` note in `CLAUDE.md`.
+ * A hidden heading stays in the accessibility tree. Use `sr-only`, never
+ * `hidden`: `hidden` removes the text from the accessibility tree as well as
+ * the screen, which leaves the section with no accessible name.
  */
 export const HiddenButStillNamed: Story = {
   args: { as: 'h2', className: 'sr-only', children: 'Aozora in numbers' },

@@ -103,10 +103,10 @@ export const Sizes: Story = {
 };
 
 /**
- * `variant="outlined"` rather than three utilities typed onto `className`. This
- * story used to write `rounded-lg border border-line-subtle` by hand, and so
- * did two screens in the social example — the same decoration written three
- * times is a variant that had not been declared yet.
+ * `variant="outlined"` draws the group's border and corner. Reach for it rather
+ * than writing `rounded-lg border border-line-subtle` onto `className`: the
+ * variant also carries the `overflow-hidden` that stops a row's hover fill
+ * painting over the corner it sits inside.
  */
 export const InAGroup: Story = {
   render: (args) => (

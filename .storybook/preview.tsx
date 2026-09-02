@@ -59,6 +59,24 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     /**
+     * Reading order, not alphabetical order. A visitor should meet the system
+     * before its parts, and the foundations run from colour outwards rather
+     * than from C to T. Anything unlisted sorts after, alphabetically.
+     */
+    options: {
+      storySort: {
+        order: [
+          'Introduction',
+          'Getting started',
+          'Foundations',
+          ['Colour', 'Typography', 'Scales', 'Surface contexts', 'Stacking', 'Dark mode'],
+          'Components',
+          'Patterns',
+          'Examples',
+        ],
+      },
+    },
+    /**
      * `@storybook/addon-vitest` resets the viewport before every story, so a
      * `viewport` on a Vitest browser *instance* never survives — the addon
      * overwrites it with its own 1200x900 default. The supported route is a
