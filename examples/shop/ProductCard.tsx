@@ -9,7 +9,7 @@ import {
   Link,
   StarIcon,
 } from 'kirua';
-import { rupiah, type Product } from './data';
+import { idr, type Product } from './data';
 
 export interface ProductCardProps {
   product: Product;
@@ -40,12 +40,12 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
               select on; the size is overridden because a product name in a grid
               of nine is not display type. */}
           <CardTitle as="h2" className="text-body-md font-semibold text-balance">
-            <Link href={`#/produk/${product.id}`} variant="block">
+            <Link href={`#/products/${product.id}`} variant="block">
               {product.name}
             </Link>
           </CardTitle>
         </div>
-        {product.condition === 'used' && <Badge status="warning">Bekas</Badge>}
+        {product.condition === 'used' && <Badge status="warning">Used</Badge>}
       </div>
 
       <p className="flex items-center gap-1 text-body-sm text-fg-secondary [--icon-size:var(--icon-sm)]">
@@ -56,11 +56,11 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
 
       <p className="mt-auto flex flex-wrap items-baseline gap-2">
         <span className="text-body-lg font-semibold text-fg tabular-nums">
-          {rupiah(product.price)}
+          {idr(product.price)}
         </span>
         {product.was !== undefined && (
           <span className="text-body-sm text-fg-muted tabular-nums line-through">
-            {rupiah(product.was)}
+            {idr(product.was)}
           </span>
         )}
       </p>
@@ -72,7 +72,7 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
         onClick={() => onAdd(product)}
         disabled={product.stock === 0}
       >
-        {product.stock === 0 ? 'Habis' : 'Tambah'}
+        {product.stock === 0 ? 'Sold out' : 'Add'}
       </Button>
     </Card>
   );

@@ -22,7 +22,6 @@ import {
 } from 'kirua';
 import { Composer } from './Composer';
 import { ThemeMenu } from '../shared/ThemeMenu';
-import { EN } from '../shared/themeLabels';
 import { useTheme } from '../shared/useTheme';
 import { SearchPalette } from './SearchPalette';
 import { SettingsDialog } from './SettingsDialog';
@@ -121,10 +120,10 @@ export function App() {
           <Button
             variant="ghost"
             size="sm"
-            aria-current={route === 'penggunaan' ? 'page' : undefined}
-            onClick={() => navigate(route === 'penggunaan' ? conversation.id : 'penggunaan')}
+            aria-current={route === 'usage' ? 'page' : undefined}
+            onClick={() => navigate(route === 'usage' ? conversation.id : 'usage')}
           >
-            {route === 'penggunaan' ? 'Back to chat' : 'Usage'}
+            {route === 'usage' ? 'Back to chat' : 'Usage'}
           </Button>
 
           <SettingsDialog
@@ -144,7 +143,7 @@ export function App() {
 
           {/* The one app of the four written in English, so the one that has to
               pass the labels the shared menu takes as a parameter. */}
-          <ThemeMenu labels={EN} />
+          <ThemeMenu />
         </header>
 
         {/* Every heading and turn below has to sit inside a landmark, or axe
@@ -153,7 +152,7 @@ export function App() {
             `<div>`: the transcript scrolls and the composer does not, so the
             route content stays a `min-h-0` flex column of its own. */}
         <main className="flex min-h-0 min-w-0 flex-1 flex-col">
-          {route === 'penggunaan' ? (
+          {route === 'usage' ? (
             <Usage />
           ) : (
             <>

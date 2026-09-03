@@ -41,8 +41,8 @@ const TODAY = '2026-03-12';
  */
 export function Summary() {
   const today = visits.filter((v) => v.at.startsWith(TODAY));
-  const waiting = today.filter((v) => v.status === 'terjadwal');
-  const inRoom = today.filter((v) => v.status === 'diperiksa');
+  const waiting = today.filter((v) => v.status === 'scheduled');
+  const inRoom = today.filter((v) => v.status === 'in-progress');
   const beds = wards.reduce((n, w) => n + w.beds, 0);
   const used = wards.reduce((n, w) => n + w.used, 0);
 
@@ -50,10 +50,10 @@ export function Summary() {
     <div className="grid grid-cols-[minmax(0,1fr)] content-start gap-6">
       <div>
         <Heading as="h1" size="heading-md">
-          Ringkasan hari ini
+          Today's summary
         </Heading>
         <Text size="sm" className="mt-1">
-          Kamis, 12 Maret 2026
+          Thursday, 12 March 2026
         </Text>
       </div>
 
@@ -62,28 +62,26 @@ export function Summary() {
           variant="tile"
           icon={<CalendarIcon />}
           value={String(today.length)}
-          label="Kunjungan hari ini"
+          label="Visits today"
         />
         <Stat
           variant="tile"
           icon={<StethoscopeIcon />}
           value={String(inRoom.length)}
-          label="Sedang diperiksa"
+          label="In consultation"
         />
-        <Stat variant="tile" value={String(waiting.length)} label="Menunggu" />
-        <Stat variant="tile" value={`${used}/${beds}`} label="Tempat tidur terpakai" />
+        <Stat variant="tile" value={String(waiting.length)} label="Waiting" />
+        <Stat variant="tile" value={`${used}/${beds}`} label="Beds in use" />
       </StatRow>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle as="h2">Kunjungan per bulan</CardTitle>
+            <CardTitle as="h2">Visits per month</CardTitle>
             <div className="mt-4">
-              <Chart label="Kunjungan selesai per bulan, April 2025 sampai Maret 2026">
+              <Chart label="Completed visits per month, April 2025 to March 2026">
                 <BarChart data={monthlyVisits} showValues={false} />
-                <ChartCaption>
-                  Maret adalah bulan tersibuk dalam dua belas bulan terakhir.
-                </ChartCaption>
+                <ChartCaption>March was the busiest month of the last twelve.</ChartCaption>
               </Chart>
             </div>
           </CardBody>
@@ -91,11 +89,11 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle as="h2">Tren dua belas bulan</CardTitle>
+            <CardTitle as="h2">Twelve-month trend</CardTitle>
             <div className="mt-4">
-              <Chart label="Tren kunjungan bulanan sebagai garis">
+              <Chart label="The monthly visit trend, drawn as a line">
                 <LineChart data={monthlyVisits} filled series={2} />
-                <ChartLegend items={[{ label: 'Kunjungan selesai', series: 2 }]} />
+                <ChartLegend items={[{ label: 'Completed visits', series: 2 }]} />
               </Chart>
             </div>
           </CardBody>
@@ -104,14 +102,14 @@ export function Summary() {
 
       <Card>
         <CardBody>
-          <CardTitle as="h2">Beban poliklinik</CardTitle>
+          <CardTitle as="h2">Clinic load</CardTitle>
           <div className="mt-4 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Poliklinik</TableHead>
-                  <TableHead>Hari ini</TableHead>
-                  <TableHead>Dua belas bulan</TableHead>
+                  <TableHead>Clinic</TableHead>
+                  <TableHead>Today</TableHead>
+                  <TableHead>Twelve months</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -133,7 +131,7 @@ export function Summary() {
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Card>
           <CardBody>
-            <CardTitle as="h2">Hunian ruang rawat</CardTitle>
+            <CardTitle as="h2">Ward occupancy</CardTitle>
             <ul className="mt-4 grid gap-4">
               {wards.map((ward) => (
                 <li key={ward.name} className="grid gap-1.5">
@@ -151,8 +149,8 @@ export function Summary() {
                   <Meter
                     value={ward.used}
                     max={ward.beds}
-                    label={`Hunian ruang ${ward.name}`}
-                    valueText={`${ward.used} dari ${ward.beds} tempat tidur`}
+                    label={`Occupancy of ${ward.name} ward`}
+                    valueText={`${ward.used} of ${ward.beds} beds`}
                     thresholds={{
                       warning: Math.round(ward.beds * 0.85),
                       danger: Math.round(ward.beds * 0.95),
@@ -166,7 +164,7 @@ export function Summary() {
 
         <Card>
           <CardBody>
-            <CardTitle as="h2">Antrean berikutnya</CardTitle>
+            <CardTitle as="h2">Next in the queue</CardTitle>
             <ItemGroup className="mt-3">
               {waiting.slice(0, 5).map((visit, index) => {
                 const patient = patients.find((p) => p.rm === visit.rm);
@@ -174,7 +172,7 @@ export function Summary() {
                   <div key={visit.id}>
                     {index > 0 && <ItemSeparator />}
                     <Item asChild interactive size="sm">
-                      <a href={`#/pasien/${visit.rm}`}>
+                      <a href={`#/patients/${visit.rm}`}>
                         <ItemMedia className="text-caption tabular-nums">
                           {visit.at.slice(11)}
                         </ItemMedia>

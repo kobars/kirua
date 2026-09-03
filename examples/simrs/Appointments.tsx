@@ -43,10 +43,10 @@ function pageWindow(current: number, total: number): (number | 'gap')[] {
 export function Appointments() {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
   const [day, setDay] = useState<Date | undefined>(new Date(2026, 2, 12));
-  const [clinic, setClinic] = useState('semua');
+  const [clinic, setClinic] = useState('all');
   const [page, setPage] = useState(1);
 
-  const all = visits.filter((v) => clinic === 'semua' || v.clinic === clinic);
+  const all = visits.filter((v) => clinic === 'all' || v.clinic === clinic);
   const pages = Math.max(1, Math.ceil(all.length / PER_PAGE));
   const current = Math.min(page, pages);
   const rows = all.slice((current - 1) * PER_PAGE, current * PER_PAGE);
@@ -54,7 +54,7 @@ export function Appointments() {
   return (
     <div className="grid content-start gap-5">
       <Heading as="h1" size="heading-md">
-        Jadwal kunjungan
+        Visit schedule
       </Heading>
 
       {/* `minmax(0,1fr)` below `lg`, because a grid item keeps `min-width:
@@ -68,7 +68,7 @@ export function Appointments() {
       <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[auto_1fr]">
         <Card className="h-max overflow-x-auto p-3">
           <Calendar
-            locale="id-ID"
+            locale="en-GB"
             month={month}
             onMonthChange={setMonth}
             selected={day}
@@ -79,15 +79,15 @@ export function Appointments() {
           <Separator className="my-3" />
           <Text size="sm" className="px-1">
             {day === undefined
-              ? 'Pilih tanggal.'
-              : new Intl.DateTimeFormat('id-ID', { dateStyle: 'full' }).format(day)}
+              ? 'Choose a date.'
+              : new Intl.DateTimeFormat('en-GB', { dateStyle: 'full' }).format(day)}
           </Text>
         </Card>
 
         <div className="grid content-start gap-4">
           <div className="grid gap-2">
             <span id="clinic-filter" className="text-body-sm font-medium text-fg">
-              Poliklinik
+              Clinic
             </span>
             <ToggleGroup
               type="single"
@@ -100,8 +100,8 @@ export function Appointments() {
               aria-labelledby="clinic-filter"
               className="flex-wrap"
             >
-              <ToggleGroupItem value="semua" size="sm" variant="outline">
-                Semua
+              <ToggleGroupItem value="all" size="sm" variant="outline">
+                All
               </ToggleGroupItem>
               {clinics.map((name) => (
                 <ToggleGroupItem key={name} value={name} size="sm" variant="outline">
@@ -113,16 +113,16 @@ export function Appointments() {
 
           <Table>
             <TableCaption>
-              {all.length} kunjungan{clinic === 'semua' ? '' : ` di ${clinic}`} · halaman{' '}
-              {current} dari {pages}
+              {all.length} visits{clinic === 'all' ? '' : ` in ${clinic}`} · page {current} of{' '}
+              {pages}
             </TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Jam</TableHead>
-                <TableHead>Pasien</TableHead>
-                <TableHead>Poliklinik</TableHead>
-                <TableHead>Dokter</TableHead>
-                <TableHead>Keluhan</TableHead>
+                <TableHead>Time</TableHead>
+                <TableHead>Patient</TableHead>
+                <TableHead>Clinic</TableHead>
+                <TableHead>Doctor</TableHead>
+                <TableHead>Reason</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -149,8 +149,8 @@ export function Appointments() {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href="#/jadwal"
-                  label="Sebelumnya"
+                  href="#/schedule"
+                  label="Previous"
                   onClick={() => setPage(Math.max(1, current - 1))}
                 />
               </PaginationItem>
@@ -162,7 +162,7 @@ export function Appointments() {
                 ) : (
                   <PaginationItem key={entry}>
                     <PaginationLink
-                      href="#/jadwal"
+                      href="#/schedule"
                       isCurrent={entry === current}
                       onClick={() => setPage(entry)}
                     >
@@ -173,8 +173,8 @@ export function Appointments() {
               )}
               <PaginationItem>
                 <PaginationNext
-                  href="#/jadwal"
-                  label="Berikutnya"
+                  href="#/schedule"
+                  label="Next"
                   onClick={() => setPage(Math.min(pages, current + 1))}
                 />
               </PaginationItem>

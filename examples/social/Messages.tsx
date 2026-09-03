@@ -80,7 +80,7 @@ export function Messages() {
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 border-b border-line-subtle p-3">
         <IconButton
-          aria-label="Kembali ke daftar"
+          aria-label="Back to the list"
           variant="ghost"
           size="sm"
           className="md:hidden"
@@ -97,7 +97,7 @@ export function Messages() {
       <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3">
         {[
           ...open.messages,
-          ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Baru', text })),
+          ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Now', text })),
         ].map((message, index) => (
           <li
             key={`${message.at}-${index}`}
@@ -132,13 +132,13 @@ export function Messages() {
         <InputGroup>
           <InputGroupInput
             value={draft}
-            aria-label={`Balas ke ${people[open.handle]?.name ?? open.handle}`}
-            placeholder="Tulis balasan"
+            aria-label={`Reply to ${people[open.handle]?.name ?? open.handle}`}
+            placeholder="Write a reply"
             onChange={(event) => setDraft(event.target.value)}
           />
           <InputGroupAddon>
             <IconButton
-              aria-label="Kirim"
+              aria-label="Send"
               type="submit"
               size="sm"
               variant="ghost"
@@ -156,7 +156,7 @@ export function Messages() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <Heading as="h1" size="heading-sm">
-        Pesan
+        Messages
       </Heading>
 
       {/* Phone: one pane at a time, chosen by whether a thread is open. */}
@@ -178,7 +178,7 @@ export function Messages() {
           className="md:hidden"
           onClick={() => setOpenId(threads[0]?.id ?? '')}
         >
-          Buka percakapan pertama
+          Open the first conversation
         </Button>
       )}
     </div>

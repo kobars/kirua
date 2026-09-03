@@ -67,20 +67,20 @@ const PER_PAGE = 6;
 export function App() {
   const [route, navigate] = useHashRoute('');
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
-  const [sort, setSort] = useState('populer');
+  const [sort, setSort] = useState('popular');
   const [page, setPage] = useState(1);
   const [lines, setLines] = useState<CartLine[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState<Category | 'semua'>('semua');
+  const [category, setCategory] = useState<Category | 'all'>('all');
   const [signedIn, setSignedIn] = useState(false);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     const kept = products.filter((p) => {
-      if (category !== 'semua' && p.category !== category) return false;
+      if (category !== 'all' && p.category !== category) return false;
       if (q !== '' && !`${p.name} ${p.brand} ${p.colour}`.toLowerCase().includes(q))
         return false;
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false;
@@ -91,9 +91,9 @@ export function App() {
       return p.price >= filters.price[0] && p.price <= filters.price[1];
     });
     const sorted = [...kept];
-    if (sort === 'murah') sorted.sort((a, b) => a.price - b.price);
-    if (sort === 'mahal') sorted.sort((a, b) => b.price - a.price);
-    if (sort === 'nilai') sorted.sort((a, b) => b.rating - a.rating);
+    if (sort === 'cheapest') sorted.sort((a, b) => a.price - b.price);
+    if (sort === 'dearest') sorted.sort((a, b) => b.price - a.price);
+    if (sort === 'rating') sorted.sort((a, b) => b.rating - a.rating);
     return sorted;
   }, [filters, sort, query, category]);
 
@@ -121,11 +121,11 @@ export function App() {
     );
 
   const count = lines.reduce((n, l) => n + l.quantity, 0);
-  const detail = route.startsWith('produk/')
-    ? products.find((p) => p.id === route.slice('produk/'.length))
+  const detail = route.startsWith('products/')
+    ? products.find((p) => p.id === route.slice('products/'.length))
     : undefined;
-  const order = route.startsWith('pesanan/')
-    ? orders.find((o) => o.id === route.slice('pesanan/'.length))
+  const order = route.startsWith('orders/')
+    ? orders.find((o) => o.id === route.slice('orders/'.length))
     : undefined;
 
   const filterPanel = (
@@ -156,7 +156,7 @@ export function App() {
             padding — more than any single control here costs. */}
         <div className="mx-auto flex w-full max-w-6xl items-center gap-2 px-4 py-3 sm:gap-3 md:px-8">
           <Link href="#/" variant="block" className="text-body-lg font-semibold text-fg">
-            Senja
+            Dusk
           </Link>
 
           {/* A `<nav>` of links, not a menu of commands: these go somewhere.
@@ -165,19 +165,19 @@ export function App() {
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>Katalog</NavigationMenuTrigger>
+                <NavigationMenuTrigger>Catalogue</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-md grid-cols-2 gap-1">
                     <NavigationMenuLink
                       href="#/"
                       onClick={() => {
-                        setCategory('semua');
+                        setCategory('all');
                         setPage(1);
                       }}
                     >
-                      <span className="font-medium">Semua barang</span>
+                      <span className="font-medium">Everything</span>
                       <span className="text-caption text-fg-muted">
-                        {products.length} item di katalog
+                        {products.length} items in the catalogue
                       </span>
                     </NavigationMenuLink>
                     {categories.map((item) => (
@@ -197,8 +197,8 @@ export function App() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink href="#/pesanan" className="px-4">
-                  Pesanan
+                <NavigationMenuLink href="#/orders" className="px-4">
+                  Orders
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -213,8 +213,8 @@ export function App() {
               </InputGroupAddon>
               <InputGroupInput
                 value={query}
-                aria-label="Cari barang"
-                placeholder="Cari barang"
+                aria-label="Search products"
+                placeholder="Search products"
                 onChange={(event) => {
                   setQuery(event.target.value);
                   setPage(1);
@@ -223,7 +223,7 @@ export function App() {
               {query !== '' && (
                 <InputGroupAddon>
                   <IconButton
-                    aria-label="Hapus pencarian"
+                    aria-label="Clear search"
                     size="sm"
                     variant="ghost"
                     className="-me-1.5"
@@ -238,23 +238,25 @@ export function App() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <IconButton aria-label="Akun" variant="ghost">
+              <IconButton aria-label="Account" variant="ghost">
                 <UserIcon />
               </IconButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>
-                {signedIn ? 'Masuk sebagai 0812…' : 'Belum masuk'}
+                {signedIn ? 'Signed in as 0812…' : 'Not signed in'}
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <a href="#/pesanan">Pesanan saya</a>
+                <a href="#/orders">My orders</a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {signedIn ? (
-                <DropdownMenuItem onSelect={() => setSignedIn(false)}>Keluar</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSignedIn(false)}>
+                  Sign out
+                </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem asChild>
-                  <a href="#/masuk">Masuk</a>
+                  <a href="#/sign-in">Sign in</a>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -294,9 +296,9 @@ export function App() {
             size="sm"
             leadingIcon={<CartIcon />}
             onClick={() => setCartOpen(true)}
-            aria-label="Keranjang"
+            aria-label="Cart"
           >
-            <span className="hidden sm:inline">Keranjang</span>
+            <span className="hidden sm:inline">Cart</span>
             {count > 0 && (
               <Badge status="info" className="sm:ms-1">
                 {count}
@@ -311,13 +313,13 @@ export function App() {
           <ProductPage product={detail} onAdd={add} />
         ) : order ? (
           <OrderPage order={order} />
-        ) : route === 'pesanan' ? (
-          <OrdersPage onOpen={(id) => navigate(`pesanan/${id}`)} />
-        ) : route === 'masuk' ? (
+        ) : route === 'orders' ? (
+          <OrdersPage onOpen={(id) => navigate(`orders/${id}`)} />
+        ) : route === 'sign-in' ? (
           <SignInPage
             onSignedIn={() => {
               setSignedIn(true);
-              navigate('pesanan');
+              navigate('orders');
             }}
           />
         ) : route === 'checkout' ? (
@@ -330,35 +332,35 @@ export function App() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Heading as="h1" size="heading-md">
-                    {categories.find((c) => c.id === category)?.label ?? 'Katalog'}{' '}
+                    {categories.find((c) => c.id === category)?.label ?? 'Catalogue'}{' '}
                     <span className="text-body-md font-normal text-fg-muted tabular-nums">
                       ({matches.length})
                     </span>
                   </Heading>
-                  {(category !== 'semua' || query !== '') && (
+                  {(category !== 'all' || query !== '') && (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setCategory('semua');
+                        setCategory('all');
                         setQuery('');
                         setPage(1);
                       }}
                     >
-                      Hapus penyaringan
+                      Clear filters
                     </Button>
                   )}
                 </div>
                 <div className="w-48">
                   <Select value={sort} onValueChange={setSort}>
-                    <SelectTrigger aria-label="Urutkan">
+                    <SelectTrigger aria-label="Sort by">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent aria-label="Urutkan">
-                      <SelectItem value="populer">Paling populer</SelectItem>
-                      <SelectItem value="murah">Harga terendah</SelectItem>
-                      <SelectItem value="mahal">Harga tertinggi</SelectItem>
-                      <SelectItem value="nilai">Nilai tertinggi</SelectItem>
+                    <SelectContent aria-label="Sort by">
+                      <SelectItem value="popular">Most popular</SelectItem>
+                      <SelectItem value="cheapest">Lowest price</SelectItem>
+                      <SelectItem value="dearest">Highest price</SelectItem>
+                      <SelectItem value="rating">Highest rated</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -367,8 +369,8 @@ export function App() {
               {shown.length === 0 ? (
                 <EmptyState
                   icon={<SearchIcon size="2xl" />}
-                  title="Tidak ada barang yang cocok"
-                  description="Coba longgarkan harga, atau hapus salah satu filter."
+                  title="Nothing matches"
+                  description="Try widening the price range, or clearing one of the filters."
                   action={
                     <Button variant="secondary" onClick={() => setFilters(emptyFilters)}>
                       Reset filter
@@ -438,9 +440,9 @@ export function App() {
           <Toast
             status="success"
             icon={<CheckIcon />}
-            close={<ToastClose label="Tutup" onClick={() => setToast(null)} />}
+            close={<ToastClose label="Close" onClick={() => setToast(null)} />}
           >
-            <ToastTitle>Masuk keranjang</ToastTitle>
+            <ToastTitle>Added to cart</ToastTitle>
             <ToastDescription>{toast}</ToastDescription>
           </Toast>
         )}

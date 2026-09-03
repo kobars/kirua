@@ -29,9 +29,9 @@ import {
   ItemTitle,
   Text,
 } from 'kirua';
-import { orderTone, orders, products, rupiah, type Order } from './data';
+import { orderTone, orders, products, idr, type Order } from './data';
 
-type Filter = 'semua' | 'berjalan' | 'selesai';
+type Filter = 'all' | 'open' | 'closed';
 
 const total = (order: Order) =>
   order.lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
@@ -45,16 +45,17 @@ export interface OrdersPageProps {
  * one action on this screen that cannot be undone from this screen.
  */
 export function OrdersPage({ onOpen }: OrdersPageProps) {
-  const [filter, setFilter] = useState<Filter>('semua');
+  const [filter, setFilter] = useState<Filter>('all');
   const [cancelling, setCancelling] = useState<Order | null>(null);
   const [cancelled, setCancelled] = useState<string[]>([]);
 
-  const statusOf = (order: Order) => (cancelled.includes(order.id) ? 'batal' : order.status);
+  const statusOf = (order: Order) =>
+    cancelled.includes(order.id) ? 'cancelled' : order.status;
 
   const shown = orders.filter((order) => {
     const status = statusOf(order);
-    if (filter === 'berjalan') return status === 'diproses' || status === 'dikirim';
-    if (filter === 'selesai') return status === 'tiba' || status === 'batal';
+    if (filter === 'open') return status === 'processing' || status === 'shipped';
+    if (filter === 'closed') return status === 'delivered' || status === 'cancelled';
     return true;
   });
 
@@ -62,14 +63,14 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
     <Container>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <Heading as="h1" size="heading-md">
-          Pesanan saya
+          My orders
         </Heading>
-        <ButtonGroup aria-label="Saring pesanan">
+        <ButtonGroup aria-label="Filter orders">
           {/* A static label sharing the group's shape. Hidden below `sm`,
               where three buttons already fill the row. */}
-          <ButtonGroupText className="hidden sm:inline-flex">Tampilkan</ButtonGroupText>
+          <ButtonGroupText className="hidden sm:inline-flex">Show</ButtonGroupText>
           <ButtonGroupSeparator className="hidden sm:block" />
-          {(['semua', 'berjalan', 'selesai'] as const).map((value) => (
+          {(['all', 'open', 'closed'] as const).map((value) => (
             <Button
               key={value}
               variant="secondary"
@@ -78,7 +79,7 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
               onClick={() => setFilter(value)}
               className={filter === value ? 'bg-selected text-on-selected' : undefined}
             >
-              {value === 'semua' ? 'Semua' : value === 'berjalan' ? 'Berjalan' : 'Selesai'}
+              {value === 'all' ? 'All' : value === 'open' ? 'Open' : 'Closed'}
             </Button>
           ))}
         </ButtonGroup>
@@ -87,11 +88,11 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
       {shown.length === 0 ? (
         <EmptyState
           icon={<CartIcon size="2xl" />}
-          title="Belum ada pesanan di sini"
-          description="Pesanan yang sudah dibayar akan muncul di halaman ini."
+          title="No orders here yet"
+          description="Orders you have paid for show up on this page."
           action={
-            <Button variant="secondary" onClick={() => setFilter('semua')}>
-              Tampilkan semua
+            <Button variant="secondary" onClick={() => setFilter('all')}>
+              Show all
             </Button>
           }
         />
@@ -116,7 +117,7 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                           {order.id}
                         </Heading>
                         <Text size="sm" className="tabular-nums">
-                          Dipesan {order.placed} · {rupiah(total(order))}
+                          Ordered {order.placed} · {idr(total(order))}
                         </Text>
                       </div>
                       <Badge status={orderTone[status]}>{status}</Badge>
@@ -138,11 +139,11 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                               <ItemContent>
                                 <ItemTitle>{product?.name ?? line.productId}</ItemTitle>
                                 <ItemDescription>
-                                  {line.quantity} × {rupiah(line.price)}
+                                  {line.quantity} × {idr(line.price)}
                                 </ItemDescription>
                               </ItemContent>
                               <ItemActions className="tabular-nums">
-                                {rupiah(line.price * line.quantity)}
+                                {idr(line.price * line.quantity)}
                               </ItemActions>
                             </Item>
                           </div>
@@ -151,9 +152,9 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                     </ItemGroup>
 
                     <div className="flex flex-wrap justify-end gap-3">
-                      {(status === 'diproses' || status === 'dikirim') && (
+                      {(status === 'processing' || status === 'shipped') && (
                         <Button variant="ghost" onClick={() => setCancelling(order)}>
-                          Batalkan
+                          Cancel
                         </Button>
                       )}
                       <Button
@@ -161,7 +162,7 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                         trailingIcon={<ChevronEndIcon />}
                         onClick={() => onOpen(order.id)}
                       >
-                        Lihat rincian
+                        View details
                       </Button>
                     </div>
                   </CardBody>
@@ -177,14 +178,14 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
         onOpenChange={(open) => !open && setCancelling(null)}
       >
         <AlertDialogContent>
-          <AlertDialogTitle>Batalkan pesanan {cancelling?.id}?</AlertDialogTitle>
+          <AlertDialogTitle>Cancel order {cancelling?.id}?</AlertDialogTitle>
           <AlertDialogDescription>
-            Barang akan dikembalikan ke stok dan dananya dikirim balik dalam tiga hari kerja.
-            Pesanan yang sudah dibatalkan tidak bisa dilanjutkan.
+            The items go back into stock and the money is returned within three working days. A
+            cancelled order cannot be resumed.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
-              <Button variant="secondary">Lanjutkan pesanan</Button>
+              <Button variant="secondary">Keep the order</Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -194,7 +195,7 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
                   setCancelling(null);
                 }}
               >
-                Batalkan pesanan
+                Cancel the order
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>

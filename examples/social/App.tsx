@@ -45,11 +45,11 @@ import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, shared by the rail, the header and the bottom bar. */
 const nav = [
-  { route: '', label: 'Beranda', icon: GridIcon },
-  { route: 'jelajah', label: 'Jelajah', icon: SearchIcon },
-  { route: 'notifikasi', label: 'Notifikasi', icon: HeartIcon },
-  { route: 'pesan', label: 'Pesan', icon: CommentIcon },
-  { route: 'profil/rin', label: 'Profil', icon: UserIcon },
+  { route: '', label: 'Home', icon: GridIcon },
+  { route: 'explore', label: 'Explore', icon: SearchIcon },
+  { route: 'notifications', label: 'Notifications', icon: HeartIcon },
+  { route: 'messages', label: 'Messages', icon: CommentIcon },
+  { route: 'profile/rin', label: 'Profile', icon: UserIcon },
 ] as const;
 
 /**
@@ -74,8 +74,8 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [loadingMore]);
 
-  const profile = route.startsWith('profil/')
-    ? people[route.slice('profil/'.length)]
+  const profile = route.startsWith('profile/')
+    ? people[route.slice('profile/'.length)]
     : undefined;
   const feed = posts.filter((post) => !deleted.includes(post.id));
   const unread = notices.filter((notice) => notice.unread).length;
@@ -90,28 +90,28 @@ export function App() {
             className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
           >
             <SparkleIcon aria-hidden="true" className="text-fg-accent" />
-            Ruang
+            Commons
           </Link>
           <span className="flex-1" />
           <Tooltip>
             <TooltipTrigger asChild>
-              <IconButton aria-label="Cari" variant="ghost">
+              <IconButton aria-label="Search" variant="ghost">
                 <SearchIcon />
               </IconButton>
             </TooltipTrigger>
-            <TooltipContent>Cari</TooltipContent>
+            <TooltipContent>Search</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <IconButton
-                aria-label="Profil"
+                aria-label="Profile"
                 variant="ghost"
-                onClick={() => navigate('profil/rin')}
+                onClick={() => navigate('profile/rin')}
               >
                 <UserIcon />
               </IconButton>
             </TooltipTrigger>
-            <TooltipContent>Profil</TooltipContent>
+            <TooltipContent>Profile</TooltipContent>
           </Tooltip>
 
           <ThemeMenu />
@@ -124,7 +124,7 @@ export function App() {
             two ways to reach the same five places on a 375px screen. */}
         <div className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block">
           <Sidebar collapsible="none" className="w-52 border-e-0 bg-transparent">
-            <SidebarContent aria-label="Utama">
+            <SidebarContent aria-label="Main">
               <SidebarGroup>
                 <SidebarMenu>
                   {nav.map(({ route: target, label, icon: Icon }) => (
@@ -133,7 +133,7 @@ export function App() {
                         <a href={`#/${target}`}>
                           <Icon aria-hidden="true" />
                           <SidebarLabel>{label}</SidebarLabel>
-                          {label === 'Notifikasi' && unread > 0 && (
+                          {label === 'Notifications' && unread > 0 && (
                             <Badge status="info" className="ms-auto">
                               {unread}
                             </Badge>
@@ -151,11 +151,11 @@ export function App() {
         <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 sm:pb-4">
           {profile ? (
             <Profile person={profile} surface={surface} />
-          ) : route === 'jelajah' ? (
-            <Explore onOpen={(handle) => navigate(`profil/${handle}`)} />
-          ) : route === 'notifikasi' ? (
+          ) : route === 'explore' ? (
+            <Explore onOpen={(handle) => navigate(`profile/${handle}`)} />
+          ) : route === 'notifications' ? (
             <Notifications />
-          ) : route === 'pesan' ? (
+          ) : route === 'messages' ? (
             <Messages />
           ) : (
             <>
@@ -164,7 +164,7 @@ export function App() {
                   `sr-only` rather than `hidden`, which would take it out of the
                   accessibility tree and leave the page unnamed either way. */}
               <Heading as="h1" className="sr-only">
-                Beranda
+                Home
               </Heading>
 
               <ExperimentBar
@@ -180,7 +180,7 @@ export function App() {
               ))}
 
               {loadingMore && (
-                <output aria-busy="true" aria-label="Memuat kiriman" className="grid gap-4">
+                <output aria-busy="true" aria-label="Loading posts" className="grid gap-4">
                   {/* A `Card`, because the thing it stands in for is a `Card`.
                       This was three utilities typed by hand, which happened to
                       draw a box the same size and shape and would have drifted
@@ -204,7 +204,7 @@ export function App() {
 
               {shown < feed.length && !loadingMore && (
                 <Button variant="secondary" fullWidth onClick={() => setLoadingMore(true)}>
-                  Muat lebih banyak
+                  Load more
                 </Button>
               )}
             </>
@@ -214,13 +214,13 @@ export function App() {
 
       <AlertDialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
-          <AlertDialogTitle>Hapus kiriman ini?</AlertDialogTitle>
+          <AlertDialogTitle>Delete this post?</AlertDialogTitle>
           <AlertDialogDescription>
-            Kiriman dan semua balasannya hilang. Tidak bisa dikembalikan.
+            The post and every reply to it go too, and none of it can be recovered.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
-              <Button variant="secondary">Biarkan</Button>
+              <Button variant="secondary">Keep it</Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -230,7 +230,7 @@ export function App() {
                   setDeleting(null);
                 }}
               >
-                Hapus
+                Delete
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -240,7 +240,7 @@ export function App() {
       {/* A phone-only bottom bar. Everything in it is reachable from the header
           on a wide screen, so it is hidden rather than duplicated there. */}
       <nav
-        aria-label="Utama"
+        aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-sticky border-t border-line-subtle bg-page px-4 py-2 sm:hidden"
       >
         <ul className="mx-auto flex max-w-2xl items-center justify-around">
@@ -254,8 +254,8 @@ export function App() {
               >
                 <Icon aria-hidden="true" />
                 {label}
-                {label === 'Notifikasi' && unread > 0 && (
-                  <span className="sr-only">, {unread} belum dibaca</span>
+                {label === 'Notifications' && unread > 0 && (
+                  <span className="sr-only">, {unread} unread</span>
                 )}
               </Link>
             </li>

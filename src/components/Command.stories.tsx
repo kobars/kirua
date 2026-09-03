@@ -31,26 +31,26 @@ export const Playground: Story = {
   render: (args) => (
     <Command {...args} open label="Command palette">
       <CommandInput
-        placeholder="Cari perintah…"
-        aria-label="Cari perintah"
+        placeholder="Search commands…"
+        aria-label="Search commands"
         aria-controls="cmd-list"
         aria-activedescendant="cmd-patient"
       />
       <CommandList id="cmd-list" aria-label="Perintah">
-        <CommandGroup heading="Pasien">
+        <CommandGroup heading="Patients">
           <CommandItem id="cmd-patient" isActive shortcut={<Kbd>P</Kbd>}>
-            <UserIcon aria-hidden="true" /> Cari pasien
+            <UserIcon aria-hidden="true" /> Find a patient
           </CommandItem>
           <CommandItem id="cmd-new">
-            <UserIcon aria-hidden="true" /> Daftarkan pasien baru
+            <UserIcon aria-hidden="true" /> Register a new patient
           </CommandItem>
         </CommandGroup>
-        <CommandGroup heading="Kunjungan">
+        <CommandGroup heading="Visits">
           <CommandItem id="cmd-visit" shortcut={<Kbd>K</Kbd>}>
-            <CalendarIcon aria-hidden="true" /> Buat kunjungan
+            <CalendarIcon aria-hidden="true" /> Book a visit
           </CommandItem>
           <CommandItem id="cmd-clinic">
-            <StethoscopeIcon aria-hidden="true" /> Ganti poliklinik
+            <StethoscopeIcon aria-hidden="true" /> Change clinic
           </CommandItem>
         </CommandGroup>
       </CommandList>
@@ -61,9 +61,9 @@ export const Playground: Story = {
 export const NoMatches: Story = {
   render: (args) => (
     <Command {...args} open label="Command palette">
-      <CommandInput defaultValue="zzz" aria-label="Cari perintah" aria-expanded={false} />
+      <CommandInput defaultValue="zzz" aria-label="Search commands" aria-expanded={false} />
       {/* INSTEAD OF the list — see CommandEmpty's own note. */}
-      <CommandEmpty>Tidak ada perintah yang cocok.</CommandEmpty>
+      <CommandEmpty>No command matches.</CommandEmpty>
     </Command>
   ),
 };
@@ -77,16 +77,16 @@ export const ItIsADialogAndTheInputOwnsTheHighlight: Story = {
   render: (args) => (
     <Command {...args} open label="Command palette">
       <CommandInput
-        aria-label="Cari perintah"
+        aria-label="Search commands"
         aria-controls="cmd-assert-list"
         aria-activedescendant="cmd-assert-visit"
       />
       <CommandList id="cmd-assert-list" aria-label="Perintah">
-        <CommandGroup heading="Kunjungan">
+        <CommandGroup heading="Visits">
           <CommandItem id="cmd-assert-visit" isActive>
-            Buat kunjungan
+            Book a visit
           </CommandItem>
-          <CommandItem id="cmd-assert-clinic">Ganti poliklinik</CommandItem>
+          <CommandItem id="cmd-assert-clinic">Change clinic</CommandItem>
         </CommandGroup>
       </CommandList>
     </Command>
@@ -99,12 +99,12 @@ export const ItIsADialogAndTheInputOwnsTheHighlight: Story = {
       await expect(dialog).toBeVisible();
     });
 
-    const input = body.getByRole('combobox', { name: 'Cari perintah' });
+    const input = body.getByRole('combobox', { name: 'Search commands' });
     await expect(input).toHaveAttribute('aria-activedescendant', 'cmd-assert-visit');
     await expect(document.activeElement).toBe(input);
 
     // A group inside a listbox is a labelled group, not an option.
-    await expect(body.getByRole('group', { name: 'Kunjungan' })).toBeVisible();
+    await expect(body.getByRole('group', { name: 'Visits' })).toBeVisible();
     await expect(body.getAllByRole('option')).toHaveLength(2);
   },
 };

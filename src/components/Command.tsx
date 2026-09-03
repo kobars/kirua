@@ -21,8 +21,8 @@ import { SearchIcon } from './icons';
  *     aria-activedescendant={`cmd-${active}`}
  *   />
  *   <CommandList id="cmd-list">
- *     <CommandGroup heading="Pasien">
- *       <CommandItem id="cmd-0" isActive>Cari pasien</CommandItem>
+ *     <CommandGroup heading="Patients">
+ *       <CommandItem id="cmd-0" isActive>Find a patient</CommandItem>
  *     </CommandGroup>
  *   </CommandList>
  * </Command>

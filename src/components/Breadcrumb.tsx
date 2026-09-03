@@ -15,7 +15,7 @@ export interface BreadcrumbProps extends ComponentProps<'nav'> {
  * @example
  * <Breadcrumb>
  *   <BreadcrumbList>
- *     <BreadcrumbItem><BreadcrumbLink href="/">Beranda</BreadcrumbLink></BreadcrumbItem>
+ *     <BreadcrumbItem><BreadcrumbLink href="/">Home</BreadcrumbLink></BreadcrumbItem>
  *     <BreadcrumbSeparator />
  *     <BreadcrumbItem><BreadcrumbPage>Siti Rahayu</BreadcrumbPage></BreadcrumbItem>
  *   </BreadcrumbList>

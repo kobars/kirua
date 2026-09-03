@@ -43,11 +43,11 @@ export const Playground: Story = {
 export const ChosenAndNotYetChosen: Story = {
   render: (args) => (
     <div className="grid w-72 gap-4">
-      <Field controlId="dp-empty" label="Tanggal kunjungan">
-        <DatePicker {...args} id="dp-empty" placeholder="Pilih tanggal" locale="id-ID" />
+      <Field controlId="dp-empty" label="Visit date">
+        <DatePicker {...args} id="dp-empty" placeholder="Pick a date" locale="en-GB" />
       </Field>
-      <Field controlId="dp-filled" label="Tanggal kunjungan">
-        <DatePicker {...args} id="dp-filled" value={new Date(2026, 2, 14)} locale="id-ID" />
+      <Field controlId="dp-filled" label="Visit date">
+        <DatePicker {...args} id="dp-filled" value={new Date(2026, 2, 14)} locale="en-GB" />
       </Field>
       <Field controlId="dp-en" label="Visit date">
         <DatePicker {...args} id="dp-en" value={new Date(2026, 2, 14)} locale="en-US" />
