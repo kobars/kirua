@@ -12,7 +12,7 @@ import {
   SheetTitle,
   Text,
 } from 'kirua';
-import { rupiah, type Product } from './data';
+import { idr, type Product } from './data';
 
 export interface CartLine {
   product: Product;
@@ -40,11 +40,11 @@ export function CartSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="end" className="gap-4">
         <div>
-          <SheetTitle>Keranjang</SheetTitle>
+          <SheetTitle>Cart</SheetTitle>
           <SheetDescription>
             {lines.length === 0
-              ? 'Belum ada barang.'
-              : `${lines.length} barang, disimpan tujuh hari.`}
+              ? 'Nothing in it yet.'
+              : `${lines.length} items, kept for seven days.`}
           </SheetDescription>
         </div>
 
@@ -52,8 +52,8 @@ export function CartSheet({
           <EmptyState
             headingLevel="h3"
             icon={<CartIcon size="2xl" />}
-            title="Keranjang kosong"
-            description="Barang yang ditambahkan akan disimpan di sini selama tujuh hari."
+            title="Your cart is empty"
+            description="Anything you add is kept here for seven days."
           />
         ) : (
           <ul className="min-h-0 flex-1 divide-y divide-line-subtle overflow-y-auto">
@@ -68,13 +68,13 @@ export function CartSheet({
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-body-sm font-medium text-fg">{product.name}</p>
                   <Text size="sm" className="tabular-nums">
-                    {rupiah(product.price)}
+                    {idr(product.price)}
                   </Text>
                   <div className="mt-2">
                     <QuantityStepper
-                      label={`Jumlah, ${product.name}`}
-                      decrementLabel={`Kurangi ${product.name}`}
-                      incrementLabel={`Tambah ${product.name}`}
+                      label={`Quantity, ${product.name}`}
+                      decrementLabel={`One fewer ${product.name}`}
+                      incrementLabel={`One more ${product.name}`}
                       value={quantity}
                       min={0}
                       max={product.stock}
@@ -92,7 +92,7 @@ export function CartSheet({
           <Separator />
           <p className="flex items-center justify-between text-body-md font-semibold text-fg">
             <span>Total</span>
-            <span className="tabular-nums">{rupiah(total)}</span>
+            <span className="tabular-nums">{idr(total)}</span>
           </p>
           <Button fullWidth disabled={lines.length === 0} onClick={onCheckout}>
             Checkout
@@ -102,7 +102,7 @@ export function CartSheet({
               state setter does not do. */}
           <SheetClose asChild>
             <Button variant="ghost" fullWidth>
-              Lanjut belanja
+              Keep shopping
             </Button>
           </SheetClose>
         </SheetFooter>

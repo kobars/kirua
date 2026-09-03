@@ -32,7 +32,7 @@ import {
   TimelineItem,
   TimelineTime,
 } from 'kirua';
-import { orderTone, products, rupiah, type Order } from './data';
+import { orderTone, products, idr, type Order } from './data';
 
 export interface OrderPageProps {
   order: Order;
@@ -48,7 +48,7 @@ export function OrderPage({ order }: OrderPageProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#/pesanan">Pesanan saya</BreadcrumbLink>
+            <BreadcrumbLink href="#/orders">My orders</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -63,7 +63,7 @@ export function OrderPage({ order }: OrderPageProps) {
             {order.id}
           </Heading>
           <Text size="sm" className="mt-1 tabular-nums">
-            Dipesan {order.placed} · {order.courier} {order.tracking}
+            Ordered {order.placed} · {order.courier} {order.tracking}
           </Text>
         </div>
         <div className="flex items-center gap-3">
@@ -85,7 +85,7 @@ export function OrderPage({ order }: OrderPageProps) {
             untruncated title rather than to the card. */}
         <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
           <Heading as="h2" size="body-md">
-            Barang
+            Items
           </Heading>
           <ItemGroup>
             {order.lines.map((line, index) => {
@@ -99,7 +99,7 @@ export function OrderPage({ order }: OrderPageProps) {
                     className="px-0"
                   >
                     {product ? (
-                      <a href={`#/produk/${product.id}`}>
+                      <a href={`#/products/${product.id}`}>
                         <ItemMedia
                           aria-hidden="true"
                           className="size-12 rounded-md bg-sunken text-body-md font-semibold"
@@ -109,7 +109,7 @@ export function OrderPage({ order }: OrderPageProps) {
                         <ItemContent>
                           <ItemTitle>{product.name}</ItemTitle>
                           <ItemDescription>
-                            {line.quantity} × {rupiah(line.price)}
+                            {line.quantity} × {idr(line.price)}
                           </ItemDescription>
                         </ItemContent>
                       </a>
@@ -128,12 +128,12 @@ export function OrderPage({ order }: OrderPageProps) {
 
           <DescriptionList>
             <DescriptionTerm>Subtotal</DescriptionTerm>
-            <DescriptionDetails numeric>{rupiah(subtotal)}</DescriptionDetails>
-            <DescriptionTerm>Ongkos kirim</DescriptionTerm>
-            <DescriptionDetails numeric>{rupiah(DELIVERY)}</DescriptionDetails>
+            <DescriptionDetails numeric>{idr(subtotal)}</DescriptionDetails>
+            <DescriptionTerm>Delivery</DescriptionTerm>
+            <DescriptionDetails numeric>{idr(DELIVERY)}</DescriptionDetails>
             <DescriptionTerm emphasis>Total</DescriptionTerm>
             <DescriptionDetails emphasis numeric>
-              {rupiah(subtotal + DELIVERY)}
+              {idr(subtotal + DELIVERY)}
             </DescriptionDetails>
           </DescriptionList>
         </CardBody>
@@ -144,11 +144,11 @@ export function OrderPage({ order }: OrderPageProps) {
           <Collapsible defaultOpen>
             <div className="flex items-center justify-between gap-3">
               <Heading as="h2" size="body-md">
-                Riwayat pengiriman
+                Delivery history
               </Heading>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm" trailingIcon={<ChevronDownIcon />}>
-                  Rincian
+                  Details
                 </Button>
               </CollapsibleTrigger>
             </div>
@@ -176,7 +176,7 @@ export function OrderPage({ order }: OrderPageProps) {
 
           <div>
             <Heading as="h3" size="body-sm">
-              Dikirim ke
+              Shipped to
             </Heading>
             <Text size="sm" className="mt-1">
               {order.address}
