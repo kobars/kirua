@@ -60,7 +60,7 @@ export function Explore({ onOpen }: ExploreProps) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <Heading as="h1" size="heading-sm">
-        Jelajah
+        Explore
       </Heading>
 
       <InputGroup>
@@ -69,14 +69,14 @@ export function Explore({ onOpen }: ExploreProps) {
         </InputGroupAddon>
         <InputGroupInput
           value={query}
-          aria-label="Cari orang atau kiriman"
-          placeholder="Cari orang atau kiriman"
+          aria-label="Search people or posts"
+          placeholder="Search people or posts"
           onChange={(event) => setQuery(event.target.value)}
         />
         {query !== '' && (
           <InputGroupAddon>
             <IconButton
-              aria-label="Hapus pencarian"
+              aria-label="Clear search"
               size="sm"
               variant="ghost"
               className="-me-1.5"
@@ -106,8 +106,8 @@ export function Explore({ onOpen }: ExploreProps) {
       {handles.length === 0 && matchingPosts.length === 0 ? (
         <EmptyState
           icon={<SearchIcon size="2xl" />}
-          title="Tidak ada yang cocok"
-          description="Coba kata lain, atau lepas topiknya."
+          title="Nothing matches"
+          description="Try another word, or drop the topic."
           action={
             <Button
               variant="secondary"
@@ -116,7 +116,7 @@ export function Explore({ onOpen }: ExploreProps) {
                 setTopic(null);
               }}
             >
-              Tampilkan semua
+              Show everything
             </Button>
           }
         />
@@ -151,7 +151,7 @@ export function Explore({ onOpen }: ExploreProps) {
           {matchingPosts.length > 0 && (
             <section className="grid gap-3">
               <Heading as="h2" size="body-md">
-                Kiriman
+                Posts
               </Heading>
               {matchingPosts.map((post) => (
                 <Card key={post.id}>

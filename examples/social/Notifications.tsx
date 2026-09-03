@@ -23,42 +23,42 @@ import {
 import { initials, notices, people, type Notice } from './data';
 
 const ICON = {
-  suka: HeartIcon,
-  komentar: CommentIcon,
-  ikuti: UserIcon,
-  sebut: SparkleIcon,
+  like: HeartIcon,
+  comment: CommentIcon,
+  follow: UserIcon,
+  mention: SparkleIcon,
 };
 
 const WORDING = {
-  suka: 'menyukai kirimanmu',
-  komentar: 'membalas kirimanmu',
-  ikuti: 'mulai mengikutimu',
-  sebut: 'menyebutmu',
+  like: 'liked your post',
+  comment: 'replied to your post',
+  follow: 'started following you',
+  mention: 'mentioned you',
 };
 
-type Tab = 'semua' | 'belum';
+type Tab = 'all' | 'unread';
 
 export function Notifications() {
-  const [tab, setTab] = useState<Tab>('semua');
+  const [tab, setTab] = useState<Tab>('all');
   const [read, setRead] = useState<string[]>([]);
 
   const isUnread = (notice: Notice) => Boolean(notice.unread) && !read.includes(notice.id);
-  const shown = notices.filter((notice) => tab === 'semua' || isUnread(notice));
+  const shown = notices.filter((notice) => tab === 'all' || isUnread(notice));
   const unread = notices.filter(isUnread).length;
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Heading as="h1" size="heading-sm">
-          Notifikasi{' '}
+          Notifications{' '}
           {unread > 0 && (
             <Badge status="info" className="ms-1">
-              {unread} baru
+              {unread} new
             </Badge>
           )}
         </Heading>
-        <ButtonGroup aria-label="Saring notifikasi">
-          {(['semua', 'belum'] as const).map((value) => (
+        <ButtonGroup aria-label="Filter notifications">
+          {(['all', 'unread'] as const).map((value) => (
             <Button
               key={value}
               variant="secondary"
@@ -67,7 +67,7 @@ export function Notifications() {
               onClick={() => setTab(value)}
               className={tab === value ? 'bg-selected text-on-selected' : undefined}
             >
-              {value === 'semua' ? 'Semua' : 'Belum dibaca'}
+              {value === 'all' ? 'All' : 'Unread'}
             </Button>
           ))}
         </ButtonGroup>
@@ -76,11 +76,11 @@ export function Notifications() {
       {shown.length === 0 ? (
         <EmptyState
           icon={<SparkleIcon size="2xl" />}
-          title="Semua sudah dibaca"
-          description="Tidak ada notifikasi baru untuk kamu."
+          title="Everything is read"
+          description="No new notifications for you."
           action={
-            <Button variant="secondary" onClick={() => setTab('semua')}>
-              Lihat semua
+            <Button variant="secondary" onClick={() => setTab('all')}>
+              Show all
             </Button>
           }
         />

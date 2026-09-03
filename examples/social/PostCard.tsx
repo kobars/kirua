@@ -47,13 +47,13 @@ export interface PostCardProps {
 
 /** How the replies under a post are ordered. Two answers, so a radio group. */
 const REPLY_ORDERS = [
-  { value: 'terbaru', label: 'Balasan terbaru dulu' },
-  { value: 'terpopuler', label: 'Balasan terpopuler dulu' },
+  { value: 'newest', label: 'Newest replies first' },
+  { value: 'popular', label: 'Most liked replies first' },
 ];
 
-export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) {
+export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps) {
   const [muted, setMuted] = useState(false);
-  const [replyOrder, setReplyOrder] = useState('terbaru');
+  const [replyOrder, setReplyOrder] = useState('newest');
   const person = people[post.handle];
   if (!person) return null;
 
@@ -85,7 +85,7 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <IconButton
-              aria-label={`Opsi untuk kiriman ${person.name}`}
+              aria-label={`Options for ${person.name}’s post`}
               variant="ghost"
               size="sm"
             >
@@ -97,19 +97,19 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
                 destructive one are three different kinds of thing and a menu
                 that does not say so is a list of six. */}
             <DropdownMenuGroup>
-              <DropdownMenuItem>Salin tautan</DropdownMenuItem>
-              <DropdownMenuItem>Sematkan</DropdownMenuItem>
-              <DropdownMenuItem>Laporkan</DropdownMenuItem>
+              <DropdownMenuItem>Copy link</DropdownMenuItem>
+              <DropdownMenuItem>Pin</DropdownMenuItem>
+              <DropdownMenuItem>Report</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
-              Bisukan @{person.handle}
+              Mute @{person.handle}
             </DropdownMenuCheckboxItem>
             {onDelete && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
-                  Hapus kiriman
+                  Delete post
                 </DropdownMenuItem>
               </>
             )}
@@ -138,7 +138,7 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
         <Toggle
           size="sm"
           defaultPressed={post.liked ?? false}
-          aria-label={`Suka kiriman ${person.name}`}
+          aria-label={`Like ${person.name}’s post`}
         >
           <HeartIcon />
           <span className="tabular-nums">{compactCount(post.likes)}</span>
@@ -150,10 +150,10 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
           {compactCount(post.comments)}
         </span>
         <span className="flex-1" />
-        <IconButton aria-label="Bagikan" variant="ghost" size="sm">
+        <IconButton aria-label="Share" variant="ghost" size="sm">
           <ShareIcon />
         </IconButton>
-        <Toggle size="sm" aria-label="Simpan">
+        <Toggle size="sm" aria-label="Save">
           <BookmarkIcon />
         </Toggle>
       </footer>
@@ -171,15 +171,15 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
       <ContextMenuContent>
         <ContextMenuGroup>
           <ContextMenuItem>
-            Salin tautan
+            Copy link
             <ContextMenuShortcut>⌘C</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem>Sematkan</ContextMenuItem>
-          <ContextMenuItem>Laporkan</ContextMenuItem>
+          <ContextMenuItem>Pin</ContextMenuItem>
+          <ContextMenuItem>Report</ContextMenuItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
-          Bisukan @{person.handle}
+          Mute @{person.handle}
         </ContextMenuCheckboxItem>
         <ContextMenuSeparator />
         {/* The right-click path carries the same commands as the button menu
@@ -196,7 +196,7 @@ export function PostCard({ post, onDelete, surface = 'netral' }: PostCardProps) 
           <>
             <ContextMenuSeparator />
             <ContextMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
-              Hapus kiriman
+              Delete post
             </ContextMenuItem>
           </>
         )}

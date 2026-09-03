@@ -61,22 +61,22 @@ export function Profile({ person, surface }: ProfileProps) {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button size="sm" variant="ghost">
-                    Blokir
+                    Block
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
-                  <AlertDialogTitle>Blokir @{person.handle}?</AlertDialogTitle>
+                  <AlertDialogTitle>Block @{person.handle}?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Kalian tidak akan saling melihat kiriman. Ini contoh, jadi tidak ada yang
-                    benar-benar diblokir.
+                    Neither of you would see the other's posts. This is an example screen, so
+                    nobody is really blocked.
                   </AlertDialogDescription>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction>Blokir</AlertDialogAction>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Block</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button size="sm">Ikuti</Button>
+              <Button size="sm">Follow</Button>
             </div>
           </div>
 
@@ -96,15 +96,15 @@ export function Profile({ person, surface }: ProfileProps) {
               <strong className="font-semibold text-fg tabular-nums">
                 {compactCount(person.followers)}
               </strong>{' '}
-              pengikut
+              followers
             </span>
             <span>
               <strong className="font-semibold text-fg tabular-nums">
                 {compactCount(person.following)}
               </strong>{' '}
-              diikuti
+              following
             </span>
-            <span className="text-fg-muted">Bergabung {person.joined}</span>
+            <span className="text-fg-muted">Joined {person.joined}</span>
           </p>
 
           <Separator />
@@ -114,20 +114,20 @@ export function Profile({ person, surface }: ProfileProps) {
               items={others.map((p) => ({ name: p.name }))}
               className="[--icon-size:var(--icon-sm)]"
             />
-            <Text size="sm">Diikuti oleh orang yang kamu ikuti</Text>
+            <Text size="sm">Followed by people you follow</Text>
           </div>
         </div>
       </Card>
 
-      <Tabs defaultValue="kiriman">
+      <Tabs defaultValue="posts">
         <TabsList>
-          <TabsTrigger value="kiriman">Kiriman</TabsTrigger>
+          <TabsTrigger value="posts">Posts</TabsTrigger>
           <TabsTrigger value="media">Media</TabsTrigger>
-          <TabsTrigger value="suka">Suka</TabsTrigger>
-          <TabsTrigger value="aktivitas">Aktivitas</TabsTrigger>
+          <TabsTrigger value="likes">Likes</TabsTrigger>
+          <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="kiriman" className="grid gap-4">
+        <TabsContent value="posts" className="grid gap-4">
           {theirs.map((post) => (
             <PostCard key={post.id} post={post} surface={surface} />
           ))}
@@ -145,17 +145,17 @@ export function Profile({ person, surface }: ProfileProps) {
             ))}
         </TabsContent>
 
-        <TabsContent value="suka" className="text-body-sm text-fg-secondary">
-          <p>Kiriman yang disukai bersifat pribadi di layar contoh ini.</p>
+        <TabsContent value="likes" className="text-body-sm text-fg-secondary">
+          <p>Liked posts are private on this example screen.</p>
         </TabsContent>
 
-        <TabsContent value="aktivitas">
+        <TabsContent value="activity">
           <Card>
             <CardBody>
-              <Chart label={`Kiriman ${person.name} per bulan, dua belas bulan terakhir`}>
+              <Chart label={`Posts by ${person.name} per month, the last twelve months`}>
                 <BarChart data={postsPerMonth} series={2} />
                 <ChartCaption>
-                  Angka-angka ini dibuat untuk contoh, bukan diukur dari mana pun.
+                  These numbers are made up for the example, not measured from anywhere.
                 </ChartCaption>
               </Chart>
             </CardBody>
