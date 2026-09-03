@@ -67,13 +67,13 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
   // The view menu drives the visit table below. A menubar earns its place only
   // when its items do something, so these are real state and not decoration.
-  const [order, setOrder] = useState('baru');
+  const [order, setOrder] = useState('newest');
   const [showCancelled, setShowCancelled] = useState(true);
 
   const history = visits
     .filter((v) => v.rm === patient.rm)
-    .filter((v) => showCancelled || !(cancelled.includes(v.id) || v.status === 'batal'))
-    .sort((a, b) => (order === 'baru' ? b.at.localeCompare(a.at) : a.at.localeCompare(b.at)));
+    .filter((v) => showCancelled || !(cancelled.includes(v.id) || v.status === 'cancelled'))
+    .sort((a, b) => (order === 'newest' ? b.at.localeCompare(a.at) : a.at.localeCompare(b.at)));
   const measurements = vitals[patient.rm] ?? [];
   const latest = measurements[0];
   const orders = labResults.filter((order) => order.rm === patient.rm);
@@ -91,7 +91,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#/">Pasien</BreadcrumbLink>
+            <BreadcrumbLink href="#/">Patients</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -116,53 +116,53 @@ export function PatientRecord({ patient }: PatientRecordProps) {
               {patient.name}
             </Heading>
             <Text size="sm" className="tabular-nums">
-              {patient.rm} · {age(patient.born)} tahun ·{' '}
-              {patient.sex === 'P' ? 'Perempuan' : 'Laki-laki'}
+              {patient.rm} · {age(patient.born)} years ·{' '}
+              {patient.sex === 'F' ? 'Female' : 'Male'}
             </Text>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Menubar className="hidden sm:flex">
             <MenubarMenu>
-              <MenubarTrigger>Berkas</MenubarTrigger>
+              <MenubarTrigger>File</MenubarTrigger>
               <MenubarContent>
                 <MenubarItem onSelect={() => window.print()}>
-                  Cetak rekam medis
+                  Print the record
                   <MenubarShortcut>⌘P</MenubarShortcut>
                 </MenubarItem>
-                <MenubarItem>Ekspor PDF</MenubarItem>
+                <MenubarItem>Export as PDF</MenubarItem>
                 <MenubarSeparator />
-                <MenubarItem disabled>Kirim ke BPJS — belum tersambung</MenubarItem>
+                <MenubarItem disabled>Send to BPJS — not connected</MenubarItem>
               </MenubarContent>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger>Tindakan</MenubarTrigger>
+              <MenubarTrigger>Actions</MenubarTrigger>
               <MenubarContent>
-                <MenubarItem>Buat kunjungan baru</MenubarItem>
-                <MenubarItem>Minta pemeriksaan lab</MenubarItem>
-                <MenubarItem>Tulis resep</MenubarItem>
+                <MenubarItem>Book a new visit</MenubarItem>
+                <MenubarItem>Order a lab test</MenubarItem>
+                <MenubarItem>Write a prescription</MenubarItem>
               </MenubarContent>
             </MenubarMenu>
             <MenubarMenu>
-              <MenubarTrigger>Tampilan</MenubarTrigger>
+              <MenubarTrigger>View</MenubarTrigger>
               <MenubarContent>
                 {/* A group with a label, rather than a separator and a heading:
                     the label names the radio set for a screen reader too. */}
                 <MenubarGroup>
-                  <MenubarLabel>Urutan kunjungan</MenubarLabel>
+                  <MenubarLabel>Visit order</MenubarLabel>
                   <MenubarRadioGroup value={order} onValueChange={setOrder}>
-                    <MenubarRadioItem value="baru">Terbaru dulu</MenubarRadioItem>
-                    <MenubarRadioItem value="lama">Terlama dulu</MenubarRadioItem>
+                    <MenubarRadioItem value="newest">Newest first</MenubarRadioItem>
+                    <MenubarRadioItem value="oldest">Oldest first</MenubarRadioItem>
                   </MenubarRadioGroup>
                 </MenubarGroup>
                 <MenubarSeparator />
                 <MenubarGroup>
-                  <MenubarLabel>Tampilkan</MenubarLabel>
+                  <MenubarLabel>Show</MenubarLabel>
                   <MenubarCheckboxItem
                     checked={showCancelled}
                     onCheckedChange={setShowCancelled}
                   >
-                    Kunjungan yang dibatalkan
+                    Cancelled visits
                   </MenubarCheckboxItem>
                 </MenubarGroup>
               </MenubarContent>
@@ -181,39 +181,39 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
       {patient.allergies.length > 0 && (
         <Alert status="danger">
-          <AlertTitle>Alergi tercatat</AlertTitle>
+          <AlertTitle>Recorded allergies</AlertTitle>
           <AlertDescription>
-            {patient.allergies.join(', ')}. Periksa sebelum meresepkan.
+            {patient.allergies.join(', ')}. Check before prescribing.
           </AlertDescription>
         </Alert>
       )}
 
-      <Tabs defaultValue="ringkasan">
+      <Tabs defaultValue="summary">
         {/* Four tabs do not fit on a phone. They scroll rather than wrap: a
             wrapped tab list moves the panel down the page as the row grows. */}
         <div className="-mx-4 overflow-x-auto px-4 pb-1">
           <TabsList>
-            <TabsTrigger value="ringkasan">Ringkasan</TabsTrigger>
-            <TabsTrigger value="kunjungan">Kunjungan</TabsTrigger>
-            <TabsTrigger value="vital">Tanda vital</TabsTrigger>
-            <TabsTrigger value="lab">Laboratorium</TabsTrigger>
+            <TabsTrigger value="summary">Summary</TabsTrigger>
+            <TabsTrigger value="visits">Visits</TabsTrigger>
+            <TabsTrigger value="vitals">Vital signs</TabsTrigger>
+            <TabsTrigger value="lab">Laboratory</TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="ringkasan">
+        <TabsContent value="summary">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="grid gap-3 p-5">
               <Heading as="h2" size="body-md">
-                Identitas
+                Identity
               </Heading>
               <Separator />
               <DescriptionList layout="aligned">
                 {(
                   [
-                    ['Tanggal lahir', patient.born],
-                    ['Penjamin', patient.payer],
-                    ['Telepon', patient.phone],
-                    ['Alamat', patient.address],
+                    ['Date of birth', patient.born],
+                    ['Payer', patient.payer],
+                    ['Phone', patient.phone],
+                    ['Address', patient.address],
                   ] as const
                 ).map(([term, value]) => (
                   <Fragment key={term}>
@@ -226,59 +226,59 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
             <Card className="grid gap-3 p-5">
               <Heading as="h2" size="body-md">
-                Kelengkapan berkas
+                Record completeness
               </Heading>
               <Separator />
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
-                  <span className="text-fg-secondary">Rekam medis</span>
+                  <span className="text-fg-secondary">Medical record</span>
                   <span className="text-fg tabular-nums">82%</span>
                 </p>
                 <Meter
                   value={82}
-                  label="Kelengkapan rekam medis"
-                  valueText="82 dari 100 persen"
+                  label="Medical record completeness"
+                  valueText="82 out of 100 per cent"
                 />
               </div>
               <div className="grid gap-2">
                 <p className="flex justify-between text-body-sm">
-                  <span className="text-fg-secondary">Berkas penjamin</span>
+                  <span className="text-fg-secondary">Payer paperwork</span>
                   <span className="text-fg tabular-nums">100%</span>
                 </p>
                 <Meter
                   value={100}
-                  label="Kelengkapan berkas penjamin"
-                  valueText="100 dari 100 persen"
+                  label="Payer paperwork completeness"
+                  valueText="100 out of 100 per cent"
                 />
               </div>
               {latest && (
                 <Text size="sm" className="mt-2 tabular-nums">
-                  Terakhir diukur {latest.at} — {latest.systolic}/{latest.diastolic} mmHg
+                  Last measured {latest.at} — {latest.systolic}/{latest.diastolic} mmHg
                 </Text>
               )}
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="kunjungan">
+        <TabsContent value="visits">
           <div className="overflow-x-auto">
             <Table>
-              <TableCaption>Riwayat kunjungan {patient.name}</TableCaption>
+              <TableCaption>Visit history for {patient.name}</TableCaption>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Waktu</TableHead>
-                  <TableHead>Poliklinik</TableHead>
-                  <TableHead>Dokter</TableHead>
-                  <TableHead>Keluhan</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Clinic</TableHead>
+                  <TableHead>Doctor</TableHead>
+                  <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="relative">
-                    <span className="sr-only">Tindakan</span>
+                    <span className="sr-only">Actions</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {history.map((visit) => {
-                  const status = cancelled.includes(visit.id) ? 'batal' : visit.status;
+                  const status = cancelled.includes(visit.id) ? 'cancelled' : visit.status;
                   return (
                     <TableRow key={visit.id}>
                       <TableCell className="tabular-nums">{visit.at}</TableCell>
@@ -289,13 +289,13 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                         <Badge status={statusTone[status]}>{status}</Badge>
                       </TableCell>
                       <TableCell>
-                        {status === 'terjadwal' && (
+                        {status === 'scheduled' && (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setCancelling(visit.id)}
                           >
-                            Batalkan
+                            Cancel
                           </Button>
                         )}
                       </TableCell>
@@ -309,12 +309,12 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="vital">
           {measurements.length === 0 ? (
-            <Text size="sm">Belum ada pengukuran.</Text>
+            <Text size="sm">No measurements yet.</Text>
           ) : (
             <div className="grid gap-6">
               <Card className="p-5">
                 <Chart
-                  label={`Tekanan darah sistolik ${patient.name}, tiga pengukuran terakhir`}
+                  label={`Systolic blood pressure for ${patient.name}, the last three measurements`}
                 >
                   <LineChart data={pressure} filled series={5} />
                 </Chart>
@@ -323,11 +323,11 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 <TableCaption>Tanda vital, terbaru di atas</TableCaption>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Waktu</TableHead>
-                    <TableHead>Tekanan darah</TableHead>
-                    <TableHead>Nadi</TableHead>
-                    <TableHead>Suhu</TableHead>
-                    <TableHead>Berat</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Blood pressure</TableHead>
+                    <TableHead>Pulse</TableHead>
+                    <TableHead>Temperature</TableHead>
+                    <TableHead>Weight</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -350,7 +350,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
 
         <TabsContent value="lab">
           {orders.length === 0 ? (
-            <Text size="sm">Belum ada pemeriksaan laboratorium.</Text>
+            <Text size="sm">No laboratory tests yet.</Text>
           ) : (
             <div className="grid gap-4">
               {orders.map((order) => (
@@ -365,15 +365,15 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                   </div>
                   <Separator />
                   {order.rows.length === 0 ? (
-                    <Text size="sm">Hasil belum keluar.</Text>
+                    <Text size="sm">Results are not back yet.</Text>
                   ) : (
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Pemeriksaan</TableHead>
-                            <TableHead>Hasil</TableHead>
-                            <TableHead>Rentang rujukan</TableHead>
+                            <TableHead>Test</TableHead>
+                            <TableHead>Result</TableHead>
+                            <TableHead>Reference range</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -411,14 +411,14 @@ export function PatientRecord({ patient }: PatientRecordProps) {
         onOpenChange={(open) => !open && setCancelling(null)}
       >
         <AlertDialogContent>
-          <AlertDialogTitle>Batalkan kunjungan {cancelling}?</AlertDialogTitle>
+          <AlertDialogTitle>Cancel visit {cancelling}?</AlertDialogTitle>
           <AlertDialogDescription>
-            Slot ini akan dilepas dan pasien harus dijadwalkan ulang. Pembatalan tidak bisa
-            ditarik kembali dari layar ini.
+            The slot is released and the patient has to be rebooked. A cancellation cannot be
+            undone from this screen.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
-              <Button variant="secondary">Biarkan terjadwal</Button>
+              <Button variant="secondary">Keep it scheduled</Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -428,7 +428,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                   setCancelling(null);
                 }}
               >
-                Batalkan kunjungan
+                Cancel the visit
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>

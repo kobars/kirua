@@ -55,10 +55,10 @@ export function Lab() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Heading as="h1" size="heading-md">
-            Laboratorium
+            Laboratory
           </Heading>
           <Text size="sm" className="mt-1">
-            {orders.length} pemeriksaan
+            {orders.length} test orders
           </Text>
         </div>
         <div className="w-full sm:w-72">
@@ -68,8 +68,8 @@ export function Lab() {
             </InputGroupAddon>
             <InputGroupInput
               value={query}
-              aria-label="Cari pemeriksaan"
-              placeholder="Cari panel, pasien, atau nomor"
+              aria-label="Search tests"
+              placeholder="Search a panel, patient or number"
               onChange={(event) => setQuery(event.target.value)}
             />
           </InputGroup>
@@ -79,11 +79,11 @@ export function Lab() {
       {orders.length === 0 ? (
         <EmptyState
           icon={<SearchIcon size="2xl" />}
-          title="Tidak ada pemeriksaan yang cocok"
-          description="Coba nama pasien, nama panel, atau nomor LAB."
+          title="No test matches"
+          description="Try a patient name, a panel name, or a LAB number."
           action={
             <Button variant="secondary" onClick={() => setQuery('')}>
-              Hapus pencarian
+              Clear search
             </Button>
           }
         />
@@ -111,28 +111,28 @@ export function Lab() {
                         </Item>
 
                         <div className="flex items-center gap-2">
-                          {order.status === 'menunggu' ? (
+                          {order.status === 'pending' ? (
                             <span className="flex items-center gap-2 text-body-sm text-fg-secondary">
                               <Spinner
                                 aria-hidden="true"
                                 className="[--icon-size:var(--icon-sm)]"
                               />
-                              Menunggu hasil
+                              Awaiting results
                             </span>
                           ) : abnormal > 0 ? (
                             <Badge status="warning">{abnormal} di luar rentang</Badge>
                           ) : (
-                            <Badge status="success">Semua normal</Badge>
+                            <Badge status="success">All normal</Badge>
                           )}
 
-                          {order.status === 'selesai' && (
+                          {order.status === 'done' && (
                             <CollapsibleTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 trailingIcon={<ChevronDownIcon />}
                               >
-                                Hasil
+                                Results
                               </Button>
                             </CollapsibleTrigger>
                           )}
@@ -144,9 +144,9 @@ export function Lab() {
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>Pemeriksaan</TableHead>
-                                <TableHead>Hasil</TableHead>
-                                <TableHead>Rentang rujukan</TableHead>
+                                <TableHead>Test</TableHead>
+                                <TableHead>Result</TableHead>
+                                <TableHead>Reference range</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
