@@ -31,7 +31,7 @@ export const Playground: Story = {
     <Pagination {...args}>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="?page=1">Sebelumnya</PaginationPrevious>
+          <PaginationPrevious href="?page=1">Previous</PaginationPrevious>
         </PaginationItem>
         {[1, 2, 3].map((page) => (
           <PaginationItem key={page}>
@@ -47,7 +47,7 @@ export const Playground: Story = {
           <PaginationLink href="?page=24">24</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationNext href="?page=3">Berikutnya</PaginationNext>
+          <PaginationNext href="?page=3">Next</PaginationNext>
         </PaginationItem>
       </PaginationContent>
     </Pagination>

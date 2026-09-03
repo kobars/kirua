@@ -25,7 +25,7 @@ import {
 } from 'kirua';
 
 /** The stepper announces its own state, and this app speaks Indonesian. */
-const STEP_LABELS = { done: 'Selesai', current: 'Langkah saat ini', upcoming: 'Belum mulai' };
+const STEP_LABELS = { done: 'Done', current: 'Current step', upcoming: 'Not started' };
 
 const LENGTH = 6;
 /** The code the demo accepts. A real shop would never know it. */
@@ -66,22 +66,22 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
     <Container width="md" pad="lg">
       <div>
         <Heading as="h1" size="heading-md">
-          Masuk
+          Sign in
         </Heading>
         <Text size="sm" className="mt-1">
-          Kami kirim kode sekali pakai ke nomor kamu.
+          We send a one-time code to your number.
         </Text>
       </div>
 
       {/* The page had always been two steps and had never said which one you
           were on. `aria-current="step"` is the half of that a drawing cannot
           carry. */}
-      <Stepper aria-label="Langkah masuk">
+      <Stepper aria-label="Sign-in steps">
         <StepperItem status={sent ? 'done' : 'current'} index={1} labels={STEP_LABELS}>
-          Nomor telepon
+          Phone number
         </StepperItem>
         <StepperItem status={sent ? 'current' : 'upcoming'} index={2} labels={STEP_LABELS}>
-          Kode sekali pakai
+          One-time code
         </StepperItem>
       </Stepper>
 
@@ -91,7 +91,7 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
               exactly one control child, and the child here is a group that
               wraps the control. */}
           <div className="grid gap-2">
-            <Label htmlFor="phone">Nomor telepon</Label>
+            <Label htmlFor="phone">Phone number</Label>
             <InputGroup>
               <InputGroupAddon>
                 <InputGroupText>+62</InputGroupText>
@@ -110,17 +110,17 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
 
           {!sent ? (
             <Button fullWidth disabled={!phoneValid || sending} onClick={send}>
-              {sending ? <Spinner label="Mengirim kode" /> : 'Kirim kode'}
+              {sending ? <Spinner label="Sending the code" /> : 'Send the code'}
             </Button>
           ) : (
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="otp">Kode enam digit</Label>
+                <Label htmlFor="otp">Six-digit code</Label>
                 <InputOTP>
                   <InputOTPInput
                     id="otp"
                     value={code}
-                    aria-label="Kode sekali pakai"
+                    aria-label="One-time code"
                     aria-invalid={wrong || undefined}
                     maxLength={LENGTH}
                     onChange={(event) => {
@@ -158,21 +158,21 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
 
               {wrong && (
                 <Alert status="danger">
-                  <AlertTitle>Kode tidak cocok</AlertTitle>
-                  <AlertDescription>Coba ketik ulang enam digitnya.</AlertDescription>
+                  <AlertTitle>That code does not match</AlertTitle>
+                  <AlertDescription>Type the six digits again.</AlertDescription>
                 </Alert>
               )}
 
               <Alert status="info">
-                <AlertTitle>Ini contoh, bukan toko sungguhan</AlertTitle>
+                <AlertTitle>This is an example, not a real shop</AlertTitle>
                 <AlertDescription>
-                  Tidak ada SMS yang dikirim. Kode yang diterima halaman ini adalah{' '}
+                  No message is sent. The code this page accepts is{' '}
                   <span className="font-medium tabular-nums">{EXPECTED}</span>.
                 </AlertDescription>
               </Alert>
 
               <Button variant="ghost" onClick={() => setSent(false)}>
-                Ganti nomor
+                Change number
               </Button>
             </div>
           )}

@@ -101,7 +101,7 @@ export function ComboboxItem({ className, isActive, children, ...props }: Combob
  * {results.length > 0 ? (
  *   <ComboboxList id="city-list">…</ComboboxList>
  * ) : (
- *   <ComboboxEmpty>Tidak ada kota yang cocok.</ComboboxEmpty>
+ *   <ComboboxEmpty>No city matches.</ComboboxEmpty>
  * )}
  */
 export function ComboboxEmpty({ className, ...props }: ComponentProps<'div'>) {

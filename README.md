@@ -242,9 +242,9 @@ was chosen because it forces a different part of the system into existence.
 |               | What it exercises                                                  |                                            |
 | ------------- | ------------------------------------------------------------------ | ------------------------------------------ |
 | **Aozora**    | Marketing — the only screens made of body copy                     | [live](https://kirua-marketing.vercel.app) |
-| **Senja**     | Commerce — faceted catalogue, cart, a checkout form that validates | [live](https://kirua-shop.vercel.app)      |
+| **Dusk**      | Commerce — faceted catalogue, cart, a checkout form that validates | [live](https://kirua-shop.vercel.app)      |
 | **SIMRS**     | Hospital records — dense, keyboard-driven, printable               | [live](https://kirua-simrs.vercel.app)     |
-| **Ruang**     | Social — phone-first, designed at 375px and widened                | [live](https://kirua-social.vercel.app)    |
+| **Commons**   | Social — phone-first, designed at 375px and widened                | [live](https://kirua-social.vercel.app)    |
 | **Assistant** | Chat — a full-height shell where only the middle scrolls           | [live](https://kirua-claude.vercel.app)    |
 
 Two automated checks keep them honest. One fails the build when an example writes

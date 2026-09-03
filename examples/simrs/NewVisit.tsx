@@ -59,13 +59,12 @@ export function NewVisit() {
     const form = new FormData(event.currentTarget);
     const found: Record<string, string> = {};
 
-    if (String(form.get('rm') ?? '').trim() === '')
-      found['rm'] = 'Pilih pasien terlebih dahulu.';
-    if (clinic === '') found['clinic'] = 'Poliklinik wajib dipilih.';
-    if (date === undefined) found['date'] = 'Tanggal kunjungan wajib diisi.';
+    if (String(form.get('rm') ?? '').trim() === '') found['rm'] = 'Choose a patient first.';
+    if (clinic === '') found['clinic'] = 'A clinic is required.';
+    if (date === undefined) found['date'] = 'A visit date is required.';
     if (String(form.get('reason') ?? '').trim().length < 5)
-      found['reason'] = 'Tulis keluhan minimal lima huruf.';
-    if (form.get('consent') !== 'on') found['consent'] = 'Persetujuan pasien wajib dicentang.';
+      found['reason'] = 'Describe the reason in at least five characters.';
+    if (form.get('consent') !== 'on') found['consent'] = 'Patient consent must be ticked.';
 
     setErrors(found);
     setSaved(Object.keys(found).length === 0);
@@ -74,35 +73,33 @@ export function NewVisit() {
   return (
     <div className="grid content-start gap-5">
       <Heading as="h1" size="heading-md">
-        Kunjungan baru
+        New visit
       </Heading>
 
       {saved && (
         <output className="block">
           <Alert status="success" icon={<CheckIcon />}>
-            <AlertTitle>Kunjungan tersimpan</AlertTitle>
-            <AlertDescription>
-              Layar contoh — tidak ada data yang benar-benar disimpan.
-            </AlertDescription>
+            <AlertTitle>Visit saved</AlertTitle>
+            <AlertDescription>An example screen — nothing is really stored.</AlertDescription>
           </Alert>
         </output>
       )}
 
       {Object.keys(errors).length > 0 && (
         <Alert status="danger" role="alert">
-          <AlertTitle>{Object.keys(errors).length} isian perlu diperbaiki</AlertTitle>
-          <AlertDescription>Pesan lengkap ada di bawah setiap isian.</AlertDescription>
+          <AlertTitle>{Object.keys(errors).length} fields need attention</AlertTitle>
+          <AlertDescription>The full message is under each field.</AlertDescription>
         </Alert>
       )}
 
       <Card className="p-5">
         <form noValidate onSubmit={submit} className="grid gap-5">
-          <Field controlId="rm" label="Pasien" required error={errors['rm']}>
+          <Field controlId="rm" label="Patient" required error={errors['rm']}>
             <Select name="rm">
               <SelectTrigger id="rm">
-                <SelectValue placeholder="Pilih pasien" />
+                <SelectValue placeholder="Choose a patient" />
               </SelectTrigger>
-              <SelectContent aria-label="Pasien">
+              <SelectContent aria-label="Patient">
                 {patients.map((patient) => (
                   <SelectItem key={patient.rm} value={patient.rm}>
                     {patient.name} — {patient.rm}
@@ -113,15 +110,15 @@ export function NewVisit() {
           </Field>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <Field controlId="clinic" label="Poliklinik" required error={errors['clinic']}>
+            <Field controlId="clinic" label="Clinic" required error={errors['clinic']}>
               <Select value={clinic} onValueChange={setClinic}>
                 <SelectTrigger id="clinic">
-                  <SelectValue placeholder="Pilih poliklinik" />
+                  <SelectValue placeholder="Choose a clinic" />
                 </SelectTrigger>
                 {/* Grouped by the department that runs the clinic, which is how
                     the hospital lists them. `SelectLabel` names each group for a
                     screen reader as well as on the screen. */}
-                <SelectContent aria-label="Poliklinik">
+                <SelectContent aria-label="Clinic">
                   {clinicGroups.map((group, index) => (
                     <Fragment key={group.label}>
                       {index > 0 && <SelectSeparator />}
@@ -141,14 +138,14 @@ export function NewVisit() {
 
             <Field
               controlId="doctor"
-              label="Dokter"
-              description={clinic === '' ? 'Pilih poliklinik dahulu.' : undefined}
+              label="Doctor"
+              description={clinic === '' ? 'Choose a clinic first.' : undefined}
             >
               <Select disabled={clinic === ''} name="doctor">
                 <SelectTrigger id="doctor">
-                  <SelectValue placeholder="Pilih dokter" />
+                  <SelectValue placeholder="Choose a doctor" />
                 </SelectTrigger>
-                <SelectContent aria-label="Dokter">
+                <SelectContent aria-label="Doctor">
                   {(doctors[clinic] ?? []).map((name) => (
                     <SelectItem key={name} value={name}>
                       {name}
@@ -160,12 +157,12 @@ export function NewVisit() {
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <Field controlId="date" label="Tanggal kunjungan" required error={errors['date']}>
+            <Field controlId="date" label="Visit date" required error={errors['date']}>
               <DatePicker
                 id="date"
-                locale="id-ID"
-                placeholder="Pilih tanggal"
-                panelLabel="Pilih tanggal kunjungan"
+                locale="en-GB"
+                placeholder="Choose a date"
+                panelLabel="Choose the visit date"
                 month={month}
                 onMonthChange={setMonth}
                 value={date}
@@ -179,7 +176,7 @@ export function NewVisit() {
               />
             </Field>
 
-            <Field controlId="time" label="Jam">
+            <Field controlId="time" label="Time">
               <Input id="time" name="time" type="time" defaultValue="08:00" />
             </Field>
           </div>
@@ -191,14 +188,14 @@ export function NewVisit() {
           <Field
             controlId="diagnosis"
             label="Diagnosis (ICD-10)"
-            description="Ketik kode atau namanya."
+            description="Type the code or the name."
           >
             <Combobox>
               <ComboboxInput
                 id="diagnosis"
                 name="diagnosis"
                 value={query}
-                placeholder="J06, hipertensi…"
+                placeholder="J06, hypertension…"
                 aria-expanded={listOpen}
                 aria-controls="diagnosis-list"
                 aria-activedescendant={
@@ -251,17 +248,22 @@ export function NewVisit() {
                 ) : (
                   // Beside the list, never inside it: a `role="listbox"` must
                   // contain options, which axe enforces.
-                  <ComboboxEmpty>Tidak ada kode yang cocok.</ComboboxEmpty>
+                  <ComboboxEmpty>No code matches.</ComboboxEmpty>
                 ))}
             </Combobox>
           </Field>
 
-          <Field controlId="reason" label="Keluhan" required error={errors['reason']}>
+          <Field
+            controlId="reason"
+            label="Reason for the visit"
+            required
+            error={errors['reason']}
+          >
             <Textarea
               id="reason"
               name="reason"
               rows={3}
-              placeholder="Batuk dua minggu, tanpa demam…"
+              placeholder="A cough for two weeks, no fever…"
             />
           </Field>
 
@@ -274,7 +276,7 @@ export function NewVisit() {
                 name="consent"
                 aria-invalid={errors['consent'] !== undefined}
               />
-              <Label htmlFor="consent">Pasien menyetujui pemeriksaan</Label>
+              <Label htmlFor="consent">The patient consents to the examination</Label>
             </div>
             {errors['consent'] && (
               <p className="text-body-sm text-invalid">{errors['consent']}</p>
@@ -283,9 +285,9 @@ export function NewVisit() {
 
           <div className="flex flex-wrap justify-end gap-3">
             <Button type="reset" variant="secondary">
-              Bersihkan
+              Clear
             </Button>
-            <Button type="submit">Simpan kunjungan</Button>
+            <Button type="submit">Save the visit</Button>
           </div>
         </form>
       </Card>

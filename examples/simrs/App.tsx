@@ -44,25 +44,26 @@ import { PatientRecord } from './PatientRecord';
 import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
 import { ThemeMenu } from '../shared/ThemeMenu';
+import { APPEARANCE } from '../shared/themeLabels';
 import { patients } from './data';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, grouped the way the building is. */
 const sections = [
   {
-    label: 'Klinik',
+    label: 'Clinic',
     items: [
-      { route: '', label: 'Ringkasan', icon: GridIcon },
-      { route: 'pasien', label: 'Pasien', icon: UserIcon },
-      { route: 'jadwal', label: 'Jadwal', icon: CalendarIcon },
-      { route: 'kunjungan-baru', label: 'Kunjungan baru', icon: PlusIcon },
+      { route: '', label: 'Summary', icon: GridIcon },
+      { route: 'patients', label: 'Patients', icon: UserIcon },
+      { route: 'schedule', label: 'Schedule', icon: CalendarIcon },
+      { route: 'new-visit', label: 'New visit', icon: PlusIcon },
     ],
   },
   {
-    label: 'Penunjang',
+    label: 'Diagnostics',
     items: [
-      { route: 'lab', label: 'Laboratorium', icon: StethoscopeIcon },
-      { route: 'farmasi', label: 'Farmasi', icon: PillIcon },
+      { route: 'lab', label: 'Laboratory', icon: StethoscopeIcon },
+      { route: 'pharmacy', label: 'Pharmacy', icon: PillIcon },
     ],
   },
 ] as const;
@@ -91,14 +92,14 @@ export function App() {
   const actions = useMemo(() => {
     const all = [
       ...nav.map((item) => ({
-        id: item.route || 'ringkasan',
+        id: item.route || 'summary',
         label: item.label,
         go: item.route,
       })),
       ...patients.map((p) => ({
         id: p.rm,
         label: `${p.name} — ${p.rm}`,
-        go: `pasien/${p.rm}`,
+        go: `patients/${p.rm}`,
       })),
     ];
     const q = query.trim().toLowerCase();
@@ -114,8 +115,8 @@ export function App() {
     setActive(0);
   };
 
-  const record = route.startsWith('pasien/')
-    ? patients.find((p) => p.rm === route.slice('pasien/'.length))
+  const record = route.startsWith('patients/')
+    ? patients.find((p) => p.rm === route.slice('patients/'.length))
     : undefined;
 
   /**
@@ -181,7 +182,7 @@ export function App() {
           <Tooltip>
             <TooltipTrigger asChild>
               <IconButton
-                aria-label="Cari cepat"
+                aria-label="Quick search"
                 variant="ghost"
                 onClick={() => setPaletteOpen(true)}
               >
@@ -190,13 +191,13 @@ export function App() {
             </TooltipTrigger>
             <TooltipContent>
               <span className="flex items-center gap-1.5">
-                Cari cepat <Kbd>⌘</Kbd>
+                Quick search <Kbd>⌘</Kbd>
                 <Kbd>K</Kbd>
               </span>
             </TooltipContent>
           </Tooltip>
 
-          <ThemeMenu />
+          <ThemeMenu labels={APPEARANCE} />
         </div>
       </header>
 
@@ -207,7 +208,7 @@ export function App() {
             route. The rail really is complementary context: which unit and
             shift you are working in, beside the navigation that serves it. */}
         <aside
-          aria-label="Unit dan bagian"
+          aria-label="Units and sections"
           className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block print:hidden"
         >
           <Sidebar open={railOpen} collapsible="icon" className="border-e-0 bg-transparent">
@@ -217,10 +218,10 @@ export function App() {
             <SidebarHeader className="h-12">
               <UserIcon aria-hidden="true" className="text-fg-accent" />
               <SidebarLabel className="text-body-sm font-medium">
-                Rawat Jalan · pagi
+                Outpatients · morning
               </SidebarLabel>
             </SidebarHeader>
-            <SidebarContent aria-label="Bagian">{destinations()}</SidebarContent>
+            <SidebarContent aria-label="Sections">{destinations()}</SidebarContent>
             <SidebarFooter className="border-t-0">
               <SidebarMenuButton onClick={() => setRailOpen(!railOpen)}>
                 <MenuIcon aria-hidden="true" />
@@ -233,18 +234,18 @@ export function App() {
         <main className="min-w-0 flex-1 px-4 py-6 md:px-8">
           {record ? (
             <PatientRecord patient={record} />
-          ) : route === 'jadwal' ? (
+          ) : route === 'schedule' ? (
             <Appointments />
-          ) : route === 'kunjungan-baru' ? (
+          ) : route === 'new-visit' ? (
             <NewVisit />
-          ) : route === 'farmasi' ? (
+          ) : route === 'pharmacy' ? (
             <Pharmacy />
           ) : route === 'lab' ? (
             <Lab />
-          ) : route === 'pasien' ? (
+          ) : route === 'patients' ? (
             <PatientList
-              onOpen={(rm) => navigate(`pasien/${rm}`)}
-              onNewVisit={() => navigate('kunjungan-baru')}
+              onOpen={(rm) => navigate(`patients/${rm}`)}
+              onNewVisit={() => navigate('new-visit')}
             />
           ) : (
             <Summary />
@@ -255,8 +256,8 @@ export function App() {
       <Command open={paletteOpen} onOpenChange={setPaletteOpen} label="Perintah cepat">
         <CommandInput
           value={query}
-          placeholder="Cari pasien atau bagian…"
-          aria-label="Cari pasien atau bagian"
+          placeholder="Search patients or sections…"
+          aria-label="Search patients or sections"
           aria-controls="simrs-results"
           aria-activedescendant={actions[active] ? `action-${actions[active].id}` : undefined}
           onChange={(event) => {
@@ -277,7 +278,7 @@ export function App() {
           }}
         />
         {actions.length > 0 ? (
-          <CommandList id="simrs-results" aria-label="Hasil">
+          <CommandList id="simrs-results" aria-label="Results">
             <CommandGroup heading="Perintah">
               {actions.map((action, index) => (
                 <CommandItem
@@ -294,7 +295,7 @@ export function App() {
             </CommandGroup>
           </CommandList>
         ) : (
-          <CommandEmpty>Tidak ada yang cocok dengan “{query}”.</CommandEmpty>
+          <CommandEmpty>Nothing matches “{query}”.</CommandEmpty>
         )}
       </Command>
     </div>

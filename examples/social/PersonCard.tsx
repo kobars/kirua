@@ -27,7 +27,7 @@ export function PersonLink({ handle }: PersonLinkProps) {
   return (
     <HoverCard openDelay={150}>
       <HoverCardTrigger asChild>
-        <Link href={`#/profil/${handle}`} variant="block" className="font-semibold text-fg">
+        <Link href={`#/profile/${handle}`} variant="block" className="font-semibold text-fg">
           {person.name}
         </Link>
       </HoverCardTrigger>
@@ -51,17 +51,17 @@ export function PersonLink({ handle }: PersonLinkProps) {
               <strong className="font-semibold text-fg tabular-nums">
                 {compactCount(person.followers)}
               </strong>{' '}
-              pengikut
+              followers
             </span>
             <span>
               <strong className="font-semibold text-fg tabular-nums">
                 {compactCount(person.following)}
               </strong>{' '}
-              diikuti
+              following
             </span>
           </p>
           <Button size="sm" fullWidth>
-            Ikuti
+            Follow
           </Button>
         </div>
       </HoverCardContent>

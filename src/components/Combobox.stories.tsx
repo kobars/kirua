@@ -33,10 +33,10 @@ export const Playground: Story = {
           aria-expanded
           aria-controls="city-list"
           aria-activedescendant="city-jkt"
-          aria-label="Kota"
+          aria-label="City"
           defaultValue="Ja"
         />
-        <ComboboxList id="city-list" aria-label="Kota">
+        <ComboboxList id="city-list" aria-label="City">
           {cities.map(([id, name]) => (
             <ComboboxItem
               key={id}
@@ -57,10 +57,10 @@ export const NoMatches: Story = {
   render: (args) => (
     <div className="h-52 w-72">
       <Combobox {...args}>
-        <ComboboxInput aria-expanded={false} aria-label="Kota" defaultValue="Zzz" />
+        <ComboboxInput aria-expanded={false} aria-label="City" defaultValue="Zzz" />
         {/* INSTEAD OF the list, not inside it: a role="listbox" must contain
             options, and axe fails an empty one as aria-required-children. */}
-        <ComboboxEmpty>Tidak ada kota yang cocok.</ComboboxEmpty>
+        <ComboboxEmpty>No city matches.</ComboboxEmpty>
       </Combobox>
     </div>
   ),
@@ -75,9 +75,9 @@ export const TheAriaWiring: Story = {
           aria-expanded
           aria-controls="wiring-list"
           aria-activedescendant="wiring-sby"
-          aria-label="Kota"
+          aria-label="City"
         />
-        <ComboboxList id="wiring-list" aria-label="Kota">
+        <ComboboxList id="wiring-list" aria-label="City">
           {cities.map(([id, name]) => (
             <ComboboxItem
               key={id}
@@ -94,7 +94,7 @@ export const TheAriaWiring: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const input = canvas.getByRole('combobox', { name: 'Kota' });
+    const input = canvas.getByRole('combobox', { name: 'City' });
 
     await expect(input).toHaveAttribute('aria-expanded', 'true');
     await expect(input).toHaveAttribute('aria-controls', 'wiring-list');

@@ -10,7 +10,7 @@ import {
   SunIcon,
 } from 'kirua';
 import { useTheme, type ThemePreference } from './useTheme';
-import { ID, type ThemeMenuLabels } from './themeLabels';
+import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
 
 /**
  * The theme control: one button at any width, and a menu of three choices.
@@ -22,7 +22,7 @@ import { ID, type ThemeMenuLabels } from './themeLabels';
  * The trigger shows the theme in force, not the choice made: under "System" it
  * is a sun or a moon depending on what the operating system currently says.
  */
-export function ThemeMenu({ labels = ID }: { labels?: ThemeMenuLabels }) {
+export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
   const { preference, choose } = useTheme();
 
   const resolved =

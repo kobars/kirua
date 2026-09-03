@@ -93,7 +93,7 @@ export const Playground: Story = {
           <IconButton aria-label="Toggle the sidebar" variant="ghost">
             <MenuIcon />
           </IconButton>
-          <SidebarLabel className="font-semibold text-fg">Klinik Senja</SidebarLabel>
+          <SidebarLabel className="font-semibold text-fg">Dusk Clinic</SidebarLabel>
         </SidebarHeader>
         <SidebarContent aria-label="Sections">
           <Destinations />

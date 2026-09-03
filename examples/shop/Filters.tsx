@@ -20,7 +20,7 @@ import {
   Slider,
   Text,
 } from 'kirua';
-import { brands, categories, colours, rupiah, sizes, type Category } from './data';
+import { brands, categories, colours, idr, sizes, type Category } from './data';
 import { emptyFilters, type FilterState } from './filterState';
 
 export interface FiltersProps {
@@ -33,8 +33,8 @@ export interface FiltersProps {
    */
   query: string;
   onQueryChange: (next: string) => void;
-  category: Category | 'semua';
-  onCategoryChange: (next: Category | 'semua') => void;
+  category: Category | 'all';
+  onCategoryChange: (next: Category | 'all') => void;
 }
 
 /**
@@ -44,7 +44,7 @@ export interface FiltersProps {
  * whole difference between `single` and `multiple`.
  */
 /** Every collapsible section, so "open all" has something to name. */
-const SECTIONS = ['kategori', 'harga', 'merek', 'ukuran'] as const;
+const SECTIONS = ['category', 'price', 'brand', 'size'] as const;
 
 export function Filters({
   value,
@@ -75,7 +75,7 @@ export function Filters({
               shows: a minus closes what is open. A chevron would say
               "expand this one" and this one is all of them. */}
           <IconButton
-            aria-label={open.length === 0 ? 'Buka semua bagian' : 'Tutup semua bagian'}
+            aria-label={open.length === 0 ? 'Open every section' : 'Close every section'}
             variant="ghost"
             size="sm"
             onClick={() => setOpen(open.length === 0 ? [...SECTIONS] : [])}
@@ -95,38 +95,38 @@ export function Filters({
           </InputGroupAddon>
           <InputGroupInput
             value={query}
-            aria-label="Cari barang"
-            placeholder="Cari barang"
+            aria-label="Search products"
+            placeholder="Search products"
             onChange={(event) => onQueryChange(event.target.value)}
           />
         </InputGroup>
       </div>
 
       <Accordion type="multiple" value={open} onValueChange={setOpen}>
-        <AccordionItem value="kategori">
-          <AccordionTrigger>Kategori</AccordionTrigger>
+        <AccordionItem value="category">
+          <AccordionTrigger>Category</AccordionTrigger>
           <AccordionContent>
             <RadioGroup
               value={category}
-              onValueChange={(next) => onCategoryChange(next as Category | 'semua')}
+              onValueChange={(next) => onCategoryChange(next as Category | 'all')}
               className="grid gap-2 pt-2"
             >
               <div className="flex items-center gap-2">
-                <RadioGroupItem value="semua" id="kategori-semua" />
-                <Label htmlFor="kategori-semua">Semua</Label>
+                <RadioGroupItem value="all" id="category-all" />
+                <Label htmlFor="category-all">Everything</Label>
               </div>
               {categories.map((item) => (
                 <div key={item.id} className="flex items-center gap-2">
-                  <RadioGroupItem value={item.id} id={`kategori-${item.id}`} />
-                  <Label htmlFor={`kategori-${item.id}`}>{item.label}</Label>
+                  <RadioGroupItem value={item.id} id={`category-${item.id}`} />
+                  <Label htmlFor={`category-${item.id}`}>{item.label}</Label>
                 </div>
               ))}
             </RadioGroup>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="harga">
-          <AccordionTrigger>Harga</AccordionTrigger>
+        <AccordionItem value="price">
+          <AccordionTrigger>Price</AccordionTrigger>
           <AccordionContent>
             <div className="grid gap-4 pt-2">
               <Slider
@@ -134,20 +134,20 @@ export function Filters({
                 min={0}
                 max={800000}
                 step={10000}
-                thumbLabels={['Harga terendah', 'Harga tertinggi']}
+                thumbLabels={['Lowest price', 'Highest price']}
                 onValueChange={([low, high]) =>
                   onChange({ ...value, price: [low ?? 0, high ?? 800000] })
                 }
               />
               <Text size="sm" className="tabular-nums">
-                {rupiah(value.price[0])} – {rupiah(value.price[1])}
+                {idr(value.price[0])} – {idr(value.price[1])}
               </Text>
             </div>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="merek">
-          <AccordionTrigger>Merek</AccordionTrigger>
+        <AccordionItem value="brand">
+          <AccordionTrigger>Brand</AccordionTrigger>
           <AccordionContent>
             <div className="grid gap-3 pt-1">
               {brands.map((brand) => (
@@ -164,8 +164,8 @@ export function Filters({
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="ukuran">
-          <AccordionTrigger>Ukuran</AccordionTrigger>
+        <AccordionItem value="size">
+          <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-wrap gap-3 pt-1">
               {sizes.map((size) => (
@@ -182,8 +182,8 @@ export function Filters({
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="warna">
-          <AccordionTrigger>Warna</AccordionTrigger>
+        <AccordionItem value="colour">
+          <AccordionTrigger>Colour</AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-2 gap-3 pt-1">
               {colours.map((colour) => (
@@ -200,8 +200,8 @@ export function Filters({
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="kondisi">
-          <AccordionTrigger>Kondisi</AccordionTrigger>
+        <AccordionItem value="condition">
+          <AccordionTrigger>Condition</AccordionTrigger>
           <AccordionContent>
             <RadioGroup
               className="pt-1"
@@ -209,13 +209,13 @@ export function Filters({
               onValueChange={(condition) =>
                 onChange({ ...value, condition: condition as FilterState['condition'] })
               }
-              aria-label="Kondisi"
+              aria-label="Condition"
             >
               {(
                 [
-                  ['any', 'Semua'],
-                  ['new', 'Baru'],
-                  ['used', 'Bekas'],
+                  ['any', 'Any'],
+                  ['new', 'New'],
+                  ['used', 'Used'],
                 ] as const
               ).map(([id, label]) => (
                 <div key={id} className="flex items-center gap-2">

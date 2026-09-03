@@ -26,18 +26,18 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: () => (
     <div className="w-96">
-      <Accordion type="single" collapsible defaultValue="ukuran">
-        <AccordionItem value="ukuran">
-          <AccordionTrigger>Ukuran</AccordionTrigger>
+      <Accordion type="single" collapsible defaultValue="size">
+        <AccordionItem value="size">
+          <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent>S, M, L and XL, with a size guide for each cut.</AccordionContent>
         </AccordionItem>
-        <AccordionItem value="warna">
-          <AccordionTrigger>Warna</AccordionTrigger>
+        <AccordionItem value="colour">
+          <AccordionTrigger>Colour</AccordionTrigger>
           <AccordionContent>Eleven colours, six of them in every size.</AccordionContent>
         </AccordionItem>
-        <AccordionItem value="harga">
-          <AccordionTrigger>Harga</AccordionTrigger>
-          <AccordionContent>From Rp 89.000 to Rp 750.000.</AccordionContent>
+        <AccordionItem value="price">
+          <AccordionTrigger>Price</AccordionTrigger>
+          <AccordionContent>From Rp 89,000 to Rp 750,000.</AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>
@@ -47,13 +47,13 @@ export const Playground: Story = {
 export const SeveralOpenAtOnce: Story = {
   render: () => (
     <div className="w-96">
-      <Accordion type="multiple" defaultValue={['ukuran', 'warna']}>
-        <AccordionItem value="ukuran">
-          <AccordionTrigger>Ukuran</AccordionTrigger>
+      <Accordion type="multiple" defaultValue={['size', 'colour']}>
+        <AccordionItem value="size">
+          <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent>A filter panel keeps its groups open.</AccordionContent>
         </AccordionItem>
-        <AccordionItem value="warna">
-          <AccordionTrigger>Warna</AccordionTrigger>
+        <AccordionItem value="colour">
+          <AccordionTrigger>Colour</AccordionTrigger>
           <AccordionContent>Closing one to open another would be maddening.</AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -69,8 +69,8 @@ export const TheTriggerIsAHeading: Story = {
   render: () => (
     <div className="w-96">
       <Accordion type="single" collapsible>
-        <AccordionItem value="ukuran">
-          <AccordionTrigger headingLevel="h2">Ukuran</AccordionTrigger>
+        <AccordionItem value="size">
+          <AccordionTrigger headingLevel="h2">Size</AccordionTrigger>
           <AccordionContent>S, M, L and XL.</AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -79,9 +79,9 @@ export const TheTriggerIsAHeading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('heading', { level: 2, name: 'Ukuran' })).toBeVisible();
+    await expect(canvas.getByRole('heading', { level: 2, name: 'Size' })).toBeVisible();
 
-    const trigger = canvas.getByRole('button', { name: 'Ukuran' });
+    const trigger = canvas.getByRole('button', { name: 'Size' });
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
     await userEvent.click(trigger);

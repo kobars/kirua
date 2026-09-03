@@ -13,11 +13,11 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from './icons';
  * controls lines up.
  *
  * @example
- * <Select defaultValue="poli-umum">
- *   <SelectTrigger aria-label="Poliklinik"><SelectValue /></SelectTrigger>
+ * <Select defaultValue="general">
+ *   <SelectTrigger aria-label="Clinic"><SelectValue /></SelectTrigger>
  *   <SelectContent>
- *     <SelectItem value="poli-umum">Poli Umum</SelectItem>
- *     <SelectItem value="poli-gigi">Poli Gigi</SelectItem>
+ *     <SelectItem value="general">General practice</SelectItem>
+ *     <SelectItem value="dental">Dental</SelectItem>
  *   </SelectContent>
  * </Select>
  */

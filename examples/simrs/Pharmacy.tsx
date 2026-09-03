@@ -44,14 +44,14 @@ import {
   TableRow,
   Text,
 } from 'kirua';
-import { medicines, rupiah, type Medicine } from './data';
+import { medicines, idr, type Medicine } from './data';
 
-type Shelf = 'semua' | 'habis' | 'menipis';
+type Shelf = 'all' | 'out' | 'low';
 
 const level = (item: Medicine) =>
-  item.stock === 0 ? 'habis' : item.stock < item.reorder ? 'menipis' : 'cukup';
+  item.stock === 0 ? 'out' : item.stock < item.reorder ? 'low' : 'ok';
 
-const tone = { habis: 'danger', menipis: 'warning', cukup: 'success' } as const;
+const tone = { out: 'danger', low: 'warning', ok: 'success' } as const;
 
 /**
  * Pharmacy stock. Three filters, a search box, and a per-row menu that opens on
@@ -72,14 +72,14 @@ const COMPARE = {
 type SortKey = keyof typeof COMPARE;
 
 const SORTABLE: { key: SortKey; label: string }[] = [
-  { key: 'stock', label: 'Stok' },
-  { key: 'expires', label: 'Kedaluwarsa' },
-  { key: 'price', label: 'Harga' },
+  { key: 'stock', label: 'Stock' },
+  { key: 'expires', label: 'Expires' },
+  { key: 'price', label: 'Price' },
 ];
 
 export function Pharmacy() {
   const [query, setQuery] = useState('');
-  const [shelf, setShelf] = useState<Shelf>('semua');
+  const [shelf, setShelf] = useState<Shelf>('all');
   const [discarding, setDiscarding] = useState<Medicine | null>(null);
   const [discarded, setDiscarded] = useState<string[]>([]);
   const [sort, setSort] = useState<{ by: SortKey; up: boolean }>({
@@ -91,8 +91,8 @@ export function Pharmacy() {
     const q = query.trim().toLowerCase();
     const kept = medicines.filter((item) => {
       if (discarded.includes(item.code)) return false;
-      if (shelf === 'habis' && level(item) !== 'habis') return false;
-      if (shelf === 'menipis' && level(item) !== 'menipis') return false;
+      if (shelf === 'out' && level(item) !== 'out') return false;
+      if (shelf === 'low' && level(item) !== 'low') return false;
       return (
         q === '' || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q)
       );
@@ -107,9 +107,9 @@ export function Pharmacy() {
    * else reaches the same three commands, and a Tab key can find it.
    */
   const commands = (item: Medicine) => [
-    { label: 'Tambah stok', shortcut: '⌘+', run: () => undefined },
-    { label: 'Cetak label rak', run: () => window.print() },
-    { label: 'Buang batch', destructive: true, run: () => setDiscarding(item) },
+    { label: 'Add stock', shortcut: '⌘+', run: () => undefined },
+    { label: 'Print a shelf label', run: () => window.print() },
+    { label: 'Discard the batch', destructive: true, run: () => setDiscarding(item) },
   ];
 
   return (
@@ -117,10 +117,10 @@ export function Pharmacy() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Heading as="h1" size="heading-md">
-            Farmasi
+            Pharmacy
           </Heading>
           <Text size="sm" className="mt-1">
-            {rows.length} dari {medicines.length - discarded.length} item
+            {rows.length} of {medicines.length - discarded.length} items
           </Text>
         </div>
 
@@ -132,14 +132,14 @@ export function Pharmacy() {
               </InputGroupAddon>
               <InputGroupInput
                 value={query}
-                aria-label="Cari obat"
-                placeholder="Cari nama atau kode"
+                aria-label="Search medicines"
+                placeholder="Search by name or code"
                 onChange={(event) => setQuery(event.target.value)}
               />
               {query !== '' && (
                 <InputGroupAddon>
                   <IconButton
-                    aria-label="Hapus pencarian"
+                    aria-label="Clear search"
                     size="sm"
                     variant="ghost"
                     className="-me-1.5"
@@ -152,8 +152,8 @@ export function Pharmacy() {
             </InputGroup>
           </div>
 
-          <ButtonGroup aria-label="Saring stok">
-            {(['semua', 'menipis', 'habis'] as const).map((value) => (
+          <ButtonGroup aria-label="Filter stock">
+            {(['all', 'low', 'out'] as const).map((value) => (
               <Button
                 key={value}
                 variant="secondary"
@@ -162,7 +162,7 @@ export function Pharmacy() {
                 onClick={() => setShelf(value)}
                 className={shelf === value ? 'bg-selected text-on-selected' : undefined}
               >
-                {value === 'semua' ? 'Semua' : value === 'menipis' ? 'Menipis' : 'Habis'}
+                {value === 'all' ? 'All' : value === 'low' ? 'Low' : 'Out'}
               </Button>
             ))}
           </ButtonGroup>
@@ -172,17 +172,17 @@ export function Pharmacy() {
       {rows.length === 0 ? (
         <EmptyState
           icon={<SearchIcon size="2xl" />}
-          title="Tidak ada obat yang cocok"
-          description="Coba kata kunci lain, atau kembali ke semua item."
+          title="No medicine matches"
+          description="Try another keyword, or go back to every item."
           action={
             <Button
               variant="secondary"
               onClick={() => {
                 setQuery('');
-                setShelf('semua');
+                setShelf('all');
               }}
             >
-              Tampilkan semua
+              Show all
             </Button>
           }
         />
@@ -190,12 +190,12 @@ export function Pharmacy() {
         <div className="overflow-x-auto">
           <Table>
             <TableCaption>
-              Klik kanan sebuah baris untuk pintasan. Semua perintahnya juga ada di menu baris.
+              Right-click a row for shortcuts. Every command is also in the row menu.
             </TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Obat</TableHead>
-                <TableHead>Rak</TableHead>
+                <TableHead>Medicine</TableHead>
+                <TableHead>Shelf</TableHead>
                 {SORTABLE.map(({ key, label }) => {
                   const active = sort.by === key;
                   return (
@@ -227,7 +227,7 @@ export function Pharmacy() {
                   );
                 })}
                 <TableHead className="relative">
-                  <span className="sr-only">Tindakan</span>
+                  <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -260,18 +260,18 @@ export function Pharmacy() {
                             size="sm"
                             value={item.stock}
                             max={item.reorder * 3}
-                            label={`Stok ${item.name}`}
-                            valueText={`${item.stock} dari ${item.reorder * 3}`}
+                            label={`Stock of ${item.name}`}
+                            valueText={`${item.stock} of ${item.reorder * 3}`}
                           />
                         </div>
                       </TableCell>
                       <TableCell className="tabular-nums">{item.expires}</TableCell>
-                      <TableCell className="tabular-nums">{rupiah(item.price)}</TableCell>
+                      <TableCell className="tabular-nums">{idr(item.price)}</TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <IconButton
-                              aria-label={`Tindakan untuk ${item.name}`}
+                              aria-label={`Actions for ${item.name}`}
                               size="sm"
                               variant="ghost"
                             >
@@ -319,14 +319,14 @@ export function Pharmacy() {
         onOpenChange={(open) => !open && setDiscarding(null)}
       >
         <AlertDialogContent>
-          <AlertDialogTitle>Buang batch {discarding?.name}?</AlertDialogTitle>
+          <AlertDialogTitle>Discard the {discarding?.name} batch?</AlertDialogTitle>
           <AlertDialogDescription>
-            {discarding?.stock} unit di rak {discarding?.shelf} akan dicatat sebagai terbuang.
-            Catatan ini tidak bisa dibatalkan dari layar ini.
+            {discarding?.stock} units on shelf {discarding?.shelf} are recorded as wasted. The
+            record cannot be undone from this screen.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
-              <Button variant="secondary">Batal</Button>
+              <Button variant="secondary">Cancel</Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
@@ -336,7 +336,7 @@ export function Pharmacy() {
                   setDiscarding(null);
                 }}
               >
-                Buang
+                Discard
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>

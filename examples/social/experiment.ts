@@ -13,32 +13,32 @@
  *
  * Nothing here is meant to survive the decision.
  */
-export type CardSurface = 'netral' | 'brand' | 'semburat' | 'garis' | 'tepi';
+export type CardSurface = 'neutral' | 'brand' | 'tint' | 'outline' | 'rail';
 
 const KEY = 'kirua-social-card-surface';
 
 export const SURFACES: { id: CardSurface; label: string; note: string }[] = [
-  { id: 'netral', label: 'Netral', note: 'Seperti sekarang — permukaan raised' },
-  { id: 'brand', label: 'Brand penuh', note: 'Seluruh kartu biru, teks putih' },
-  { id: 'semburat', label: 'Semburat', note: 'Latar biru paling muda, teks normal' },
+  { id: 'neutral', label: 'Neutral', note: 'As it is now — a raised surface' },
+  { id: 'brand', label: 'Full brand', note: 'The whole card blue, white text' },
+  { id: 'tint', label: 'Tint', note: 'The palest blue ground, normal text' },
   {
-    id: 'garis',
-    label: 'Garis brand',
-    note: 'Kartu netral dengan garis tepi biru mengelilingi',
+    id: 'outline',
+    label: 'Brand outline',
+    note: 'A neutral card with a blue border all the way round',
   },
   {
-    id: 'tepi',
-    label: 'Rel brand',
-    note: 'Kartu netral dengan rel biru tebal di sisi awal saja',
+    id: 'rail',
+    label: 'Brand rail',
+    note: 'A neutral card with a thick blue rail on the start edge only',
   },
 ];
 
 export function readSurface(): CardSurface {
   try {
     const stored = localStorage.getItem(KEY);
-    return SURFACES.some((s) => s.id === stored) ? (stored as CardSurface) : 'netral';
+    return SURFACES.some((s) => s.id === stored) ? (stored as CardSurface) : 'neutral';
   } catch {
-    return 'netral';
+    return 'neutral';
   }
 }
 
@@ -63,16 +63,16 @@ export const SURFACE_PROPS: Record<
   CardSurface,
   { variant?: 'light' | 'brand'; className?: string }
 > = {
-  netral: { variant: 'light' },
+  neutral: { variant: 'light' },
   brand: { variant: 'brand' },
-  semburat: { variant: 'light', className: 'bg-brand-subtle' },
-  garis: { variant: 'light', className: 'border-brand' },
+  tint: { variant: 'light', className: 'bg-brand-subtle' },
+  outline: { variant: 'light', className: 'border-brand' },
   /**
    * `border-brand` colours every side, so the other three are pushed back to
    * the subtle line by name. Logical on the inline axis, so the rail stays on
    * the reading start in a right-to-left page.
    */
-  tepi: {
+  rail: {
     variant: 'light',
     className:
       'border-s-4 border-brand border-t-line-subtle border-e-line-subtle border-b-line-subtle',

@@ -4,9 +4,13 @@ import { Text } from './Text';
 import { Timeline, TimelineItem, TimelineTime } from './Timeline';
 
 const EVENTS = [
-  { at: '2026-03-11T09:12', shown: '11 Mar 2026, 09:12', what: 'Tiba di gudang Bandung' },
-  { at: '2026-03-10T18:40', shown: '10 Mar 2026, 18:40', what: 'Berangkat dari Jakarta' },
-  { at: '2026-03-09T11:05', shown: '9 Mar 2026, 11:05', what: 'Diserahkan ke kurir' },
+  {
+    at: '2026-03-11T09:12',
+    shown: '11 Mar 2026, 09:12',
+    what: 'Arrived at the Bandung warehouse',
+  },
+  { at: '2026-03-10T18:40', shown: '10 Mar 2026, 18:40', what: 'Left Jakarta' },
+  { at: '2026-03-09T11:05', shown: '9 Mar 2026, 11:05', what: 'Handed to the courier' },
 ];
 
 const meta = {
@@ -50,11 +54,11 @@ export const APendingMoment: Story = {
         <TimelineItem>
           <TimelineTime dateTime="2026-03-11T09:12">11 Mar 2026, 09:12</TimelineTime>
           <Text size="sm" tone="primary">
-            Tiba di gudang Bandung
+            Arrived at the Bandung warehouse
           </Text>
         </TimelineItem>
         <TimelineItem state="pending">
-          <Text size="sm">Menunggu pengantaran</Text>
+          <Text size="sm">Awaiting delivery</Text>
         </TimelineItem>
       </Timeline>
     </div>

@@ -24,7 +24,7 @@ import {
   SelectValue,
   Separator,
 } from 'kirua';
-import { rupiah } from './data';
+import { idr } from './data';
 import type { CartLine } from './CartSheet';
 
 export interface CheckoutPageProps {
@@ -50,15 +50,17 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
     const found: Record<string, string> = {};
 
     const name = String(form.get('name') ?? '').trim();
-    if (name === '') found['name'] = 'Nama penerima wajib diisi.';
+    if (name === '') found['name'] = 'A recipient name is required.';
 
     const phone = String(form.get('phone') ?? '').trim();
-    if (!/^0\d{8,12}$/.test(phone)) found['phone'] = 'Nomor telepon diawali 0 dan 9–13 angka.';
+    if (!/^0\d{8,12}$/.test(phone))
+      found['phone'] = 'A phone number starts with 0 and has 9 to 13 digits.';
 
     const address = String(form.get('address') ?? '').trim();
-    if (address.length < 10) found['address'] = 'Alamat terlalu pendek untuk dikirimi paket.';
+    if (address.length < 10)
+      found['address'] = 'That address is too short to deliver a parcel to.';
 
-    if (form.get('terms') !== 'on') found['terms'] = 'Setujui syarat pengiriman untuk lanjut.';
+    if (form.get('terms') !== 'on') found['terms'] = 'Accept the delivery terms to continue.';
 
     setErrors(found);
     if (Object.keys(found).length === 0) {
@@ -78,9 +80,9 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
       {placed && (
         <output className="block">
           <Alert status="success" icon={<CheckIcon />}>
-            <AlertTitle>Pesanan diterima</AlertTitle>
+            <AlertTitle>Order received</AlertTitle>
             <AlertDescription>
-              Ini layar contoh — tidak ada yang benar-benar dikirim.
+              This is an example screen — nothing is really shipped.
             </AlertDescription>
           </Alert>
         </output>
@@ -88,36 +90,36 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
 
       {Object.keys(errors).length > 0 && (
         <Alert status="danger" role="alert">
-          <AlertTitle>Ada {Object.keys(errors).length} isian yang perlu diperbaiki</AlertTitle>
-          <AlertDescription>Lihat pesan di bawah setiap isian.</AlertDescription>
+          <AlertTitle>{Object.keys(errors).length} fields need fixing</AlertTitle>
+          <AlertDescription>Look at the message under each field.</AlertDescription>
         </Alert>
       )}
 
       <form noValidate onSubmit={submit} className="grid gap-6 md:grid-cols-[1fr_20rem]">
         <div className="grid content-start gap-5">
-          <Field controlId="name" label="Nama penerima" error={errors['name']}>
+          <Field controlId="name" label="Recipient name" error={errors['name']}>
             <Input id="name" name="name" autoComplete="name" />
           </Field>
 
           <Field
             controlId="phone"
-            label="Telepon"
-            description="Dipakai kurir saat tiba."
+            label="Phone"
+            description="Used by the courier on arrival."
             error={errors['phone']}
           >
             <Input id="phone" name="phone" type="tel" inputMode="numeric" autoComplete="tel" />
           </Field>
 
-          <Field controlId="address" label="Alamat" error={errors['address']}>
+          <Field controlId="address" label="Address" error={errors['address']}>
             <Input id="address" name="address" autoComplete="street-address" />
           </Field>
 
-          <Field controlId="city" label="Kota">
+          <Field controlId="city" label="City">
             <Select defaultValue="bandung" name="city">
               <SelectTrigger id="city">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent aria-label="Kota">
+              <SelectContent aria-label="City">
                 <SelectItem value="bandung">Bandung</SelectItem>
                 <SelectItem value="jakarta">Jakarta</SelectItem>
                 <SelectItem value="surabaya">Surabaya</SelectItem>
@@ -127,13 +129,13 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           </Field>
 
           <fieldset className="grid gap-3">
-            <legend className="mb-1 text-body-sm font-medium text-fg">Pengiriman</legend>
-            <RadioGroup defaultValue="reguler" name="shipping" aria-label="Pengiriman">
+            <legend className="mb-1 text-body-sm font-medium text-fg">Delivery</legend>
+            <RadioGroup defaultValue="standard" name="shipping" aria-label="Delivery">
               {(
                 [
-                  ['reguler', 'Reguler — 3 sampai 5 hari'],
-                  ['kilat', 'Kilat — besok tiba'],
-                  ['ambil', 'Ambil di toko'],
+                  ['standard', 'Standard — 3 to 5 days'],
+                  ['express', 'Express — arrives tomorrow'],
+                  ['collect', 'Collect in store'],
                 ] as const
               ).map(([id, label]) => (
                 <div key={id} className="flex items-center gap-2">
@@ -147,7 +149,7 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           <div className="grid gap-1.5">
             <div className="flex items-start gap-2">
               <Checkbox id="terms" name="terms" aria-invalid={errors['terms'] !== undefined} />
-              <Label htmlFor="terms">Saya setuju dengan syarat pengiriman</Label>
+              <Label htmlFor="terms">I accept the delivery terms</Label>
             </div>
             {errors['terms'] && <p className="text-body-sm text-invalid">{errors['terms']}</p>}
           </div>
@@ -155,15 +157,15 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
 
         <Card className="grid h-max gap-3 p-5">
           <Heading as="h2" size="body-md">
-            Ringkasan
+            Summary
           </Heading>
           <Separator />
           <DescriptionList>
             <DescriptionTerm>Subtotal</DescriptionTerm>
-            <DescriptionDetails numeric>{rupiah(subtotal)}</DescriptionDetails>
-            <DescriptionTerm>Ongkir</DescriptionTerm>
+            <DescriptionDetails numeric>{idr(subtotal)}</DescriptionDetails>
+            <DescriptionTerm>Delivery</DescriptionTerm>
             <DescriptionDetails numeric>
-              {shipping === 0 ? 'Gratis' : rupiah(shipping)}
+              {shipping === 0 ? 'Free' : idr(shipping)}
             </DescriptionDetails>
           </DescriptionList>
           <Separator />
@@ -173,11 +175,11 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           <DescriptionList>
             <DescriptionTerm emphasis>Total</DescriptionTerm>
             <DescriptionDetails emphasis numeric>
-              {rupiah(subtotal + shipping)}
+              {idr(subtotal + shipping)}
             </DescriptionDetails>
           </DescriptionList>
           <Button type="submit" fullWidth size="lg">
-            Bayar
+            Pay
           </Button>
         </Card>
       </form>

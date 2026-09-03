@@ -29,22 +29,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const visits = [
-  ['07:30', 'Siti Rahayu', 'Poli Umum', 'dr. Andi', 'success', 'Selesai'],
-  ['08:00', 'Budi Santoso', 'Poli Gigi', 'drg. Maya', 'warning', 'Menunggu'],
-  ['08:15', 'Ayu Lestari', 'Poli Anak', 'dr. Rina', 'info', 'Diperiksa'],
-  ['09:00', 'Joko Widodo', 'Poli Mata', 'dr. Hendra', 'neutral', 'Terjadwal'],
+  ['07:30', 'Siti Rahayu', 'General practice', 'dr. Andi', 'success', 'Done'],
+  ['08:00', 'Budi Santoso', 'Dental', 'drg. Maya', 'warning', 'Waiting'],
+  ['08:15', 'Ayu Lestari', 'Paediatrics', 'dr. Rina', 'info', 'In consultation'],
+  ['09:00', 'Joko Widodo', 'Ophthalmology', 'dr. Hendra', 'neutral', 'Scheduled'],
 ] as const;
 
 export const Playground: Story = {
   render: (args) => (
     <Table {...args}>
-      <TableCaption>Kunjungan hari ini — 4 pasien</TableCaption>
+      <TableCaption>Today's visits — 4 patients</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Jam</TableHead>
-          <TableHead>Pasien</TableHead>
-          <TableHead>Poliklinik</TableHead>
-          <TableHead>Dokter</TableHead>
+          <TableHead>Time</TableHead>
+          <TableHead>Patient</TableHead>
+          <TableHead>Clinic</TableHead>
+          <TableHead>Doctor</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
@@ -64,7 +64,7 @@ export const Playground: Story = {
       <TableFooter>
         <TableRow>
           <TableCell colSpan={4}>Total</TableCell>
-          <TableCell>4 pasien</TableCell>
+          <TableCell>4 patients</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
@@ -78,24 +78,24 @@ export const Playground: Story = {
 export const RowHeaders: Story = {
   render: (args) => (
     <Table {...args}>
-      <TableCaption>Tarif per poliklinik</TableCaption>
+      <TableCaption>Fee by clinic</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Poliklinik</TableHead>
-          <TableHead>Umum</TableHead>
+          <TableHead>Clinic</TableHead>
+          <TableHead>Self-pay</TableHead>
           <TableHead>BPJS</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableHead scope="row">Poli Umum</TableHead>
-          <TableCell>Rp 75.000</TableCell>
+          <TableHead scope="row">General practice</TableHead>
+          <TableCell>Rp 75,000</TableCell>
           <TableCell>Rp 0</TableCell>
         </TableRow>
         <TableRow>
-          <TableHead scope="row">Poli Gigi</TableHead>
-          <TableCell>Rp 150.000</TableCell>
-          <TableCell>Rp 25.000</TableCell>
+          <TableHead scope="row">Dental</TableHead>
+          <TableCell>Rp 150,000</TableCell>
+          <TableCell>Rp 25,000</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -110,7 +110,7 @@ export const AWideTableScrollsItself: Story = {
         <TableCaption className="sr-only">A table wider than its frame</TableCaption>
         <TableHeader>
           <TableRow>
-            {['Jam', 'Pasien', 'Poliklinik', 'Dokter', 'Tindakan', 'Status'].map((h) => (
+            {['Time', 'Patient', 'Clinic', 'Doctor', 'Reason', 'Status'].map((h) => (
               <TableHead key={h}>{h}</TableHead>
             ))}
           </TableRow>
@@ -119,10 +119,10 @@ export const AWideTableScrollsItself: Story = {
           <TableRow>
             <TableCell>07:30</TableCell>
             <TableCell>Siti Rahayu</TableCell>
-            <TableCell>Poli Umum</TableCell>
+            <TableCell>General practice</TableCell>
             <TableCell>dr. Andi Wijaya</TableCell>
-            <TableCell>Pemeriksaan umum</TableCell>
-            <TableCell>Selesai</TableCell>
+            <TableCell>General examination</TableCell>
+            <TableCell>Done</TableCell>
           </TableRow>
         </TableBody>
       </Table>

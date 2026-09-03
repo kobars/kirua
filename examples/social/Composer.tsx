@@ -23,7 +23,7 @@ const LIMIT = 280;
  */
 export function Composer() {
   const [text, setText] = useState('');
-  const [audience, setAudience] = useState('semua');
+  const [audience, setAudience] = useState('everyone');
   const [uploaded, setUploaded] = useState<number | null>(null);
   const left = LIMIT - text.length;
 
@@ -48,14 +48,14 @@ export function Composer() {
         </Avatar>
         <div className="min-w-0 flex-1">
           <Label htmlFor="compose" className="sr-only">
-            Tulis kiriman
+            Write a post
           </Label>
           <Textarea
             id="compose"
             rows={3}
             value={text}
             maxLength={LIMIT}
-            placeholder="Apa yang sedang kamu kerjakan?"
+            placeholder="What are you working on?"
             className="resize-none border-0 bg-transparent px-0 shadow-none"
             onChange={(event) => setText(event.target.value)}
           />
@@ -65,12 +65,12 @@ export function Composer() {
       {uploaded !== null && (
         <div className="grid gap-1.5">
           <div className="flex items-baseline justify-between">
-            <Text size="sm">{uploaded < 100 ? 'Mengunggah gambar…' : 'Gambar terunggah'}</Text>
+            <Text size="sm">{uploaded < 100 ? 'Uploading the image…' : 'Image uploaded'}</Text>
             <Text size="sm" tone="muted" inline className="tabular-nums">
               {uploaded}%
             </Text>
           </div>
-          <Progress value={uploaded} aria-label="Unggahan gambar" />
+          <Progress value={uploaded} aria-label="Image upload" />
         </div>
       )}
 
@@ -79,13 +79,13 @@ export function Composer() {
           type="single"
           value={audience}
           onValueChange={(next) => next && setAudience(next)}
-          aria-label="Siapa yang bisa melihat"
+          aria-label="Who can see this"
         >
           {(
             [
-              ['semua', 'Semua'],
-              ['pengikut', 'Pengikut'],
-              ['saya', 'Hanya saya'],
+              ['everyone', 'Everyone'],
+              ['followers', 'Followers'],
+              ['me', 'Only me'],
             ] as const
           ).map(([value, label]) => (
             <ToggleGroupItem key={value} value={value} size="sm" variant="outline">
@@ -102,7 +102,7 @@ export function Composer() {
             disabled={uploaded !== null}
             onClick={() => setUploaded(0)}
           >
-            Gambar
+            Image
           </Button>
           <span
             aria-live={left <= 20 ? 'polite' : 'off'}
@@ -114,7 +114,7 @@ export function Composer() {
             {left}
           </span>
           <Button size="sm" trailingIcon={<SendIcon />} disabled={text.trim() === ''}>
-            Kirim
+            Send
           </Button>
         </div>
       </div>

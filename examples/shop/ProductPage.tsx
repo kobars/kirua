@@ -27,7 +27,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from 'kirua';
-import { rupiah, type Product } from './data';
+import { idr, type Product } from './data';
 
 export interface ProductPageProps {
   product: Product;
@@ -43,7 +43,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#/">Katalog</BreadcrumbLink>
+            <BreadcrumbLink href="#/">Catalogue</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           {/* Three crumbs do not fit beside a product name at 320px, so the
@@ -65,7 +65,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
 
       <div className="grid gap-8 md:grid-cols-2">
         <Carousel label={`Foto ${product.name}`} className="scroll-p-1 p-1">
-          {['Depan', 'Samping', 'Detail', 'Kotak'].map((view) => (
+          {['Front', 'Side', 'Detail', 'Boxed'].map((view) => (
             <CarouselItem key={view} className="w-[min(20rem,80vw)]">
               <AspectRatio ratio={1} className="rounded-lg bg-sunken">
                 <div className="grid size-full place-content-center text-body-sm text-fg-muted">
@@ -85,21 +85,21 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
             <p className="flex items-center gap-1.5 text-body-sm text-fg-secondary [--icon-size:var(--icon-sm)]">
               <StarIcon aria-hidden="true" className="text-warning-solid" />
               <span className="tabular-nums">{product.rating.toFixed(1)}</span>
-              <span className="text-fg-muted">· {product.reviews} ulasan</span>
+              <span className="text-fg-muted">· {product.reviews} reviews</span>
             </p>
           </div>
 
           <p className="flex flex-wrap items-baseline gap-3">
             <span className="text-heading-lg font-semibold text-fg tabular-nums">
-              {rupiah(product.price)}
+              {idr(product.price)}
             </span>
             {product.was !== undefined && (
               <span className="text-body-md text-fg-muted tabular-nums line-through">
-                {rupiah(product.was)}
+                {idr(product.was)}
               </span>
             )}
             <Badge status={product.stock > 5 ? 'success' : 'warning'}>
-              {product.stock > 5 ? 'Tersedia' : `Sisa ${product.stock}`}
+              {product.stock > 5 ? 'In stock' : `${product.stock} left`}
             </Badge>
           </p>
 
@@ -113,7 +113,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
                 plain element referenced by `aria-labelledby` names the group,
                 which is what a group needs. */}
             <span id="size-label" className="text-body-sm font-medium text-fg">
-              Ukuran
+              Size
             </span>
             <ToggleGroup
               type="single"
@@ -131,7 +131,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
 
           <div className="flex flex-wrap items-center gap-3">
             <QuantityStepper
-              label={`Jumlah, ${product.name}`}
+              label={`Quantity, ${product.name}`}
               value={quantity}
               min={1}
               max={product.stock}
@@ -144,7 +144,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
               className="grow"
               onClick={() => onAdd(product, quantity)}
             >
-              Tambah ke keranjang
+              Add to cart
             </Button>
           </div>
         </div>
@@ -153,21 +153,21 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
       <Tabs defaultValue="detail">
         <TabsList>
           <TabsTrigger value="detail">Detail</TabsTrigger>
-          <TabsTrigger value="pengiriman">Pengiriman</TabsTrigger>
-          <TabsTrigger value="ulasan">Ulasan</TabsTrigger>
+          <TabsTrigger value="delivery">Delivery</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="detail" className="max-w-prose text-body-md text-fg-secondary">
           <p>
-            {product.blurb} Warna {product.colour.toLowerCase()}, tersedia dalam ukuran{' '}
+            {product.blurb} In {product.colour.toLowerCase()}, available in{' '}
             {product.size.join(', ')}.
           </p>
         </TabsContent>
-        <TabsContent value="pengiriman" className="max-w-prose text-body-md text-fg-secondary">
-          <p>Dikirim dari Bandung dalam satu hari kerja. Gratis ongkir di atas Rp 500.000.</p>
+        <TabsContent value="delivery" className="max-w-prose text-body-md text-fg-secondary">
+          <p>Shipped from Bandung within one working day. Free delivery over Rp 500,000.</p>
         </TabsContent>
-        <TabsContent value="ulasan" className="max-w-prose text-body-md text-fg-secondary">
+        <TabsContent value="reviews" className="max-w-prose text-body-md text-fg-secondary">
           <p>
-            {product.reviews} ulasan, rata-rata {product.rating.toFixed(1)} dari 5.
+            {product.reviews} reviews, averaging {product.rating.toFixed(1)} out of 5.
           </p>
         </TabsContent>
       </Tabs>
