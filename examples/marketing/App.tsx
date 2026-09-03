@@ -17,7 +17,6 @@ import { HomePage } from './HomePage';
 import { PricingPage } from './PricingPage';
 import { StoryPage } from './StoryPage';
 import { ThemeMenu } from '../shared/ThemeMenu';
-import { EN } from '../shared/themeLabels';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /** The one route table. `NavBar` takes `href`, so these are written as hashes. */
@@ -66,7 +65,7 @@ export function App() {
             <TooltipContent>Search the site</TooltipContent>
           </Tooltip>
 
-          <ThemeMenu labels={EN} />
+          <ThemeMenu />
 
           <Button variant="primary" size="md" className="hidden sm:inline-flex" asChild>
             <a href="#/pricing">Start free</a>

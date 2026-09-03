@@ -1,5 +1,5 @@
 /**
- * The words the theme menu shows, in the two languages the example apps use.
+ * The words the theme menu shows.
  *
  * A sibling file rather than two more exports from `ThemeMenu.tsx`, for the
  * reason `*.variants.ts` and `menu.styles.ts` exist in `src/components`: a
@@ -13,18 +13,22 @@ export interface ThemeMenuLabels {
   system: string;
 }
 
-/** Three of the four applications, and so the default. */
-export const ID: ThemeMenuLabels = {
-  trigger: 'Tema',
-  light: 'Terang',
-  dark: 'Gelap',
-  system: 'Ikuti sistem',
-};
-
-/** The assistant app, the only one that passes anything. */
-export const EN: ThemeMenuLabels = {
+/** The wording four of the five applications use, and so the default. */
+export const DEFAULT: ThemeMenuLabels = {
   trigger: 'Theme',
   light: 'Light',
   dark: 'Dark',
   system: 'System',
+};
+
+/**
+ * The hospital application, which says "Appearance" because "theme" already
+ * means a clinical template there. It is the reason the prop exists: the words
+ * belong to the product, not to the control.
+ */
+export const APPEARANCE: ThemeMenuLabels = {
+  trigger: 'Appearance',
+  light: 'Light',
+  dark: 'Dark',
+  system: 'Match the device',
 };
