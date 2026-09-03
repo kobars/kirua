@@ -29,20 +29,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const clinics = [
-  ['poli-umum', 'Poli Umum'],
-  ['poli-gigi', 'Poli Gigi'],
-  ['poli-anak', 'Poli Anak'],
-  ['poli-mata', 'Poli Mata'],
+  ['general', 'General practice'],
+  ['dental', 'Dental'],
+  ['paediatrics', 'Paediatrics'],
+  ['ophthalmology', 'Ophthalmology'],
 ] as const;
 
 export const Playground: Story = {
   render: (args) => (
     <div className="w-72">
-      <Select {...args} defaultValue="poli-umum">
-        <SelectTrigger aria-label="Poliklinik">
+      <Select {...args} defaultValue="general">
+        <SelectTrigger aria-label="Clinic">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent aria-label="Poliklinik">
+        <SelectContent aria-label="Clinic">
           {clinics.map(([value, label]) => (
             <SelectItem key={value} value={value}>
               {label}
@@ -57,24 +57,24 @@ export const Playground: Story = {
 export const InAField: Story = {
   render: (args) => (
     <div className="w-72">
-      <Field controlId="clinic" label="Poliklinik" description="Where the visit is booked.">
+      <Field controlId="clinic" label="Clinic" description="Where the visit is booked.">
         <Select {...args}>
           <SelectTrigger id="clinic">
             <SelectValue placeholder="Choose a clinic" />
           </SelectTrigger>
-          <SelectContent aria-label="Poliklinik">
+          <SelectContent aria-label="Clinic">
             <SelectGroup>
-              <SelectLabel>Umum</SelectLabel>
-              <SelectItem value="poli-umum">Poli Umum</SelectItem>
-              <SelectItem value="poli-anak">Poli Anak</SelectItem>
+              <SelectLabel>General</SelectLabel>
+              <SelectItem value="general">General practice</SelectItem>
+              <SelectItem value="paediatrics">Paediatrics</SelectItem>
             </SelectGroup>
             <SelectSeparator />
             <SelectGroup>
-              <SelectLabel>Spesialis</SelectLabel>
-              <SelectItem value="poli-gigi">Poli Gigi</SelectItem>
-              <SelectItem value="poli-mata">Poli Mata</SelectItem>
-              <SelectItem value="poli-jantung" disabled>
-                Poli Jantung — full today
+              <SelectLabel>Specialist</SelectLabel>
+              <SelectItem value="dental">Dental</SelectItem>
+              <SelectItem value="ophthalmology">Ophthalmology</SelectItem>
+              <SelectItem value="cardiology" disabled>
+                Cardiology — full today
               </SelectItem>
             </SelectGroup>
           </SelectContent>
@@ -88,11 +88,11 @@ export const InAField: Story = {
 export const ChooseWithTheKeyboard: Story = {
   render: (args) => (
     <div className="w-72">
-      <Select {...args} defaultValue="poli-umum">
-        <SelectTrigger aria-label="Poliklinik">
+      <Select {...args} defaultValue="general">
+        <SelectTrigger aria-label="Clinic">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent aria-label="Poliklinik">
+        <SelectContent aria-label="Clinic">
           {clinics.map(([value, label]) => (
             <SelectItem key={value} value={value}>
               {label}
@@ -104,9 +104,9 @@ export const ChooseWithTheKeyboard: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('combobox', { name: 'Poliklinik' });
+    const trigger = canvas.getByRole('combobox', { name: 'Clinic' });
 
-    await expect(trigger).toHaveTextContent('Poli Umum');
+    await expect(trigger).toHaveTextContent('General practice');
 
     trigger.focus();
     await userEvent.keyboard('{Enter}');
@@ -120,7 +120,7 @@ export const ChooseWithTheKeyboard: Story = {
 
     await userEvent.keyboard('{ArrowDown}{Enter}');
     await waitFor(async () => {
-      await expect(trigger).toHaveTextContent('Poli Gigi');
+      await expect(trigger).toHaveTextContent('Dental');
     });
 
     // Wait for the closing panel to leave the DOM. Radix keeps it mounted for

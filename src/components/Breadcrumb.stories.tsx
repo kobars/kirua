@@ -31,11 +31,11 @@ export const Playground: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="#beranda">Beranda</BreadcrumbLink>
+          <BreadcrumbLink href="#home">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="#pasien">Pasien</BreadcrumbLink>
+          <BreadcrumbLink href="#patients">Patients</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -51,7 +51,7 @@ export const Collapsed: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="#beranda">Beranda</BreadcrumbLink>
+          <BreadcrumbLink href="#home">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -59,7 +59,7 @@ export const Collapsed: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Rekam medis</BreadcrumbPage>
+          <BreadcrumbPage>Medical record</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -69,10 +69,10 @@ export const Collapsed: Story = {
 /** All three rules at once. Each is invisible on screen. */
 export const TheThreeRules: Story = {
   render: (args) => (
-    <Breadcrumb {...args} label="Rekam medis">
+    <Breadcrumb {...args} label="Medical record">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="#beranda">Beranda</BreadcrumbLink>
+          <BreadcrumbLink href="#home">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -85,7 +85,7 @@ export const TheThreeRules: Story = {
     const canvas = within(canvasElement);
 
     // 1. A named landmark.
-    await expect(canvas.getByRole('navigation', { name: 'Rekam medis' })).toBeVisible();
+    await expect(canvas.getByRole('navigation', { name: 'Medical record' })).toBeVisible();
 
     // 2. The current page is marked, and is not a link.
     const current = canvas.getByText('Siti Rahayu');

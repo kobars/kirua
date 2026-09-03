@@ -20,7 +20,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const slides = ['Depan', 'Samping', 'Belakang', 'Lipat', 'Kotak'] as const;
+const slides = ['Front', 'Side', 'Back', 'Folded', 'Boxed'] as const;
 
 export const Playground: Story = {
   render: (args) => (

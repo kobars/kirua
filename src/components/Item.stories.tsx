@@ -193,7 +193,7 @@ export const ALongTitleTruncates: Story = {
     <Item {...args} variant="outline" className="w-72">
       <ItemContent>
         <ItemTitle data-testid="title">
-          Rujukan poliklinik penyakit dalam untuk pemeriksaan lanjutan
+          Referral to internal medicine for further investigation
         </ItemTitle>
       </ItemContent>
       <ItemActions>
