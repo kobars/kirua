@@ -1,0 +1,38 @@
+/* Docs previews use iframes, so these reading styles cannot alter components. */
+.sbdocs.sbdocs-wrapper {
+  padding: 40px 32px;
+}
+
+.sbdocs .sbdocs-content {
+  max-width: 1000px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.sbdocs .sbdocs-content :is(p, li, td, th, h1, h2, h3, h4) {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.sbdocs .sbdocs-content :is(p, li) {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.sbdocs .sbdocs-content p {
+  max-width: 72ch;
+}
+
+.sbdocs .sbdocs-content :is(pre, code) {
+  font-family: ui-monospace, monospace;
+}
+
+.sbdocs .sbdocs-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 600px) {
+  .sbdocs.sbdocs-wrapper {
+    padding: 24px 16px;
+  }
+}

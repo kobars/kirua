@@ -44,9 +44,9 @@
     "test:webkit": "KIRUA_WEBKIT=1 vitest --run --project webkit",
     "test:coverage": "vitest --run --coverage",
     "lint:fix": "oxlint --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\"",
-    "check": "tsc -b && node tools/dead-classes.mjs && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\"",
+    "check": "tsc -b && node tools/dead-classes.mjs && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit",
     "dead-classes": "node tools/dead-classes.mjs"
   },
   "dependencies": {
