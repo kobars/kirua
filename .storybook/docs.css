@@ -26,12 +26,16 @@
 }
 
 .sbdocs .sbdocs-content table {
-  display: block;
+  width: 100%;
   max-width: 100%;
-  overflow-x: auto;
 }
 
 @media (max-width: 600px) {
+  .sbdocs .sbdocs-content table {
+    display: block;
+    overflow-x: auto;
+  }
+
   .sbdocs.sbdocs-wrapper {
     padding: 24px 16px;
   }
