@@ -1,0 +1,136 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design direction" />
+
+# Design direction
+
+kirua aims to give creators a recognisable starting point and room to make it
+their own. Its first style should feel at home beside 2D illustration while
+remaining useful for shopping, publishing and community workflows.
+
+## The base identity
+
+Use round shapes, clear silhouettes, friendly text and a strong blue accent.
+Keep display headlines short. Let artwork and a few decorative details carry the
+playfulness; keep prices, navigation, forms and long text easy to scan.
+
+For an expressive page, combine a brand panel, display heading and one focal
+illustration. For a quieter application, use neutral surfaces, text headings and
+small accents on selected states or primary actions. Both belong to the base style.
+
+[Everyday screens](?path=/docs/patterns-everyday-screens--docs) demonstrates this
+range without introducing a second theme or a new component API.
+
+## Four independent decisions
+
+<table>
+  <thead>
+    <tr>
+      <th>Decision</th>
+      <th>Question</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Template</td>
+      <td>What goes on the page?</td>
+      <td>Creator profile, product listing, checkout</td>
+    </tr>
+    <tr>
+      <td>Style</td>
+      <td>What visual character does it have?</td>
+      <td>Playful display type, rounded cards, optional glints</td>
+    </tr>
+    <tr>
+      <td>Theme and mode</td>
+      <td>Which coordinated palette does it use?</td>
+      <td>The current blue palette in light or dark mode</td>
+    </tr>
+    <tr>
+      <td>Surface context</td>
+      <td>What background surrounds this component?</td>
+      <td>A brand panel within a light page</td>
+    </tr>
+  </tbody>
+</table>
+
+A template should be usable with several styles. A style should support several
+palettes. Each palette needs light/dark and local-surface decisions. A component
+variant expresses its role, such as a dangerous action, within those decisions.
+
+## What exists today
+
+The repository has one base style, one blue palette, light/dark modes and local
+brand/inverse contexts. Anime Hero is a reusable composition; the five example
+apps demonstrate more layouts using local sample data.
+
+There is no named style registry, theme package, template installer or runtime
+style selector. The example apps share their visual foundations. Changing a
+palette or shape currently involves editing CSS and checking dependent assets.
+
+## Review of the extension points
+
+**Colour has the strongest foundation.** Components mostly consume semantic
+roles, and existing tests exercise contrast across contexts. A new palette needs
+the full set of surface, text, action, field, status and focus roles. Changing one
+brand swatch does not create a complete theme.
+
+**Style is only partly configurable.** Font and radius scales exist, but ornament
+geometry is also represented in JavaScript constants in `src/lib/radius.ts`.
+Changing the CSS radius alone can misalign CornerGlint. A named style needs a
+coordinated geometry contract or a way to omit that ornament.
+
+**Density needs design work.** Heights and padding are expressed in component
+variants. A compact style cannot yet be selected globally. Test a dense table and
+a mobile form before deciding whether density belongs to each component or to a
+shared style setting.
+
+**Templates need explicit boundaries.** Example apps combine layouts, sample
+data, navigation and state. A reusable template needs named content inputs,
+responsive behaviour, loading/error/empty states and clearly identified demo
+integrations. Extract successful screens individually.
+
+**Documentation needs executable examples.** Prop tables explain individual
+parts; forms, searchable lists and overlays also need application code. The new
+interactive stories show these responsibilities and include interaction checks.
+
+## Try a limited visual adjustment
+
+For a quieter area, a local font override can demonstrate a direction without
+claiming a complete new style:
+
+```css
+.workspace-copy {
+  --font-text: ui-sans-serif, system-ui, sans-serif;
+}
+```
+
+```tsx
+<section className="workspace-copy">
+  <Heading as="h2" size="heading-md">
+    Order history
+  </Heading>
+  <Text>Track deliveries and view receipts.</Text>
+</section>
+```
+
+This changes the text family in that subtree. It does not change geometry,
+density or colour. Portals outside the subtree will not inherit it; apply a
+site-wide style at the document root when overlays must share the same settings.
+
+For a palette experiment, edit the semantic roles in
+`src/styles/tokens.semantic.css` and check every context and state. Avoid colour
+replacement at individual call sites: it makes surfaces and modes harder to maintain.
+
+## Build the next style in this order
+
+1. Choose two contrasting target screens: a creator landing page and a checkout or feed.
+2. Define the style's text/display families, shape, density and ornament rules.
+3. Define complete palette roles for modes and local surfaces, including focus and errors.
+4. Render the same content with the current base and proposed style side by side.
+5. Check keyboard behaviour, contrast, reduced motion, forced colours and responsive layout.
+6. Package the style and templates only after those compositions work without scattered overrides.
+
+Keep component behaviour stable while exploring appearance. The aim is a small
+set of coherent choices users can understand, with useful defaults for each.

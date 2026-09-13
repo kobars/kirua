@@ -4,98 +4,68 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Dark mode
 
-Dark mode in kirua is **one block of re-pointed variables** in
-`tokens.semantic.css` and **zero component changes**. That is the payoff for
-having a semantic layer at all: `Card`, `Button` and `Dialog` never learn that a
-theme exists.
-
-What a consumer has to build is the other half — the part no component can do,
-because it happens before any component renders.
-
-## Turn it on
-
-Add the `dark` class to `<html>`. That is the entire API.
+The current palette has light and dark modes. Set the `dark` class on `<html>`
+to select dark mode; semantic colour roles update throughout the document,
+including overlays that portal to the body.
 
 ```js
 document.documentElement.classList.toggle('dark', true);
 ```
 
-## The snippet, and why it must block
+## Set the initial mode before paint
 
-A page that reads a stored preference in a normal script paints the light theme
-first and then repaints dark. That flash is the single most visible defect a
-token-based dark mode has, and it happens before React exists, so no component
-can fix it.
-
-Put this in the document `<head>`, **before any stylesheet**, as an inline
-script with no `defer` and no `async`:
+Put this inline script in the document head before stylesheets. It reads an
+explicit preference first, then falls back to the operating system. If browser
+storage is unavailable, the system preference still works.
 
 ```html
 <script>
   (() => {
-    const stored = localStorage.getItem('kirua-theme');
+    let preference;
+    try {
+      preference = localStorage.getItem('kirua-theme');
+    } catch {
+      preference = null;
+    }
     const dark =
-      stored === 'dark' ||
-      (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+      preference === 'dark' ||
+      (preference !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
     document.documentElement.classList.toggle('dark', dark);
   })();
 </script>
 ```
 
-It is small on purpose. A blocking script delays first paint by exactly as long
-as it takes to run, so it should do one thing: decide, and set the class.
+If your host enforces a Content Security Policy, authorise the inline script
+through its nonce or hash mechanism. In a framework, integrate this with the
+host's document and hydration setup. A complete Next.js integration is not
+currently exercised by this repository's checks.
 
-## Why the system preference is honoured *here* and not in CSS
+## Let the user choose
 
-There is no bare `@media (prefers-color-scheme: dark)` block in
-`tokens.semantic.css`, and adding one would be a defect rather than a
-convenience.
+An application can offer **Light**, **Dark** and **System**. Save explicit choices
+under `kirua-theme`; remove the key for System. Apply the choice immediately and,
+while System is selected, listen for changes to the colour-scheme media query.
 
-A consumer who offers a three-way **light / dark / system** control could then
-never render light on a machine set to dark, because a media query cannot be
-turned off from inside the page. Reading the preference in the snippet keeps one
-decision in one place — and it is the place that can run before first paint.
+The example apps share this flow in `examples/shared/useTheme.ts`. That hook is
+application code and is not exported as part of kirua. It assumes storage is
+available; hosts with restricted storage should handle read and write failures.
 
-So: `.dark` is class-only, and the class is chosen by a script that consults the
-stored preference first and the system preference second.
+The token stylesheet does not select dark mode with a media query. Keeping the
+selection in the host lets an explicit Light choice override a dark system preference.
 
-## Next.js App Router
+## Mode is different from a local surface
 
-The head is server-rendered, so the snippet has to be inlined rather than
-imported. In `app/layout.tsx`:
+Use a brand or dark Card for a contrasting panel within a page. Its context
+changes inherited roles locally. A body-level portal does not inherit the
+trigger's local context; use a supported `container` prop when an overlay must
+stay within that context.
 
-```tsx
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(()=>{const s=localStorage.getItem('kirua-theme');
-              document.documentElement.classList.toggle('dark',
-                s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))})()`,
-          }}
-        />
-      </head>
-      <body>{children}</body>
-    </html>
-  );
-}
-```
+## Preview in Storybook
 
-`suppressHydrationWarning` on `<html>` is required, not optional. The script
-mutates `class` on the element React is about to hydrate, so without it React
-reports a mismatch on every dark-mode page load.
+Open an individual story and change **Mode** in the toolbar. Storybook applies
+the choice around the specimen. Body-level portals can therefore differ from
+that local wrapper; use the **Foundations → Stacking** examples to inspect portal
+containers. Real applications should set document mode on `<html>`.
 
-## Storybook
-
-The toolbar **Mode** control is a development affordance, not the API. It sets
-the class on a wrapper element in `.storybook/preview.tsx` so both themes can be
-seen side by side without reloading. A real application sets it on `<html>`.
-
-## Fonts, while you are in the head
-
-kirua **names** its typefaces and does not ship them, so the host document loads
-them too. **Getting started** carries the `preconnect` pair and the stylesheet
-link. Both `--font-display` and `--font-text` end in a system fallback, so a host
-that loads nothing still gets a working page.
+See [Design direction](?path=/docs/design-direction--docs) for how future palettes
+and styles relate to these two modes.
