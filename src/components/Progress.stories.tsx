@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { Progress } from './Progress';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Progress',
   component: Progress,
   args: { value: 63, max: 100 },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Pass a number and the bar reports aria-valuenow. Pass null and it reports nothing, which is the honest answer when the total is unknown. A bar has no accessible name of its own — give it one.',
+          'Progress through a task. Supply a label and numeric value when the total is known; use null for an indeterminate wait.',
       },
     },
   },
@@ -43,11 +44,6 @@ export const DeterminateAndNot: Story = {
   ),
 };
 
-/**
- * The ARIA difference, which is the whole reason both states exist. A bar with
- * no known total must not claim a value — a screen reader would read it as
- * progress that is not being made.
- */
 export const IndeterminateReportsNoValue: Story = {
   render: (args) => (
     <div className="grid w-80 gap-4">

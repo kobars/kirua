@@ -1,18 +1,4 @@
-/**
- * One config factory for the five example applications.
- *
- * Each app is a Vite root, not a package: Node resolution walks upward, so a
- * root under `examples/` finds the repository's single `node_modules` with no
- * install-graph change.
- *
- * The alias is what makes each app import the bare specifier `kirua`, exactly
- * as an outside consumer would, so it cannot reach into `src`:
- *
- *     grep -rn "from '@/" examples/   # must print nothing
- *
- * When kirua becomes a published package, the two alias entries are deleted and
- * no application code moves.
- */
+/** Shared Vite configuration for example apps using local kirua aliases. */
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';

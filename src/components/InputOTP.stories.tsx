@@ -11,13 +11,14 @@ import {
 import { Label } from './Label';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/InputOTP',
   component: InputOTP,
   parameters: {
     docs: {
       description: {
         component:
-          'One real input stretched invisibly over a row of painted boxes. Six separate inputs is the obvious build and it breaks paste, breaks autofill from an SMS, and announces six unlabelled fields.',
+          'A single input presented as separate character slots. It preserves native paste and autocomplete. Provide a visible label and configure the expected length and input mode.',
       },
     },
   },
@@ -105,12 +106,6 @@ export const States: Story = {
   ),
 };
 
-/**
- * One field, not six. Asserted three ways, because each one is a different way
- * the obvious build fails: a paste has to fill every box, the boxes must be
- * hidden from assistive technology so the code is not read twice, and the input
- * must keep its size so a password manager can still see it.
- */
 export const OneRealFieldUnderSixPaintedBoxes: Story = {
   render: () => <Code />,
   play: async ({ canvasElement }) => {
@@ -138,12 +133,6 @@ export const OneRealFieldUnderSixPaintedBoxes: Story = {
   },
 };
 
-/**
- * Two separate limits, and they apply in this order. The browser enforces
- * `maxLength` on the raw text *before* React sees it, so a paste of
- * "12ab3456" is cut to six characters first and only then stripped of letters —
- * which is why a single assertion on a mixed paste measures the wrong thing.
- */
 export const ItKeepsOnlyDigitsAndOnlyAsManyAsFit: Story = {
   render: () => <Code />,
   play: async ({ canvasElement }) => {

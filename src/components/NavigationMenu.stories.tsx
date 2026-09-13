@@ -10,6 +10,7 @@ import {
 } from './NavigationMenu';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/NavigationMenu',
   component: NavigationMenu,
   parameters: {
@@ -26,9 +27,10 @@ const meta = {
       config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] },
     },
     docs: {
+      story: { height: '400px' },
       description: {
         component:
-          'A site header whose items open a panel of links. It renders a `<nav>` full of anchors, not a menu of commands — using `Menubar` for site navigation traps the arrow keys and is the most common way to make a header unusable.',
+          'Site navigation with panels of links. Use clear link destinations and labels. Menubar and DropdownMenu are intended for commands.',
       },
     },
   },
@@ -85,11 +87,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * The panel holds links, not menu items. Asserted, because the two look
- * identical and behave differently for everybody who is not using a mouse: a
- * menu takes over the arrow keys, and a list of links must leave them alone.
- */
 export const ThePanelHoldsLinks: Story = {
   render: () => (
     <div className="flex h-72 justify-center pt-2">
@@ -122,11 +119,6 @@ export const ThePanelHoldsLinks: Story = {
   },
 };
 
-/**
- * The trigger says whether its panel is open, and the panel is measured into
- * the viewport rather than overflowing it. Both are invisible until they are
- * wrong: a viewport with no height clips every panel to nothing.
- */
 export const TheViewportTakesThePanelsHeight: Story = {
   render: () => (
     <div className="flex h-72 justify-center pt-2">

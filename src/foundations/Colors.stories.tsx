@@ -216,11 +216,6 @@ function ContrastTable() {
   );
 }
 
-/**
- * Every ratio on this page is measured in the browser from the tokens that ship,
- * using the WCAG 2.1 formula. Change a hex in tokens.primitives.css and these
- * numbers change with it.
- */
 export const ContrastAudit: Story = {
   render: () => (
     <div className="flex flex-col gap-6">

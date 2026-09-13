@@ -167,8 +167,6 @@ const Page = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col gap-10 bg-page p-8 text-fg">{children}</div>
 );
 
-/* ---------------------------------------------------------------- spacing */
-
 const SPACING_STEPS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24];
 
 export const Spacing: Story = {
@@ -198,8 +196,6 @@ export const Spacing: Story = {
     );
   },
 };
-
-/* ----------------------------------------------------------------- radius */
 
 const RADIUS_STEPS = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] as const;
 
@@ -271,8 +267,6 @@ export const Radius: Story = {
   },
 };
 
-/* -------------------------------------------------------------- elevation */
-
 const ELEVATIONS = ['resting', 'raised', 'overlay'] as const;
 
 export const Elevation: Story = {
@@ -320,8 +314,6 @@ export const Elevation: Story = {
     );
   },
 };
-
-/* ----------------------------------------------------------------- motion */
 
 const DURATIONS = ['fast', 'base', 'slow'] as const;
 const ANIMATIONS = [
@@ -383,8 +375,6 @@ export const Motion: Story = {
   },
 };
 
-/* ------------------------------------------------------------ breakpoints */
-
 const BREAKPOINTS = ['sm', 'md', 'lg', 'xl', '2xl'] as const;
 
 export const Breakpoints: Story = {
@@ -421,8 +411,6 @@ export const Breakpoints: Story = {
   },
 };
 
-/* ------------------------------------------------------------ icon sizing */
-
 const ICONS = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
 
 export const IconSizes: Story = {
@@ -457,8 +445,6 @@ export const IconSizes: Story = {
     );
   },
 };
-
-/* --------------------------------------------------------- stacking order */
 
 const LAYERS = [
   'base',

@@ -3,6 +3,7 @@ import { Badge } from './Badge';
 import { CheckIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Badge',
   component: Badge,
   args: { children: 'Published', status: 'neutral', size: 'md' },
@@ -18,7 +19,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'None of these states exist in the reference design — it is a single marketing screen with nothing to succeed or fail. They are invented, because a design system has to be able to say "this went wrong". Each badge carries a word as well as a colour, so the meaning survives greyscale and colour blindness.',
+          'A compact status label. Include a word that communicates the status, so meaning does not depend on colour. Use Chip for tags or richer inline content.',
       },
     },
   },
@@ -51,7 +52,6 @@ export const Statuses: Story = {
   ),
 };
 
-/** `sm` drops to the caption size and the smallest icon step — table cells, not headings. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">

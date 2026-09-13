@@ -3,13 +3,14 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Slider } from './Slider';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Slider',
   component: Slider,
   parameters: {
     docs: {
       description: {
         component:
-          'One thumb per value: `[20]` is a single value, `[20, 80]` is a range. The number of thumbs is the length of the array rather than a separate prop, so both cases are one component.',
+          'Choose one value or a range by moving thumbs. Pass one array entry per thumb and provide accessible names and units.',
       },
     },
   },
@@ -51,11 +52,6 @@ export const SingleAndRange: Story = {
   ),
 };
 
-/**
- * A range renders two thumbs, driven by the array rather than a prop, and each
- * is operable by keyboard. They are found by their own names: `role="slider"`
- * is on the thumb, so a name on the root would name nothing.
- */
 export const TwoThumbsAndBothTakeTheKeyboard: Story = {
   render: (args) => (
     <div className="w-80">
@@ -83,10 +79,6 @@ export const TwoThumbsAndBothTakeTheKeyboard: Story = {
   },
 };
 
-/**
- * The thumb is drawn at 20px and has to be grabbable at 44. Measured from the
- * pseudo-element's box rather than asserted as a class name.
- */
 export const TheTouchTargetIsBiggerThanTheCircle: Story = {
   render: (args) => (
     <div className="w-80">

@@ -1,36 +1,30 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
-import { TooltipProvider } from '../src/components';
+import { ThemedDocsContainer } from './ThemedDocsContainer';
+import { StorySurface } from './StorySurface';
+import { colourMode } from './theme';
+import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
+import './docs.css';
 
-/**
- * Surface context and colour mode are the two things every story needs to be
- * viewed under, because the whole token architecture exists to make components
- * survive both. They are exposed as toolbar globals rather than as per-story
- * props so any story can be flipped without editing it.
- */
-const withSurface: Decorator = (Story, context) => {
-  const { mode, surface } = context.globals as { mode: string; surface: string };
-  const surfaceClass =
-    surface === 'brand' ? 'ctx-brand bg-brand' : surface === 'inverse' ? 'ctx-inverse bg-page' : 'bg-page';
-
-  return (
-    <div className={mode === 'dark' ? 'dark' : undefined}>
-      <TooltipProvider delayDuration={200}>
-        <div className={`${surfaceClass} min-h-40 rounded-xl p-8 text-fg`}>
-          <Story />
-        </div>
-      </TooltipProvider>
-    </div>
-  );
-};
+const withSurface: Decorator = (Story, context) => (
+  <StorySurface
+    mode={colourMode(context.globals)}
+    surface={context.globals['surface']}
+    bare={context.parameters.surface === 'none'}
+    fixedMode={context.storyGlobals?.['mode'] !== undefined}
+    fixedSurface={context.storyGlobals?.['surface'] !== undefined}
+  >
+    <Story />
+  </StorySurface>
+);
 
 const preview: Preview = {
   decorators: [withSurface],
+  initialGlobals: { mode: 'light', surface: 'page' },
   globalTypes: {
     mode: {
       description: 'Colour mode',
-      defaultValue: 'light',
       toolbar: {
         title: 'Mode',
         icon: 'circlehollow',
@@ -43,7 +37,6 @@ const preview: Preview = {
     },
     surface: {
       description: 'Surface context the component is rendered on',
-      defaultValue: 'page',
       toolbar: {
         title: 'Surface',
         icon: 'paintbrush',
@@ -58,16 +51,12 @@ const preview: Preview = {
   },
   parameters: {
     layout: 'fullscreen',
-    /**
-     * Reading order, not alphabetical order. A visitor should meet the system
-     * before its parts, and the foundations run from colour outwards rather
-     * than from C to T. Anything unlisted sorts after, alphabetically.
-     */
     options: {
       storySort: {
         order: [
           'Introduction',
           'Getting started',
+          'Design direction',
           'Foundations',
           ['Colour', 'Typography', 'Scales', 'Surface contexts', 'Stacking', 'Dark mode'],
           'Components',
@@ -76,23 +65,25 @@ const preview: Preview = {
         ],
       },
     },
-    /**
-     * `@storybook/addon-vitest` resets the viewport before every story, so a
-     * `viewport` on a Vitest browser *instance* never survives — the addon
-     * overwrites it with its own 1200x900 default. The supported route is a
-     * Storybook global, which is why `vite.config.ts` defines one project per
-     * width rather than one project with three instances.
-     */
+    // The Vitest addon reads viewport globals from each test project.
     viewport: { options: KIRUA_VIEWPORTS },
+    docs: {
+      // Isolate IDs and portals when several stories share a docs page.
+      page: DocsPage,
+      container: ThemedDocsContainer,
+      story: { inline: false, height: '240px' },
+      source: { excludeDecorators: true },
+      controls: { sort: 'requiredFirst' },
+      toc: true,
+    },
     controls: {
+      sort: 'requiredFirst',
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
     },
     a11y: {
-      // Contrast is the entire reason this system deviates from its reference
-      // design, so a11y violations should be loud, not advisory.
       test: 'error',
     },
   },

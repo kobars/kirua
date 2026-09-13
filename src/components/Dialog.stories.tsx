@@ -12,13 +12,15 @@ import {
 } from './Dialog';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Dialog',
   component: Dialog,
   parameters: {
     docs: {
+      story: { height: '480px' },
       description: {
         component:
-          'Built on Radix Primitives. Radix supplies the behaviour that is easy to get wrong and invisible when it is wrong: focus trapping, focus return to the trigger on close, marking the rest of the page inert, Escape to dismiss, and background scroll locking. This file adds appearance only — which is why the dialog can look nothing like a default component library and still behave correctly. Try it with the keyboard: Tab cycles inside the panel and never escapes it.',
+          'A modal panel for a focused task. Supply a title and description, and use a visible trigger. Radix handles focus trapping, Escape dismissal and focus return.',
       },
     },
   },
@@ -54,15 +56,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * The close button is the one piece of text this component supplies itself, so
- * `closeLabel` exists to replace it. Everything else was already a child.
- *
- * The play function is the proof, not the rendering: it opens the dialog and
- * finds the button by its accessible name, which is the same lookup a screen
- * reader makes. If the label stopped reaching the accessibility tree, this
- * story would fail rather than look correct.
- */
 export const TranslatedCloseLabel: Story = {
   render: () => (
     <Dialog>
@@ -107,20 +100,6 @@ export const Destructive: Story = {
   ),
 };
 
-/**
- * **Focus trapping and focus restore, driven with the keyboard.**
- *
- * Both are Radix's job, and that is the right division — but "Radix does it"
- * was an assumption this harness never tested. A missing `Portal`, a swallowed
- * `onOpenChange`, a wrapper that stops the panel being the focus scope: each
- * breaks the trap silently while the dialog still looks and renders correctly,
- * and no axe rule and no screenshot can see it.
- *
- * The failure this catches is severe and specific. A keyboard-only user who
- * tabs out of an open modal lands on the page behind it, which is marked inert
- * — so focus goes somewhere they cannot see and cannot act on, with no way back
- * except a mouse.
- */
 export const TrapsAndRestoresFocus: Story = {
   ...Default,
   play: async ({ canvasElement }) => {

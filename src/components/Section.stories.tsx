@@ -6,6 +6,7 @@ import { Section } from './Section';
 import { Text } from './Text';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Section',
   component: Section,
   args: { gap: 'md' },
@@ -14,7 +15,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'One block of a page. The gap here is inside a block; the gap between blocks belongs to the Container — a distinction the hand-written shells did not draw.',
+          'A content block with shared internal spacing. Place its heading inside the section and use Container for the spacing between page sections.',
       },
     },
   },
@@ -49,11 +50,6 @@ export const Gaps: Story = {
   ),
 };
 
-/**
- * A named section is announced as a region; an unnamed one is not a landmark at
- * all. Both are correct, and which one you get is decided by whether you gave
- * it a name — so it is asserted rather than assumed.
- */
 export const NamedBecomesALandmark: Story = {
   render: (args) => (
     <Container width="3xl">

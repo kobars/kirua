@@ -158,7 +158,16 @@ export default defineConfig({
   // dependency-optimizer pass: discovering one after a browser starts reloads
   // the test mid-run, which can leave React with two dispatchers and reports
   // the interrupted files as "0 tests".
-  optimizeDeps: { include: ['react-dom/server', '@storybook/react-vite', 'storybook/test'] },
+  optimizeDeps: {
+    include: [
+      'react-dom/server',
+      '@storybook/react-vite',
+      'storybook/test',
+      '@storybook/addon-docs/blocks',
+      'storybook/internal/core-events',
+      'storybook/theming',
+    ],
+  },
   build: { target: BUILD_TARGET },
   resolve: {
     alias: {

@@ -11,13 +11,14 @@ import {
 } from './Pagination';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Pagination',
   component: Pagination,
   parameters: {
     docs: {
       description: {
         component:
-          'Links, not buttons. A page of results has a URL, so it can be opened in a new tab, bookmarked, shared and reached with Back. A button that calls a handler throws all of that away and looks identical.',
+          'Navigation between pages of results. Provide real href values for bookmarking and browser history, and mark the current page.',
       },
     },
   },
@@ -76,10 +77,6 @@ export const IconsOnly: Story = {
   ),
 };
 
-/**
- * Every control is a real link, the current page is announced as such, and the
- * previous and next controls meet the 44px touch target.
- */
 export const LinksWithRealDestinations: Story = {
   render: (args) => (
     <Pagination {...args}>

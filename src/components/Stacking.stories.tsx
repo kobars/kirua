@@ -19,18 +19,14 @@ import { GridIcon, SearchIcon } from './icons';
  * on top — the named stacking layers do.
  */
 const meta = {
+  tags: ['autodocs'],
   title: 'Foundations/Stacking',
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: [
-          'Every overlay names a layer from the stacking scale instead of a number: `z-scrim` for the dialog backdrop, `z-modal` for the dialog itself, `z-popover` for a menu, `z-tooltip` for a hint.',
-          '',
-          '**The order is the interesting part.** A tooltip sits above a popover because a tooltip can be attached to a menu item, and a hint hidden behind the menu it describes is useless. A dialog sits above its own scrim, which is the only pairing that is obvious. And `ornament` sits above `raised`, because a `CornerGlint` has to stay over artwork that overhangs the panel edge — that artwork is content.',
-          '',
-          'These stories are here to fail. A tooltip opened inside a dialog, and a menu opened inside a dialog, are the two combinations where a wrong layer is invisible in review and obvious to a user.',
-        ].join('\n'),
+        component:
+          'Explore overlays that appear together: a dialog with a menu, a dialog with a tooltip, and a custom portal container. Named stacking layers determine which panel appears above another. Open each example and use the keyboard to check focus and dismissal.',
       },
     },
   },
@@ -128,10 +124,6 @@ export const MenuInsideADialog: Story = {
   },
 };
 
-/**
- * The dialog's own backdrop. Obvious enough that nobody checks it, and it is one
- * transposed pair of names away from a dialog nobody can click.
- */
 export const ADialogIsAboveItsOwnScrim: Story = {
   render: () => (
     <Dialog defaultOpen>
@@ -192,20 +184,6 @@ function MenuInAChosenContainer() {
   );
 }
 
-/**
- * An overlay is portalled to the end of `<body>` so no ancestor's
- * `overflow: hidden` can clip it. `container` sends it somewhere else — into a
- * shadow root, into a container query, or into somebody else's modal.
- *
- * It is a prop on each content component rather than a provider, because a
- * React context needs a client component and this system ships no
- * `"use client"` of its own. A consumer who wants one container for their whole
- * application writes their own client-side wrapper around these three.
- *
- * **The container should be an ancestor of the trigger, or `document.body`.**
- * Radix hides everything outside the container while a modal overlay is open,
- * so a container beside the trigger hides the trigger.
- */
 export const AConsumerCanChooseTheContainer: Story = {
   render: () => <MenuInAChosenContainer />,
   play: async ({ canvasElement }) => {

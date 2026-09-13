@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { Separator } from './Separator';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Separator',
   component: Separator,
   args: { orientation: 'horizontal', decorative: true },
@@ -14,7 +15,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A rule between two things. `decorative` decides whether assistive technology hears about it, and it defaults to true because most rules are drawn, not meant.',
+          'A visual divider between content groups. Decorative is the default; use non-decorative semantics when the division carries meaning.',
       },
     },
   },
@@ -45,10 +46,6 @@ export const Vertical: Story = {
   ),
 };
 
-/**
- * The whole reason the prop exists. A decorative rule is absent from the
- * accessibility tree; a meaningful one is a `separator` a reader can find.
- */
 export const DecorativeIsNotAnnounced: Story = {
   render: (args) => (
     <div className="max-w-sm">

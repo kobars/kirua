@@ -3,13 +3,14 @@ import { expect, waitFor, within } from 'storybook/test';
 import { ResizableGroup, ResizableHandle, ResizablePanel } from './Resizable';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Resizable',
   component: ResizableGroup,
   parameters: {
     docs: {
       description: {
         component:
-          '`orientation` names the axis the panels sit on, so a horizontal group has a vertical bar. Sizes are per panel, and the unit follows the type: a number is pixels, a bare numeric string is a percentage.',
+          'Adjustable panels separated by a draggable handle. orientation describes the axis of the panels. Numeric sizes are pixels; numeric strings are percentages.',
       },
     },
   },
@@ -76,12 +77,6 @@ export const ThreePanels: Story = {
   ),
 };
 
-/**
- * The bar is a real `separator` with a value, it takes focus, and its own axis
- * is the opposite of the group's. That last part is the thing this wrapper
- * relies on to be one component instead of two, so it is measured rather than
- * assumed.
- */
 export const TheBarIsAFocusableSeparator: Story = {
   render: () => (
     <div className="h-64 w-full overflow-hidden rounded-lg border border-line-subtle bg-raised">

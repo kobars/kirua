@@ -4,6 +4,7 @@ import { CornerGlint } from './CornerGlint';
 import { SpotlightContent, SpotlightPanel } from './SpotlightPanel';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/CornerGlint',
   component: CornerGlint,
   args: {
@@ -29,17 +30,8 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: [
-          'The corner ornament from the reference design: a flat, solid blade tucked into a rounded corner, thickest partway round the turn and tapering to a sharp point at each end.',
-          '',
-          '**It is flat by design.** One solid fill, one colour, hard edges, no gradient. A soft gradient fade would read as a bevel highlight — a 3D lighting cue, wrong for a system whose character is flat 2D anime.',
-          '',
-          '**Colour is a rule, not a value.** Measured from Figma, the blade is always a lighter tint of the surface beneath it: `#6CB5FF` on the `#0A84FF` panel, `#555555` on the black card. Drawing it in translucent white composites to *exactly* those two values — 40% white over the blue, 33.3% over the black — so one token is correct on every surface, including ones added later.',
-          '',
-          "**It is inset, not welded to the edge.** In Figma the card's corner arc is centred at `(872.41, 753)` and the glint's arc at `(871.25, 752.61)` — the same point. The glint is *concentric* with the corner and one radius smaller: 22 − 14 = an 8px inset, so a band of surface shows between the border and the blade.",
-          '',
-          "**Geometry, all from the Figma paths.** Outer edge = the inset arc plus two straight runs tangent to it. Inner edge = a second arc joined to each tip by that tip's tangent line, which is what tapers the ends to true points. Tails are asymmetric — about 1.57× the arc radius one way, 0.29× the other. At the reference's own `radius=22, inset=8` this reproduces the Figma asset's 36 × 18 bounding box exactly.",
-        ].join('\n'),
+        component:
+          'A flat corner accent for the base style. Use it sparingly on brand or inverse panels, where its translucent fill contrasts with the surface. Prefer Card glint or SpotlightPanel for automatic placement. Direct use requires radius and inset values that match the containing shape.',
       },
     },
   },
@@ -48,7 +40,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Drag `weight`, `sweep` and `bias` to see how the blade is constructed. */
 export const Playground: Story = {
   render: (args) => (
     <div className="ctx-inverse relative size-72 rounded-xl bg-page">
@@ -76,10 +67,6 @@ export const AllFourCorners: Story = {
   },
 };
 
-/**
- * The blade is drawn on whatever radius it is given, so it stays flush on every
- * corner size. Card passes its own radius variant through automatically.
- */
 export const FollowsTheRadius: Story = {
   render: () => (
     <div className="flex flex-wrap items-end gap-6">
@@ -102,7 +89,6 @@ export const FollowsTheRadius: Story = {
   ),
 };
 
-/** How it is actually used: one blade per card, on the corner facing the panel. */
 export const InContext: Story = {
   render: () => (
     <div className="flex flex-col gap-6">

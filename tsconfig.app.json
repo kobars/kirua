@@ -40,7 +40,7 @@
   /* `vitest.shims.d.ts` is named explicitly because it sits outside `src` and
    * carries the browser-matcher type references the test suite needs. It was
    * present but unreachable until this line existed. */
-  "include": ["src", "examples", "vitest.shims.d.ts"],
+  "include": ["src", "examples", ".storybook", "vitest.shims.d.ts"],
   /* The example Vite configs belong to the node project: they import `vite` and
    * run under Node. Listed in both, they would compile twice under different
    * `module` settings. */

@@ -16,13 +16,15 @@ import {
 import { Item, ItemContent, ItemTitle } from './Item';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/ContextMenu',
   component: ContextMenu,
   parameters: {
     docs: {
+      story: { height: '400px' },
       description: {
         component:
-          'The right-click menu. Every command in it must also exist somewhere a Tab key can reach — a right-click has no keyboard equivalent on most platforms and none at all on a touch screen.',
+          'Actions opened from a contextual gesture such as right-click. Also provide a visible, keyboard-accessible route to essential actions for touch and keyboard users.',
       },
     },
   },
@@ -91,11 +93,6 @@ export const WithChoices: Story = {
   },
 };
 
-/**
- * Opened, so the axe run and the roles are actually checked. `contextmenu` is
- * dispatched directly: `userEvent` has no right-click helper that Radix's own
- * listener recognises.
- */
 export const OpensAtThePointerAndPassesItsAccessibilityRun: Story = {
   render: () => (
     <ContextMenu>

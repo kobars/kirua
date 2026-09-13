@@ -4,6 +4,7 @@ import { DescriptionDetails, DescriptionList, DescriptionTerm } from './Descript
 import { Kbd } from './Kbd';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/DescriptionList',
   component: DescriptionList,
   args: { layout: 'split', gap: 'md' },
@@ -15,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Term and value as a real `<dl>`. The pairs are direct children of the list, which is what puts every value in one grid column — the five hand-written versions each wrapped a pair in its own flex row, so every row aligned itself and no two agreed.',
+          'Aligned terms and values using native description-list semantics. Use it for order details, profile facts or summary metadata.',
       },
     },
   },
@@ -71,10 +72,6 @@ export const Gaps: Story = {
   ),
 };
 
-/**
- * A value does not have to be text. Here it is a chord of key caps, which is
- * why `numeric` is a prop rather than something the component decides.
- */
 export const AValueCanBeAnything: Story = {
   render: (args) => (
     <div className="max-w-80">
@@ -91,11 +88,6 @@ export const AValueCanBeAnything: Story = {
   ),
 };
 
-/**
- * The claim the component exists to keep. Every value starts at the same x,
- * which a per-row flex container cannot promise and the five hand-written
- * lists did not.
- */
 export const TheValueColumnLinesUp: Story = {
   render: (args) => (
     <div className="max-w-80">
