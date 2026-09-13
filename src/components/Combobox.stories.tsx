@@ -1,15 +1,20 @@
+/* oxlint-disable import/default, import/no-duplicates -- Vite ?raw imports load source text separately from the executable module. */
+import { CityCombobox } from '../patterns/examples/CityCombobox';
+import CityComboboxSource from '../patterns/examples/CityCombobox.tsx?raw';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from './Combobox';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Combobox',
   component: Combobox,
   parameters: {
     docs: {
+      story: { height: '400px' },
       description: {
         component:
-          'kirua supplies the parts and the ARIA; the consumer supplies the filtering, because a query and a highlight are application state. The one rule that matters is aria-activedescendant on the INPUT — focus never leaves it, so without that a screen reader announces nothing as the arrows move.',
+          'A searchable choice built from an input and listbox. The application supplies filtering, open state, keyboard navigation and selection. Keep focus in the input and point aria-activedescendant at the highlighted option.',
       },
     },
   },
@@ -26,36 +31,48 @@ const cities = [
 ] as const;
 
 export const Playground: Story = {
-  render: (args) => (
-    <div className="h-80 w-72">
-      <Combobox {...args}>
-        <ComboboxInput
-          aria-expanded
-          aria-controls="city-list"
-          aria-activedescendant="city-jkt"
-          aria-label="City"
-          defaultValue="Ja"
-        />
-        <ComboboxList id="city-list" aria-label="City">
-          {cities.map(([id, name]) => (
-            <ComboboxItem
-              key={id}
-              id={`city-${id}`}
-              isActive={id === 'jkt'}
-              aria-selected={id === 'jkt'}
-            >
-              {name}
-            </ComboboxItem>
-          ))}
-        </ComboboxList>
-      </Combobox>
-    </div>
-  ),
+  name: 'Search and select',
+  parameters: {
+    docs: {
+      source: {
+        code: CityComboboxSource.replace("from '@/components'", "from 'kirua'"),
+        language: 'tsx',
+      },
+      description: {
+        story:
+          'Type to filter cities. Use Arrow Up/Down and Enter to select, Escape to dismiss, or click an option. Focus stays on the input. The example owns all state and keyboard handlers.',
+      },
+    },
+  },
+  render: (args) => <CityCombobox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('combobox', { name: 'City' });
+    await userEvent.type(input, 'ja');
+    await expect(canvas.getAllByRole('option')).toHaveLength(1);
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await expect(input).toHaveValue('Jakarta');
+    await expect(input).toHaveAttribute('aria-expanded', 'false');
+    await expect(input).toHaveFocus();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'zzz');
+    await expect(canvas.getByText('No city matches. Try another name.')).toBeVisible();
+    await expect(input).not.toHaveAttribute('aria-activedescendant');
+    await userEvent.keyboard('{Escape}');
+    await expect(
+      canvas.queryByText('No city matches. Try another name.'),
+    ).not.toBeInTheDocument();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'ban');
+    await userEvent.click(canvas.getByRole('option', { name: 'Bandung' }));
+    await expect(input).toHaveValue('Bandung');
+    await expect(input).toHaveFocus();
+  },
 };
 
 export const NoMatches: Story = {
   render: (args) => (
-    <div className="h-52 w-72">
+    <div className="h-52 w-full max-w-72">
       <Combobox {...args}>
         <ComboboxInput aria-expanded={false} aria-label="City" defaultValue="Zzz" />
         {/* INSTEAD OF the list, not inside it: a role="listbox" must contain
@@ -66,10 +83,10 @@ export const NoMatches: Story = {
   ),
 };
 
-/** The whole ARIA contract, asserted in one place. */
 export const TheAriaWiring: Story = {
+  name: 'Highlight and selection',
   render: (args) => (
-    <div className="h-80 w-72">
+    <div className="h-80 w-full max-w-72">
       <Combobox {...args}>
         <ComboboxInput
           aria-expanded
