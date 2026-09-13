@@ -4,24 +4,12 @@ import { cn } from '@/lib/cn';
 import { textVariants } from './Text.variants';
 
 export interface TextProps extends ComponentProps<'p'>, VariantProps<typeof textVariants> {
-  /**
-   * Renders a `<span>` instead of a `<p>`, for text inside a sentence or a
-   * table cell. Not `asChild`: there is no third element a paragraph might
-   * legitimately become, and a boolean cannot be got wrong.
-   */
+  /** Render a span for inline text instead of a paragraph. */
   inline?: boolean;
 }
 
 /**
- * Body copy, and the one place the type scale's body steps are applied.
- *
- * Anything that is not a heading is this: a paragraph, a caption under a chart,
- * the second line of a table cell. `Heading` is the other half.
- *
- * `Text` is also the name of a DOM global, so forgetting the import does not
- * produce "Cannot find name" — TypeScript resolves the global instead and
- * reports that a `Text` node is not a valid JSX element type. Recognise that
- * message as a missing import; it cost a minute the first time.
+ * Body copy with independent size and tone.
  *
  * @example <Text size="lg">Aozora gives you one place to design a gallery.</Text>
  *
@@ -37,16 +25,7 @@ export function Text({ inline = false, size, tone, className, ...props }: TextPr
 }
 
 /**
- * The line above a heading: a category, a step number, a section name.
- *
- * Its own component rather than a third axis on `Text`, because it is a role
- * and not a size — every eyebrow in the system is caption-size capitals, and
- * offering `size` beside `uppercase` would let someone build a display-size
- * one. `CardEyebrow` is the same decision inside a card.
- *
- * `tracking-wider` is doing real work. Capitals lose the ascender and descender
- * shapes a reader matches whole words on, and the extra spacing is what gives
- * the word its outline back; the scale step exists for this case.
+ * A short caption above a heading, such as a category or section name.
  *
  * @example <Eyebrow>Our story</Eyebrow>
  */
