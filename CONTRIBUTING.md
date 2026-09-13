@@ -43,7 +43,7 @@ Put instructions for users in the visible docs instead of only above a story exp
 
 ```bash
 pnpm check
-pnpm build-storybook
+pnpm check:storybook
 pnpm build
 ```
 
@@ -53,9 +53,10 @@ To iterate on a story:
 pnpm exec vitest --run --project storybook:lg src/components/Field.stories.tsx
 ```
 
-Also check changed stories at `storybook:below-md` and `storybook:md`. Review the
-built docs at narrow and wide widths. Test theme/surface controls on a story and
-open an overlay to inspect its portal. Changes to example applications also need
+Also check changed stories at `storybook:below-md` and `storybook:md`. The Storybook
+check builds the docs and exercises real toolbar mode changes, navigation, isolated
+previews and open portals. Review the built docs at narrow and wide widths. Test
+theme/surface controls on a story and open an overlay to inspect its portal. Changes to example applications also need
 `pnpm check:examples`.
 
 Formatting checks include Storybook configuration, MDX and these public Markdown

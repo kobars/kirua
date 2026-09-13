@@ -164,6 +164,8 @@ export default defineConfig({
       '@storybook/react-vite',
       'storybook/test',
       '@storybook/addon-docs/blocks',
+      'storybook/internal/core-events',
+      'storybook/theming',
     ],
   },
   build: { target: BUILD_TARGET },
