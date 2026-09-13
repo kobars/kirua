@@ -4,13 +4,14 @@ import { Label } from './Label';
 import { Switch } from './Switch';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Switch',
   component: Switch,
   parameters: {
     docs: {
       description: {
         component:
-          'A setting that applies the moment it moves — which is what makes it different from a checkbox, and why it reports role="switch" and reads as on/off rather than checked/unchecked.',
+          'A labelled setting that takes effect immediately. Use Checkbox for a choice submitted as part of a form.',
       },
     },
   },
@@ -48,13 +49,6 @@ export const States: Story = {
   ),
 };
 
-/**
- * The control is a `switch`, and the thumb travels when it is turned on. The
- * travel is measured rather than asserted as a class name, because the rule
- * lives in CSS keyed on `data-slot`.
- *
- * `waitFor` because the travel is a 120ms transition.
- */
 export const ItIsASwitchAndTheThumbTravels: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">

@@ -4,6 +4,7 @@ import { Meter } from './Meter';
 import { Text } from './Text';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Meter',
   component: Meter,
   args: { value: 86, min: 0, max: 120, label: 'Bed occupancy', size: 'md' },
@@ -15,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A measurement, not a task. `Progress` carries `role="progressbar"`, which means how far along a task is — so using it for bed occupancy or a stock level tells a screen reader something untrue.',
+          'A measurement within a known range, such as storage or stock. Provide a label and meaningful value text. Use Progress for task completion.',
       },
     },
   },
@@ -45,10 +46,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * Normal is the brand fill and not green. Green means "succeeded" everywhere
- * else in this system, and a ward at 60% has not succeeded at anything.
- */
 export const Thresholds: Story = {
   render: (args) => (
     <div className="grid w-80 gap-4">
@@ -71,11 +68,6 @@ export const Thresholds: Story = {
   ),
 };
 
-/**
- * The two claims a bar cannot make on its own: what it is a measurement *of*,
- * and what its number means. `aria-valuetext` is why "86" is announced as
- * "86 of 120 beds" rather than as a figure with no unit.
- */
 export const AnnouncedAsAMeasurement: Story = {
   args: { valueText: '86 of 120 beds' },
   render: (args) => (
@@ -94,11 +86,6 @@ export const AnnouncedAsAMeasurement: Story = {
   },
 };
 
-/**
- * The threshold decides the fill, and the fill is a real colour on the page.
- * Asserted because a threshold that silently never fires looks exactly like a
- * value that never crossed it.
- */
 export const ThresholdChangesTheFill: Story = {
   render: (args) => (
     <div className="grid w-80 gap-4">
@@ -123,10 +110,6 @@ export const ThresholdChangesTheFill: Story = {
   },
 };
 
-/**
- * The width is the value, so a bar that stops reporting is a bar that lies
- * quietly. 86 of 120 is 71.67%.
- */
 export const WidthIsTheValue: Story = {
   render: (args) => (
     <div className="w-80">

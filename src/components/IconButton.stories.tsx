@@ -3,6 +3,7 @@ import { IconButton } from './IconButton';
 import { CloseIcon, GridIcon, HeartIcon, SearchIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/IconButton',
   component: IconButton,
   args: {
@@ -21,7 +22,7 @@ const meta = {
     docs: {
       description: {
         component:
-          '`aria-label` is a required prop, not an optional one. An icon-only control has no text for a screen reader to announce, so without it the control is simply unusable without sight. Making it required in TypeScript is the cheapest possible enforcement — the build fails rather than the user.',
+          'An action represented by an icon. aria-label is required to name the action. A tooltip may add a hint, but the control must already have an accessible name.',
       },
     },
   },

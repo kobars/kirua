@@ -12,21 +12,11 @@ import {
 } from '@/components';
 import { contrastRatio, formatRatio, grade, resolveColor, type Rgb } from '@/lib/contrast';
 
-/**
- * The surface contexts are arguably the most surprising idea in this system and
- * they had no page at all.
- *
- * A surface declares its context by class and re-points the semantic variables
- * for its whole subtree. So one `<Button variant="primary">` renders as a blue
- * pill on a page and a white pill on the blue panel — same component, same
- * props, no override and no `inverted` prop. `@theme inline` is what makes that
- * work at runtime: it compiles utilities to literal `var()` references rather
- * than to values frozen at build time.
- */
 const meta = {
   title: 'Foundations/Surface contexts',
   parameters: {
     layout: 'fullscreen',
+    surface: 'none',
     // Token specimens, as on the other foundations pages: the automated rule
     // flags the swatch captions rather than anything the system ships.
     a11y: { test: 'off' },
@@ -40,26 +30,24 @@ const CONTEXTS = [
   {
     name: 'page',
     className: 'bg-page',
-    note: 'The bare :root palette. Light, and the default.',
+    note: 'Default page surface in light mode.',
   },
   {
     name: 'ctx-brand',
     className: 'ctx-brand bg-brand',
-    note: 'Set by SpotlightPanel. text-secondary is IDENTICAL to text-primary here — any transparency drops white under AA on blue-600, so hierarchy comes from size and weight.',
+    note: 'Brand panels use high-contrast text. Build hierarchy with size and weight instead of reducing text opacity.',
   },
   {
     name: 'ctx-inverse',
     className: 'ctx-inverse bg-page',
-    note: 'Set by NavBar, dark Card, dark Chip and Tooltip. Use bg-page for black inside it, never bg-inverse — bg-inverse flips to white under .dark.',
+    note: 'An inverse panel, used by the dark Card and NavBar. Pair this context with bg-page to retain its dark fill in both modes.',
   },
   {
     name: 'dark',
     className: 'dark bg-page',
-    note: 'One block of re-pointed variables and zero component edits. Invented — the reference has no dark mode. dark: variants are for layout and opacity only.',
+    note: 'Dark mode changes the document palette. The same components use the resulting colour roles.',
   },
 ] as const;
-
-/* ------------------------------------------------- the same components, four times */
 
 function Specimen() {
   return (
@@ -98,7 +86,7 @@ export const TheFourSurfaces: Story = {
           </div>
           <Specimen />
           {context.name === 'ctx-brand' ? (
-            <p className="max-w-2xl font-text text-caption text-fg-muted">
+            <p className="max-w-2xl font-text text-caption text-fg-secondary">
               <strong>Context check:</strong> the brand <code>Chip</code> keeps its blue fill
               here, but its semantic border resolves to the context&apos;s translucent white
               line. The boundary stays visible without re-pointing{' '}
@@ -111,8 +99,6 @@ export const TheFourSurfaces: Story = {
     </div>
   ),
 };
-
-/* ------------------------------------------------------------- the field family */
 
 /**
  * Reads a token *inside* a context and grades it. Resolving from
@@ -188,7 +174,7 @@ function FieldRow({
   const measured = useContextRatio(contextClass, foreground, background);
 
   return (
-    <div className="flex items-center gap-4 py-1.5">
+    <div className="flex flex-wrap items-center gap-4 py-1.5">
       <span className="w-32 shrink-0 font-text text-caption text-fg">{label}</span>
       <span
         className="flex h-9 w-40 shrink-0 items-center rounded-sm border px-3 font-text text-caption"
@@ -206,17 +192,11 @@ function FieldRow({
       <code className="w-20 shrink-0 font-mono text-caption text-fg-secondary">
         {measured?.level ?? ''}
       </code>
-      <span className="font-text text-caption text-fg-muted">{requirement}</span>
+      <span className="font-text text-caption text-fg-secondary">{requirement}</span>
     </div>
   );
 }
 
-/**
- * The field family is the newest one and the only one designed *after* the
- * contexts existed, so it is the clearest demonstration of what a context
- * actually costs to support: twelve tokens, re-pointed four times, every pair
- * measured rather than assumed.
- */
 export const FieldTokens: Story = {
   render: () => (
     <div className="flex flex-col">
@@ -235,9 +215,9 @@ export const FieldTokens: Story = {
               />
             ))}
           </div>
-          <p className="max-w-2xl font-text text-caption text-fg-muted">
-            Disabled is exempt: WCAG 1.4.3 excludes an inactive component, and a disabled field
-            that met 4.5:1 would look enabled.
+          <p className="max-w-2xl font-text text-caption text-fg-secondary">
+            Inactive controls are exempt from the text contrast requirement. Keep their labels
+            understandable and distinguish the disabled state beyond colour where possible.
           </p>
         </section>
       ))}

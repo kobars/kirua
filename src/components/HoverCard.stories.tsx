@@ -4,13 +4,14 @@ import { Avatar, AvatarFallback } from './Avatar';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './HoverCard';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/HoverCard',
   component: HoverCard,
   parameters: {
     docs: {
       description: {
         component:
-          'A pointer-only shortcut. It never opens on focus and never on touch, so everything inside it must exist somewhere else — the trigger link is the route everyone else takes.',
+          'Supplemental information shown on pointer hover. Keep essential content reachable through the trigger link because hover is unavailable to some users and devices.',
       },
     },
   },
@@ -68,10 +69,6 @@ export const Open: Story = {
   ),
 };
 
-/**
- * The trigger has to stand on its own: for a keyboard or touch user it is the
- * only thing that exists. Asserted as a real link with a real destination.
- */
 export const TheTriggerWorksWithoutTheCard: Story = {
   render: (args) => (
     <HoverCard {...args}>

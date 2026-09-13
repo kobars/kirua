@@ -4,6 +4,7 @@ import { BookmarkIcon, HeartIcon } from './icons';
 import { Toggle } from './Toggle';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Toggle',
   component: Toggle,
   args: { variant: 'plain', size: 'md' },
@@ -15,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A button that stays pressed. The difference from a Button is aria-pressed — a bold control that only changes colour tells a sighted reader its state and a screen-reader user nothing.',
+          'A button with a persistent pressed state. Use it for choices such as bold text or a saved filter, with a label that remains clear in both states.',
       },
     },
   },
@@ -62,10 +63,6 @@ export const VariantsAndSizes: Story = {
   ),
 };
 
-/**
- * `aria-pressed` is the assertion. A test on the class list would pass with the
- * ARIA removed, which is precisely the defect this component exists to prevent.
- */
 export const PressedIsAnnounced: Story = {
   render: (args) => (
     <Toggle {...args} aria-label="Like">

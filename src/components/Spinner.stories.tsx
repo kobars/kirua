@@ -4,6 +4,7 @@ import { Button } from './Button';
 import { Spinner } from './Spinner';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Spinner',
   component: Spinner,
   args: { label: 'Loading' },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Follows `--icon-size`, so inside a Button it is already the size of the icon it replaces and the control does not change width while it works.',
+          'A compact loading indicator sized to the surrounding icon scale. Supply loading text through the containing control or status region.',
       },
     },
   },
@@ -38,11 +39,6 @@ export const InsideAControl: Story = {
   ),
 };
 
-/**
- * The size claim, measured rather than described: the spinner in the large
- * button is drawn larger than the one in the small button, because both read
- * `--icon-size` from the control around them.
- */
 export const ItTakesTheSizeOfItsControl: Story = {
   render: (args) => (
     <div className="flex items-center gap-4">

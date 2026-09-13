@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { AspectRatio } from './AspectRatio';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/AspectRatio',
   component: AspectRatio,
   args: { ratio: 16 / 9 },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Reserves the box before the content arrives. `ratio` is width divided by height, so 16:9 is written `16 / 9`.',
+          'Reserve space for media before it loads. Set ratio to width divided by height, such as 16 / 9, and provide appropriate alternative text on the media itself.',
       },
     },
   },
@@ -52,7 +53,6 @@ export const Ratios: Story = {
   ),
 };
 
-/** The box has height with nothing inside it. */
 export const ReservesHeightBeforeContentLoads: Story = {
   render: (args) => (
     <div className="w-80">

@@ -8,6 +8,7 @@ import { SpotlightContent, SpotlightMedia, SpotlightPanel } from './SpotlightPan
 import { ArrowRightIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/SpotlightPanel',
   component: SpotlightPanel,
   args: { tone: 'default', padding: 'xl', mediaWidth: '34%' },
@@ -18,9 +19,10 @@ const meta = {
   },
   parameters: {
     docs: {
+      story: { height: '680px' },
       description: {
         component:
-          'The signature layout of the reference design: a rounded brand panel whose artwork deliberately breaks out past its own edges. The panel does not clip its children, and setting `mediaWidth` both sizes the artwork and reserves matching space on the text side, so a long headline can never run underneath it.',
+          'An expressive hero panel with space reserved for overhanging artwork. Set mediaWidth to balance text and illustration. Use a quiet Card for dense application content.',
       },
     },
   },
@@ -67,13 +69,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * `tone` is the contrast decision, made explicit.
- *
- * `default` is blue-600 and is safe behind body copy at 4.67:1. `vivid` is
- * blue-500 — the exact colour measured in Figma — and is safe behind display
- * type only, at 3.65:1. Turn on the a11y addon to see the difference flagged.
- */
 export const Tones: Story = {
   parameters: {
     // The `vivid` panel deliberately shows body copy on blue-500 so the failure
@@ -106,11 +101,6 @@ export const Tones: Story = {
   ),
 };
 
-/**
- * Three padding steps, each with a smaller pair below `md`. The reference's
- * panel is the `xl` step; `md` exists for a panel that sits inside another
- * layout rather than carrying the page.
- */
 export const Paddings: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
@@ -128,12 +118,6 @@ export const Paddings: Story = {
   ),
 };
 
-/**
- * The artwork is decorative and there is no room for it beside the text on a
- * phone, so `SpotlightMedia` is `hidden md:flex`. That is a real switch, not a
- * reflow: below `md` the element is not laid out at all, which is also why it
- * cannot be relied on to carry meaning.
- */
 export const HidesItsArtworkBelowMd: Story = {
   ...Playground,
   play: async ({ canvasElement }) => {

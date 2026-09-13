@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { QuantityStepper } from './QuantityStepper';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/QuantityStepper',
   component: QuantityStepper,
   args: { value: 1, min: 1, max: 5, label: 'Quantity, Kacamata bulat' },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A number input in a cart row is wrong twice: on a phone it opens a keyboard for a value that changes by one, and its spin buttons are a few pixels tall. Controlled — the consumer owns the quantity, because only they know whether the change succeeded.',
+          'Increment or decrement a controlled quantity. The application supplies the value, limits and change handler. Label the control with the item being changed.',
       },
     },
   },
@@ -32,10 +33,6 @@ export const AtTheEndsOfItsRange: Story = {
   ),
 };
 
-/**
- * The control that would leave the range is disabled, not hidden: one that
- * disappears moves its neighbour under the finger about to tap.
- */
 export const TheEndControlIsDisabledAndStaysPut: Story = {
   render: (args) => <QuantityStepper {...args} value={1} />,
   play: async ({ canvasElement }) => {
@@ -52,7 +49,6 @@ export const TheEndControlIsDisabledAndStaysPut: Story = {
   },
 };
 
-/** The handlers are the consumer's, asserted with a real click. */
 export const TheHandlersAreTheConsumers: Story = {
   render: (args) => {
     let calls = 0;

@@ -4,13 +4,14 @@ import { Checkbox } from './Checkbox';
 import { Label } from './Label';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Checkbox',
   component: Checkbox,
   parameters: {
     docs: {
       description: {
         component:
-          'Three states, not two. `checked="indeterminate"` is the state a "select all" row is in when some but not all of its rows are ticked, and it is drawn as a dash because a tick that means "partly" is a lie.',
+          'A choice that can be checked or unchecked. Use checked="indeterminate" for a parent selection when only some children are selected. Associate each control with a visible label.',
       },
     },
   },
@@ -49,7 +50,6 @@ export const States: Story = {
   ),
 };
 
-/** The indeterminate box reports `aria-checked="mixed"`. */
 export const IndeterminateIsAnnouncedAsMixed: Story = {
   render: (args) => (
     <div className="grid gap-3">
@@ -78,7 +78,6 @@ export const IndeterminateIsAnnouncedAsMixed: Story = {
   },
 };
 
-/** The label is the click target too, which is the point of `htmlFor`. */
 export const TheLabelTogglesIt: Story = {
   render: (args) => (
     <div className="flex items-center gap-2">

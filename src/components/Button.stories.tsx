@@ -3,6 +3,15 @@ import { Button } from './Button';
 import { ArrowRightIcon, SparkleIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Trigger an action such as saving, joining or submitting. Use primary for the main action, secondary or ghost for supporting actions, and danger for destructive actions. For navigation, use asChild with an anchor.',
+      },
+    },
+  },
   title: 'Components/Button',
   component: Button,
   args: { children: 'Start now', variant: 'primary', size: 'md' },
@@ -60,16 +69,15 @@ export const Sizes: Story = {
     docs: {
       description: {
         story:
-          'Large is 54px, the exact call-to-action height measured in the reference Figma file. Medium is the default at 44px, which meets the 44px minimum touch target.',
+          'Use medium for everyday controls, small for compact supporting actions, and large for prominent calls to action. Keep enough spacing around compact controls for comfortable touch use.',
       },
     },
   },
 };
 
-/** Stretches to its container — a form's submit row, a card footer, a sheet. */
 export const FullWidth: Story = {
   render: (args) => (
-    <div className="flex w-80 flex-col gap-3">
+    <div className="flex w-full max-w-80 flex-col gap-3">
       <Button {...args} fullWidth>
         Continue
       </Button>
@@ -109,16 +117,8 @@ export const Disabled: Story = {
   ),
 };
 
-/**
- * The point of the token architecture, in one story.
- *
- * These are the SAME components with the SAME props. Only the surrounding
- * surface changes. Because `.ctx-brand` and `.ctx-inverse` re-point the action
- * tokens, the primary button becomes a white pill on blue and on black without
- * a prop, a variant, or an override class.
- */
 export const AcrossSurfaces: Story = {
-  parameters: { surface: 'page' },
+  globals: { surface: 'page' },
   render: (args) => (
     <div className="grid gap-4 md:grid-cols-3">
       {[
@@ -145,11 +145,6 @@ export const AcrossSurfaces: Story = {
   ),
 };
 
-/**
- * `asChild` renders the button's styling onto a different element. Use it for
- * links, so the browser gives real link behaviour — middle-click, open in new
- * tab, and the correct role for a screen reader.
- */
 export const AsLink: Story = {
   render: (args) => (
     <Button {...args} asChild>

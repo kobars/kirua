@@ -11,13 +11,14 @@ import {
 } from './Breadcrumb';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Breadcrumb',
   component: Breadcrumb,
   parameters: {
     docs: {
       description: {
         component:
-          'A named nav landmark, an aria-current page that is not a link, and separators hidden from the accessibility tree — without which the trail reads as "Home slash Patients slash Siti Rahayu".',
+          'A navigation trail through a page hierarchy. Use links for ancestors and BreadcrumbPage for the current page; separators are decorative.',
       },
     },
   },
@@ -66,7 +67,6 @@ export const Collapsed: Story = {
   ),
 };
 
-/** All three rules at once. Each is invisible on screen. */
 export const TheThreeRules: Story = {
   render: (args) => (
     <Breadcrumb {...args} label="Medical record">

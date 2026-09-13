@@ -13,13 +13,15 @@ import {
 } from './Table';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Table',
   component: Table,
   parameters: {
     docs: {
+      story: { height: '440px' },
       description: {
         component:
-          "Presentational only. Sorting, selection, paging and virtualisation are application state — a component that owned them would be holding a second copy of the consumer's data. The table wraps itself in its own scroll box so a wide table never scrolls the page.",
+          'A data table with an internal scroll container. Add headers and a caption or accessible name. The application owns sorting, selection, paging and data updates.',
       },
     },
   },
@@ -71,10 +73,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * Row headers as well as column headers, where `scope` earns its keep: without
- * it a screen reader cannot say which header describes a cell.
- */
 export const RowHeaders: Story = {
   render: (args) => (
     <Table {...args}>
@@ -102,7 +100,6 @@ export const RowHeaders: Story = {
   ),
 };
 
-/** A wide table scrolls inside its own box rather than scrolling the page. */
 export const AWideTableScrollsItself: Story = {
   render: (args) => (
     <div className="w-72 border border-line-subtle" data-testid="frame">

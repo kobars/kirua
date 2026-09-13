@@ -6,6 +6,7 @@ import { IconButton } from './IconButton';
 import { ChevronEndIcon, ChevronStartIcon, GridIcon, MenuIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/ButtonGroup',
   component: ButtonGroup,
   args: { orientation: 'horizontal' },
@@ -16,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Buttons joined into one control. Give the group an `aria-label`: `role="group"` tells a screen reader the buttons belong together and then leaves the reason unsaid.',
+          'Visually join related buttons. Give the group an aria-label explaining their shared purpose. Use ToggleGroup when the controls represent persistent choices.',
       },
     },
   },
@@ -65,7 +66,6 @@ export const IconsOnly: Story = {
   ),
 };
 
-/** A pager: two controls with the position between them. */
 export const WithAText: Story = {
   render: (args) => (
     <ButtonGroup {...args} aria-label="Pagination">
@@ -92,12 +92,6 @@ export const WithASeparator: Story = {
   ),
 };
 
-/**
- * The corners are what makes three buttons read as one control, and they are
- * logical: in a right-to-left page the first button keeps its rounded corners
- * on the right. Measured rather than described, because a physical `rounded-l`
- * looks identical until the page is flipped.
- */
 export const TheInnerCornersAreSquared: Story = {
   render: (args) => (
     <ButtonGroup {...args} aria-label="Alignment">
@@ -125,11 +119,6 @@ export const TheInnerCornersAreSquared: Story = {
   },
 };
 
-/**
- * The group is `isolate` so a focused button paints over its neighbour's
- * background instead of being clipped by it. Without a stacking context the
- * outline of the middle button disappears under the button after it.
- */
 export const AFocusedButtonIsNotClipped: Story = {
   render: (args) => (
     <ButtonGroup {...args} aria-label="Alignment">

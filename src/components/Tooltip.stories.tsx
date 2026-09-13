@@ -5,13 +5,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './Tooltip';
 import { BookmarkIcon, HeartIcon, SearchIcon, SendIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Tooltip',
   component: Tooltip,
   parameters: {
     docs: {
       description: {
         component:
-          "Built on Radix Primitives. Radix shows the hint on keyboard focus as well as hover, shares one open-delay timer across a group so a row of icons does not stutter, dismisses on Escape, and positions with collision detection. A tooltip is a hint and never the only source of a control's name — every IconButton here still carries its own aria-label, which is why the component requires one.",
+          'A short hint shown on focus or hover. Keep its content noninteractive and give the trigger its own accessible name. Wrap related controls in TooltipProvider.',
       },
     },
   },
@@ -61,14 +62,6 @@ export const Sides: Story = {
   ),
 };
 
-/**
- * Radix never writes `data-state="open"` on a tooltip. It writes "delayed-open"
- * after the group delay, or "instant-open" when a neighbouring tooltip was
- * already showing. The `data-open` variant covers all three spellings, and this
- * story is what holds it to that: a variant that stopped matching would leave
- * the tooltip visible but unanimated, which neither a rendering check nor an
- * accessibility rule can detect.
- */
 export const OpensWithAnimation: Story = {
   render: () => (
     <Tooltip>

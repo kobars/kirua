@@ -16,13 +16,14 @@ import {
 } from './Menubar';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Menubar',
   component: Menubar,
   parameters: {
     docs: {
       description: {
         component:
-          'The File / Edit / View strip. One tab stop for the whole bar, arrows between the menus, and the arrows keep working across the bar once a menu is open — which is the reason to use this instead of several dropdowns in a row.',
+          'A desktop-style strip of command menus, such as File, Edit and View. Arrow keys move between menus and items. Use NavigationMenu for links to site sections.',
       },
     },
   },
@@ -89,12 +90,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * The whole bar is one tab stop, and the arrows move between the top-level
- * menus. That is the ARIA menubar pattern and it is the entire reason this
- * component exists — three `DropdownMenu`s side by side would be three tab
- * stops.
- */
 export const TheWholeBarIsOneTabStop: Story = {
   render: () => (
     <div>
@@ -131,7 +126,6 @@ export const TheWholeBarIsOneTabStop: Story = {
   },
 };
 
-/** Opened, so the panel's own roles and its axe run are exercised. */
 export const OpensAndPassesItsAccessibilityRun: Story = {
   render: () => (
     <Menubar>

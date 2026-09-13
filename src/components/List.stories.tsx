@@ -4,6 +4,7 @@ import { CheckIcon } from './icons';
 import { List, ListItem } from './List';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/List',
   component: List,
   args: { variant: 'bullet', size: 'md' },
@@ -15,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A list a reader reads, as opposed to a list a layout happens to be. Reach for it when the items are prose; a stack of cards is a layout, and `<ul>` there buys nothing.',
+          'A styled list of related prose items. Choose ordered lists when sequence matters and unordered lists when it does not.',
       },
     },
   },
@@ -62,11 +63,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * Two levels, and the second one changes marker. A `List` cannot know its own
- * depth; its ancestor can say what happens below it, which is what makes the
- * nesting readable rather than ambiguous.
- */
 export const TwoLevelsDeep: Story = {
   render: (args) => (
     <div className="max-w-96">
@@ -100,10 +96,6 @@ export const TwoLevelsDeep: Story = {
   },
 };
 
-/**
- * `plain` drops the marker and keeps the list. A screen reader still says
- * "list, 3 items". Dropping to a `<div>` to lose the bullet throws that away.
- */
 export const PlainIsStillAList: Story = {
   render: (args) => (
     <div className="max-w-96">
@@ -126,11 +118,6 @@ export const PlainIsStillAList: Story = {
   },
 };
 
-/**
- * The one case `list-none!` exists for. A plain list nested inside a bulleted
- * one keeps its own answer, because the outer list's descendant rule outranks
- * an ordinary `list-none`.
- */
 export const PlainSurvivesNesting: Story = {
   render: (args) => (
     <div className="max-w-96">

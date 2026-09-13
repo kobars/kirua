@@ -11,15 +11,17 @@ import {
 } from './Sheet';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Sheet',
   component: SheetContent,
   args: { side: 'end' },
   argTypes: { side: { control: 'inline-radio', options: ['start', 'end', 'bottom'] } },
   parameters: {
     docs: {
+      story: { height: '560px' },
       description: {
         component:
-          'A Dialog anchored to an edge — same focus trap, same scrim, same primitive. `side` is logical: start and end follow the reading direction. There is deliberately no top; that is the phone notification shade.',
+          'A modal panel anchored to the start, end or bottom edge. Supply a title and a trigger. Start and end follow the reading direction.',
       },
     },
   },
@@ -45,13 +47,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * All three sides at once. `modal={false}` is required: three modal dialogs on
- * one page fight over the focus trap and mark each other `aria-hidden`.
- *
- * This is also the story that renders every `side` value, which
- * `variants.test.tsx` requires.
- */
 export const Sides: Story = {
   render: (args) => (
     <div className="min-h-96">
@@ -104,13 +99,6 @@ export const Sides: Story = {
   },
 };
 
-/**
- * The panel takes focus, and Escape gives it back to the trigger.
- *
- * `waitFor` on both ends, and the reason holds for every overlay here: a
- * portalled panel is marked `data-state="open"` one commit before its children
- * commit, and focus return after Escape is asynchronous too.
- */
 export const ItTrapsAndReturnsFocus: Story = {
   render: (args) => (
     <Sheet>
