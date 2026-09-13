@@ -14,13 +14,14 @@ const EVENTS = [
 ];
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Timeline',
   component: Timeline,
   parameters: {
     docs: {
       description: {
         component:
-          'What happened, and when. It shares its rail with Stepper and nothing else: a timeline marks its moments with `<time datetime>`, a stepper marks its position with `aria-current="step"`, and a mode flag on one component would have made one of those wrong on every render.',
+          'A sequence of events with dates or times. Use machine-readable datetime values where available. Use Stepper for a process with a current position.',
       },
     },
   },
@@ -46,7 +47,6 @@ export const Playground: Story = {
   ),
 };
 
-/** A moment that has not happened yet is drawn hollow. */
 export const APendingMoment: Story = {
   render: (args) => (
     <div className="max-w-96">
@@ -65,10 +65,6 @@ export const APendingMoment: Story = {
   ),
 };
 
-/**
- * The two things a rail cannot say on its own. The timestamps are machine
- * readable, and the last item does not trail a connector into nothing.
- */
 export const MomentsAreMachineReadable: Story = {
   render: (args) => (
     <div className="max-w-96">

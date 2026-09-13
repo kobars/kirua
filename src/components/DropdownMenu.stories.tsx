@@ -17,13 +17,15 @@ import { IconButton } from './IconButton';
 import { ChevronDownIcon, GridIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/DropdownMenu',
   component: DropdownMenu,
   parameters: {
     docs: {
+      story: { height: '400px' },
       description: {
         component:
-          'Built on Radix Primitives. Radix supplies typeahead, arrow-key roving focus, Home and End, the menu and menuitem roles, collision-aware positioning that flips the panel near a viewport edge, and focus return to the trigger on close. Open it and start typing a letter to see typeahead work.',
+          'A menu of actions attached to a trigger. Radix supplies keyboard navigation, typeahead and focus return. Use NavigationMenu for site navigation.',
       },
     },
   },
@@ -53,7 +55,6 @@ export const Default: Story = {
   ),
 };
 
-/** From an icon-only trigger, as the reference design's nav uses it. */
 export const FromIconButton: Story = {
   render: function Render() {
     const [sort, setSort] = useState('newest');
@@ -82,13 +83,6 @@ export const FromIconButton: Story = {
   },
 };
 
-/**
- * Until this story existed, no story had ever *opened* a menu — so the axe run
- * only ever saw a closed one, and the open state of every menu in the system
- * was unchecked. Opening it immediately found a real violation: Radix's default
- * `modal` menu leaves its own trigger `aria-hidden` and focusable. `DropdownMenu`
- * now defaults `modal` to false; see the reasoning on the component.
- */
 export const OpensAndPassesItsAccessibilityRun: Story = {
   ...Default,
   play: async () => {
@@ -100,19 +94,6 @@ export const OpensAndPassesItsAccessibilityRun: Story = {
   },
 };
 
-/**
- * **The keyboard contract, driven rather than assumed.**
- *
- * Opening the menu was already covered by the story above, which is what found
- * the `aria-hidden` violation. This one drives what happens *after* it opens:
- * arrow keys rove, a disabled item is stepped over rather than focused, Escape
- * closes, and focus returns to the trigger.
- *
- * All four are Radix's, and all four break silently. A wrapper that dropped the
- * `Portal`, or rendered items outside the content, leaves a menu that opens,
- * looks right, and passes every accessibility rule while being unusable without
- * a mouse.
- */
 export const KeyboardNavigation: Story = {
   ...Default,
   play: async ({ canvasElement }) => {

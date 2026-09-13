@@ -4,154 +4,71 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # kirua
 
-A React design system with a three-layer token architecture, built on
-[Radix Primitives](https://www.radix-ui.com/primitives). 74 components, all
-server-renderable, all tested against WCAG 2.1 AA.
+An expressive React design system for anime-inspired websites, social spaces and
+everyday applications. Start playful, then choose how much personality a screen needs.
 
-This Storybook **is** the documentation. Every component has a page, every
-foundation has a page, and every number quoted on those pages is computed in the
-browser from the tokens that actually ship.
+The base style combines vivid blue, rounded controls, friendly text and bold
+display type. Corner glints and oversized artwork are optional accents. Forms,
+feeds and checkout screens can use the same components with quieter surfaces.
 
-## The idea in one example
+## Start here
 
-Colour is decided by the surface a component sits on, not by a prop it is passed.
+1. [Getting started](?path=/docs/getting-started--docs) — run the workspace and compose your first screen.
+2. [Design direction](?path=/docs/design-direction--docs) — understand templates, styles, themes and what exists today.
+3. [Everyday screens](?path=/docs/patterns-everyday-screens--docs) — compare a creator card with a practical checkout form.
+4. [Button](?path=/docs/components-button--docs) and [Field](?path=/docs/components-field--docs) — explore examples, source and props.
+
+## One base, different settings
+
+A creator landing page can use a display heading, a brand panel and ornament.
+A shop can reserve those accents for its campaign and keep product information
+on neutral cards. A social feed can give content the space while using the brand
+colour for its primary action.
+
+These are different compositions of the current base. Multiple named styles,
+additional palettes and packaged templates are the direction, not shipped APIs.
+
+## Explore a component
+
+Each component docs page starts with its purpose and a live example, followed by
+props and additional examples. Use **Show code** to inspect source. Open an
+individual story to use controls and switch **Mode** or **Surface** in the toolbar.
+Docs previews are isolated so repeated control IDs and open dialogs stay inside
+their own example.
+
+**Foundations** explains colour, typography, scales and local surfaces.
+**Patterns** shows components working together. **Examples** contains the board
+viewer; the five application demos run with the commands in Getting started.
+
+## How appearance adapts
+
+A brand Card establishes a local surface context. Its children read colour roles
+for that surface, so the primary action stays legible:
 
 ```tsx
-<Button variant="primary">Get started</Button>
+import { Button, Card, CardTitle } from 'kirua';
 
-<div className="ctx-brand bg-brand">
-  <Button variant="primary">Get started</Button>
-</div>
+<Card variant="brand" padding="md">
+  <CardTitle as="h2">Your next drawing starts here</CardTitle>
+  <Button>Join the club</Button>
+</Card>;
 ```
 
-The first renders as a blue pill on a white page. The second renders as a white
-pill on the brand panel. Same component, same props, no override, no `inverted`
-prop, no theme provider.
+The **Design direction** guide explains how this differs from a complete theme.
+The **Surface contexts** foundation shows the actual token behaviour.
 
-A surface declares its context with a class, and every semantic token inside that
-subtree is re-pointed for the whole tree below it. Dark mode is the same
-mechanism: one block of re-pointed variables and zero component changes.
+## Behaviour and accessibility
 
-Use the **Surface** and **Mode** controls in the toolbar above to put any story
-on any surface, in either mode, without editing it.
+Radix Primitives provides behaviour for controls such as dialogs, menus and tabs.
+kirua supplies their appearance. Applications supply data, validation and actions;
+Combobox and Command also require application-owned keyboard and selection logic.
 
-## Where to start
+Automated checks exercise component stories, contrast and selected interaction
+paths. Raw-token foundation specimens include exceptions to axe checks. Review
+complete screens with a keyboard and assistive technology as well.
 
-<table>
-  <tbody>
-    <tr>
-      <td><b>Foundations → Colour</b></td>
-      <td>The palette, and every contrast ratio recomputed live from the shipped tokens</td>
-    </tr>
-    <tr>
-      <td><b>Foundations → Surface contexts</b></td>
-      <td>One component set rendered on all four surfaces, side by side</td>
-    </tr>
-    <tr>
-      <td><b>Foundations → Scales</b></td>
-      <td>Spacing, radius, elevation, motion, breakpoints, icon sizes, stacking order</td>
-    </tr>
-    <tr>
-      <td><b>Foundations → Typography</b></td>
-      <td>The type scale, and which face each step carries</td>
-    </tr>
-    <tr>
-      <td><b>Foundations → Dark mode</b></td>
-      <td>How a consumer turns it on, including the snippet that prevents a flash</td>
-    </tr>
-    <tr>
-      <td><b>Components</b></td>
-      <td>All 74, each with an interactive page and a props table</td>
-    </tr>
-    <tr>
-      <td><b>Patterns → Anime Hero</b></td>
-      <td>A full screen assembled only from the system</td>
-    </tr>
-  </tbody>
-</table>
+## Project status
 
-## How the tokens are layered
-
-```
-tokens.primitives.css   @theme          raw values      blue-500 = #0A84FF
-        ↓
-tokens.semantic.css     :root / .ctx-*  meaning         surface-brand = blue-600
-        ↓
-theme.css               @theme inline   utility alias   bg-brand → surface-brand
-        ↓
-components                                              <Card variant="brand">
-```
-
-Components read the **semantic** layer only. They never reference a primitive and
-never a raw hex. That indirection is what turns a theme change into a variable
-change instead of a component change.
-
-`@theme inline` is load-bearing rather than stylistic. It compiles utilities to
-literal `var(--color-…)` references instead of freezing the value at build time,
-which is what allows a context switch to propagate at runtime.
-
-## Colour and contrast
-
-The reference design's brand blue is `#0A84FF`. White body copy on it measures
-**3.65:1**, and at the reference's own 80% opacity it measures **2.85:1**. WCAG
-AA requires **4.5:1** for body text.
-
-That is not fixable per component, so the system separates two blues:
-
-- **`blue-500`** — `#0A84FF`, the identity blue, kept exact. Used behind display
-  type, where AA Large's 3:1 threshold applies.
-- **`blue-600`** — `#0973DC`, the text-bearing surface. Measures **4.67:1**
-  against white.
-
-`--color-surface-brand` points at `blue-600`, and every component inherits it.
-
-Every ratio above is recomputed in the browser on **Foundations → Colour**, so
-these pages cannot drift from the CSS.
-
-## Behaviour comes from Radix
-
-Dialog, DropdownMenu, Tooltip, Select, Tabs and the rest are built on Radix
-Primitives — headless components that supply behaviour and accessibility and no
-appearance at all.
-
-That split is why this system can look nothing like a default component library
-and still trap focus correctly, restore focus to the trigger, support typeahead
-in a menu, and move through tabs with the right keyboard model.
-
-## Every component is stateless
-
-No component here calls a hook or carries a `"use client"` directive, so a Card
-inside a React Server Component ships no JavaScript to the browser at all. A test
-asserts this rather than a convention remembering it.
-
-The trade-off is worth stating: `Combobox`, `Command` and `Carousel` are
-**presentational shells**. They render the right elements with the right ARIA
-wiring, and the consumer owns the open state, the filtering and the current
-index from their own client component. A component that filtered its own list
-would be smaller to use and impossible to server-render.
-
-## Accessibility is enforced, not reviewed
-
-Every story on this site runs axe with violations set to **error**, so an
-accessibility failure fails the build rather than printing a warning. Beyond
-that, dedicated test runs cover Windows high contrast, `prefers-reduced-motion`,
-target size under WCAG 2.5.8, and both reading directions.
-
-## The reference design
-
-The values marked `[FIGMA]` in the CSS are measured from *Figma Anime Website UI
-Design: Futuristic & Interactive Hero Section*, published on Figma Community.
-
-The reference is one desktop marketing frame: about twenty loose shapes, no
-components, no variables, no styles. It has no form fields, no tables, no modals,
-no hover, focus, disabled, loading, empty or error states, no mobile layout and
-no dark mode. Everything unmarked was designed to fill the gaps a single screen
-leaves, and the marking makes the difference visible everywhere it matters.
-
-## Artwork licensing
-
-The hero pattern uses fan-distributed renders of Killua Zoldyck, a character from
-*Hunter × Hunter* created by Yoshihiro Togashi and published by Shueisha. **They
-are not licensed for commercial use of any kind.** Replace them before shipping
-anything built on that pattern — the layout only needs a tall figure on a
-transparent background.
+kirua runs from source and is not published to npm. There is one base style with
+light and dark modes. No reuse licence is currently supplied, and the hero's
+third-party character assets need separate permission or replacement.

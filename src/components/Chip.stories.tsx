@@ -5,6 +5,15 @@ import { Chip } from './Chip';
 import { SparkleIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'An inline tag or compact piece of metadata, with optional leading content. Use Badge for status and Button or Toggle for actions.',
+      },
+    },
+  },
   title: 'Components/Chip',
   component: Chip,
   args: { children: "+1M Like's", variant: 'dark', size: 'md' },
@@ -41,7 +50,6 @@ export const Variants: Story = {
   ),
 };
 
-/** Heights match the button steps, so a chip and a button can share a row. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
@@ -58,7 +66,6 @@ export const Sizes: Story = {
   ),
 };
 
-/** The contextual border keeps the brand fill visible on the brand surface. */
 export const BrandOnBrand: Story = {
   render: (args) => (
     <div className="ctx-brand bg-brand p-8">
@@ -77,7 +84,6 @@ export const BrandOnBrand: Story = {
   },
 };
 
-/** The reference design's two floating badges, rebuilt from the component. */
 export const AsInTheReference: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">

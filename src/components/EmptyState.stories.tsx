@@ -5,6 +5,7 @@ import { EmptyState } from './EmptyState';
 import { CartIcon, SearchIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/EmptyState',
   component: EmptyState,
   args: { title: 'Nothing here yet' },
@@ -17,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The commonest unowned screen in any application. The `action` slot is the important one: an empty state that only says "nothing here" has told the reader what they already knew.',
+          'Explain why content is absent and offer a useful next action. Adapt the message for first use, an empty search or an error instead of reusing one generic message.',
       },
     },
   },
@@ -49,10 +50,6 @@ export const WithoutAnAction: Story = {
   ),
 };
 
-/**
- * The heading level is a prop because no single answer fits both places an
- * empty state appears. A wrong level is invisible on screen.
- */
 export const TheHeadingLevelIsChosen: Story = {
   render: (args) => (
     // h1 then h2, not h1 then h3: the axe run enforces `heading-order`.

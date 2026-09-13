@@ -17,21 +17,8 @@ function apply(preference: ThemePreference) {
   document.documentElement.classList.toggle('dark', dark);
 }
 
-/**
- * The theme choice, and the one class that expresses it.
- *
- * `.dark` on the root element is the whole mechanism: kirua re-points its
- * semantic tokens under that class, so no component takes a `dark:` variant and
- * nothing here touches a colour.
- *
- * Three states, not two. "System" is the default and is stored as the *absence*
- * of a key, so a reader who never chooses follows their operating system, and
- * keeps following it when they change it later.
- *
- * The first paint is not this hook's job — `index.html` runs a blocking script
- * that reads the same key, so the page never flashes the wrong theme before
- * React mounts.
- */
+/** Persist an explicit mode, or follow system changes while no choice is stored.
+ * The host document sets the initial class before React mounts. */
 export function useTheme() {
   const [preference, setPreference] = useState<ThemePreference>(stored);
 

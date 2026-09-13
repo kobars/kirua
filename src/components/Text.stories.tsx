@@ -6,6 +6,7 @@ const SIZES = ['lg', 'md', 'sm', 'caption'] as const;
 const TONES = ['primary', 'secondary', 'muted'] as const;
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Text',
   component: Text,
   args: {
@@ -23,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Body copy. Size and tone are separate axes because they are independent — a caption can be the primary voice of its block, and a paragraph is usually the secondary one.',
+          'Body copy with size and tone choices. Use a readable foreground for instructions and important details; reserve muted text for supplemental content.',
       },
     },
   },
@@ -58,10 +59,6 @@ export const Tones: Story = {
   ),
 };
 
-/**
- * `inline` renders a `<span>`, so `Text` can sit inside a sentence without
- * putting a block element in the middle of one.
- */
 export const InsideASentence: Story = {
   render: (args) => (
     <Text {...args} size="md" tone="primary" data-testid="line">
@@ -82,10 +79,6 @@ export const InsideASentence: Story = {
   },
 };
 
-/**
- * The eyebrow is a role, not a size — which is why it is a separate component
- * with no axes at all.
- */
 export const AnEyebrowAboveAHeading: Story = {
   render: () => (
     <div className="grid gap-2">

@@ -1,17 +1,22 @@
+/* oxlint-disable import/default, import/no-duplicates -- Vite ?raw imports load source text separately from the executable module. */
+import { ProductCarousel } from '../patterns/examples/ProductCarousel';
+import ProductCarouselSource from '../patterns/examples/ProductCarousel.tsx?raw';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AspectRatio } from './AspectRatio';
 import { Carousel, CarouselItem } from './Carousel';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Carousel',
   component: Carousel,
   args: { label: 'Product photos' },
   parameters: {
     docs: {
+      story: { height: '480px' },
       description: {
         component:
-          "CSS scroll snap, not a carousel library. The browser already owns momentum, snapping, touch, the wheel and keyboard scrolling — a library replaces all five with JavaScript and needs a ref, a hook and a client boundary. The previous and next buttons are the one part that genuinely needs a ref, and they are four lines in a consumer's own client file.",
+          'A horizontally scrollable track with CSS snapping. Provide a descriptive label and named slides. Scrolling works natively; the With controls example adds application-owned previous/next actions.',
       },
     },
   },
@@ -40,12 +45,8 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * The claims that make the library unnecessary: the track really does snap,
- * it really does scroll inside itself rather than scrolling the page, and it
- * is reachable by keyboard so the last slide is not pointer-only.
- */
 export const ItSnapsScrollsItselfAndTakesFocus: Story = {
+  name: 'Scrolling and keyboard focus',
   render: (args) => (
     <div className="max-w-md" data-testid="frame">
       <Carousel {...args}>
@@ -70,5 +71,34 @@ export const ItSnapsScrollsItselfAndTakesFocus: Story = {
     await expect(track).toHaveAttribute('tabindex', '0');
     await expect(track.scrollWidth).toBeGreaterThan(track.clientWidth);
     await expect(frame.scrollWidth).toBe(frame.clientWidth);
+  },
+};
+
+export const WithControls: Story = {
+  name: 'With controls',
+  parameters: {
+    docs: {
+      source: {
+        code: ProductCarouselSource.replace("from '@/components'", "from 'kirua'"),
+        language: 'tsx',
+      },
+      description: {
+        story:
+          'Previous and next buttons scroll to a named slide. The application tracks native scrolling too, so the counter stays in sync after a swipe. Reduced-motion preferences disable animated scrolling.',
+      },
+    },
+  },
+  render: (args) => <ProductCarousel {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Previous' })).toBeDisabled();
+    await userEvent.click(canvas.getByRole('button', { name: 'Next' }));
+    await waitFor(async () => {
+      await expect(canvas.getByRole('status')).toHaveTextContent('2 of 5');
+    });
+    await userEvent.click(canvas.getByRole('button', { name: 'Previous' }));
+    await waitFor(async () => {
+      await expect(canvas.getByRole('status')).toHaveTextContent('1 of 5');
+    });
   },
 };

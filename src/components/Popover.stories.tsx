@@ -6,13 +6,15 @@ import { Input } from './Input';
 import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Popover',
   component: Popover,
   parameters: {
     docs: {
+      story: { height: '400px' },
       description: {
         component:
-          'A tooltip is a label and may hold nothing focusable — there is no way to reach it. The moment a floating panel holds a button or a field it has to be a Popover.',
+          'A floating panel for supporting information or controls. Provide an accessible name and a clear trigger. Use Tooltip for a short noninteractive hint.',
       },
     },
   },
@@ -36,10 +38,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * Why a popover is not a tooltip: the field inside is reachable by keyboard
- * once the panel is open.
- */
 export const ItsContentIsReachable: Story = {
   render: (args) => (
     <Popover {...args}>

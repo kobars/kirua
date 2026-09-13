@@ -5,15 +5,17 @@ import { Stat, StatRow } from './Stat';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './Table';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Chart',
   component: Chart,
   args: { label: 'Clinic visits per month, first half of 2026' },
   argTypes: { label: { control: 'text' } },
   parameters: {
     docs: {
+      story: { height: '440px' },
       description: {
         component:
-          'Plain SVG and CSS — no charting dependency. The common cases are a few dozen lines of geometry, they render on a server with no JavaScript, and they read their colours from the token layer. Reach for a library when you need axes that pan or tens of thousands of points.',
+          'Small SVG and CSS charts for summaries and comparisons. Provide accessible labels and context for the values. The application owns formatting and data; advanced pan/zoom and large datasets need a separate charting solution.',
       },
     },
   },
@@ -49,7 +51,6 @@ export const Line: Story = {
   ),
 };
 
-/** The five series, so a chart with more than one line can be read. */
 export const TheFiveSeries: Story = {
   render: () => (
     <Chart label="The five chart series" className="w-lg">
@@ -71,7 +72,6 @@ export const TheFiveSeries: Story = {
   ),
 };
 
-/** Small enough to sit beside a number rather than under a heading. */
 export const InlineSparkline: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
@@ -88,10 +88,6 @@ export const InlineSparkline: Story = {
   ),
 };
 
-/**
- * A picture is not the numbers. The chart carries a name; the table beside it
- * carries the values, and a reader using a screen reader gets the second one.
- */
 export const WithTheNumbersBeside: Story = {
   render: () => (
     <Chart label="Clinic visits per month, first half of 2026" className="w-lg">
@@ -118,12 +114,6 @@ export const WithTheNumbersBeside: Story = {
   ),
 };
 
-/**
- * Two bars in the same chart are comparable only if they share a ceiling, and
- * two *charts* are comparable only if `max` is passed to both. The default —
- * the largest value present — silently rescales, which is how a chart shows a
- * fall as a rise.
- */
 export const BarHeightsAreProportional: Story = {
   render: () => (
     <Chart label="Two values, one twice the other" className="w-64">
@@ -144,11 +134,6 @@ export const BarHeightsAreProportional: Story = {
   },
 };
 
-/**
- * The chart has a name and the SVG inside it does not announce itself a second
- * time. A picture with no name is announced as nothing at all; a picture
- * announced twice is worse.
- */
 export const ThePictureIsNamedOnce: Story = {
   render: () => (
     <Chart label="Clinic visits per month" className="w-96">

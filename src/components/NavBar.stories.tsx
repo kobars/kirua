@@ -6,6 +6,7 @@ import { NavBar } from './NavBar';
 import { GridIcon, SearchIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/NavBar',
   component: NavBar,
   args: {
@@ -22,7 +23,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Measured from Figma: 70px tall, 22px corner radius, pure black fill. It sets `ctx-inverse`, so any Button or IconButton passed through `actions` picks up its on-black colours with no override. It renders a real `nav` wrapping a list, because "list of 4 navigation links" is exactly what a screen reader should announce.',
+          'A navigation bar with links and an actions slot. It uses an inverse surface context so its child controls adapt to the dark background.',
       },
     },
   },
@@ -48,12 +49,6 @@ export const WithActions: Story = {
   },
 };
 
-/**
- * The pill has one reflow and it is easy to lose: below `md` the links are
- * left-aligned and scroll horizontally, at `md` and above they centre. The
- * suite runs at three widths, so this story asserts both sides of the switch
- * rather than whichever one the runner happened to open at.
- */
 export const CentresItsLinksAtMd: Story = {
   play: async ({ canvasElement }) => {
     const list = canvasElement.querySelector('[data-slot="nav-bar"] ul');
@@ -64,19 +59,6 @@ export const CentresItsLinksAtMd: Story = {
   },
 };
 
-/**
- * **The current item is announced as current, not merely shaded.**
- *
- * `current` drives two separate things, and only one of them is visible.
- * `bg-ghost-hover` and `font-medium` say "you are here" to someone looking at
- * the pill; `aria-current="page"` is the only thing that says it to a screen
- * reader. Losing the attribute while keeping the styling is invisible in every
- * other check here — the render is identical, axe reports nothing, and the
- * screenshot matches its baseline exactly.
- *
- * The link is found by its accessible name, which is the lookup assistive
- * technology makes, rather than by a class or a `data-slot`.
- */
 export const MarksTheCurrentPage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

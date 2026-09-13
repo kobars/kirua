@@ -1,5 +1,8 @@
+/* oxlint-disable import/default, import/no-duplicates -- Vite ?raw imports load source text separately from the executable module. */
+import { CommunityCommands } from '../patterns/examples/CommunityCommands';
+import CommunityCommandsSource from '../patterns/examples/CommunityCommands.tsx?raw';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   Command,
   CommandEmpty,
@@ -12,13 +15,15 @@ import { Kbd } from './Kbd';
 import { CalendarIcon, StethoscopeIcon, UserIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Command',
   component: Command,
   parameters: {
     docs: {
+      story: { height: '480px' },
       description: {
         component:
-          "A filtered list of actions inside kirua's own Dialog, rather than cmdk — the only thing a library would add here is the filtering, which is one Array.filter over data the consumer already holds.",
+          'A searchable action palette inside a dialog. The application supplies a trigger, filtering, keyboard navigation and action execution. The interactive example shows that wiring; the other previews illustrate fixed states.',
       },
     },
   },
@@ -28,6 +33,42 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
+  parameters: {
+    docs: {
+      source: {
+        code: CommunityCommandsSource.replace("from '@/components'", "from 'kirua'"),
+        language: 'tsx',
+      },
+    },
+  },
+  name: 'Search and run an action',
+  render: (args) => <CommunityCommands {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Open commands' });
+    await userEvent.click(trigger);
+    const input = await body.findByRole('combobox', { name: 'Search commands' });
+    await userEvent.type(input, 'saved');
+    await expect(body.getAllByRole('option')).toHaveLength(1);
+    await userEvent.keyboard('{Enter}');
+    await expect(await canvas.findByRole('status')).toHaveTextContent(
+      'Selected: View saved artwork.',
+    );
+    await waitFor(async () => {
+      await expect(trigger).toHaveFocus();
+    });
+    await userEvent.click(trigger);
+    await userEvent.type(await body.findByRole('combobox', { name: 'Search commands' }), 'zzz');
+    await expect(body.getByText('No actions match your search.')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(async () => {
+      await expect(trigger).toHaveFocus();
+    });
+  },
+};
+
+export const GroupedActions: Story = {
   render: (args) => (
     <Command {...args} open label="Command palette">
       <CommandInput
@@ -36,7 +77,7 @@ export const Playground: Story = {
         aria-controls="cmd-list"
         aria-activedescendant="cmd-patient"
       />
-      <CommandList id="cmd-list" aria-label="Perintah">
+      <CommandList id="cmd-list" aria-label="Commands">
         <CommandGroup heading="Patients">
           <CommandItem id="cmd-patient" isActive shortcut={<Kbd>P</Kbd>}>
             <UserIcon aria-hidden="true" /> Find a patient
@@ -68,12 +109,8 @@ export const NoMatches: Story = {
   ),
 };
 
-/**
- * The palette is a named modal dialog, the input is the combobox, and the
- * highlight reaches a screen reader through `aria-activedescendant` — focus
- * never leaves the input.
- */
 export const ItIsADialogAndTheInputOwnsTheHighlight: Story = {
+  name: 'Dialog focus and active option',
   render: (args) => (
     <Command {...args} open label="Command palette">
       <CommandInput
@@ -81,7 +118,7 @@ export const ItIsADialogAndTheInputOwnsTheHighlight: Story = {
         aria-controls="cmd-assert-list"
         aria-activedescendant="cmd-assert-visit"
       />
-      <CommandList id="cmd-assert-list" aria-label="Perintah">
+      <CommandList id="cmd-assert-list" aria-label="Commands">
         <CommandGroup heading="Visits">
           <CommandItem id="cmd-assert-visit" isActive>
             Book a visit

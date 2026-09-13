@@ -10,6 +10,7 @@ import { ToggleGroup, ToggleGroupItem } from './ToggleGroup';
  * props at the call site, where the union is narrowed.
  */
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/ToggleGroup',
   component: ToggleGroup,
   args: { type: 'single' },
@@ -17,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A single tab stop with arrow-key movement inside it. `type="single"` is a view switcher — exactly one is true. `type="multiple"` is a filter — any number are.',
+          'Related toggle choices with arrow-key navigation. single allows at most one selection; multiple allows several. Handle an empty value if your application requires a selection.',
       },
     },
   },
@@ -71,11 +72,6 @@ export const SingleAndMultiple: Story = {
   ),
 };
 
-/**
- * One tab stop, with the arrows moving inside it. Asserted by pressing Tab, not
- * by reading `tabindex`: the container is the stop, so every item reads `-1`
- * at rest.
- */
 export const ArrowKeysMoveInsideOneTabStop: Story = {
   render: () => (
     <div className="grid gap-4">

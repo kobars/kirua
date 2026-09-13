@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { Kbd } from './Kbd';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Kbd',
   component: Kbd,
   args: { size: 'sm', children: 'K' },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'One key cap. A chord is several elements with plain text between them, so a screen reader reads "Control K" rather than "ControlK".',
+          'A keyboard key or shortcut hint. Separate keys in a chord with readable text, and show shortcuts that the application actually implements.',
       },
     },
   },
@@ -45,10 +46,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * A chord is separate elements. Asserted because the tempting shortcut —
- * `<Kbd>⌘K</Kbd>` — reads aloud as one nonsense word.
- */
 export const AChordIsSeparateKeys: Story = {
   render: (args) => (
     <p className="text-body-md text-fg" data-testid="hint">

@@ -4,13 +4,14 @@ import { Card, CardBody, CardTitle } from './Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Tabs',
   component: Tabs,
   parameters: {
     docs: {
       description: {
         component:
-          'Built on Radix Primitives. Radix supplies the tablist, tab, and tabpanel relationships, arrow-key movement between tabs, and the rule that Tab moves OUT of the tab list into the active panel rather than through every tab in turn. That keyboard model is where most hand-rolled tabs fail. The active tab is marked by fill AND weight, never by colour alone.',
+          'Switch between related panels within a page. Radix supplies tab/panel relationships and arrow-key navigation. Use links for navigation to separate pages.',
       },
     },
   },
@@ -62,19 +63,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * **Arrow keys move between tabs, and the panel follows.**
- *
- * This is the keyboard model most hand-rolled tab sets get wrong: arrows move
- * between the triggers, and `Tab` leaves the list for the panel rather than
- * walking through every trigger in turn. Radix supplies it; nothing here
- * checked that the wrapper had not broken it.
- *
- * Asserting the *panel* as well as the trigger is the point. A roving tabindex
- * that moved focus without changing `aria-selected` — or a panel that stayed on
- * the old value — would leave a sighted mouse user perfectly happy and a screen
- * reader user reading content that does not match the tab they are on.
- */
 export const ArrowKeysMoveBetweenTabs: Story = {
   ...Default,
   play: async ({ canvasElement }) => {

@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Field } from './Field';
+import { Input } from './Input';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Field',
   component: Field,
   args: {
@@ -10,12 +12,7 @@ const meta = {
     label: 'Email address',
     description: 'We will only use this for receipts.',
     required: false,
-    children: (
-      <input
-        type="email"
-        className="h-11 rounded-md border border-field-line bg-field px-3 text-on-field"
-      />
-    ),
+    children: <Input type="email" name="email" autoComplete="email" />,
   },
   argTypes: {
     label: { control: 'text' },
@@ -26,9 +23,10 @@ const meta = {
   },
   parameters: {
     docs: {
+      story: { height: '300px' },
       description: {
         component:
-          'Field owns the strings that are easiest to mistype when repeated by hand. It assigns one explicit control ID to the label, joins description and error IDs onto aria-describedby, and derives aria-invalid from the visible error. The ID stays explicit so this wrapper remains a Server Component.',
+          'Connect one form control to a visible label, description and error. Supply a unique controlId. The application validates input and passes error; Field then exposes the invalid state and supporting text.',
       },
     },
   },
@@ -41,6 +39,7 @@ export const Playground: Story = {};
 
 export const Invalid: Story = {
   args: {
+    controlId: 'invalid-email',
     required: true,
     error: 'Enter a valid email address.',
   },
@@ -53,7 +52,7 @@ export const Invalid: Story = {
     await expect(control).toBeRequired();
     await expect(control).toHaveAttribute('aria-invalid', 'true');
     await expect(control).toHaveAttribute('aria-describedby', `${description.id} ${error.id}`);
-    await expect(description.id).toBe('email-description');
-    await expect(error.id).toBe('email-error');
+    await expect(description.id).toBe('invalid-email-description');
+    await expect(error.id).toBe('invalid-email-error');
   },
 };

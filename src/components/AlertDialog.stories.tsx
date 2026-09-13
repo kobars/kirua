@@ -13,13 +13,15 @@ import {
 import { Button } from './Button';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/AlertDialog',
   component: AlertDialog,
   parameters: {
     docs: {
+      story: { height: '480px' },
       description: {
         component:
-          'The stop-and-answer dialog. No close button, no dismiss on the scrim, initial focus on cancel, and `role="alertdialog"` so the description is read at once. Use `Dialog` for anything a reader may reasonably walk away from.',
+          'A confirmation dialog for consequential actions. Provide a clear title, explain the consequence and label the confirm action specifically. Initial focus goes to cancel.',
       },
     },
   },
@@ -52,10 +54,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Open, so the axe run sees it. A closed overlay passes every accessibility
- * check trivially, which is how a whole system's menus once went unchecked.
- */
 export const OpenAndPassesItsAccessibilityRun: Story = {
   render: () => (
     <AlertDialog open>
@@ -75,11 +73,6 @@ export const OpenAndPassesItsAccessibilityRun: Story = {
   ),
 };
 
-/**
- * The three differences from `Dialog`, asserted rather than described: the role
- * is `alertdialog`, focus starts on cancel, and a click on the scrim leaves it
- * open.
- */
 export const ItIsAnAlertdialogAndFocusStartsOnCancel: Story = {
   render: () => (
     <AlertDialog>

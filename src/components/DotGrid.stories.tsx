@@ -3,6 +3,7 @@ import { expect } from 'storybook/test';
 import { DotGrid } from './DotGrid';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/DotGrid',
   component: DotGrid,
   args: { rows: 5, cols: 5, dotSize: 4, spacing: 10 },
@@ -16,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "The reference design's decorative dot matrix. Ornamental, so it is hidden from assistive technology entirely. Colour comes from `currentColor`, which means a text utility on any ancestor controls it and no colour prop is needed.",
+          'Decorative dots for an expressive background. Colour follows currentColor. Keep the grid away from dense text and controls; it is hidden from assistive technology.',
       },
     },
   },
@@ -37,10 +38,6 @@ export const Shapes: Story = {
   ),
 };
 
-/**
- * Decorative means decorative. `aria-hidden` is not a prop, because a dot matrix
- * has no state in which it should be announced.
- */
 export const HiddenFromAssistiveTechnology: Story = {
   play: async ({ canvasElement }) => {
     const grid = canvasElement.querySelector('[data-slot="dot-grid"]');

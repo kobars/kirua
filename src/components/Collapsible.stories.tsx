@@ -5,13 +5,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './Collapsib
 import { ChevronDownIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Collapsible',
   component: Collapsible,
   parameters: {
     docs: {
       description: {
         component:
-          'One section that opens and shuts. Use `Accordion` when several sections share an open value; a lone accordion item puts a heading in the page outline that means nothing.',
+          'One section of content that can expand or collapse. Give the trigger a clear label. Use Accordion for a coordinated set of sections.',
       },
     },
   },
@@ -51,15 +52,6 @@ export const OpenByDefault: Story = {
   ),
 };
 
-/**
- * The panel animates to its natural height, and it can only do that because it
- * reads `--radix-collapsible-content-height`.
- *
- * Asserted by name. The accordion's keyframes read a *different* variable, and
- * pointing this component at those produces `height: <unset>` — which is an
- * invalid declaration, so the panel snaps open with no animation and no error
- * anywhere. That is exactly the failure a green suite would hide.
- */
 export const OpensWithItsOwnAnimation: Story = {
   render: () => (
     <Collapsible className="w-96">
@@ -84,11 +76,6 @@ export const OpensWithItsOwnAnimation: Story = {
   },
 };
 
-/**
- * The trigger must say whether the panel is open. Radix writes `aria-expanded`
- * and `aria-controls`, and a chevron that only rotates says nothing to a screen
- * reader.
- */
 export const TheTriggerAnnouncesItsState: Story = {
   render: () => (
     <Collapsible className="w-96">

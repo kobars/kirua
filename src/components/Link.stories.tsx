@@ -4,6 +4,7 @@ import { Link } from './Link';
 import { Text } from './Text';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Link',
   component: Link,
   args: { variant: 'inline', href: '#', children: 'the publishing guide' },
@@ -12,7 +13,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The ordinary link. The focus ring is in the base and cannot be opted out of — a ring retyped at every call site is a ring somebody eventually leaves off.',
+          'An inline navigation link with a focus treatment. Use a meaningful destination and link text. For a prominent navigation action, Button supports asChild.',
       },
     },
   },
@@ -23,11 +24,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
 
-/**
- * An inline link is underlined at rest, not on hover. Asserted, because
- * "underline on hover" is the version this system had written twice and is the
- * one that fails WCAG 1.4.1 inside a sentence.
- */
 export const InsideASentence: Story = {
   render: (args) => (
     <Text tone="primary">
@@ -42,10 +38,6 @@ export const InsideASentence: Story = {
   },
 };
 
-/**
- * A block link takes no colour of its own, so a card title stays a card title
- * instead of turning into a search result.
- */
 export const TheWholeThingYouClick: Story = {
   args: { variant: 'block', children: 'Kacamata bulat' },
   render: (args) => (
@@ -63,10 +55,6 @@ export const TheWholeThingYouClick: Story = {
   },
 };
 
-/**
- * Both variants on all four surfaces. An inline link reads through `text-accent`,
- * which every context re-points; a block link inherits, so it cannot go wrong.
- */
 export const OnEverySurface: Story = {
   render: (args) => (
     <div className="grid gap-3">

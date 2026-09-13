@@ -5,6 +5,7 @@ import { Label } from './Label';
 import { Textarea } from './Textarea';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Textarea',
   component: Textarea,
   args: {
@@ -24,7 +25,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Textarea is the multi-line form of the same field contract as Input. It keeps native resizing in the block direction, consumes the same semantic state tokens, and remains a plain server-renderable element.',
+          'A native multi-line text field with vertical resizing. Pair it with Field or Label and provide a suitable name and initial rows.',
       },
     },
   },
