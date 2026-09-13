@@ -63,33 +63,13 @@
   --color-violet-600: #6938ef;
   --color-violet-900: #4a1fb8;
 
-  /* ONE KNOB. Every step is a ratio of `--radius`, so "how round is this system"
-   * is a single edit rather than seven consistent ones nobody makes.
-   *
-   * The ratios are elevenths because the measured value is 22px = 11/8rem, so
-   * each step lands on a whole multiple of 2px: 6, 10, 16, 22, 32, 40. That is
-   * why they are written as `* n / 11` and not as decimals — 0.7272… would
-   * round, and `--radius-md` would stop being exactly 16px.
-   *
-   * Two values are measured and must stay exact at the current knob setting:
-   * `lg` is the reference's 22px card and nav corner, `xl` its 32px hero panel.
-   *
-   * `Card.tsx` mirrors three of these as JavaScript numbers to draw CornerGlint,
-   * which cannot read CSS. `Card.stories.tsx` asserts the two agree, so retuning
-   * the knob fails a test rather than quietly bending the ornament. */
+  /* Radius steps are ratios of the measured 22px base.
+   * Keep src/lib/radius.ts in sync: SVG ornaments use numeric geometry. */
   --radius: 1.375rem; /* 22px [FIGMA] */
   --radius-xs: calc(var(--radius) * 3 / 11); /* 6px */
   --radius-sm: calc(var(--radius) * 5 / 11); /* 10px */
   --radius-md: calc(var(--radius) * 8 / 11); /* 16px */
-  /* 22px [FIGMA] nav bar, and the reference's white card `35:19`.
-   *
-   * THE FILE CONTRADICTS ITSELF HERE and 22 is the deliberate answer. The black
-   * card `35:188` is a frame at radius 24; the white card and the nav pill are
-   * both 22. Two nodes against one — and because every step above is a ratio of
-   * this one knob, adopting 24 would move `--radius-md` off 16 and
-   * `--radius-xl` off the hero panel's measured 32 in order to honour a single
-   * node. A 2px difference on one shape in a marketing mock is drawing, not a
-   * system statement. */
+  /* 22px [FIGMA]: shared nav and white-card radius; the black reference card is 24px. */
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 16 / 11); /* 32px [FIGMA] hero panel */
   --radius-2xl: calc(var(--radius) * 20 / 11); /* 40px */

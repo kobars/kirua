@@ -5,16 +5,7 @@ import { headingVariants } from './Heading.variants';
 
 export interface HeadingProps
   extends ComponentProps<'h2'>, VariantProps<typeof headingVariants> {
-  /**
-   * The outline level, and it is required rather than defaulted.
-   *
-   * A hand-written `<h3>` cannot be asked to be an `<h2>`, so before this
-   * component existed the level was decided by whichever size class looked
-   * right — and three composed screens skipped a level that way, which only an
-   * axe run over a whole page can see. Requiring the prop makes the author
-   * choose the outline, and the size prop makes that choice free of how big the
-   * text is.
-   */
+  /** Required document heading level, independent of visual size. */
   as: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 

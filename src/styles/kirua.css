@@ -1,18 +1,4 @@
-/* The design system's own layers — everything except `@import 'tailwindcss'`
- * and the `@source` list, which is per entry point.
- *
- * Split out of `src/index.css` so an entry point can decide what Tailwind
- * scans while inheriting every layer unchanged. Tailwind emits one stylesheet
- * per scanned source set, so the hero page and an example app must not share
- * one; `tools/size-budget.mjs` holds the budget that enforces it.
- *
- * Import order is the token architecture: primitives -> semantic -> aliases.
- *
- * No remote `@import` here. A font fetched from inside this file costs three
- * sequential round trips before text is drawn in the intended face, and makes
- * every consumer inherit a runtime dependency on another origin. kirua names
- * its typefaces and does not ship them; `--font-display` and `--font-text`
- * both end in a system fallback. */
+/* Shared layers in dependency order. Hosts load fonts and configure Tailwind sources. */
 
 @import './tokens.primitives.css';
 @import './tokens.semantic.css';

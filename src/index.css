@@ -1,21 +1,9 @@
-/* The application entry point: Tailwind, the source list, then every layer.
- *
- * Storybook's preview, `prettier.config.mjs` and `.oxlintrc.json` all name this
- * path, so it stays here while the layers live in `styles/kirua.css`.
- *
- * Tailwind finds classes by scanning source text and emits one stylesheet per
- * source set, so both `@source not` lines below keep another application's
- * utilities out of this bundle — which `tools/size-budget.mjs` fails the build
- * on. */
+/* Application entry: Tailwind source selection, then the design-system layers. */
 @import 'tailwindcss';
 
-/* The sample board bundle is prose that will grow, and a sentence about a table
- * is a candidate for the `table` utility. A fence, not a repair. */
+/* Exclude prose and separately built apps from utility generation. */
 @source not './board/sample';
 
-/* The example applications have their own entry points and `@source` lists.
- * This line is load-bearing: without it, thousands of their utility usages
- * would ship in this bundle. */
 @source not '../examples';
 
 @import './styles/kirua.css';
