@@ -4,6 +4,7 @@ import { Toast, ToastClose, ToastDescription, ToastTitle, ToastViewport } from '
 import { CheckIcon, CloseIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Toast',
   component: Toast,
   args: { status: 'neutral' },
@@ -16,9 +17,10 @@ const meta = {
   },
   parameters: {
     docs: {
+      story: { height: '360px' },
       description: {
         component:
-          'The VIEWPORT is the live region, not the toast: a region has to exist before a message is inserted into it, or the insertion is often not announced at all. role follows the status — alert interrupts, status waits for a pause.',
+          'Temporary feedback after an action. Keep ToastViewport mounted before inserting messages so live updates can be announced. The application owns message state and dismissal.',
       },
     },
   },
@@ -27,10 +29,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Rendered in place rather than in the fixed viewport, so the gallery can show
- * them side by side. A real application renders one `ToastViewport` in its shell.
- */
 export const Statuses: Story = {
   render: (args) => (
     <div className="grid max-w-100 gap-3">
@@ -72,7 +70,6 @@ export const AnchoredToTheCorner: Story = {
   ),
 };
 
-/** The role split: only `danger` gets `alert`, which interrupts. */
 export const OnlyFailureInterrupts: Story = {
   render: (args) => (
     <div className="grid max-w-100 gap-3">
@@ -92,10 +89,6 @@ export const OnlyFailureInterrupts: Story = {
   },
 };
 
-/**
- * The pointer-events split. The viewport spans a strip of the screen, so if it
- * swallowed clicks the page behind it would be dead while a toast showed.
- */
 export const TheViewportDoesNotSwallowClicks: Story = {
   render: (args) => (
     <div className="relative min-h-72">
@@ -114,14 +107,6 @@ export const TheViewportDoesNotSwallowClicks: Story = {
   },
 };
 
-/**
- * The dismiss control must be inside the toast, and clickable.
- *
- * Both are easy to get wrong in the same way. `ToastClose` rendered as a
- * sibling of `Toast` looks almost right in a screenshot — it lands just below
- * the panel — and it inherits the viewport's `pointer-events: none`, so it
- * cannot be clicked at all. The `close` prop is what makes that unrepresentable.
- */
 export const TheCloseControlIsInsideTheToastAndClickable: Story = {
   render: (args) => {
     const dismiss = () => {

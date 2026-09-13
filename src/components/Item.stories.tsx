@@ -24,6 +24,7 @@ import {
 import { MoreIcon, PillIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Item',
   component: Item,
   args: { variant: 'plain', size: 'md', interactive: false },
@@ -37,7 +38,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The row that lists, menus and settings panels are made of. It carries no ARIA role: the same shape is a paragraph in one place and a list item in another, and only the caller knows which.',
+          'A flexible content row with optional leading and trailing parts. Choose the surrounding semantics for its use, such as a list of settings or search results.',
       },
     },
   },
@@ -102,12 +103,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * `variant="outlined"` draws the group's border and corner. Reach for it rather
- * than writing `rounded-lg border border-line-subtle` onto `className`: the
- * variant also carries the `overflow-hidden` that stops a row's hover fill
- * painting over the corner it sits inside.
- */
 export const InAGroup: Story = {
   render: (args) => (
     <ItemGroup variant="outlined" className="w-96">
@@ -158,11 +153,6 @@ export const InAGroup: Story = {
   },
 };
 
-/**
- * `asChild` is what makes a whole row a link. Asserted, because the tempting
- * alternative — an anchor wrapping the row — nests the action buttons inside
- * the link, and a button inside a link is not clickable.
- */
 export const AsChildMakesTheWholeRowALink: Story = {
   render: (args) => (
     <Item {...args} asChild interactive variant="outline" className="w-96">
@@ -183,11 +173,6 @@ export const AsChildMakesTheWholeRowALink: Story = {
   },
 };
 
-/**
- * A long title truncates rather than widening the row. That only works because
- * `ItemContent` is `min-w-0`; a flex child defaults to `min-width: auto` and
- * refuses to shrink below its content.
- */
 export const ALongTitleTruncates: Story = {
   render: (args) => (
     <Item {...args} variant="outline" className="w-72">

@@ -4,13 +4,14 @@ import { Label } from './Label';
 import { RadioGroup, RadioGroupItem } from './RadioGroup';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/RadioGroup',
   component: RadioGroup,
   parameters: {
     docs: {
       description: {
         component:
-          'A radio group is a SINGLE tab stop. Tab enters and leaves it; the arrow keys move between options. Implementations that make every radio tabbable look correct and are the commonest keyboard defect in a form.',
+          'A labelled set of mutually exclusive choices. Tab enters or leaves the group; arrow keys move between choices. Supply a visible label for each item.',
       },
     },
   },
@@ -53,16 +54,6 @@ export const Disabled: Story = {
   ),
 };
 
-/**
- * The keyboard model, in the two halves it has.
- *
- * One tab stop, asserted by pressing Tab rather than by reading `tabindex`:
- * Radix makes the container the stop, so every item reads `-1` at rest.
- *
- * Arrows move focus and Space commits. Selection-follows-arrow is not asserted
- * — Radix reads a flag set by a `document` keydown listener that runs after
- * roving focus has already moved, so it never fires under `userEvent`.
- */
 export const ArrowKeysMoveWithinTheGroup: Story = {
   render: (args) => (
     <div className="grid gap-4">

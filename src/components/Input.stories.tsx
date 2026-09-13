@@ -5,6 +5,7 @@ import { Input } from './Input';
 import { Label } from './Label';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Input',
   component: Input,
   args: {
@@ -27,7 +28,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A native input that consumes the field semantic family in every state. Its 44px default height matches Button’s medium size, and Field can supply all accessible relationships without Input becoming stateful.',
+          'A styled native input for a single value. Pair it with Field or Label. Choose a suitable type, name and autocomplete value; validation belongs to the application.',
       },
     },
   },

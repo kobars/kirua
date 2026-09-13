@@ -14,6 +14,7 @@ const SIZES = [
 ] as const;
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Heading',
   component: Heading,
   args: { as: 'h2', size: 'heading-md', children: 'Bring your anime worlds to life' },
@@ -25,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Level and size are separate props. The level is required, because a heading whose level is decided by the size that looked right is how three composed screens ended up skipping one.',
+          'A heading with independent document level and visual size. Choose as for the page outline and size for emphasis. Reserve display sizes for short promotional headlines.',
       },
     },
   },
@@ -48,11 +49,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * The whole reason the component exists. Both of these are `h2` in the
- * document outline and neither of them is the same size, which is a thing a
- * hand-written tag cannot express without someone remembering to.
- */
 export const LevelIsNotSize: Story = {
   render: (args) => (
     <div className="grid gap-4">
@@ -74,11 +70,6 @@ export const LevelIsNotSize: Story = {
   },
 };
 
-/**
- * A hidden heading stays in the accessibility tree. Use `sr-only`, never
- * `hidden`: `hidden` removes the text from the accessibility tree as well as
- * the screen, which leaves the section with no accessible name.
- */
 export const HiddenButStillNamed: Story = {
   args: { as: 'h2', className: 'sr-only', children: 'Aozora in numbers' },
   play: async ({ canvasElement }) => {

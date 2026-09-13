@@ -3,6 +3,7 @@ import { expect, within } from 'storybook/test';
 import { Stepper, StepperItem } from './Stepper';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Stepper',
   component: Stepper,
   args: { 'aria-label': 'Sign in' },
@@ -10,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Where you are in a process. Three states, not two: the current step is where attention belongs and an upcoming one is a promise, so drawing them the same way tells the reader nothing.',
+          'Show progress through a sequence. Distinguish completed, current and upcoming steps, and mark the current step for assistive technology.',
       },
     },
   },
@@ -51,11 +52,6 @@ export const Statuses: Story = {
   ),
 };
 
-/**
- * The half of the state that is not a drawing. Exactly one step is
- * `aria-current="step"`, and every step says in words whether it has been
- * passed — a marker showing "2" says nothing on its own.
- */
 export const PositionIsAnnounced: Story = {
   render: (args) => (
     <div className="max-w-96">

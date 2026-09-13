@@ -19,6 +19,7 @@ import {
 import { CalendarIcon, GridIcon, MenuIcon, PillIcon, StethoscopeIcon, UserIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Sidebar',
   component: Sidebar,
   args: { collapsible: 'icon', open: true },
@@ -28,9 +29,10 @@ const meta = {
   },
   parameters: {
     docs: {
+      story: { height: '540px' },
       description: {
         component:
-          'The application rail. It holds no state: `open` is a prop and the button that changes it belongs to the application, which is also where an open state that survives a reload has to live.',
+          'An application navigation rail. The application owns open state, its toggle and any persistence. Include an accessible navigation label.',
       },
     },
   },
@@ -133,11 +135,6 @@ export const Collapsible: Story = {
   ),
 };
 
-/**
- * The application owns the state, and this is what that looks like. The rail
- * narrows and the labels go — the icons and their targets stay, which is the
- * whole difference between `icon` and `offcanvas`.
- */
 export const TheApplicationOwnsTheOpenState: Story = {
   render: function Render(args) {
     const [open, setOpen] = useState(true);
@@ -184,10 +181,6 @@ export const TheApplicationOwnsTheOpenState: Story = {
   },
 };
 
-/**
- * The active row is announced, not merely coloured. `aria-current="page"` is
- * what a screen reader reads; a background colour is silent.
- */
 export const TheCurrentPageIsAnnounced: Story = {
   render: (args) => (
     <div className="h-64 bg-page">
@@ -224,7 +217,6 @@ export const TheCurrentPageIsAnnounced: Story = {
   },
 };
 
-/** A row that navigates should be an anchor, which is what `asChild` is for. */
 export const AsLink: Story = {
   render: (args) => (
     <div className="h-64 bg-page">

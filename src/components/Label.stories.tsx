@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Label } from './Label';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Label',
   component: Label,
   args: { htmlFor: 'display-name', children: 'Display name' },
@@ -14,7 +15,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A styled native label. Native association is the feature: clicking its visible text focuses the matching control and the same text becomes that control’s accessible name without JavaScript.',
+          'A visible label associated with a control through htmlFor. Use Field when the control also needs description or error text.',
       },
     },
   },

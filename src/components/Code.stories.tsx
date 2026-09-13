@@ -4,6 +4,7 @@ import { Code } from './Code';
 import { Text } from './Text';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Code',
   component: Code,
   args: { children: '--color-surface-brand' },
@@ -11,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A word of code inside a sentence. `CodeBlock` always draws a bordered container and a header bar, which is right for a block and impossible for a word.',
+          'A short code fragment within a sentence. Use CodeBlock for multi-line examples.',
       },
     },
   },
@@ -28,11 +29,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * The size is relative, so the same component sits on the line whatever size
- * the sentence is. Asserted, because an absolute size looks right in exactly
- * one paragraph and wrong in the rest.
- */
 export const ItSitsOnTheLineItIsIn: Story = {
   render: (args) => (
     <div className="grid gap-3">
@@ -59,10 +55,6 @@ export const ItSitsOnTheLineItIsIn: Story = {
   },
 };
 
-/**
- * A long name breaks the line rather than pushing its paragraph sideways. An
- * unbreakable token in a narrow column widens the whole page instead.
- */
 export const ALongNameWrapsRatherThanOverflows: Story = {
   render: (args) => (
     <div className="w-48" data-testid="column">
@@ -79,7 +71,6 @@ export const ALongNameWrapsRatherThanOverflows: Story = {
   },
 };
 
-/** A token name lands on a brand panel more often than anywhere else. */
 export const OnEverySurface: Story = {
   render: (args) => (
     <div className="grid gap-3">

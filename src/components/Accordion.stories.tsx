@@ -7,6 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './
  * union on `type`, which cannot be spread under `exactOptionalPropertyTypes`.
  */
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Accordion',
   component: Accordion,
   args: { type: 'single' },
@@ -14,7 +15,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'single closes the open section when another opens — a FAQ. multiple lets any number stand open — a filter panel, where closing the size filter to open the colour filter would be maddening.',
+          'Expandable sections for FAQs or grouped settings. Use type="single" for one open section or type="multiple" to let readers compare several sections.',
       },
     },
   },
@@ -61,10 +62,6 @@ export const SeveralOpenAtOnce: Story = {
   ),
 };
 
-/**
- * Two things a screenshot cannot show: the trigger sits inside a real heading,
- * and `aria-expanded` follows the panel.
- */
 export const TheTriggerIsAHeading: Story = {
   render: () => (
     <div className="w-96">

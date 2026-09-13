@@ -4,6 +4,7 @@ import { Card, CardBody, CardTitle } from './Card';
 import { ScrollArea } from './ScrollArea';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/ScrollArea',
   component: ScrollArea,
   args: { orientation: 'vertical' },
@@ -15,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A scrolling region that draws its own scrollbar from the semantic layer, so a column with more content below looks different from one without — on macOS, where the platform scrollbar fades away, as much as anywhere else. The bar exists only for an axis that overflows.',
+          'A scrollable region with styled scrollbars. Constrain its dimensions and ensure keyboard users can reach overflowing content.',
       },
     },
   },
@@ -37,7 +38,6 @@ const bar = (root: HTMLElement, orientation: string) =>
     `[data-slot="scroll-bar"][data-orientation="${orientation}"]`,
   );
 
-/** Twelve cards in a region four cards tall: a vertical bar, and a themed one. */
 export const Vertical: Story = {
   render: (args) => (
     <ScrollArea {...args} className="size-80 rounded-lg border border-line">
@@ -59,7 +59,6 @@ export const Vertical: Story = {
   },
 };
 
-/** A row wider than its region: a horizontal bar, and no vertical one. */
 export const Horizontal: Story = {
   args: { orientation: 'horizontal' },
   render: (args) => (
@@ -73,7 +72,6 @@ export const Horizontal: Story = {
   },
 };
 
-/** Both axes overflow; both bars, and the corner between them. */
 export const Both: Story = {
   args: { orientation: 'both' },
   render: (args) => (
@@ -87,11 +85,6 @@ export const Both: Story = {
   },
 };
 
-/**
- * The case the component is judged by: two cards in a region that fits them.
- * No bar, no track, nothing — a scrollbar on a region that cannot scroll is a
- * lie about the content.
- */
 export const NoOverflow: Story = {
   args: { orientation: 'both' },
   render: (args) => (

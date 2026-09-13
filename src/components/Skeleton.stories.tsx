@@ -3,13 +3,14 @@ import { expect, within } from 'storybook/test';
 import { Skeleton } from './Skeleton';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Skeleton',
   component: Skeleton,
   parameters: {
     docs: {
       description: {
         component:
-          'A placeholder in the shape of the content it replaces. It is aria-hidden: the container announces the wait once, rather than every shape announcing it.',
+          'A decorative placeholder matching the shape of pending content. Announce loading once on the containing region, and replace the skeleton when content is ready.',
       },
     },
   },
@@ -43,10 +44,6 @@ export const APostThatHasNotArrived: Story = {
   ),
 };
 
-/**
- * Six shapes, one announcement. The failure this prevents is a feed that reads
- * "loading" once per placeholder.
- */
 export const TheShapesAreSilent: Story = {
   render: (args) => (
     <output aria-busy="true" aria-label="Loading" data-testid="region" className="grid gap-2">

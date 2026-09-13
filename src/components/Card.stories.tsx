@@ -5,6 +5,16 @@ import { Stat, StatRow } from './Stat';
 import { ArrowRightIcon, BookmarkIcon, HeartIcon, SendIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      story: { height: '440px' },
+      description: {
+        component:
+          'Group related content and actions. Brand and dark variants establish local surface contexts for their children. Use glint sparingly for expressive panels.',
+      },
+    },
+  },
   title: 'Components/Card',
   component: Card,
   args: { variant: 'light', padding: 'lg', radius: 'xl' },
@@ -35,11 +45,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * `dark` and `brand` do more than change a fill — they declare a surface
- * context. The Button inside each card is identical in every one of these three
- * cases. It re-colours itself because the card re-points the action tokens.
- */
 export const SurfaceContexts: Story = {
   render: () => (
     <div className="grid gap-6 md:grid-cols-2">
@@ -57,11 +62,6 @@ export const SurfaceContexts: Story = {
   ),
 };
 
-/**
- * Below `md` every step tightens by one — `p-5` to `p-4`, `p-6` to `p-5` — so
- * the same card keeps its proportion at a narrow width. Only `lg` at `md` and
- * above is a measured value; see the note on the variant map.
- */
 export const Paddings: Story = {
   render: () => (
     <div className="grid gap-6 md:grid-cols-4">
@@ -75,7 +75,6 @@ export const Paddings: Story = {
   ),
 };
 
-/** Three steps of one scale. `lg` is the reference's 22px card corner. */
 export const Radii: Story = {
   render: () => (
     <div className="grid gap-6 md:grid-cols-3">
@@ -89,7 +88,6 @@ export const Radii: Story = {
   ),
 };
 
-/** The engagement card from the bottom row of the reference design. */
 export const WithStats: Story = {
   render: () => (
     <Card variant="dark" padding="lg" className="max-w-lg">

@@ -13,13 +13,14 @@ import {
 } from './Select';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Select',
   component: Select,
   parameters: {
     docs: {
       description: {
         component:
-          'A native select cannot be styled to match the field family — the option list is drawn by the operating system. The trigger is h-11, the same step as Input and Button, so a row of controls lines up.',
+          'Choose one value from a predefined list. Provide a visible label and meaningful option text. Use Combobox when users need to search a longer list.',
       },
     },
   },
@@ -84,7 +85,6 @@ export const InAField: Story = {
   ),
 };
 
-/** Opens the menu, chooses with the keyboard, and checks the trigger updates. */
 export const ChooseWithTheKeyboard: Story = {
   render: (args) => (
     <div className="w-72">

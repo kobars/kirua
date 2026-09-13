@@ -7,13 +7,15 @@ import { Label } from './Label';
 import { CloseIcon, SearchIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/InputGroup',
   component: InputGroup,
   parameters: {
     docs: {
+      story: { height: '320px' },
       description: {
         component:
-          'One box, one focus ring. The border and the state belong to the group, so `InputGroupInput` draws nothing — putting a plain `Input` in here gives you two borders, which is the look this component exists to remove.',
+          'An input with adjoining icons, text or actions inside one boundary. Use InputGroupInput inside the group so it shares the border and focus treatment.',
       },
     },
   },
@@ -86,12 +88,6 @@ export const States: Story = {
   ),
 };
 
-/**
- * The group reads its own descendants, so nothing is told twice. Focusing the
- * input has to change the *group's* border colour — that is the whole claim of
- * the component, and a `has-` selector that silently fails to compile would
- * still render a box that looks correct until it is focused.
- */
 export const TheGroupTakesTheFocusRing: Story = {
   render: () => (
     <div className="w-80">

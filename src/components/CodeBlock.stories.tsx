@@ -5,6 +5,7 @@ import { IconButton } from './IconButton';
 import { CopyIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/CodeBlock',
   component: CodeBlock,
   args: { language: 'bash' },
@@ -13,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'No syntax highlighting, deliberately: a highlighter is a large dependency and an argument about which token layer owns the colour of a keyword. The language-* class is on the <code>, which is what every highlighter looks for, so adding one later is a wrapper rather than a rewrite.',
+          'A labelled block of code with optional actions. Syntax highlighting and clipboard behaviour are application responsibilities; the language class is available for a highlighter.',
       },
     },
   },
@@ -50,10 +51,6 @@ export const WithACopyControl: Story = {
   ),
 };
 
-/**
- * The `language-*` class is where a highlighter expects it, the scrolling
- * region is focusable, and it scrolls itself rather than the page.
- */
 export const ItScrollsItselfAndTakesFocus: Story = {
   render: (args) => (
     <div className="w-72" data-testid="frame">

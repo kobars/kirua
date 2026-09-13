@@ -11,15 +11,17 @@ const localDay = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/DatePicker',
   component: DatePicker,
   args: { month: MARCH_2026, today: TODAY, locale: 'en-US', panelLabel: 'Choose a visit date' },
   argTypes: { onSelect: { control: false }, onMonthChange: { control: false } },
   parameters: {
     docs: {
+      story: { height: '480px' },
       description: {
         component:
-          'Popover + Calendar + a trigger that shows the chosen date. month and value are separate props on purpose: a reader may page through March without choosing anything in it, and one prop would snap the calendar back every time.',
+          'A date field composed from a trigger, Popover and Calendar. The application owns month and value separately so browsing another month does not change the selection.',
       },
     },
   },
@@ -36,10 +38,6 @@ export const Playground: Story = {
   ),
 };
 
-/**
- * The trigger label is formatted by `Intl`, so one value reads "14 Maret 2026"
- * in Indonesian and "March 14, 2026" in English with no pattern string.
- */
 export const ChosenAndNotYetChosen: Story = {
   render: (args) => (
     <div className="grid w-72 gap-4">
@@ -56,7 +54,6 @@ export const ChosenAndNotYetChosen: Story = {
   ),
 };
 
-/** Opens the panel, checks it is named, and chooses a day. */
 export const OpenAndChoose: Story = {
   render: (args) => (
     <div className="w-72">

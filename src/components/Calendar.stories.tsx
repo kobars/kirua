@@ -14,6 +14,7 @@ const localMonth = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Calendar',
   component: Calendar,
   args: { month: MARCH_2026, today: TODAY, locale: 'en-US' },
@@ -24,9 +25,10 @@ const meta = {
   },
   parameters: {
     docs: {
+      story: { height: '460px' },
       description: {
         component:
-          'Hand-built rather than a date-picker library, because the two hard parts — localised names and which day the week starts on — are both answered by Intl. Controlled: month and selected belong to the consumer.',
+          'A controlled month grid for choosing a date. The application owns the displayed month and selected date. Set locale for calendar names and the first weekday; engines without week-info support fall back to Monday.',
       },
     },
   },
@@ -39,11 +41,6 @@ export const Playground: Story = {
   render: (args) => <Calendar {...args} selected={new Date(2026, 2, 17)} />,
 };
 
-/**
- * Why `locale` is a locale and not a `weekStartsOn` number: `en-US` starts the
- * week on Sunday, `en-GB` and `id-ID` on Monday, and `id-ID` renames the
- * columns and the month too.
- */
 export const TheWeekStartsWhereTheLocaleSaysItDoes: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-4">
@@ -72,10 +69,6 @@ export const WithDisabledDates: Story = {
   ),
 };
 
-/**
- * Two things a picture cannot show: each day button's accessible name is the
- * full date, and a change of month is announced.
- */
 export const EveryDayIsNamedInFull: Story = {
   render: (args) => <Calendar {...args} selected={new Date(2026, 2, 17)} />,
   play: async ({ canvasElement }) => {
@@ -95,10 +88,6 @@ export const EveryDayIsNamedInFull: Story = {
   },
 };
 
-/**
- * Controlled: the month does not move unless the consumer moves it. This
- * asserts the handler reports the right next month.
- */
 export const MovingMonthIsTheConsumersToDo: Story = {
   render: (args) => (
     <Calendar

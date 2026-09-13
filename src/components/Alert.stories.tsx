@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from './Alert';
 import { CheckIcon, CloseIcon, SparkleIcon } from './icons';
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Alert',
   component: Alert,
   args: { status: 'neutral' },
@@ -18,7 +19,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Static inline feedback using the status ramp already shared with Badge. Alert does not choose live-region semantics: a consumer opts into role="status" for a polite update or role="alert" for an urgent dynamic failure.',
+          'Inline feedback with a title and supporting text. Add role="status" for a dynamic update or role="alert" for an urgent error; static alerts do not announce themselves.',
       },
     },
   },

@@ -8,6 +8,7 @@ import { Text } from './Text';
 const WIDTHS = ['md', '3xl', '4xl', '6xl', '7xl'] as const;
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Components/Container',
   component: Container,
   args: { width: '4xl', gap: 'md', pad: 'sm' },
@@ -20,7 +21,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The page shell. It carries `grid-cols-[minmax(0,1fr)]` so a wide child scrolls inside its own wrapper instead of stretching the page — a rule the responsive sweep found missing at five page roots.',
+          'A responsive page shell with shared width, gutter and spacing choices. Wide tables and charts should retain their own scroll containers.',
       },
     },
   },
@@ -65,11 +66,6 @@ export const Rhythm: Story = {
   ),
 };
 
-/**
- * The whole argument for the component. The table is wider than the container,
- * and the container does not grow to fit it — which is what a bare
- * `grid` would do, because a grid item keeps `min-width: auto`.
- */
 export const AWideChildDoesNotStretchThePage: Story = {
   render: (args) => (
     <Container {...args} width="md" data-testid="shell">
