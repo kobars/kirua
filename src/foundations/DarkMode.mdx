@@ -62,10 +62,18 @@ stay within that context.
 
 ## Preview in Storybook
 
-Open an individual story and change **Mode** in the toolbar. Storybook applies
-the choice around the specimen. Body-level portals can therefore differ from
-that local wrapper; use the **Foundations → Stacking** examples to inspect portal
-containers. Real applications should set document mode on `<html>`.
+Change **Mode** in the toolbar to switch the Storybook interface, documentation
+page and example documents together. Each preview sets the class on its own
+`<html>`, so body-level menus, dialogs and tooltips receive the selected mode too.
+
+Storybook rebuilds the docs page when toolbar globals change, which resets
+embedded examples. Open an individual story when you want to switch modes while
+keeping an interaction, such as an open dialog, in progress.
+
+The **Surface** control changes only the specimen's containing surface. A brand
+panel within a dark page is still a brand panel. Stories explicitly comparing
+fixed modes, such as Anime Hero's Light and Dark examples, retain their declared
+mode; they do not change the surrounding documentation's selection.
 
 See [Design direction](?path=/docs/design-direction--docs) for how future palettes
 and styles relate to these two modes.

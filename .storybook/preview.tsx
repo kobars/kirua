@@ -1,44 +1,30 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
-import { TooltipProvider } from '../src/components';
+import { ThemedDocsContainer } from './ThemedDocsContainer';
+import { StorySurface } from './StorySurface';
+import { colourMode } from './theme';
 import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
 import './docs.css';
 
-const withSurface: Decorator = (Story, context) => {
-  const { mode, surface } = context.globals as { mode: string; surface: string };
-  const surfaceClass =
-    surface === 'brand'
-      ? 'ctx-brand bg-brand'
-      : surface === 'inverse'
-        ? 'ctx-inverse bg-page'
-        : 'bg-page';
-
-  if (context.parameters.surface === 'none') {
-    return (
-      <TooltipProvider delayDuration={200}>
-        <Story />
-      </TooltipProvider>
-    );
-  }
-
-  return (
-    <div className={mode === 'dark' ? 'dark' : undefined}>
-      <TooltipProvider delayDuration={200}>
-        <div className={`${surfaceClass} min-h-40 rounded-xl p-4 text-fg sm:p-8`}>
-          <Story />
-        </div>
-      </TooltipProvider>
-    </div>
-  );
-};
+const withSurface: Decorator = (Story, context) => (
+  <StorySurface
+    mode={colourMode(context.globals)}
+    surface={context.globals['surface']}
+    bare={context.parameters.surface === 'none'}
+    fixedMode={context.storyGlobals?.['mode'] !== undefined}
+    fixedSurface={context.storyGlobals?.['surface'] !== undefined}
+  >
+    <Story />
+  </StorySurface>
+);
 
 const preview: Preview = {
   decorators: [withSurface],
+  initialGlobals: { mode: 'light', surface: 'page' },
   globalTypes: {
     mode: {
       description: 'Colour mode',
-      defaultValue: 'light',
       toolbar: {
         title: 'Mode',
         icon: 'circlehollow',
@@ -51,7 +37,6 @@ const preview: Preview = {
     },
     surface: {
       description: 'Surface context the component is rendered on',
-      defaultValue: 'page',
       toolbar: {
         title: 'Surface',
         icon: 'paintbrush',
@@ -85,6 +70,7 @@ const preview: Preview = {
     docs: {
       // Isolate IDs and portals when several stories share a docs page.
       page: DocsPage,
+      container: ThemedDocsContainer,
       story: { inline: false, height: '240px' },
       source: { excludeDecorators: true },
       controls: { sort: 'requiredFirst' },

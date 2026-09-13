@@ -30,17 +30,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Light: Story = {};
+export const Light: Story = { globals: { mode: 'light' } };
 
-export const Dark: Story = {
-  decorators: [
-    (Story) => (
-      <div className="dark">
-        <Story />
-      </div>
-    ),
-  ],
-};
+export const Dark: Story = { globals: { mode: 'dark' } };
 
 export const SplitsIntoTwoColumnsAtLg: Story = {
   play: async ({ canvasElement }) => {
