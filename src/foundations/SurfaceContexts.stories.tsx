@@ -14,6 +14,7 @@ import { contrastRatio, formatRatio, grade, resolveColor, type Rgb } from '@/lib
 
 const meta = {
   title: 'Foundations/Surface contexts',
+  globals: { mode: 'light', surface: 'page' },
   parameters: {
     layout: 'fullscreen',
     surface: 'none',
