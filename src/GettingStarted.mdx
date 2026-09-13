@@ -4,15 +4,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Getting started
 
-kirua is **not yet published to npm.** It runs from source, and this Storybook is
-the documentation. The package is `private`, and a library build and package
-manifest are still to come.
+Run kirua locally, explore a working screen, then inspect its components.
+The package is private and has no published installation flow yet.
 
-Read it, run it, and copy from it. Do not add it to `package.json` yet.
+## 1. Start the workspace
 
-## Run it locally
-
-Requires Node `^20.19 || ^22.12 || >=24`, and pnpm 10.
+Use Node `^20.19.0 || ^22.12.0 || >=24.0.0` and pnpm 10.
 
 ```bash
 git clone https://github.com/kobars/kirua.git
@@ -21,50 +18,62 @@ pnpm install
 pnpm storybook
 ```
 
-## Import a component
+Open **http://localhost:6006**. The component docs include live previews, source
+and props. Open a story to change its controls, colour mode or containing surface.
 
-Applications import the bare specifier `kirua`, and the stylesheet as
-`kirua/styles.css`.
+## 2. Open an application
+
+Choose one example as a starting point for reading the code:
+
+```bash
+pnpm example:marketing
+pnpm example:shop
+pnpm example:social
+pnpm example:simrs
+pnpm example:claude
+```
+
+Each command starts its own Vite application. Run one at a time, or use the URL
+printed by Vite when several servers are running. Data and actions are local demos.
+
+## 3. Compose with the local aliases
+
+Within these example apps, `kirua` points to `src/components/index.ts` and
+`kirua/styles.css` points to that app's stylesheet. These aliases are configured
+in `examples/vite.shared.ts`; they are not installed packages.
 
 ```tsx
-import { Card, CardTitle, CardBody, Button, Badge } from 'kirua';
+import { Button, Card, CardBody, CardTitle, Field, Input } from 'kirua';
+import 'kirua/styles.css';
 
-export function ReleaseCard() {
+export function NewsletterForm() {
   return (
-    <Card padding="md">
-      <Badge status="success">Shipped</Badge>
-      <CardTitle as="h2">Version 2.1</CardTitle>
-      <CardBody>Adds the field family and four form controls.</CardBody>
-      <Button variant="primary">Read the notes</Button>
+    <Card padding="md" className="max-w-md">
+      <CardTitle as="h2">A little inspiration each week</CardTitle>
+      <CardBody>Drawing prompts and new work from the community.</CardBody>
+      <form action="/subscribe" method="post" className="flex flex-col gap-4">
+        <Field controlId="newsletter-email" label="Email address" required>
+          <Input type="email" name="email" autoComplete="email" />
+        </Field>
+        <Button type="submit">Subscribe</Button>
+      </form>
     </Card>
   );
 }
 ```
 
-Until the package is published, that specifier is an alias — one entry in
-`tsconfig.app.json` and one in `examples/vite.shared.ts`. Application code
-therefore reaches the library through a name rather than a relative path, and
-nothing has to move when the real package lands.
+The `/subscribe` endpoint is an application responsibility. For a working local
+form with validation and confirmation, open
+[Everyday screens](?path=/docs/patterns-everyday-screens--docs).
 
-## What the host document must provide
+Each Field needs a unique `controlId`. It connects its child to the label,
+description and error. The application decides when to validate and passes
+`error` when there is a message to display.
 
-Three things live outside the component layer, because no component can reach
-them.
+## 4. Load the base typefaces
 
-### 1. The stylesheet
-
-```ts
-import 'kirua/styles.css';
-```
-
-One file: primitives, semantic tokens and utility aliases. About 13.5 kB gzipped
-for the whole system.
-
-### 2. The typefaces
-
-kirua **names** its typefaces and does not ship them, so the host document loads
-them. Both `--font-display` and `--font-text` end in a system fallback, so a page
-that loads nothing still works — it simply loses the character.
+The host document loads the fonts; the component stylesheet does not fetch them.
+Place these links in the document head, or self-host equivalent font files:
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -75,87 +84,44 @@ that loads nothing still works — it simply loses the character.
 />
 ```
 
-### 3. The colour-mode class
+Use display type for short promotional headlines. Use the text family for
+navigation, labels, forms and reading. Both have system-font fallbacks.
 
-Dark mode is the `dark` class on `<html>`. See **Foundations → Dark mode** for
-the blocking snippet that prevents a flash of the wrong theme, and for the
-Next.js App Router version.
+## 5. Choose mode and surface
 
-## The prop contract
+Set the `dark` class on `<html>` for dark mode. Read
+[Dark mode](?path=/docs/foundations-dark-mode--docs) for initial paint and stored preferences.
 
-Every component in the system behaves the same way, and these are the rules a
-consumer can rely on.
+Use `Card variant="brand"` or `Card variant="dark"` for a local contrasting panel.
+A surface context affects inherited tokens; a portalled overlay inherits from its
+portal container. Set the document mode on `<html>` so body-level portals receive it.
 
-<table>
-  <tbody>
-    <tr>
-      <td><code>ref</code></td>
-      <td>Reaches the rendered root element. React 19 treats it as an ordinary prop, so there is no <code>forwardRef</code> anywhere</td>
-    </tr>
-    <tr>
-      <td><code>className</code></td>
-      <td>Merges last, so a consumer always wins. It is a layout escape hatch — colour belongs to a surface context</td>
-    </tr>
-    <tr>
-      <td><code>...props</code></td>
-      <td>Spreads onto the same element that carries <code>data-slot</code>, so a ref, an <code>id</code> and a <code>data-*</code> attribute all land on one node</td>
-    </tr>
-    <tr>
-      <td><code>asChild</code></td>
-      <td>Only where the element's semantics may legitimately change. <code>Button</code> has it, because a button that navigates should be an <code>&lt;a&gt;</code></td>
-    </tr>
-    <tr>
-      <td><code>data-slot</code></td>
-      <td>On every element the system styles, named after the exported component in kebab-case. It is public API — select on it freely</td>
-    </tr>
-  </tbody>
-</table>
+## State and server rendering
 
-Sub-components are **flat named exports**, never static properties. Import
-`SpotlightMedia`, not `SpotlightPanel.Media` — a static property resolves to
-`undefined` across a client boundary.
+Static components can render on the server. Interactive Radix primitives carry
+client boundaries and require JavaScript. Event handlers and hooks belong in your
+application's client component when using React Server Components.
 
-Required props are required in the type. `IconButton` types `aria-label` as
-required, so the build fails rather than the user.
+- **Field** displays your validation state; it does not validate or submit data.
+- **Combobox** needs filtering, open state, keyboard navigation and selection.
+- **Command** needs search, keyboard navigation, execution and a trigger.
+- **Carousel** scrolls natively; your client code supplies previous/next controls.
 
-## Server rendering
+Their Storybook pages include examples of the application code involved. Server
+rendering is tested locally, but a complete framework integration is not yet verified.
 
-No component calls a hook or carries a `"use client"` directive, so components
-render on the server and ship no JavaScript of their own. The Radix packages
-carry their own directives where they need them.
+## Useful component conventions
 
-Two consequences for a consumer:
+Import parts by name, such as `CardTitle` and `DialogContent`. Use `asChild` on a
+Button when its action is navigation, passing an anchor with a real destination.
+Provide `aria-label` for IconButton. Pick heading levels for the document outline
+with `as`; choose their visual scale separately.
 
-- **A handler needs your own client component.** Attaching `onClick` crosses a
-  React boundary, and that boundary is yours to declare.
-- **Three components need you to drive them.** `Combobox`, `Command` and
-  `Carousel` render the right elements with the right ARIA wiring, and the open
-  state, the filtering and the current index are the consumer's.
+Use `className` for layout adjustments. Use existing variants and colour roles
+for appearance. Set `dir="rtl"` on a container to exercise logical direction.
 
-## Right-to-left
+## Next
 
-Every directional value in the system is logical — `ps-`, `pe-`, `ms-`, `me-`,
-`inset-s-`, `inset-e-` — and corners are named `top-start`, `top-end`,
-`bottom-start`, `bottom-end`. Set `dir="rtl"` on a container and the layout
-mirrors, including the corner ornament.
-
-## Browser support
-
-{/* HTML rather than a pipe table: Storybook's MDX pipeline does not enable
-    GFM, so a markdown table renders as literal text. */}
-
-<table>
-  <thead>
-    <tr><th align="left">Engine</th><th align="left">Minimum</th><th align="left">Set by</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Chrome / Edge</td><td><b>120</b></td><td><code>:dir()</code></td></tr>
-    <tr><td>Safari</td><td><b>16.4</b></td><td>Tailwind v4</td></tr>
-    <tr><td>Firefox</td><td><b>128</b></td><td>Tailwind v4</td></tr>
-  </tbody>
-</table>
-
-Tailwind CSS v4 compiles to `@property`, cascade layers and `color-mix()`, which
-sets three of these floors. `:dir()` raises Chrome, because it is the only
-selector that follows *inherited* direction and the corner ornament needs it to
-re-invert inside a right-to-left document.
+Read [Design direction](?path=/docs/design-direction--docs) before experimenting
+with a new palette or style. The repository README lists verification commands
+and current distribution limitations.
