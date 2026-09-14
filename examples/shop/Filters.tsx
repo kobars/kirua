@@ -127,7 +127,7 @@ export function Filters({
 
         <AccordionItem value="price">
           <AccordionTrigger>Price</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="pt-3">
             <div className="grid gap-4 pt-2">
               <Slider
                 value={value.price}
