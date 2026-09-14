@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -23,6 +23,7 @@ import {
   ResizableHandle,
   ResizablePanel,
   SendIcon,
+  ScrollArea,
 } from 'kirua';
 import { initials, people, threads } from './data';
 
@@ -35,13 +36,24 @@ import { initials, people, threads } from './data';
  */
 export function Messages() {
   const [openId, setOpenId] = useState(threads[0]?.id ?? '');
-  const [draft, setDraft] = useState('');
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const root = useRef<HTMLDivElement>(null);
   const [sent, setSent] = useState<Record<string, string[]>>({});
 
   const open = threads.find((thread) => thread.id === openId) ?? threads[0];
 
+  const draft = drafts[open?.id ?? ''] ?? '';
+  const setDraft = (value: string) => {
+    if (open) setDrafts((all) => ({ ...all, [open.id]: value }));
+  };
+  useEffect(() => {
+    root.current?.querySelectorAll('[data-slot="scroll-area-viewport"]').forEach((viewport) => {
+      viewport.scrollTop = viewport.scrollHeight;
+    });
+  }, [openId, sent]);
+
   const list = (
-    <ItemGroup>
+    <ItemGroup className="max-h-full overflow-y-auto">
       {threads.map((thread, index) => {
         const person = people[thread.handle];
         const last = thread.messages[thread.messages.length - 1];
@@ -94,31 +106,33 @@ export function Messages() {
         <span className="font-medium text-fg">{people[open.handle]?.name ?? open.handle}</span>
       </div>
 
-      <ul className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3">
-        {[
-          ...open.messages,
-          ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Now', text })),
-        ].map((message, index) => (
-          <li
-            key={`${message.at}-${index}`}
-            className={message.from === 'me' ? 'flex justify-end' : 'flex justify-start'}
-          >
-            <span
-              className={[
-                'max-w-[80%] rounded-lg px-3 py-2 text-body-sm',
-                // `ctx-brand` is what makes the text legible on a brand fill, and
-                // it is the recipe `Card`'s own brand variant uses. `text-on-primary`
-                // belongs to the *action* family, not the surface family: under
-                // `.dark` it inverts to near-black while `bg-brand` stays a dark
-                // blue, so the pair reads only in light mode.
-                message.from === 'me' ? 'ctx-brand bg-brand text-fg' : 'bg-sunken text-fg',
-              ].join(' ')}
+      <ScrollArea className="min-h-0 flex-1">
+        <ul className="flex flex-col gap-2 p-3">
+          {[
+            ...open.messages,
+            ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Now', text })),
+          ].map((message, index) => (
+            <li
+              key={`${message.at}-${index}`}
+              className={message.from === 'me' ? 'flex justify-end' : 'flex justify-start'}
             >
-              {message.text}
-            </span>
-          </li>
-        ))}
-      </ul>
+              <span
+                className={[
+                  'max-w-[80%] rounded-lg px-3 py-2 text-body-sm wrap-anywhere',
+                  // `ctx-brand` is what makes the text legible on a brand fill, and
+                  // it is the recipe `Card`'s own brand variant uses. `text-on-primary`
+                  // belongs to the *action* family, not the surface family: under
+                  // `.dark` it inverts to near-black while `bg-brand` stays a dark
+                  // blue, so the pair reads only in light mode.
+                  message.from === 'me' ? 'ctx-brand bg-brand text-fg' : 'bg-sunken text-fg',
+                ].join(' ')}
+              >
+                {message.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </ScrollArea>
 
       <form
         className="border-t border-line-subtle p-3"
@@ -154,13 +168,15 @@ export function Messages() {
   );
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
+    <div ref={root} className="grid grid-cols-[minmax(0,1fr)] gap-4">
       <Heading as="h1" size="heading-sm">
         Messages
       </Heading>
 
       {/* Phone: one pane at a time, chosen by whether a thread is open. */}
-      <Card className="overflow-hidden md:hidden">{openId === '' ? list : conversation}</Card>
+      <Card className="h-[calc(100dvh-14rem)] min-h-64 overflow-hidden md:hidden">
+        {openId === '' ? list : conversation}
+      </Card>
 
       <Card className="hidden h-128 overflow-hidden md:block">
         <ResizableGroup orientation="horizontal">
