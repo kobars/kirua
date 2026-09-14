@@ -21,7 +21,11 @@ const LIMIT = 280;
  * announcing "271 characters left" on every keystroke is noise, so the count
  * is silent until the last 20.
  */
-export function Composer() {
+export function Composer({
+  onPublish,
+}: {
+  onPublish: (text: string, audience: string, image: boolean) => void;
+}) {
   const [text, setText] = useState('');
   const [audience, setAudience] = useState('everyone');
   const [uploaded, setUploaded] = useState<number | null>(null);
@@ -44,7 +48,7 @@ export function Composer() {
     <Card className="grid gap-3 p-4">
       <div className="flex gap-3">
         <Avatar size="md">
-          <AvatarFallback>KS</AvatarFallback>
+          <AvatarFallback>RN</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
           <Label htmlFor="compose" className="sr-only">
@@ -113,7 +117,16 @@ export function Composer() {
           >
             {left}
           </span>
-          <Button size="sm" trailingIcon={<SendIcon />} disabled={text.trim() === ''}>
+          <Button
+            size="sm"
+            trailingIcon={<SendIcon />}
+            disabled={text.trim() === '' || (uploaded !== null && uploaded < 100)}
+            onClick={() => {
+              onPublish(text.trim(), audience, uploaded === 100);
+              setText('');
+              setUploaded(null);
+            }}
+          >
             Send
           </Button>
         </div>
