@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -39,8 +39,15 @@ export function NewVisit() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [dateOpen, setDateOpen] = useState(false);
   const [clinic, setClinic] = useState('');
+  const [patient, setPatient] = useState('');
+  const [doctor, setDoctor] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
+
+  const result = useRef<HTMLElement>(null);
+  useEffect(() => {
+    result.current?.focus();
+  }, [errors, saved]);
 
   // The combobox's own state. kirua supplies the parts and the ARIA; the query,
   // the filtered rows and the highlighted one are application state, which is
@@ -77,7 +84,13 @@ export function NewVisit() {
       </Heading>
 
       {saved && (
-        <output className="block">
+        <output
+          ref={(node) => {
+            result.current = node;
+          }}
+          tabIndex={-1}
+          className="block"
+        >
           <Alert status="success" icon={<CheckIcon />}>
             <AlertTitle>Visit saved</AlertTitle>
             <AlertDescription>An example screen — nothing is really stored.</AlertDescription>
@@ -86,74 +99,110 @@ export function NewVisit() {
       )}
 
       {Object.keys(errors).length > 0 && (
-        <Alert status="danger" role="alert">
+        <Alert
+          ref={(node) => {
+            result.current = node;
+          }}
+          tabIndex={-1}
+          status="danger"
+          role="alert"
+        >
           <AlertTitle>{Object.keys(errors).length} fields need attention</AlertTitle>
           <AlertDescription>The full message is under each field.</AlertDescription>
         </Alert>
       )}
 
       <Card className="p-5">
-        <form noValidate onSubmit={submit} className="grid gap-5">
-          <Field controlId="rm" label="Patient" required error={errors['rm']}>
-            <Select name="rm">
+        <form
+          noValidate
+          onSubmit={submit}
+          onReset={() => {
+            setPatient('');
+            setClinic('');
+            setDoctor('');
+            setDate(undefined);
+            setMonth(new Date(2026, 2, 1));
+            setDateOpen(false);
+            setQuery('');
+            setDiagnosis(null);
+            setListOpen(false);
+            setActive(0);
+            setErrors({});
+            setSaved(false);
+          }}
+          className="grid gap-5"
+        >
+          <Select name="rm" value={patient} onValueChange={setPatient}>
+            <Field controlId="rm" label="Patient" required error={errors['rm']}>
               <SelectTrigger id="rm">
                 <SelectValue placeholder="Choose a patient" />
               </SelectTrigger>
-              <SelectContent aria-label="Patient">
-                {patients.map((patient) => (
-                  <SelectItem key={patient.rm} value={patient.rm}>
-                    {patient.name} — {patient.rm}
+            </Field>
+            <SelectContent aria-label="Patient">
+              {patients.map((patient) => (
+                <SelectItem key={patient.rm} value={patient.rm}>
+                  {patient.name} — {patient.rm}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <Select
+              value={clinic}
+              onValueChange={(next) => {
+                setClinic(next);
+                setDoctor('');
+              }}
+            >
+              <Field controlId="clinic" label="Clinic" required error={errors['clinic']}>
+                <SelectTrigger id="clinic">
+                  <SelectValue placeholder="Choose a clinic" />
+                </SelectTrigger>
+              </Field>
+              {/* Grouped by the department that runs the clinic, which is how
+                    the hospital lists them. `SelectLabel` names each group for a
+                    screen reader as well as on the screen. */}
+              <SelectContent aria-label="Clinic">
+                {clinicGroups.map((group, index) => (
+                  <Fragment key={group.label}>
+                    {index > 0 && <SelectSeparator />}
+                    <SelectGroup>
+                      <SelectLabel>{group.label}</SelectLabel>
+                      {group.clinics.map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </Fragment>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              disabled={clinic === ''}
+              name="doctor"
+              value={doctor}
+              onValueChange={setDoctor}
+            >
+              <Field
+                controlId="doctor"
+                label="Doctor"
+                description={clinic === '' ? 'Choose a clinic first.' : undefined}
+              >
+                <SelectTrigger id="doctor">
+                  <SelectValue placeholder="Choose a doctor" />
+                </SelectTrigger>
+              </Field>
+              <SelectContent aria-label="Doctor">
+                {(doctors[clinic] ?? []).map((name) => (
+                  <SelectItem key={name} value={name}>
+                    {name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </Field>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            <Field controlId="clinic" label="Clinic" required error={errors['clinic']}>
-              <Select value={clinic} onValueChange={setClinic}>
-                <SelectTrigger id="clinic">
-                  <SelectValue placeholder="Choose a clinic" />
-                </SelectTrigger>
-                {/* Grouped by the department that runs the clinic, which is how
-                    the hospital lists them. `SelectLabel` names each group for a
-                    screen reader as well as on the screen. */}
-                <SelectContent aria-label="Clinic">
-                  {clinicGroups.map((group, index) => (
-                    <Fragment key={group.label}>
-                      {index > 0 && <SelectSeparator />}
-                      <SelectGroup>
-                        <SelectLabel>{group.label}</SelectLabel>
-                        {group.clinics.map((name) => (
-                          <SelectItem key={name} value={name}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </Fragment>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-
-            <Field
-              controlId="doctor"
-              label="Doctor"
-              description={clinic === '' ? 'Choose a clinic first.' : undefined}
-            >
-              <Select disabled={clinic === ''} name="doctor">
-                <SelectTrigger id="doctor">
-                  <SelectValue placeholder="Choose a doctor" />
-                </SelectTrigger>
-                <SelectContent aria-label="Doctor">
-                  {(doctors[clinic] ?? []).map((name) => (
-                    <SelectItem key={name} value={name}>
-                      {name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
@@ -185,19 +234,19 @@ export function NewVisit() {
               codes long and a doctor knows the first letters. Focus never
               leaves the input, so `aria-activedescendant` is what announces the
               highlighted row. */}
-          <Field
-            controlId="diagnosis"
-            label="Diagnosis (ICD-10)"
-            description="Type the code or the name."
-          >
-            <Combobox>
+          <Combobox>
+            <Field
+              controlId="diagnosis"
+              label="Diagnosis (ICD-10)"
+              description="Type the code or the name."
+            >
               <ComboboxInput
                 id="diagnosis"
                 name="diagnosis"
                 value={query}
                 placeholder="J06, hypertension…"
                 aria-expanded={listOpen}
-                aria-controls="diagnosis-list"
+                aria-controls={listOpen && matches.length > 0 ? 'diagnosis-list' : undefined}
                 aria-activedescendant={
                   listOpen && matches[active] ? `diagnosis-${matches[active].code}` : undefined
                 }
@@ -205,14 +254,16 @@ export function NewVisit() {
                 onBlur={() => setListOpen(false)}
                 onChange={(event) => {
                   setQuery(event.target.value);
+                  setDiagnosis(null);
                   setListOpen(true);
                   setActive(0);
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === 'ArrowDown')
-                    setActive((n) => Math.min(matches.length - 1, n + 1));
-                  else if (event.key === 'ArrowUp') setActive((n) => Math.max(0, n - 1));
-                  else if (event.key === 'Enter' && matches[active]) {
+                  if (event.key === 'ArrowDown') {
+                    setListOpen(true);
+                    setActive((n) => Math.max(0, Math.min(matches.length - 1, n + 1)));
+                  } else if (event.key === 'ArrowUp') setActive((n) => Math.max(0, n - 1));
+                  else if (event.key === 'Enter' && listOpen && matches[active]) {
                     event.preventDefault();
                     setDiagnosis(matches[active].code);
                     setQuery(`${matches[active].code} — ${matches[active].label}`);
@@ -222,36 +273,36 @@ export function NewVisit() {
                   if (event.key.startsWith('Arrow')) event.preventDefault();
                 }}
               />
-              {listOpen &&
-                (matches.length > 0 ? (
-                  <ComboboxList id="diagnosis-list" aria-label="Diagnosis">
-                    {matches.map((entry, index) => (
-                      <ComboboxItem
-                        key={entry.code}
-                        id={`diagnosis-${entry.code}`}
-                        isActive={index === active}
-                        aria-selected={entry.code === diagnosis}
-                        onMouseDown={(event) => {
-                          event.preventDefault();
-                          setDiagnosis(entry.code);
-                          setQuery(`${entry.code} — ${entry.label}`);
-                          setListOpen(false);
-                        }}
-                      >
-                        <span>
-                          <span className="font-medium tabular-nums">{entry.code}</span>{' '}
-                          {entry.label}
-                        </span>
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                ) : (
-                  // Beside the list, never inside it: a `role="listbox"` must
-                  // contain options, which axe enforces.
-                  <ComboboxEmpty>No code matches.</ComboboxEmpty>
-                ))}
-            </Combobox>
-          </Field>
+            </Field>
+            {listOpen &&
+              (matches.length > 0 ? (
+                <ComboboxList id="diagnosis-list" aria-label="Diagnosis">
+                  {matches.map((entry, index) => (
+                    <ComboboxItem
+                      key={entry.code}
+                      id={`diagnosis-${entry.code}`}
+                      isActive={index === active}
+                      aria-selected={entry.code === diagnosis}
+                      onMouseDown={(event) => {
+                        event.preventDefault();
+                        setDiagnosis(entry.code);
+                        setQuery(`${entry.code} — ${entry.label}`);
+                        setListOpen(false);
+                      }}
+                    >
+                      <span>
+                        <span className="font-medium tabular-nums">{entry.code}</span>{' '}
+                        {entry.label}
+                      </span>
+                    </ComboboxItem>
+                  ))}
+                </ComboboxList>
+              ) : (
+                // Beside the list, never inside it: a `role="listbox"` must
+                // contain options, which axe enforces.
+                <ComboboxEmpty>No code matches.</ComboboxEmpty>
+              ))}
+          </Combobox>
 
           <Field
             controlId="reason"
@@ -275,11 +326,14 @@ export function NewVisit() {
                 id="consent"
                 name="consent"
                 aria-invalid={errors['consent'] !== undefined}
+                aria-describedby={errors['consent'] ? 'consent-error' : undefined}
               />
               <Label htmlFor="consent">The patient consents to the examination</Label>
             </div>
             {errors['consent'] && (
-              <p className="text-body-sm text-invalid">{errors['consent']}</p>
+              <p id="consent-error" className="text-body-sm text-invalid">
+                {errors['consent']}
+              </p>
             )}
           </div>
 
