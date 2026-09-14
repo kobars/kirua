@@ -28,7 +28,7 @@ import { SettingsDialog } from './SettingsDialog';
 import { Sidebar } from './Sidebar';
 import { Transcript } from './Transcript';
 import { Usage } from './Usage';
-import { allConversations } from './data';
+import { allConversations, type Turn } from './data';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /**
@@ -44,7 +44,8 @@ export function App() {
   const [route, navigate] = useHashRoute(allConversations[0]!.id);
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [addedTurns, setAddedTurns] = useState<Record<string, Turn[]>>({});
   const [deleting, setDeleting] = useState<string | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
   const { preference, choose } = useTheme();
@@ -52,6 +53,25 @@ export function App() {
   const visible = allConversations.filter((c) => !hidden.includes(c.id));
   const conversation =
     visible.find((c) => c.id === route) ?? visible[0] ?? allConversations[0]!;
+
+  useEffect(() => {
+    if (pendingId === null) return;
+    const timer = window.setTimeout(() => {
+      setAddedTurns((all) => ({
+        ...all,
+        [pendingId]: [
+          ...(all[pendingId] ?? []),
+          {
+            id: crypto.randomUUID(),
+            from: 'assistant',
+            text: 'This is a local demo reply. Explore the sample conversations for worked examples of tokens, accessibility and layout. No message was sent to a server.',
+          },
+        ],
+      }));
+      setPendingId(null);
+    }, 1400);
+    return () => window.clearTimeout(timer);
+  }, [pendingId]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -156,13 +176,26 @@ export function App() {
             <Usage />
           ) : (
             <>
-              <Transcript conversation={conversation} pending={pending} />
+              <Transcript
+                conversation={{
+                  ...conversation,
+                  turns: [...conversation.turns, ...(addedTurns[conversation.id] ?? [])],
+                }}
+                pending={pendingId === conversation.id}
+              />
 
               <Composer
-                busy={pending}
-                onSend={() => {
-                  setPending(true);
-                  window.setTimeout(() => setPending(false), 1400);
+                busy={pendingId !== null}
+                onSend={(text) => {
+                  if (pendingId !== null) return;
+                  setAddedTurns((all) => ({
+                    ...all,
+                    [conversation.id]: [
+                      ...(all[conversation.id] ?? []),
+                      { id: crypto.randomUUID(), from: 'you', text },
+                    ],
+                  }));
+                  setPendingId(conversation.id);
                 }}
               />
             </>
