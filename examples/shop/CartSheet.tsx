@@ -44,7 +44,7 @@ export function CartSheet({
           <SheetDescription>
             {lines.length === 0
               ? 'Nothing in it yet.'
-              : `${lines.length} items, kept for seven days.`}
+              : `${lines.length} items in this demo session.`}
           </SheetDescription>
         </div>
 
@@ -53,7 +53,7 @@ export function CartSheet({
             headingLevel="h3"
             icon={<CartIcon size="2xl" />}
             title="Your cart is empty"
-            description="Anything you add is kept here for seven days."
+            description="Add an item to try checkout. This demo cart resets on reload."
           />
         ) : (
           <ul className="min-h-0 flex-1 divide-y divide-line-subtle overflow-y-auto">

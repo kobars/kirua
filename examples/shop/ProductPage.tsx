@@ -129,7 +129,13 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
             </ToggleGroup>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <form
+            className="flex flex-wrap items-center gap-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              onAdd(product, quantity);
+            }}
+          >
             <QuantityStepper
               label={`Quantity, ${product.name}`}
               value={quantity}
@@ -138,15 +144,10 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
               onDecrement={() => setQuantity((n) => n - 1)}
               onIncrement={() => setQuantity((n) => n + 1)}
             />
-            <Button
-              size="lg"
-              leadingIcon={<CartIcon />}
-              className="grow"
-              onClick={() => onAdd(product, quantity)}
-            >
+            <Button size="lg" leadingIcon={<CartIcon />} className="grow" type="submit">
               Add to cart
             </Button>
-          </div>
+          </form>
         </div>
       </div>
 
