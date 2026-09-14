@@ -163,9 +163,8 @@ for (const size of WIDTHS) {
 
           // WCAG 2.5.8's spacing exception: an undersized target still passes
           // when a 24-pixel circle centred on it touches no other target's
-          // circle. Two centres 24 pixels apart is the same statement, and it
-          // is why a row of 20-pixel checkboxes with air around them is not a
-          // failure while two crowded ones are.
+          // circle OR actual rectangle. Comparing centres alone misses a
+          // small slider immediately below a wide accordion trigger.
           const centre = (b) => ({ x: b.x + b.width / 2, y: b.y + b.height / 2 });
           for (const { el, box } of aimed) {
             if (box.width >= minTarget && box.height >= minTarget) continue;
@@ -173,7 +172,13 @@ for (const size of WIDTHS) {
             const crowded = aimed.some(({ el: other, box: otherBox }) => {
               if (other === el) return false;
               const b = centre(otherBox);
-              return Math.hypot(a.x - b.x, a.y - b.y) < minTarget;
+              const nearestX = Math.max(otherBox.left, Math.min(a.x, otherBox.right));
+              const nearestY = Math.max(otherBox.top, Math.min(a.y, otherBox.bottom));
+              return (
+                Math.hypot(a.x - nearestX, a.y - nearestY) < minTarget / 2 ||
+                ((otherBox.width < minTarget || otherBox.height < minTarget) &&
+                  Math.hypot(a.x - b.x, a.y - b.y) < minTarget)
+              );
             });
             if (!crowded) continue;
             small.push({
