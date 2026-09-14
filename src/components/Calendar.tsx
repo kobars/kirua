@@ -118,6 +118,7 @@ export function Calendar({
     >
       <div className="mb-2 flex items-center justify-between gap-2">
         <IconButton
+          type="button"
           aria-label={previousLabel}
           size="sm"
           variant="ghost"
@@ -134,6 +135,7 @@ export function Calendar({
           {titleFormat.format(firstOfMonth)}
         </span>
         <IconButton
+          type="button"
           aria-label={nextLabel}
           size="sm"
           variant="ghost"

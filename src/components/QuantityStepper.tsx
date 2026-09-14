@@ -61,6 +61,7 @@ export function QuantityStepper({
       {...props}
     >
       <IconButton
+        type="button"
         aria-label={decrementLabel}
         size="sm"
         variant="ghost"
@@ -77,6 +78,7 @@ export function QuantityStepper({
         {value}
       </output>
       <IconButton
+        type="button"
         aria-label={incrementLabel}
         size="sm"
         variant="ghost"

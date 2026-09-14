@@ -17,6 +17,8 @@ export interface SliderProps extends ComponentProps<typeof SliderPrimitive.Root>
  * `role="slider"` is on the thumb, not the root, so this component moves the
  * accessible name there — a name left on the root would name nothing.
  *
+ * Set a height when using the vertical orientation, for example className="h-48".
+ *
  * @example <Slider defaultValue={[20]} max={200} aria-label="Volume" />
  * @example
  * <Slider
@@ -28,6 +30,7 @@ export interface SliderProps extends ComponentProps<typeof SliderPrimitive.Root>
 export function Slider({
   className,
   thumbLabels,
+  orientation = 'horizontal',
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   ...props
@@ -39,8 +42,10 @@ export function Slider({
   return (
     <SliderPrimitive.Root
       data-slot="slider"
+      orientation={orientation}
       className={cn(
-        'relative flex w-full touch-none items-center select-none',
+        'relative flex touch-none items-center select-none',
+        orientation === 'vertical' ? 'h-full w-5 flex-col' : 'w-full',
         'data-disabled:opacity-50',
         className,
       )}
@@ -48,11 +53,17 @@ export function Slider({
     >
       <SliderPrimitive.Track
         data-slot="slider-track"
-        className="relative h-1.5 w-full grow overflow-hidden rounded-pill bg-sunken"
+        className={cn(
+          'relative grow overflow-hidden rounded-pill bg-sunken',
+          orientation === 'vertical' ? 'h-full w-1.5' : 'h-1.5 w-full',
+        )}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
-          className="absolute h-full bg-primary"
+          className={cn(
+            'absolute bg-primary',
+            orientation === 'vertical' ? 'w-full' : 'h-full',
+          )}
         />
       </SliderPrimitive.Track>
       {thumbs.map((_, index) => (
