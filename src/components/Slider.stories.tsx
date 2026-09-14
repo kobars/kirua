@@ -95,3 +95,33 @@ export const TheTouchTargetIsBiggerThanTheCircle: Story = {
     await expect(inset).toBe('-12px');
   },
 };
+
+export const Vertical: Story = {
+  render: (args) => (
+    <div className="flex h-48 gap-12 px-4">
+      <Slider
+        {...args}
+        orientation="vertical"
+        defaultValue={[40]}
+        step={5}
+        aria-label="Volume"
+      />
+      <Slider
+        {...args}
+        orientation="vertical"
+        defaultValue={[25, 75]}
+        thumbLabels={['Minimum', 'Maximum']}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const thumb = within(canvasElement).getByRole('slider', { name: 'Volume' });
+    await expect(thumb).toHaveAttribute('aria-orientation', 'vertical');
+    thumb.focus();
+    await userEvent.keyboard('{ArrowUp}');
+    await expect(thumb).toHaveAttribute('aria-valuenow', '45');
+    const track = canvasElement.querySelector('[data-slot="slider-track"]')!;
+    await expect(track.getBoundingClientRect().height).toBeGreaterThan(100);
+    await expect(track.getBoundingClientRect().width).toBeLessThan(10);
+  },
+};

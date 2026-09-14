@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import {
   Button,
   ChevronDownIcon,
@@ -28,6 +29,18 @@ export interface TranscriptProps {
  * `min-h-0` on itself and every flex ancestor, or the page scrolls instead.
  */
 export function Transcript({ conversation, pending }: TranscriptProps) {
+  const end = useRef<HTMLDivElement>(null);
+  const [copyStatus, setCopyStatus] = useState('');
+  const previous = useRef({ id: conversation.id, count: conversation.turns.length });
+  useEffect(() => {
+    if (
+      previous.current.id === conversation.id &&
+      conversation.turns.length > previous.current.count
+    ) {
+      end.current?.scrollIntoView({ block: 'nearest' });
+    }
+    previous.current = { id: conversation.id, count: conversation.turns.length };
+  }, [conversation.id, conversation.turns.length, pending]);
   return (
     <ScrollArea className="min-h-0 flex-1">
       <Container width="3xl" gap="lg" pad="md">
@@ -68,7 +81,10 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
               )}
 
               {turn.text.split('\n\n').map((paragraph) => (
-                <p key={paragraph.slice(0, 24)} className="text-body-md text-pretty text-fg">
+                <p
+                  key={paragraph.slice(0, 24)}
+                  className="text-body-md text-pretty wrap-anywhere text-fg"
+                >
                   {paragraph}
                 </p>
               ))}
@@ -79,7 +95,21 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                   action={
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <IconButton aria-label="Copy code" size="sm" variant="ghost">
+                        <IconButton
+                          aria-label="Copy code"
+                          size="sm"
+                          variant="ghost"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(turn.code!.source);
+                              setCopyStatus('Code copied');
+                            } catch {
+                              setCopyStatus(
+                                'Could not copy. Select the code and copy it manually.',
+                              );
+                            }
+                          }}
+                        >
                           <CopyIcon />
                         </IconButton>
                       </TooltipTrigger>
@@ -145,6 +175,8 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
             <Skeleton className="h-4 w-2/3" />
           </output>
         )}
+        <output className="sr-only">{copyStatus}</output>
+        <div ref={end} />
       </Container>
     </ScrollArea>
   );

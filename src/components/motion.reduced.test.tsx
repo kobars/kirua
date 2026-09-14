@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
 import { Card } from './Card';
+import { Carousel } from './Carousel';
 
 afterEach(cleanup);
 
@@ -102,3 +103,10 @@ describe('transitions are flattened too', () => {
  * generated — both read as "not 500ms". The pair is what pins the difference to
  * the preference, and the two files name each other so the link is not lost.
  */
+
+it('the carousel does not animate scrolling when reduced motion is requested', () => {
+  const carousel = render(<Carousel label="Artwork" />).querySelector(
+    '[data-slot="carousel"]',
+  )!;
+  expect(getComputedStyle(carousel).scrollBehavior).toBe('auto');
+});

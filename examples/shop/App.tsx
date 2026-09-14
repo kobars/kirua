@@ -106,9 +106,11 @@ export function App() {
       const existing = all.find((l) => l.product.id === product.id);
       return existing
         ? all.map((l) =>
-            l.product.id === product.id ? { ...l, quantity: l.quantity + quantity } : l,
+            l.product.id === product.id
+              ? { ...l, quantity: Math.min(product.stock, l.quantity + quantity) }
+              : l,
           )
-        : [...all, { product, quantity }];
+        : [...all, { product, quantity: Math.min(product.stock, quantity) }];
     });
     setToast(product.name);
   };
@@ -295,7 +297,10 @@ export function App() {
             variant="secondary"
             size="sm"
             leadingIcon={<CartIcon />}
-            onClick={() => setCartOpen(true)}
+            onClick={() => {
+              setToast(null);
+              setCartOpen(true);
+            }}
             aria-label="Cart"
           >
             <span className="hidden sm:inline">Cart</span>
