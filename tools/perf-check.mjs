@@ -132,7 +132,7 @@ for (const { slug, routes } of APPS) {
   const { port } = server.address();
   const page = await context.newPage();
 
-  await page.coverage.startCSSCoverage();
+  await page.coverage.startCSSCoverage({ resetOnNavigation: false });
 
   let nodes = 0;
   let paint = 0;
