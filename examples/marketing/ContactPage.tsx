@@ -47,6 +47,7 @@ export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const nameError = submitted && name.trim() === '' ? 'Enter your name.' : undefined;
   const emailError =
     submitted && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
       ? 'Enter an address we can reply to.'
@@ -78,11 +79,12 @@ export function ContactPage() {
               event.preventDefault();
               setSubmitted(true);
               const validEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-              if (validEmail && message.trim().length >= 10) setSent(true);
+              if (name.trim() !== '' && validEmail && message.trim().length >= 10)
+                setSent(true);
             }}
             noValidate
           >
-            <Field controlId="contact-name" label="Your name" required>
+            <Field controlId="contact-name" label="Your name" required error={nameError}>
               <Input
                 value={name}
                 autoComplete="name"
@@ -172,9 +174,9 @@ export function ContactPage() {
             icon={<CheckIcon />}
             close={<ToastClose label="Dismiss" onClick={() => setSent(false)} />}
           >
-            <ToastTitle>Message sent</ToastTitle>
+            <ToastTitle>Demo message received</ToastTitle>
             <ToastDescription>
-              We will reply to {email} within one working day.
+              Nothing was sent. In a connected application, replies would go to {email}.
             </ToastDescription>
           </Toast>
         )}

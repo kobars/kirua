@@ -36,7 +36,7 @@ export function Composer({ onSend, busy }: ComposerProps) {
 
   const send = () => {
     const el = box.current;
-    if (!el || el.value.trim() === '') return;
+    if (!el || busy || el.value.trim() === '') return;
     onSend(el.value.trim());
     el.value = '';
     grow();
@@ -66,7 +66,7 @@ export function Composer({ onSend, busy }: ComposerProps) {
           onInput={grow}
           onKeyDown={(event) => {
             // Enter sends, Shift+Enter makes a new line.
-            if (event.key === 'Enter' && !event.shiftKey) {
+            if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
               event.preventDefault();
               send();
             }
@@ -81,7 +81,17 @@ export function Composer({ onSend, busy }: ComposerProps) {
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
-                <IconButton aria-label="Suggest a prompt" variant="ghost">
+                <IconButton
+                  type="button"
+                  aria-label="Suggest a prompt"
+                  variant="ghost"
+                  onClick={() => {
+                    if (!box.current) return;
+                    box.current.value = 'How do surface contexts keep buttons readable?';
+                    grow();
+                    box.current.focus();
+                  }}
+                >
                   <SparkleIcon />
                 </IconButton>
               </TooltipTrigger>

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import {
   AspectRatio,
+  Button,
+  Input,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -15,7 +20,6 @@ import {
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
-  ContextMenuShortcut,
   ContextMenuTrigger,
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -53,6 +57,23 @@ const REPLY_ORDERS = [
 
 export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps) {
   const [muted, setMuted] = useState(false);
+  const [liked, setLiked] = useState(post.liked ?? false);
+  const [pinned, setPinned] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [reply, setReply] = useState('');
+  const [replies, setReplies] = useState<string[]>([]);
+  const [repliesOpen, setRepliesOpen] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `${post.text}\n${location.origin}${location.pathname}#/profile/${post.handle}`,
+      );
+      setNotice('Post and profile link copied.');
+    } catch {
+      setNotice('Could not copy. Select the post text to copy it manually.');
+    }
+  };
+  const report = () => setNotice('Report recorded for this demo session. Nothing was sent.');
   const [replyOrder, setReplyOrder] = useState('newest');
   const person = people[post.handle];
   if (!person) return null;
@@ -97,9 +118,11 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
                 destructive one are three different kinds of thing and a menu
                 that does not say so is a list of six. */}
             <DropdownMenuGroup>
-              <DropdownMenuItem>Copy link</DropdownMenuItem>
-              <DropdownMenuItem>Pin</DropdownMenuItem>
-              <DropdownMenuItem>Report</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => void copy()}>Copy post</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setPinned(!pinned)}>
+                {pinned ? 'Unpin' : 'Pin'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={report}>Report</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
@@ -117,7 +140,9 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
         </DropdownMenu>
       </header>
 
-      <Text tone="primary" className="text-pretty">
+      {pinned && <Text size="sm">Pinned in this session</Text>}
+      {muted && <Text size="sm">Muted in this session</Text>}
+      <Text tone="primary" className="text-pretty wrap-anywhere">
         {post.text}
       </Text>
 
@@ -137,26 +162,58 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
       <footer className="flex flex-wrap items-center gap-1">
         <Toggle
           size="sm"
-          defaultPressed={post.liked ?? false}
+          pressed={liked}
+          onPressedChange={setLiked}
           aria-label={`Like ${person.name}’s post`}
         >
           <HeartIcon />
-          <span className="tabular-nums">{compactCount(post.likes)}</span>
+          <span className="tabular-nums">
+            {compactCount(post.likes + Number(liked) - Number(post.liked ?? false))}
+          </span>
         </Toggle>
-        <IconButton aria-label={`${post.comments} komentar`} variant="ghost" size="sm">
-          <CommentIcon />
-        </IconButton>
+        <CollapsibleTrigger asChild>
+          <IconButton aria-label="Reply to post" variant="ghost" size="sm">
+            <CommentIcon />
+          </IconButton>
+        </CollapsibleTrigger>
         <span className="text-body-sm text-fg-secondary tabular-nums">
-          {compactCount(post.comments)}
+          {compactCount(post.comments + replies.length)}
         </span>
         <span className="flex-1" />
-        <IconButton aria-label="Share" variant="ghost" size="sm">
+        <IconButton aria-label="Share" variant="ghost" size="sm" onClick={() => void copy()}>
           <ShareIcon />
         </IconButton>
         <Toggle size="sm" aria-label="Save">
           <BookmarkIcon />
         </Toggle>
       </footer>
+      <CollapsibleContent className="grid gap-3">
+        <Text size="sm">Replies added here stay in this demo session.</Text>
+        {(replyOrder === 'newest' ? [...replies].reverse() : replies).map((text, index) => (
+          <Text key={`${index}-${text}`} className="wrap-anywhere">
+            {text}
+          </Text>
+        ))}
+        <form
+          className="flex gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!reply.trim()) return;
+            setReplies((all) => [...all, reply.trim()]);
+            setReply('');
+          }}
+        >
+          <Input
+            aria-label="Write a reply"
+            value={reply}
+            onChange={(event) => setReply(event.target.value)}
+          />
+          <Button type="submit" size="sm" disabled={!reply.trim()}>
+            Reply
+          </Button>
+        </form>
+      </CollapsibleContent>
+      <output className="text-body-sm text-fg-secondary">{notice}</output>
     </Card>
   );
 
@@ -167,15 +224,18 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
    */
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>{card}</ContextMenuTrigger>
+      <ContextMenuTrigger asChild>
+        <Collapsible open={repliesOpen} onOpenChange={setRepliesOpen} asChild>
+          {card}
+        </Collapsible>
+      </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuGroup>
-          <ContextMenuItem>
-            Copy link
-            <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+          <ContextMenuItem onSelect={() => void copy()}>Copy post</ContextMenuItem>
+          <ContextMenuItem onSelect={() => setPinned(!pinned)}>
+            {pinned ? 'Unpin' : 'Pin'}
           </ContextMenuItem>
-          <ContextMenuItem>Pin</ContextMenuItem>
-          <ContextMenuItem>Report</ContextMenuItem>
+          <ContextMenuItem onSelect={report}>Report</ContextMenuItem>
         </ContextMenuGroup>
         <ContextMenuSeparator />
         <ContextMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>

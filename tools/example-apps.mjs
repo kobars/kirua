@@ -11,6 +11,7 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { gzipSync } from 'node:zlib';
 
 export const REPO = path.join(import.meta.dirname, '..');
 
@@ -85,17 +86,22 @@ const TYPES = {
 };
 
 /** A static server for one app's `dist`, on an ephemeral port. */
-export function serve(root) {
+export function serve(root, { compress = false } = {}) {
   return new Promise((resolve) => {
     const server = createServer(async (request, response) => {
       const url = new URL(request.url ?? '/', 'http://localhost');
       const file = url.pathname === '/' ? '/index.html' : url.pathname;
       try {
         const body = await readFile(path.join(root, file));
+        const gzip =
+          compress &&
+          /\bgzip\b/.test(request.headers['accept-encoding'] ?? '') &&
+          /\.(html|js|css|svg)$/.test(file);
         response.writeHead(200, {
           'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
+          ...(gzip ? { 'content-encoding': 'gzip', vary: 'Accept-Encoding' } : {}),
         });
-        response.end(body);
+        response.end(gzip ? gzipSync(body) : body);
       } catch {
         response.writeHead(404).end('not found');
       }

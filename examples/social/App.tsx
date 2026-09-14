@@ -40,7 +40,7 @@ import { Notifications } from './Notifications';
 import { PostCard } from './PostCard';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { Profile } from './Profile';
-import { notices, people, posts } from './data';
+import { notices, people, posts, type Post } from './data';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, shared by the rail, the header and the bottom bar. */
@@ -59,6 +59,7 @@ const nav = [
 export function App() {
   const [route, navigate] = useHashRoute('');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [published, setPublished] = useState<Post[]>([]);
   const [shown, setShown] = useState(3);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
@@ -68,7 +69,7 @@ export function App() {
   useEffect(() => {
     if (!loadingMore) return;
     const timer = window.setTimeout(() => {
-      setShown((n) => Math.min(n + 3, posts.length));
+      setShown((n) => n + 3);
       setLoadingMore(false);
     }, 900);
     return () => window.clearTimeout(timer);
@@ -77,7 +78,7 @@ export function App() {
   const profile = route.startsWith('profile/')
     ? people[route.slice('profile/'.length)]
     : undefined;
-  const feed = posts.filter((post) => !deleted.includes(post.id));
+  const feed = [...published, ...posts].filter((post) => !deleted.includes(post.id));
   const unread = notices.filter((notice) => notice.unread).length;
 
   return (
@@ -95,7 +96,11 @@ export function App() {
           <span className="flex-1" />
           <Tooltip>
             <TooltipTrigger asChild>
-              <IconButton aria-label="Search" variant="ghost">
+              <IconButton
+                aria-label="Search"
+                variant="ghost"
+                onClick={() => navigate('explore')}
+              >
                 <SearchIcon />
               </IconButton>
             </TooltipTrigger>
@@ -148,7 +153,7 @@ export function App() {
           </Sidebar>
         </div>
 
-        <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 sm:pb-4">
+        <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 md:pb-4">
           {profile ? (
             <Profile person={profile} surface={surface} />
           ) : route === 'explore' ? (
@@ -174,7 +179,24 @@ export function App() {
                   writeSurface(next);
                 }}
               />
-              <Composer />
+              <Composer
+                onPublish={(text, audience, image) => {
+                  setPublished((all) => [
+                    {
+                      id: crypto.randomUUID(),
+                      handle: 'rin',
+                      when: `Now · ${audience}`,
+                      text,
+                      likes: 0,
+                      comments: 0,
+                      ...(image
+                        ? { media: { ratio: 16 / 9, caption: 'Demo image attachment' } }
+                        : {}),
+                    },
+                    ...all,
+                  ]);
+                }}
+              />
               {feed.slice(0, shown).map((post) => (
                 <PostCard key={post.id} post={post} onDelete={setDeleting} surface={surface} />
               ))}
@@ -241,7 +263,7 @@ export function App() {
           on a wide screen, so it is hidden rather than duplicated there. */}
       <nav
         aria-label="Main"
-        className="fixed inset-x-0 bottom-0 z-sticky border-t border-line-subtle bg-page px-4 py-2 sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-sticky border-t border-line-subtle bg-page px-4 py-2 md:hidden"
       >
         <ul className="mx-auto flex max-w-2xl items-center justify-around">
           {nav.map(({ route: target, label, icon: Icon }) => (

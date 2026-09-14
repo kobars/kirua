@@ -128,6 +128,7 @@ export function ToastClose({
 }) {
   return (
     <IconButton
+      type="button"
       data-slot="toast-close"
       aria-label={label}
       size="sm"

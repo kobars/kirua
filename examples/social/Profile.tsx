@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,6 +38,7 @@ export interface ProfileProps {
 }
 
 export function Profile({ person, surface }: ProfileProps) {
+  const [following, setFollowing] = useState(false);
   const theirs = posts.filter((p) => p.handle === person.handle);
   const others = Object.values(people).filter((p) => p.handle !== person.handle);
 
@@ -76,7 +78,13 @@ export function Profile({ person, surface }: ProfileProps) {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button size="sm">Follow</Button>
+              <Button
+                size="sm"
+                aria-pressed={following}
+                onClick={() => setFollowing(!following)}
+              >
+                {following ? 'Following' : 'Follow'}
+              </Button>
             </div>
           </div>
 

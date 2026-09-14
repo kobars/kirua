@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -21,13 +22,18 @@ export interface PersonLinkProps {
  * on a phone, the link IS the feature.
  */
 export function PersonLink({ handle }: PersonLinkProps) {
+  const [following, setFollowing] = useState(false);
   const person = people[handle];
   if (!person) return null;
 
   return (
     <HoverCard openDelay={150}>
       <HoverCardTrigger asChild>
-        <Link href={`#/profile/${handle}`} variant="block" className="font-semibold text-fg">
+        <Link
+          href={`#/profile/${handle}`}
+          variant="block"
+          className="inline-flex min-h-6 items-center font-semibold text-fg"
+        >
           {person.name}
         </Link>
       </HoverCardTrigger>
@@ -60,8 +66,13 @@ export function PersonLink({ handle }: PersonLinkProps) {
               following
             </span>
           </p>
-          <Button size="sm" fullWidth>
-            Follow
+          <Button
+            size="sm"
+            fullWidth
+            aria-pressed={following}
+            onClick={() => setFollowing(!following)}
+          >
+            {following ? 'Following' : 'Follow'}
           </Button>
         </div>
       </HoverCardContent>
