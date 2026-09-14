@@ -12,7 +12,7 @@
  * component and writes the markup by hand is measuring nothing, and it is the
  * easiest thing in the world to do by accident under time pressure.
  *
- * The two shapes it catches:
+ * Raw markup mistakes it catches:
  *
  *   - A `Popover` of hand-rolled `<button>`s standing in for a menu. It looks
  *     right and answers no arrow key, no first letter and no Escape, and a
@@ -22,6 +22,12 @@
  * Neither is caught by types, by the linter, or by any test: raw HTML is valid
  * React and renders fine. It is only wrong against an intent nothing else
  * writes down.
+ *
+ * Static surface copies are checked too: complete recipes of at least three
+ * border, radius, background, shadow or context utilities, read from component
+ * className literals and cva variants. Layout and typography do not identify a
+ * component. Computed strings, imported constants and recipes assembled across
+ * multiple expressions are outside this check; it is not visual equivalence.
  *
  * ## The escape hatch, and why it is a comment rather than a list
  *
@@ -37,6 +43,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { REPO } from './example-apps.mjs';
+import { appearanceRecipes, findAppearanceCopies } from './dogfood-appearance.mjs';
 
 /**
  * The raw element, and what the system exports instead.
@@ -111,11 +118,20 @@ const RAW = new RegExp(`<(${tags})(?=[\\s/>])`, 'g');
 
 const findings = [];
 const allowed = [];
+const componentDir = path.join(REPO, 'src/components');
+const recipes = readdirSync(componentDir)
+  .filter((name) => /(?:\.tsx|\.variants\.ts)$/.test(name) && !/\.(test|stories)\./.test(name))
+  .flatMap((name) => appearanceRecipes(readFileSync(path.join(componentDir, name), 'utf8')));
 
 for (const file of sources(EXAMPLES)) {
   const source = readFileSync(file, 'utf8');
   const code = blankNonCode(source);
   const lines = source.split('\n');
+  for (const copy of findAppearanceCopies(source, recipes)) {
+    const where = `${path.relative(REPO, file)}:${copy.line}`;
+    if (copy.reason) allowed.push({ where, tag: copy.owner, reason: copy.reason });
+    else findings.push({ where, tag: copy.classes, instead: copy.owner });
+  }
 
   for (const match of code.matchAll(RAW)) {
     const line = code.slice(0, match.index).split('\n').length;
@@ -128,7 +144,7 @@ for (const file of sources(EXAMPLES)) {
 }
 
 if (allowed.length > 0) {
-  console.log('\nRaw elements allowed on purpose:\n');
+  console.log('\nDogfood exceptions allowed on purpose:\n');
   console.table(allowed);
 }
 
@@ -143,5 +159,5 @@ if (findings.length > 0) {
 
 console.log(
   `\ndogfood-check: ${sources(EXAMPLES).length} example files, ` +
-    `no raw element the system already covers.`,
+    `no raw element or complete static surface recipe the system already covers.`,
 );
