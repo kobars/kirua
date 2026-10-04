@@ -7,6 +7,9 @@ export const iconButtonVariants = cva(
     'transition-[background-color,color,scale] duration-fast ease-out',
     // See `buttonVariants`: no press scale on a popup trigger.
     'not-aria-[haspopup]:active:scale-95',
+    // See `buttonVariants`: a chevron turns over while expanded.
+    '**:data-[icon=chevron-down]:transition-transform **:data-[icon=chevron-down]:duration-fast',
+    'aria-expanded:**:data-[icon=chevron-down]:rotate-180',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     'disabled:pointer-events-none disabled:cursor-not-allowed',
     'disabled:bg-disabled disabled:text-on-disabled',
