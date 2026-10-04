@@ -174,7 +174,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
             leadingIcon={<PrintIcon />}
             onClick={() => window.print()}
           >
-            Cetak
+            Print
           </Button>
         </div>
       </div>
@@ -320,7 +320,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                 </Chart>
               </Card>
               <Table>
-                <TableCaption>Tanda vital, terbaru di atas</TableCaption>
+                <TableCaption>Vital signs, newest first</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Time</TableHead>
@@ -337,7 +337,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                       <TableCell className="tabular-nums">
                         {vital.systolic}/{vital.diastolic} mmHg
                       </TableCell>
-                      <TableCell className="tabular-nums">{vital.pulse}/mnt</TableCell>
+                      <TableCell className="tabular-nums">{vital.pulse}/min</TableCell>
                       <TableCell className="tabular-nums">{vital.temperature} °C</TableCell>
                       <TableCell className="tabular-nums">{vital.weight} kg</TableCell>
                     </TableRow>

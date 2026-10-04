@@ -74,7 +74,7 @@ export function OrderPage({ order }: OrderPageProps) {
             leadingIcon={<PrintIcon />}
             onClick={() => window.print()}
           >
-            Cetak
+            Print
           </Button>
         </div>
       </div>

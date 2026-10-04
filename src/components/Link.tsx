@@ -26,7 +26,7 @@ export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof link
  *
  * @example
  * // The link is the whole thing you click, so it keeps the text colour it is in.
- * <CardTitle as="h2"><Link variant="block" href="#/produk/1">Kacamata bulat</Link></CardTitle>
+ * <CardTitle as="h2"><Link variant="block" href="#/product/1">Round Glasses</Link></CardTitle>
  */
 export function Link({ className, variant, children, ...props }: LinkProps) {
   return (

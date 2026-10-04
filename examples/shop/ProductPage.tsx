@@ -64,7 +64,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
       </Breadcrumb>
 
       <div className="grid gap-8 md:grid-cols-2">
-        <Carousel label={`Foto ${product.name}`} className="scroll-p-1 p-1">
+        <Carousel label={`Photos of ${product.name}`} className="scroll-p-1 p-1">
           {['Front', 'Side', 'Detail', 'Boxed'].map((view) => (
             <CarouselItem key={view} className="w-[min(20rem,80vw)]">
               <AspectRatio ratio={1} className="rounded-lg bg-sunken">

@@ -26,7 +26,7 @@ import {
  * <Timeline>
  *   <TimelineItem>
  *     <TimelineTime dateTime="2026-03-11T09:12">11 Mar 2026, 09:12</TimelineTime>
- *     <Text size="sm" tone="primary">Tiba di gudang Bandung</Text>
+ *     <Text size="sm" tone="primary">Arrived at the Bandung warehouse</Text>
  *   </TimelineItem>
  * </Timeline>
  */

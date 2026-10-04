@@ -64,10 +64,10 @@ export const ItTakesTheSizeOfItsControl: Story = {
 };
 
 export const TheLabelIsOverridable: Story = {
-  render: (args) => <Spinner {...args} label="Menghitung ulang" />,
+  render: (args) => <Spinner {...args} label="Recalculating totals" />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
-      'Menghitung ulang',
+      'Recalculating totals',
     );
   },
 };

@@ -173,8 +173,8 @@ export const FAQ = [
 
 /** Studio details, as term-and-value pairs. */
 export const STUDIO = [
-  { term: 'Studio', value: 'Aozora Kreatif' },
-  { term: 'Address', value: 'Jalan Cendana 14, Yogyakarta 55223' },
+  { term: 'Studio', value: 'Aozora Creative' },
+  { term: 'Address', value: '14 Cendana Street, Yogyakarta 55223' },
   { term: 'Hours', value: 'Monday to Friday, 09:00–17:00 WIB' },
   { term: 'Reply time', value: 'Within one working day' },
 ];

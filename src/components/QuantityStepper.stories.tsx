@@ -6,7 +6,7 @@ const meta = {
   tags: ['autodocs'],
   title: 'Components/QuantityStepper',
   component: QuantityStepper,
-  args: { value: 1, min: 1, max: 5, label: 'Quantity, Kacamata bulat' },
+  args: { value: 1, min: 1, max: 5, label: 'Quantity, Round Glasses' },
   argTypes: { onDecrement: { control: false }, onIncrement: { control: false } },
   parameters: {
     docs: {

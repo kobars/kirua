@@ -160,8 +160,8 @@ export function App() {
               </IconButton>
             </SheetTrigger>
             <SheetContent side="start" className="overflow-y-auto pt-14">
-              <SheetTitle>SIMRS Sehat Bersama</SheetTitle>
-              <nav aria-label="Bagian" className="mt-4 grid gap-4">
+              <SheetTitle>SIMRS Healthy Together</SheetTitle>
+              <nav aria-label="Sections" className="mt-4 grid gap-4">
                 {destinations(() => setDrawerOpen(false))}
               </nav>
             </SheetContent>
@@ -173,7 +173,7 @@ export function App() {
             className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
           >
             <StethoscopeIcon aria-hidden="true" className="text-fg-accent" />
-            <span className="hidden sm:inline">SIMRS Sehat Bersama</span>
+            <span className="hidden sm:inline">SIMRS Healthy Together</span>
             <span className="sm:hidden">SIMRS</span>
           </Link>
 
@@ -225,7 +225,7 @@ export function App() {
             <SidebarFooter className="border-t-0">
               <SidebarMenuButton onClick={() => setRailOpen(!railOpen)}>
                 <MenuIcon aria-hidden="true" />
-                <SidebarLabel>{railOpen ? 'Perkecil menu' : 'Perbesar menu'}</SidebarLabel>
+                <SidebarLabel>{railOpen ? 'Collapse menu' : 'Expand menu'}</SidebarLabel>
               </SidebarMenuButton>
             </SidebarFooter>
           </Sidebar>
@@ -253,7 +253,7 @@ export function App() {
         </main>
       </div>
 
-      <Command open={paletteOpen} onOpenChange={setPaletteOpen} label="Perintah cepat">
+      <Command open={paletteOpen} onOpenChange={setPaletteOpen} label="Quick commands">
         <CommandInput
           value={query}
           placeholder="Search patients or sections…"
@@ -279,7 +279,7 @@ export function App() {
         />
         {actions.length > 0 ? (
           <CommandList id="simrs-results" aria-label="Results">
-            <CommandGroup heading="Perintah">
+            <CommandGroup heading="Commands">
               {actions.map((action, index) => (
                 <CommandItem
                   key={action.id}

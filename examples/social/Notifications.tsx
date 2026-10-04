@@ -106,7 +106,7 @@ export function Notifications() {
                     <ItemTitle>
                       {person?.name ?? notice.handle} {WORDING[notice.kind]}
                     </ItemTitle>
-                    <ItemDescription>{notice.body ?? `${notice.when} lalu`}</ItemDescription>
+                    <ItemDescription>{notice.body ?? `${notice.when} ago`}</ItemDescription>
                   </ItemContent>
                   <ItemActions>
                     <Icon aria-hidden="true" className="text-fg-muted" />
