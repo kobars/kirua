@@ -74,8 +74,8 @@ export const SECTIONS = [
     ],
   },
   {
-    section: 'claude',
-    prefix: 'claude/',
+    section: 'assistant',
+    prefix: 'assistant/',
     routes: [
       '',
       'tokens',

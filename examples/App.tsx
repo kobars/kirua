@@ -12,7 +12,7 @@ const PAGES: Record<SectionId, ComponentType> = {
   shop: lazy(() => import('./shop/App').then((module) => ({ default: module.App }))),
   his: lazy(() => import('./his/App').then((module) => ({ default: module.App }))),
   social: lazy(() => import('./social/App').then((module) => ({ default: module.App }))),
-  claude: lazy(() => import('./claude/App').then((module) => ({ default: module.App }))),
+  assistant: lazy(() => import('./assistant/App').then((module) => ({ default: module.App }))),
   marketing: lazy(() => import('./marketing/App').then((module) => ({ default: module.App }))),
 };
 

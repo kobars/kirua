@@ -97,7 +97,7 @@ It opens on a hub at `#/` that links to five sections:
 | Dusk     | A storefront with filters, a product page, cart and checkout          | [`#/shop/`](https://kirua-examples.vercel.app/#/shop/)           |
 | Larkspur | A US hospital chart: patients, coverage, appointments, labs, pharmacy | [`#/his/`](https://kirua-examples.vercel.app/#/his/)             |
 | Commons  | A mobile-first feed, explore, notifications, messages                 | [`#/social/`](https://kirua-examples.vercel.app/#/social/)       |
-| Claude   | An assistant transcript, composer, searchable sidebar, usage          | [`#/claude/`](https://kirua-examples.vercel.app/#/claude/)       |
+| Lumen    | An assistant transcript, composer, searchable sidebar, usage          | [`#/assistant/`](https://kirua-examples.vercel.app/#/assistant/) |
 | Aozora   | A marketing site with pricing, a story, a guide and a form            | [`#/marketing/`](https://kirua-examples.vercel.app/#/marketing/) |
 
 Each section loads as its own chunk. All data is local sample data. The
@@ -277,7 +277,7 @@ src/
 examples/
   index.html       the example app: one page, hash-routed
   App.tsx, Hub.tsx the router and the hub at #/
-  shop/ his/ social/ claude/ marketing/   one directory per section
+  shop/ his/ social/ assistant/ marketing/   one directory per section
   shared/          the theme and night menu, routing and other shared hooks
   styles.css       imports and @source lines only
 tools/             the example-app checks, size budgets and the dead-class check

@@ -47,7 +47,7 @@ import { useHashRoute } from '../shared/useHashRoute';
  * and a composer that stays.
  */
 export function App() {
-  const [route, navigate] = useHashRoute('claude', allConversations[0]!.id);
+  const [route, navigate] = useHashRoute('assistant', allConversations[0]!.id);
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
