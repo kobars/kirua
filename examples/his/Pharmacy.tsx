@@ -188,7 +188,7 @@ export function Pharmacy() {
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Medication</TableHead>
+              <TableHead sticky="start">Medication</TableHead>
               <TableHead>Bin</TableHead>
               {SORTABLE.map(({ key, label }) => {
                 const active = sort.by === key;
@@ -208,7 +208,7 @@ export function Pharmacy() {
                   </TableHead>
                 );
               })}
-              <TableHead>
+              <TableHead sticky="end">
                 <VisuallyHidden>Actions</VisuallyHidden>
               </TableHead>
             </TableRow>
@@ -221,7 +221,7 @@ export function Pharmacy() {
                     {/* Block text, not a Stack: a Stack's column may shrink to
                         nothing, which would let the table squeeze this column
                         instead of scrolling. */}
-                    <TableCell>
+                    <TableCell sticky="start">
                       <Text size="inherit" weight="medium" tone="primary">
                         {item.name}
                       </Text>
@@ -260,7 +260,7 @@ export function Pharmacy() {
                     </TableCell>
                     <TableCell numeric>{formatDate(item.expires)}</TableCell>
                     <TableCell numeric>{usd(item.cost)}</TableCell>
-                    <TableCell>
+                    <TableCell sticky="end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <IconButton

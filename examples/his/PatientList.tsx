@@ -2,11 +2,18 @@ import { useMemo, useState } from 'react';
 import {
   Badge,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
   EmptyState,
   Field,
+  IconButton,
   Inline,
   Input,
   Link,
+  MoreIcon,
   PageHeader,
   PlusIcon,
   SearchIcon,
@@ -25,6 +32,7 @@ import {
   TableHeader,
   TableRow,
   Text,
+  VisuallyHidden,
 } from 'kirua';
 import { age, formatDob, patients, payerTone } from './data';
 
@@ -105,20 +113,22 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
           </TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead sticky="start">Name</TableHead>
               <TableHead>MRN</TableHead>
-              <TableHead>Name</TableHead>
               <TableHead>DOB (age)</TableHead>
               <TableHead>Sex</TableHead>
               <TableHead>Payer</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Allergies</TableHead>
+              <TableHead sticky="end">
+                <VisuallyHidden>Actions</VisuallyHidden>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((patient) => (
               <TableRow key={patient.mrn}>
-                <TableCell numeric>{patient.mrn}</TableCell>
-                <TableCell>
+                <TableCell sticky="start">
                   <Link
                     variant="block"
                     href={`#/his/patients/${patient.mrn}`}
@@ -129,6 +139,7 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
                     </Text>
                   </Link>
                 </TableCell>
+                <TableCell numeric>{patient.mrn}</TableCell>
                 <TableCell numeric>
                   {formatDob(patient.born)} ({age(patient.born)})
                 </TableCell>
@@ -151,6 +162,28 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
                       ))}
                     </Inline>
                   )}
+                </TableCell>
+                <TableCell sticky="end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <IconButton
+                        aria-label={`Actions for ${patient.name}`}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        <MoreIcon />
+                      </IconButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>MRN {patient.mrn}</DropdownMenuLabel>
+                      <DropdownMenuItem onSelect={() => onOpen(patient.mrn)}>
+                        Open the chart
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={onNewVisit}>
+                        Schedule a visit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

@@ -3,7 +3,15 @@ import {
   Badge,
   Calendar,
   Card,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Heading,
+  IconButton,
+  MoreIcon,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -24,6 +32,7 @@ import {
   Text,
   ToggleGroup,
   ToggleGroupItem,
+  VisuallyHidden,
 } from 'kirua';
 import {
   departments,
@@ -33,6 +42,7 @@ import {
   patients,
   statusLabel,
   statusTone,
+  type Encounter,
 } from './data';
 
 const PER_PAGE = 8;
@@ -49,11 +59,20 @@ function pageWindow(current: number, total: number): (number | 'gap')[] {
   );
 }
 
-export function Appointments() {
+export interface AppointmentsProps {
+  onOpen: (mrn: string) => void;
+}
+
+export function Appointments({ onOpen }: AppointmentsProps) {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
   const [day, setDay] = useState<Date | undefined>(new Date(2026, 2, 12));
   const [department, setDepartment] = useState('all');
   const [page, setPage] = useState(1);
+  // Check-ins and cancellations made on this screen, by encounter id.
+  const [changed, setChanged] = useState<Record<string, Encounter['status']>>({});
+  const statusOf = (e: Encounter) => changed[e.id] ?? e.status;
+  const setStatus = (id: string, status: Encounter['status']) =>
+    setChanged((all) => ({ ...all, [id]: status }));
 
   // Appointments only: an emergency visit or an inpatient stay is not booked.
   const all = encounters.filter(
@@ -126,35 +145,77 @@ export function Appointments() {
             </TableCaption>
             <TableHeader>
               <TableRow>
+                <TableHead sticky="start">Patient</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Time</TableHead>
-                <TableHead>Patient</TableHead>
                 <TableHead>MRN</TableHead>
                 <TableHead>Department</TableHead>
                 <TableHead>Provider</TableHead>
                 <TableHead>Reason for visit</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead sticky="end">
+                  <VisuallyHidden>Actions</VisuallyHidden>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((appointment) => (
-                <TableRow key={appointment.id}>
-                  <TableCell numeric>{formatDate(appointment.at)}</TableCell>
-                  <TableCell numeric>{formatTime(appointment.at)}</TableCell>
-                  <TableCell>
-                    {patients.find((p) => p.mrn === appointment.mrn)?.name ?? '—'}
-                  </TableCell>
-                  <TableCell numeric>{appointment.mrn}</TableCell>
-                  <TableCell>{appointment.department}</TableCell>
-                  <TableCell>{appointment.provider}</TableCell>
-                  <TableCell>{appointment.reason}</TableCell>
-                  <TableCell>
-                    <Badge status={statusTone[appointment.status]}>
-                      {statusLabel[appointment.status]}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {rows.map((appointment) => {
+                const name = patients.find((p) => p.mrn === appointment.mrn)?.name ?? '—';
+                const status = statusOf(appointment);
+                return (
+                  <TableRow key={appointment.id}>
+                    <TableCell sticky="start" nowrap>
+                      {name}
+                    </TableCell>
+                    <TableCell numeric nowrap>
+                      {formatDate(appointment.at)}
+                    </TableCell>
+                    <TableCell numeric nowrap>
+                      {formatTime(appointment.at)}
+                    </TableCell>
+                    <TableCell numeric>{appointment.mrn}</TableCell>
+                    <TableCell>{appointment.department}</TableCell>
+                    <TableCell>{appointment.provider}</TableCell>
+                    <TableCell>{appointment.reason}</TableCell>
+                    <TableCell>
+                      <Badge status={statusTone[status]}>{statusLabel[status]}</Badge>
+                    </TableCell>
+                    <TableCell sticky="end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <IconButton
+                            aria-label={`Actions for ${name}, ${formatTime(appointment.at)}`}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            <MoreIcon />
+                          </IconButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>{name}</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            disabled={status !== 'scheduled'}
+                            onSelect={() => setStatus(appointment.id, 'in-progress')}
+                          >
+                            Check in
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => onOpen(appointment.mrn)}>
+                            Open the chart
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            variant="danger"
+                            disabled={status !== 'scheduled'}
+                            onSelect={() => setStatus(appointment.id, 'canceled')}
+                          >
+                            Cancel the appointment
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
 
