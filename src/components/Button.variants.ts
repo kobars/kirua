@@ -16,6 +16,11 @@ const pressable = [
   'solo-enabled:motion-safe:not-aria-[haspopup]:active:translate-y-(--clay-lift)',
   'solo-enabled:motion-safe:not-aria-[haspopup]:active:scale-100',
   'solo-enabled:motion-safe:not-aria-[haspopup]:active:shadow-press-down',
+  // A mouse press is also a hover, and the hover rules above come later in
+  // the stylesheet at the same specificity, so they would hold the button up
+  // while it is pressed. `hover:active` outranks them.
+  'solo-enabled:motion-safe:pointer-fine:not-aria-[haspopup]:hover:active:translate-y-(--clay-lift)',
+  'solo-enabled:motion-safe:pointer-fine:not-aria-[haspopup]:hover:active:shadow-press-down',
 ];
 
 /**

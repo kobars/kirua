@@ -236,7 +236,7 @@ export function App() {
             {record ? (
               <PatientRecord patient={record} />
             ) : route === 'schedule' ? (
-              <Appointments />
+              <Appointments onOpen={(mrn) => navigate(`patients/${mrn}`)} />
             ) : route === 'new-visit' ? (
               <NewVisit />
             ) : route === 'pharmacy' ? (

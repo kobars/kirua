@@ -120,10 +120,10 @@ export function PricingPage() {
         <Card padding="md">
           {/* No ScrollArea: `Table` wraps itself in its own focusable scroll
               box, and a second one around it never scrolls. */}
-          <Table>
+          <Table surface="raised">
             <TableHeader>
               <TableRow>
-                <TableHead>Feature</TableHead>
+                <TableHead sticky="start">Feature</TableHead>
                 {PLANS.map((plan) => (
                   <TableHead key={plan.id}>{plan.name}</TableHead>
                 ))}
@@ -132,7 +132,7 @@ export function PricingPage() {
             <TableBody>
               {COMPARISON.map((row) => (
                 <TableRow key={row.feature}>
-                  <TableCell nowrap>
+                  <TableCell sticky="start" nowrap>
                     {row.feature === 'Platform fee' ? (
                       <Popover>
                         {/* Anchored to the whole cell rather than to the
@@ -185,7 +185,7 @@ export function PricingPage() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell>Billed</TableCell>
+                <TableCell sticky="start">Billed</TableCell>
                 <TableCell>—</TableCell>
                 <TableCell>Monthly</TableCell>
                 <TableCell>Monthly</TableCell>
