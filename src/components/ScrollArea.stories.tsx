@@ -83,7 +83,9 @@ export const Both: Story = {
   ),
   play: async ({ canvasElement }) => {
     await waitFor(() => expect(bar(canvasElement, 'vertical')).not.toBeNull());
-    await expect(bar(canvasElement, 'horizontal')).not.toBeNull();
+    // Radix mounts each bar once it has measured an overflow on that axis,
+    // so the second bar can arrive a frame after the first.
+    await waitFor(() => expect(bar(canvasElement, 'horizontal')).not.toBeNull());
   },
 };
 

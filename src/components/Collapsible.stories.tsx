@@ -37,6 +37,38 @@ export const Default: Story = {
   ),
 };
 
+export const TheChevronTurnsOverWhileOpen: Story = {
+  render: () => (
+    <Collapsible className="w-96">
+      <CollapsibleTrigger asChild>
+        <Button variant="ghost" trailingIcon={<ChevronDownIcon />}>
+          Delivery details
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>Sent from Bandung by overnight courier.</CollapsibleContent>
+    </Collapsible>
+  ),
+  /**
+   * The chevron is the trigger's state shown as a picture: down while there
+   * is more to see, up while it is showing. A chevron that stays down on an
+   * open panel says the opposite of what is on screen.
+   */
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: 'Delivery details' });
+    const chevron = trigger.querySelector('[data-icon="chevron-down"]') as SVGElement;
+    const settled = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      return getComputedStyle(chevron).rotate;
+    };
+
+    await expect(await settled()).toBe('none');
+    await userEvent.click(trigger);
+    await expect(await settled()).toBe('180deg');
+    await userEvent.click(trigger);
+    await expect(await settled()).toBe('none');
+  },
+};
+
 export const OpenByDefault: Story = {
   render: () => (
     <Collapsible defaultOpen className="w-96">
