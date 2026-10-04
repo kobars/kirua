@@ -47,7 +47,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * shop         47.58      156.56
  * his          50.19      159.17
  * social       42.79      151.77
- * claude       39.70      148.68
+ * assistant    39.70      148.68
  * marketing    33.27      142.25
  * ```
  *

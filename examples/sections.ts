@@ -4,7 +4,7 @@
  * Each `id` is the first segment of the section's routes — `#/shop/orders` —
  * and `title` is the document title while the section is open.
  */
-export type SectionId = 'shop' | 'his' | 'social' | 'claude' | 'marketing';
+export type SectionId = 'shop' | 'his' | 'social' | 'assistant' | 'marketing';
 
 export interface Section {
   id: SectionId;
@@ -40,10 +40,10 @@ export const SECTIONS: Section[] = [
     summary: 'A mobile-first feed with replies, explore, notifications, messages and profiles.',
   },
   {
-    id: 'claude',
-    name: 'Claude',
+    id: 'assistant',
+    name: 'Lumen',
     kind: 'Assistant',
-    title: 'Claude — a kirua example',
+    title: 'Lumen — a kirua example',
     summary: 'An assistant transcript, a composer, a searchable sidebar and a usage page.',
   },
   {
