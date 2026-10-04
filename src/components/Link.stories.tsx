@@ -55,6 +55,53 @@ export const TheWholeThingYouClick: Story = {
   },
 };
 
+export const ABlockLinkIsATarget: Story = {
+  args: { variant: 'block', children: 'Maria Gonzalez' },
+  render: (args) => (
+    <div className="font-text text-body-sm text-fg">
+      <Link {...args} />
+    </div>
+  ),
+  /**
+   * One line of small text is 19px tall, under the 24px WCAG 2.5.8 asks of a
+   * target that is not inside a sentence. The link keeps the minimum without
+   * the text in it moving off centre.
+   */
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Maria Gonzalez' });
+    await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+  },
+};
+
+export const ABlockLinkInATruncatingRow: Story = {
+  args: { variant: 'block' },
+  render: (args) => (
+    <div className="w-36 truncate font-text text-body-md text-fg" data-testid="row">
+      <Link {...args} href="#/patients/20418801">
+        <Text inline truncate>
+          Maria Gonzalez-Fernández de Córdoba
+        </Text>
+      </Link>
+    </div>
+  ),
+  /**
+   * The link's box is atomic, so the row's own ellipsis cannot reach into it.
+   * The link stays inside the row and the text in it ends in an ellipsis
+   * rather than being clipped through a letter.
+   */
+  play: async ({ canvasElement }) => {
+    const row = within(canvasElement).getByTestId('row');
+    const link = within(row).getByRole('link');
+    const text = link.firstElementChild as HTMLElement;
+    await expect(link.getBoundingClientRect().width).toBeLessThanOrEqual(
+      row.getBoundingClientRect().width,
+    );
+    await expect(getComputedStyle(text).textOverflow).toBe('ellipsis');
+    await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
+    await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
+  },
+};
+
 export const OnEverySurface: Story = {
   render: (args) => (
     <div className="grid gap-3">
