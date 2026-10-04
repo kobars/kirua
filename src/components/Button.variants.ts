@@ -44,6 +44,12 @@ export const buttonVariants = cva(
     // Radix opens a menu on pointerdown and measures its trigger then, so a
     // trigger that shrinks while pressed places its popup off by a pixel or two.
     'not-aria-[haspopup]:active:scale-[0.98]',
+    // A chevron is a disclosure's state, so it turns over while the control
+    // is expanded: a collapsible's panel or a menu is open. Any other
+    // trailing icon keeps its direction. Rotation is symmetrical, so it needs
+    // no right-to-left mirror.
+    '**:data-[icon=chevron-down]:transition-transform **:data-[icon=chevron-down]:duration-fast',
+    'aria-expanded:**:data-[icon=chevron-down]:rotate-180',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     'disabled:pointer-events-none disabled:cursor-not-allowed',
     'disabled:border-transparent disabled:bg-disabled disabled:text-on-disabled',

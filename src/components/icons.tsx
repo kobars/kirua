@@ -112,8 +112,12 @@ export const ArrowRightIcon = (p: IconProps) => (
   </Icon>
 );
 
+/**
+ * Marked with `data-icon` because it is the one icon whose meaning has a
+ * state: a control that opens something turns it over while it is open.
+ */
 export const ChevronDownIcon = (p: IconProps) => (
-  <Icon {...p}>
+  <Icon data-icon="chevron-down" {...p}>
     <path d="m6 9 6 6 6-6" />
   </Icon>
 );
