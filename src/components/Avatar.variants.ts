@@ -16,6 +16,11 @@ export const avatarVariants = cva(
         lg: 'size-14 text-body-md',
         xl: 'size-20 text-heading-sm',
       },
+      /**
+       * A ring in the page colour, which separates an avatar laid over a cover
+       * image or another avatar from what is behind it.
+       */
+      ring: { true: 'ring-4 ring-page', false: '' },
     },
     defaultVariants: { size: 'md' },
   },

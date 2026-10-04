@@ -93,6 +93,12 @@ export const TheTouchTargetIsBiggerThanTheCircle: Story = {
     // -12px each side on a 20px circle is a 44px target.
     await expect(drawn).toBe(20);
     await expect(inset).toBe('-12px');
+
+    // The row is as tall as the circle, so the circle stays inside it.
+    const root = canvasElement.querySelector('[data-slot="slider"]')!.getBoundingClientRect();
+    const circle = thumb.getBoundingClientRect();
+    await expect(circle.top).toBeGreaterThanOrEqual(root.top);
+    await expect(circle.bottom).toBeLessThanOrEqual(root.bottom);
   },
 };
 

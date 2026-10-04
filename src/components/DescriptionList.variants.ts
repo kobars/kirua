@@ -14,8 +14,8 @@ import { cva } from '@/lib/cva';
  * term. `stacked` is the narrow-column form, term above value, for a sidebar
  * that has no room for two columns.
  *
- * Three, not one, because all three were already being written by hand — five
- * `<dl>` elements across four applications, and no two of them agreed.
+ * Three, not one, because applications draw all three, and a hand-written
+ * `<dl>` in each is how no two of them agree.
  */
 export const descriptionListVariants = cva('grid font-text text-body-sm', {
   variants: {

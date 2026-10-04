@@ -60,3 +60,18 @@ export const FallbackWhenTheImageFails: Story = {
     ).toBeNull();
   },
 };
+
+export const RingedOverACover: Story = {
+  render: () => (
+    <div className="grid h-32 w-64 items-end bg-brand-subtle p-3">
+      <Avatar size="lg" ring data-testid="avatar">
+        <AvatarFallback>RK</AvatarFallback>
+      </Avatar>
+    </div>
+  ),
+  /** A ring in the page colour separates the circle from the picture behind it. */
+  play: async ({ canvasElement }) => {
+    const avatar = within(canvasElement).getByTestId('avatar');
+    await expect(getComputedStyle(avatar).boxShadow).not.toBe('none');
+  },
+};

@@ -3,7 +3,7 @@ import { cva } from '@/lib/cva';
 export const iconButtonVariants = cva(
   [
     'inline-flex shrink-0 items-center justify-center',
-    'touch-manipulation rounded-pill',
+    'touch-manipulation rounded-control',
     'transition-[background-color,color,scale] duration-fast ease-out',
     // See `buttonVariants`: no press scale on a popup trigger.
     'not-aria-[haspopup]:active:scale-95',
@@ -25,7 +25,7 @@ export const iconButtonVariants = cva(
       size: {
         sm: 'size-9 [--icon-size:var(--icon-md)]',
         md: 'size-11 [--icon-size:var(--icon-lg)]',
-        /** 54px — the reference design's circular search control. */
+        /** 54px — the reference design's search control. */
         // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 54px, must not track --spacing
         lg: 'size-[3.375rem] [--icon-size:var(--icon-xl)]',
       },

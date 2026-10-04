@@ -51,11 +51,11 @@ export const InAChip: Story = {
   render: (args) => <Chip leading={<AvatarStack {...args} size="sm" />}>+1M Likes</Chip>,
 };
 
-export const TranslatedLabel: Story = {
-  args: { label: (n: number) => `${n} personnes` },
+export const CustomLabel: Story = {
+  args: { label: (n: number) => `${n} teammates` },
   play: async ({ canvasElement }) => {
     await expect(
-      within(canvasElement).getByRole('img', { name: '5 personnes' }),
+      within(canvasElement).getByRole('img', { name: '5 teammates' }),
     ).toBeInTheDocument();
   },
 };

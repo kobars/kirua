@@ -128,3 +128,33 @@ export const HidesItsArtworkBelowMd: Story = {
     await expect(display).toBe(atLeast(MD) ? 'flex' : 'none');
   },
 };
+
+export const MinimumHeights: Story = {
+  render: () => (
+    <div className="grid gap-6">
+      {(['sm', 'md'] as const).map((minHeight) => (
+        <SpotlightPanel
+          key={minHeight}
+          minHeight={minHeight}
+          padding="md"
+          data-testid={minHeight}
+        >
+          <SpotlightContent gap={4} measure>
+            <h2 className="font-display text-display-md">minHeight=&quot;{minHeight}&quot;</h2>
+          </SpotlightContent>
+        </SpotlightPanel>
+      ))}
+    </div>
+  ),
+  /** A floor from `md`, where the artwork rejoins the layout; the copy sets it below. */
+  play: async ({ canvasElement }) => {
+    const height = (step: string) =>
+      canvasElement.querySelector(`[data-testid="${step}"]`)!.getBoundingClientRect().height;
+    if (atLeast(MD)) {
+      await expect(Math.round(height('sm'))).toBeGreaterThanOrEqual(384);
+      await expect(Math.round(height('md'))).toBeGreaterThanOrEqual(480);
+    } else {
+      await expect(height('md')).toBeLessThan(480);
+    }
+  },
+};

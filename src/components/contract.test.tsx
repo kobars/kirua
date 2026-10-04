@@ -76,9 +76,8 @@ type Extra = Record<string, unknown>;
 type Case = [name: string, render: (extra: Extra) => ReactElement, tag: string];
 
 /**
- * Every hand-written component is listed. That is the point — the defect this
- * file replaces was that not one of them accepted a ref, and a list with holes
- * in it would have passed then too.
+ * Every hand-written component is listed. That is the point: a list with holes
+ * in it would keep passing while a missing component dropped its ref.
  *
  * `AvatarImage` is deliberately absent: Radix does not mount the `<img>` until
  * the file has loaded, so no element exists for a ref to reach when `render()`
@@ -101,7 +100,7 @@ const cases: Case[] = [
   [
     'AlertDescription',
     (p) => <AlertDescription {...p}>Your changes are live.</AlertDescription>,
-    'P',
+    'DIV',
   ],
   ['Chip', (p) => <Chip {...p}>Tag</Chip>, 'SPAN'],
   ['AvatarStack', (p) => <AvatarStack items={[{ name: 'Rin' }]} {...p} />, 'SPAN'],

@@ -45,7 +45,9 @@ export function Slider({
       orientation={orientation}
       className={cn(
         'relative flex touch-none items-center select-none',
-        orientation === 'vertical' ? 'h-full w-5 flex-col' : 'w-full',
+        // As tall as the thumb, so the row reserves the 20px circle rather
+        // than the 6px track and the thumb cannot overlap what sits above.
+        orientation === 'vertical' ? 'h-full w-5 flex-col' : 'h-5 w-full',
         'data-disabled:opacity-50',
         className,
       )}

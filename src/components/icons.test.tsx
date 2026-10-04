@@ -37,10 +37,9 @@ describe('the icon size scale', () => {
 });
 
 /**
- * The half of the card that made it foundation work rather than tidying: an
- * icon inside a sized control must be sized *by the control*. Before this, the
- * relationship was a number typed at the call site, so adding a size to any
- * component meant revisiting every icon inside it.
+ * An icon inside a sized control must be sized *by the control*. A number
+ * typed at the call site would mean that adding a size to any component meant
+ * revisiting every icon inside it.
  */
 describe('an unsized icon follows the control it sits in', () => {
   const cases: Array<[string, () => React.ReactElement, string]> = [

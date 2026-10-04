@@ -69,3 +69,32 @@ export const Disabled: Story = {
     </div>
   ),
 };
+
+export const BareAndGrowing: Story = {
+  render: () => (
+    <div className="grid max-w-md gap-6">
+      <Textarea
+        variant="bare"
+        aria-label="What is on your mind"
+        placeholder="What is on your mind?"
+        data-testid="bare"
+      />
+      <Textarea grow aria-label="Message" placeholder="Ask anything" data-testid="grow" />
+    </div>
+  ),
+  /** `bare` keeps a focus outline; `grow` starts at one line and grows with the text. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bare = canvas.getByTestId('bare');
+    const grow = canvas.getByTestId('grow');
+
+    await expect(getComputedStyle(bare).borderTopWidth).toBe('0px');
+    // A text field matches `:focus-visible` however it was focused.
+    await userEvent.click(bare);
+    await expect(getComputedStyle(bare).outlineStyle).toBe('solid');
+
+    const before = grow.getBoundingClientRect().height;
+    await userEvent.type(grow, 'One{Enter}Two{Enter}Three{Enter}Four');
+    await expect(grow.getBoundingClientRect().height).toBeGreaterThan(before);
+  },
+};

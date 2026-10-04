@@ -1,6 +1,8 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import type { ComponentProps } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { collapsibleVariants } from './Collapsible.variants';
 
 /**
  * One section that opens and shuts.
@@ -15,12 +17,27 @@ import { cn } from '@/lib/cn';
  * uses read it, so no component measures the DOM.
  *
  * @example
- * <Collapsible>
+ * <Collapsible gap={3}>
  *   <CollapsibleTrigger asChild><Button variant="ghost">More filters</Button></CollapsibleTrigger>
  *   <CollapsibleContent>…</CollapsibleContent>
  * </Collapsible>
  */
-export const Collapsible = CollapsiblePrimitive.Root;
+export function Collapsible({
+  className,
+  variant,
+  gap,
+  ...props
+}: ComponentProps<typeof CollapsiblePrimitive.Root> &
+  VariantProps<typeof collapsibleVariants>) {
+  return (
+    <CollapsiblePrimitive.Root
+      data-slot="collapsible"
+      className={cn(collapsibleVariants({ variant, gap }), className) || undefined}
+      {...props}
+    />
+  );
+}
+
 export const CollapsibleTrigger = CollapsiblePrimitive.Trigger;
 
 export function CollapsibleContent({

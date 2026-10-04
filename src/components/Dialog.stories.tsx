@@ -56,22 +56,26 @@ export const Default: Story = {
   ),
 };
 
-export const TranslatedCloseLabel: Story = {
+export const CustomCloseLabel: Story = {
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="primary">Ouvrir</Button>
+        <Button variant="primary">Join the course</Button>
       </DialogTrigger>
-      <DialogContent closeLabel="Fermer">
-        <DialogTitle>Rejoindre le cours</DialogTitle>
-        <DialogDescription>Deux séances en direct par semaine.</DialogDescription>
+      <DialogContent closeLabel="Close the course details">
+        <DialogTitle>Join the course</DialogTitle>
+        <DialogDescription>Two live sessions a week.</DialogDescription>
       </DialogContent>
     </Dialog>
   ),
   play: async ({ canvasElement }) => {
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Ouvrir' }));
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Join the course' }),
+    );
     // Radix portals the panel to document.body, so it is outside canvasElement.
-    await expect(await screen.findByRole('button', { name: 'Fermer' })).toBeInTheDocument();
+    await expect(
+      await screen.findByRole('button', { name: 'Close the course details' }),
+    ).toBeInTheDocument();
   },
 };
 

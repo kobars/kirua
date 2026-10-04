@@ -23,9 +23,9 @@ afterEach(cleanup);
  * nobody opens one by accident. So each component is rendered in both
  * directions and the two are compared.
  *
- * `getComputedStyle` returns a **live** object, which cost a debugging round
- * here: read both directions lazily and the first snapshot silently reports the
- * second direction's values. Everything below is copied out immediately.
+ * `getComputedStyle` returns a **live** object: read both directions lazily and
+ * the first snapshot silently reports the second direction's values.
+ * Everything below is copied out immediately.
  */
 function readIn(dir: 'ltr' | 'rtl', element: ReactElement, selector: string) {
   const container = render(<div dir={dir}>{element}</div>);

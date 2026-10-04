@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { useState } from 'react';
 import { Avatar, AvatarFallback } from './Avatar';
+import { Badge } from './Badge';
+import { Button } from './Button';
 import { IconButton } from './IconButton';
 import {
   Sidebar,
@@ -12,11 +14,22 @@ import {
   SidebarHeader,
   SidebarLabel,
   SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
 } from './Sidebar';
-import { CalendarIcon, GridIcon, MenuIcon, PillIcon, StethoscopeIcon, UserIcon } from './icons';
+import {
+  CalendarIcon,
+  GridIcon,
+  MenuIcon,
+  MoreIcon,
+  PillIcon,
+  StethoscopeIcon,
+  UserIcon,
+} from './icons';
+import { Text } from './Text';
 
 const meta = {
   tags: ['autodocs'],
@@ -105,7 +118,7 @@ export const Playground: Story = {
             <Avatar size="sm">
               <AvatarFallback>DR</AvatarFallback>
             </Avatar>
-            <SidebarLabel className="text-body-sm text-fg-secondary">dr. Rahmi</SidebarLabel>
+            <SidebarLabel className="text-body-sm text-fg-secondary">Dr. Rahmi</SidebarLabel>
           </div>
         </SidebarFooter>
       </Sidebar>
@@ -269,4 +282,121 @@ export const AlwaysOpen: Story = {
       </Sidebar>
     </div>
   ),
+};
+
+export const APlainRailWithActionsAndCounts: Story = {
+  render: () => (
+    <div className="h-96">
+      <Sidebar collapsible="none" variant="plain" width="sm" data-testid="rail">
+        <SidebarHeader size="sm">
+          <UserIcon aria-hidden="true" />
+          <SidebarLabel>
+            <Text inline size="sm" weight="medium" tone="primary">
+              Outpatients · morning
+            </Text>
+          </SidebarLabel>
+        </SidebarHeader>
+        <SidebarContent aria-label="Conversations">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive>
+                <a href="#/c/12">
+                  <SidebarLabel>Trip plan</SidebarLabel>
+                </a>
+              </SidebarMenuButton>
+              <SidebarMenuAction>
+                <IconButton aria-label="More for Trip plan" size="sm" variant="ghost">
+                  <MoreIcon />
+                </IconButton>
+              </SidebarMenuAction>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#/notifications">
+                  <GridIcon />
+                  <SidebarLabel>Notifications</SidebarLabel>
+                  <SidebarMenuBadge>
+                    <Badge status="info">3</Badge>
+                  </SidebarMenuBadge>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter divider={false} data-testid="footer">
+          <SidebarMenuButton>
+            <MenuIcon aria-hidden="true" />
+            <SidebarLabel>Collapse menu</SidebarLabel>
+          </SidebarMenuButton>
+        </SidebarFooter>
+      </Sidebar>
+    </div>
+  ),
+  /**
+   * The action is a sibling of the link, never inside it, and the link leaves
+   * room for it. The count is inside the link, so it is part of its name.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const rail = canvas.getByTestId('rail');
+    const link = canvas.getByRole('link', { name: 'Trip plan' });
+    const action = canvas.getByRole('button', { name: 'More for Trip plan' });
+
+    await expect(link.contains(action)).toBe(false);
+    await expect(action.getBoundingClientRect().left).toBeGreaterThan(
+      link.getBoundingClientRect().left,
+    );
+    await expect(getComputedStyle(link).paddingInlineEnd).toBe('44px');
+    await expect(canvas.getByRole('link', { name: 'Notifications 3' })).toBeVisible();
+    await expect(Math.round(rail.getBoundingClientRect().width)).toBe(208);
+    await expect(getComputedStyle(rail).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    await expect(getComputedStyle(canvas.getByTestId('footer')).borderTopWidth).toBe('0px');
+  },
+};
+
+export const AWideRailWithAColumnOfControls: Story = {
+  render: () => (
+    <div className="h-80">
+      <Sidebar collapsible="none" width="lg" data-testid="rail">
+        <SidebarHeader size="auto" data-testid="header">
+          <Button fullWidth>New chat</Button>
+          <Button variant="ghost" fullWidth>
+            Search everything
+          </Button>
+        </SidebarHeader>
+        <SidebarContent aria-label="Conversations" data-testid="list">
+          <SidebarMenu>
+            {Array.from({ length: 12 }, (_, index) => (
+              <SidebarMenuItem key={index}>
+                <SidebarMenuButton asChild>
+                  <a href={`#/c/${index}`}>
+                    <SidebarLabel>Conversation {index + 1}</SidebarLabel>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarContent>
+      </Sidebar>
+    </div>
+  ),
+  /** The header grows to hold its controls, and only the list below it scrolls. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByTestId('header');
+    const [first, second] = Array.from(header.children) as HTMLElement[];
+    await expect(second!.getBoundingClientRect().top).toBeGreaterThan(
+      first!.getBoundingClientRect().bottom,
+    );
+    await expect(first!.getBoundingClientRect().width).toBe(
+      header.clientWidth -
+        parseFloat(getComputedStyle(header).paddingInlineStart) -
+        parseFloat(getComputedStyle(header).paddingInlineEnd),
+    );
+    const list = canvas.getByTestId('list');
+    await expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+    await expect(Math.round(canvas.getByTestId('rail').getBoundingClientRect().width)).toBe(
+      288,
+    );
+  },
 };

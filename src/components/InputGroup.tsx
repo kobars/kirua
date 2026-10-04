@@ -1,5 +1,10 @@
 import type { ComponentProps } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { inputGroupVariants } from './InputGroup.variants';
+
+export interface InputGroupProps
+  extends ComponentProps<'div'>, VariantProps<typeof inputGroupVariants> {}
 
 /**
  * A text field with something attached to its edge — a search icon, a currency
@@ -22,7 +27,7 @@ import { cn } from '@/lib/cn';
  *   <InputGroupAddon><Kbd>/</Kbd></InputGroupAddon>
  * </InputGroup>
  */
-export function InputGroup({ className, ...props }: ComponentProps<'div'>) {
+export function InputGroup({ className, size, width, ...props }: InputGroupProps) {
   return (
     <div
       data-slot="input-group"
@@ -39,6 +44,7 @@ export function InputGroup({ className, ...props }: ComponentProps<'div'>) {
         'has-[input[aria-invalid="true"]]:border-field-line-invalid',
         'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-field-line-disabled',
         'has-[input:disabled]:bg-field-disabled',
+        inputGroupVariants({ size, width }),
         className,
       )}
       {...props}
@@ -70,6 +76,10 @@ export function InputGroupInput({ className, ...props }: ComponentProps<'input'>
  * One edge of the group. Put it before or after `InputGroupInput` in the DOM;
  * there is no side prop, because the DOM order already says which side it is
  * on and that order is what mirrors in a right-to-left page.
+ *
+ * An `IconButton` at the very edge — a clear or send button — is pulled
+ * outwards by half the group's padding, so its hover fill sits evenly inside
+ * the box instead of 12px from one side and 6px from the other.
  */
 export function InputGroupAddon({ className, ...props }: ComponentProps<'div'>) {
   return (
@@ -77,6 +87,8 @@ export function InputGroupAddon({ className, ...props }: ComponentProps<'div'>) 
       data-slot="input-group-addon"
       className={cn(
         'flex shrink-0 items-center gap-1.5 text-fg-muted [--icon-size:var(--icon-sm)]',
+        '[&:last-child>[data-slot=icon-button]:last-child]:-me-1.5',
+        '[&:first-child>[data-slot=icon-button]:first-child]:-ms-1.5',
         'group-has-[input:disabled]/input-group:text-on-field-disabled',
         className,
       )}

@@ -1,4 +1,5 @@
 import type { CSSProperties, SVGProps } from 'react';
+import { cn } from '@/lib/cn';
 
 /** The `--icon-*` tokens, by name. Values live in `tokens.primitives.css`. */
 const ICON_SIZES = {
@@ -12,6 +13,20 @@ const ICON_SIZES = {
 
 export type IconSize = keyof typeof ICON_SIZES;
 
+/**
+ * Colours an icon may take that are not the text it sits in. Unset follows
+ * `currentColor`, which is right almost everywhere. `accent` is a brand mark;
+ * `warning` is a rating star, the only filled-colour icon the examples draw.
+ */
+const ICON_TONES = {
+  accent: 'text-fg-accent',
+  muted: 'text-fg-muted',
+  warning: 'text-warning-solid',
+  danger: 'text-danger-fg',
+} as const;
+
+export type IconTone = keyof typeof ICON_TONES;
+
 /** Inline icon set matching the reference's outline style: 1.75px strokes,
  *  round caps and joins, 24x24 box. Colour follows `currentColor`. */
 export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
@@ -23,9 +38,11 @@ export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
    * A raw number is accepted as an escape hatch for a one-off ornament.
    */
   size?: IconSize | number;
+  /** A colour other than the surrounding text's. */
+  tone?: IconTone;
 };
 
-function Icon({ size, children, style, ...props }: IconProps) {
+function Icon({ size, tone, className, children, style, ...props }: IconProps) {
   const resolved =
     size === undefined
       ? 'var(--icon-size, var(--icon-md))'
@@ -46,6 +63,7 @@ function Icon({ size, children, style, ...props }: IconProps) {
       // Width and height rather than the SVG attributes, so a token can be a
       // `var()` and a consumer's `className` can still win.
       style={{ width: resolved, height: resolved, ...style } as CSSProperties}
+      className={cn(tone && ICON_TONES[tone], className) || undefined}
       {...props}
     >
       {children}
@@ -118,8 +136,8 @@ export const SparkleIcon = (p: IconProps) => (
   </Icon>
 );
 
-/* Icons below were added for the application screens. Same 24x24 box, same
- * 1.75px stroke, same `currentColor`. */
+/* Icons for application screens. Same 24x24 box, same 1.75px stroke, same
+ * `currentColor`. */
 
 export const ChevronUpIcon = (p: IconProps) => (
   <Icon {...p}>
