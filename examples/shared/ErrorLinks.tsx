@@ -12,14 +12,13 @@ export interface ErrorLinksProps {
  */
 export function ErrorLinks({ errors }: ErrorLinksProps) {
   return (
-    <List size="sm" className="mt-1">
+    <List size="sm">
       {Object.entries(errors).map(([id, message]) => (
         <ListItem key={id}>
           {/* The alert's own colour, underlined: the accent blue is measured on
               the page, not on a tinted alert. */}
           <Link
-            variant="block"
-            className="underline"
+            variant="inherit"
             href={`#${id}`}
             onClick={(event) => {
               event.preventDefault();

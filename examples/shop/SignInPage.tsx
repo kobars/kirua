@@ -5,9 +5,7 @@ import {
   AlertTitle,
   Button,
   Card,
-  CardBody,
   Container,
-  Heading,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -18,12 +16,13 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
   Label,
+  PageHeader,
+  Stack,
   Stepper,
   StepperItem,
-  Text,
 } from 'kirua';
 
-/** The stepper announces its own state, and this app speaks Indonesian. */
+/** The words the stepper announces for each state. */
 const STEP_LABELS = { done: 'Done', current: 'Current step', upcoming: 'Not started' };
 
 const LENGTH = 6;
@@ -70,18 +69,10 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
 
   return (
     <Container width="md" pad="lg">
-      <div>
-        <Heading as="h1" size="heading-md">
-          Sign in
-        </Heading>
-        <Text size="sm" className="mt-1">
-          We send a one-time code to your number.
-        </Text>
-      </div>
+      <PageHeader title="Sign in" description="We send a one-time code to your number." />
 
-      {/* The page had always been two steps and had never said which one you
-          were on. `aria-current="step"` is the half of that a drawing cannot
-          carry. */}
+      {/* Says which of the two steps you are on. `aria-current="step"` is
+          the half of that a drawing cannot carry. */}
       <Stepper aria-label="Sign-in steps">
         <StepperItem status={sent ? 'done' : 'current'} index={1} labels={STEP_LABELS}>
           Phone number
@@ -91,126 +82,125 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
         </StepperItem>
       </Stepper>
 
-      <Card>
-        <CardBody className="grid gap-5">
-          {/* `Label` and not `Field`: a `Field` hands its id and aria wiring to
+      <Card gap={5}>
+        {/* `Label` and not `Field`: a `Field` hands its id and aria wiring to
               exactly one control child, and the child here is a group that
               wraps the control. */}
-          <form
-            id="phone-step"
-            className="grid gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (phoneValid && !sending && !sent) send();
-            }}
-          >
-            <Label htmlFor="phone">Phone number</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>+62</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="phone"
-                inputMode="tel"
-                autoComplete="tel-national"
-                placeholder="812 3456 7890"
-                value={phone}
-                disabled={sent}
-                onChange={(event) => setPhone(event.target.value)}
-              />
-            </InputGroup>
-          </form>
+        <Stack
+          as="form"
+          id="phone-step"
+          gap={2}
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (phoneValid && !sending && !sent) send();
+          }}
+        >
+          <Label htmlFor="phone">Phone number</Label>
+          <InputGroup>
+            <InputGroupAddon>
+              <InputGroupText>+62</InputGroupText>
+            </InputGroupAddon>
+            <InputGroupInput
+              id="phone"
+              inputMode="tel"
+              autoComplete="tel-national"
+              placeholder="812 3456 7890"
+              value={phone}
+              disabled={sent}
+              onChange={(event) => setPhone(event.target.value)}
+            />
+          </InputGroup>
+        </Stack>
 
-          {!sent ? (
-            <Button
-              type="submit"
-              form="phone-step"
-              fullWidth
-              disabled={!phoneValid}
-              loading={sending}
-              loadingLabel="Sending the code"
+        {!sent ? (
+          <Button
+            type="submit"
+            form="phone-step"
+            fullWidth
+            disabled={!phoneValid}
+            loading={sending}
+            loadingLabel="Sending the code"
+          >
+            Send the code
+          </Button>
+        ) : (
+          <Stack gap={4}>
+            <Stack
+              as="form"
+              gap={2}
+              onSubmit={(event) => {
+                event.preventDefault();
+                submit(code);
+              }}
             >
-              Send the code
-            </Button>
-          ) : (
-            <div className="grid gap-4">
-              <form
-                className="grid gap-2"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  submit(code);
-                }}
-              >
-                <Label htmlFor="otp">Six-digit code</Label>
-                <InputOTP>
-                  <InputOTPInput
-                    id="otp"
-                    ref={focusOnMount}
-                    pattern="\d*"
-                    value={code}
-                    aria-label="One-time code"
-                    aria-invalid={wrong || undefined}
-                    maxLength={LENGTH}
-                    onChange={(event) => {
-                      const next = event.target.value.replace(/\D/g, '').slice(0, LENGTH);
-                      setCode(next);
-                      setWrong(false);
-                      submit(next);
-                    }}
-                    // The caret is drawn by the boxes, so the real one is kept
-                    // at the end, where Backspace removes the last digit.
-                    onSelect={(event) => {
-                      const { length } = event.currentTarget.value;
-                      event.currentTarget.setSelectionRange(length, length);
-                    }}
-                  />
-                  {/* Two groups of three with a separator between them. A code
+              <Label htmlFor="otp">Six-digit code</Label>
+              <InputOTP>
+                <InputOTPInput
+                  id="otp"
+                  ref={focusOnMount}
+                  pattern="\d*"
+                  value={code}
+                  aria-label="One-time code"
+                  aria-invalid={wrong || undefined}
+                  maxLength={LENGTH}
+                  onChange={(event) => {
+                    const next = event.target.value.replace(/\D/g, '').slice(0, LENGTH);
+                    setCode(next);
+                    setWrong(false);
+                    submit(next);
+                  }}
+                  // The caret is drawn by the boxes, so the real one is kept
+                  // at the end, where Backspace removes the last digit.
+                  onSelect={(event) => {
+                    const { length } = event.currentTarget.value;
+                    event.currentTarget.setSelectionRange(length, length);
+                  }}
+                />
+                {/* Two groups of three with a separator between them. A code
                       is read aloud in threes, and six unbroken boxes make the
                       reader count. */}
-                  <InputOTPGroup>
-                    {Array.from({ length: LENGTH / 2 }, (_, index) => (
+                <InputOTPGroup>
+                  {Array.from({ length: LENGTH / 2 }, (_, index) => (
+                    <InputOTPSlot
+                      key={index}
+                      char={code[index]}
+                      isActive={index === Math.min(code.length, LENGTH - 1)}
+                    />
+                  ))}
+                  <InputOTPSeparator />
+                  {Array.from({ length: LENGTH / 2 }, (_, offset) => {
+                    const index = offset + LENGTH / 2;
+                    return (
                       <InputOTPSlot
                         key={index}
                         char={code[index]}
                         isActive={index === Math.min(code.length, LENGTH - 1)}
                       />
-                    ))}
-                    <InputOTPSeparator />
-                    {Array.from({ length: LENGTH / 2 }, (_, offset) => {
-                      const index = offset + LENGTH / 2;
-                      return (
-                        <InputOTPSlot
-                          key={index}
-                          char={code[index]}
-                          isActive={index === Math.min(code.length, LENGTH - 1)}
-                        />
-                      );
-                    })}
-                  </InputOTPGroup>
-                </InputOTP>
-              </form>
+                    );
+                  })}
+                </InputOTPGroup>
+              </InputOTP>
+            </Stack>
 
-              {wrong && (
-                <Alert status="danger" role="alert">
-                  <AlertTitle>That code does not match</AlertTitle>
-                  <AlertDescription>Type the six digits again.</AlertDescription>
-                </Alert>
-              )}
-
-              <Alert status="info">
-                <AlertTitle>This is an example, not a real shop</AlertTitle>
-                <AlertDescription>
-                  No message is sent. The code this page accepts is{' '}
-                  <span className="font-medium tabular-nums">{EXPECTED}</span>.
-                </AlertDescription>
+            {wrong && (
+              <Alert status="danger" role="alert">
+                <AlertTitle>That code does not match</AlertTitle>
+                <AlertDescription>Type the six digits again.</AlertDescription>
               </Alert>
+            )}
 
-              <Button type="button" variant="ghost" onClick={() => setSent(false)}>
-                Change number
-              </Button>
-            </div>
-          )}
-        </CardBody>
+            <Alert status="info">
+              <AlertTitle>This is an example, not a real shop</AlertTitle>
+              <AlertDescription>
+                No message is sent. The code this page accepts is <strong>{EXPECTED}</strong>.
+              </AlertDescription>
+            </Alert>
+
+            <Button type="button" variant="ghost" onClick={() => setSent(false)}>
+              Change number
+            </Button>
+          </Stack>
+        )}
       </Card>
     </Container>
   );

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Weighs each of the five example applications and fails when one crosses its
- * declared size.
+ * Weighs the example app and fails when a part of it crosses its declared
+ * size.
  *
  * `tools/size-budget.mjs` does this for `dist` — the rebuilt hero page. That is
  * one screen importing a handful of components, so it answers "did something
- * heavy enter the graph" for a page nobody ships. The example apps are the
- * closest thing here to a real consumer: five applications, thirty-six screens,
+ * heavy enter the graph" for a page nobody ships. The example app is the
+ * closest thing here to a real consumer: five sections, thirty-six screens,
  * and most of the component set between them.
  *
  * ## What is enforced, and what is only reported
@@ -19,13 +19,12 @@
  * laptop and teaches everyone to re-run it until it passes — which is worse
  * than no gate, because it also trains people to re-run the real failures.
  *
- * **Stylesheet coverage is reported.** Tailwind scans source *text*, and every
- * app's stylesheet names `src/components`, so each one ships every utility any
+ * **Stylesheet coverage is reported.** Tailwind scans source *text*, and the
+ * app's stylesheet names `src/components`, so it ships every utility any
  * component mentions whether or not that component is ever imported. The number
- * this prints is how much of the sheet the app's own screens actually use, and
- * it is the evidence for whether a per-app `@source` list would be worth its
- * complexity. Ranges are unioned across every route of the app, so a rule used
- * on one screen counts as used.
+ * this prints is how much of the sheet each section's screens actually use.
+ * Ranges are unioned across every route of the section, so a rule used on one
+ * screen counts as used.
  *
  *     pnpm build:examples && node tools/perf-check.mjs
  */
@@ -33,90 +32,142 @@ import { gzipSync } from 'node:zlib';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { APPS, distOf, serve } from './example-apps.mjs';
+import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
 
 /**
- * Measured on 2026-08-31, so each budget is a record of reality plus headroom
+ * Measured from the build, so each budget is a record of reality plus headroom
  * rather than an aspiration.
  *
  * ```
- * claude     130.73 kB js   12.52 kB css
- * marketing  126.00 kB js   12.69 kB css
- * shop       135.87 kB js   12.81 kB css
- * simrs      136.20 kB js   12.71 kB css
- * social     130.54 kB js   12.77 kB css
+ * entry       108.98 kB js
+ * total       233.81 kB js
+ * css          17.23 kB
+ *
+ *             section   first visit
+ * shop         47.58      156.56
+ * his          50.19      159.17
+ * social       42.79      151.77
+ * claude       39.70      148.68
+ * marketing    33.27      142.25
  * ```
  *
- * One pair of limits for all five rather than five pairs, because the five
- * numbers are within 11 kB of each other and a per-app limit would invite
- * raising one quietly. The headroom is roughly a tenth, for the reason
- * `size-budget.mjs` gives: a budget with room for a whole extra dependency does
- * not fail until after the mistake has shipped.
+ * **The JavaScript is weighed in three parts**, because the app is one entry
+ * and five lazily loaded sections:
+ *
+ * - `entry` is what every visitor downloads before any section: React, the
+ *   theme menu, the hub and the components they share.
+ * - `section` is what opening one section adds: its own chunk and every
+ *   shared chunk it imports that the entry does not already hold. One limit
+ *   for all five rather than five, because a per-section limit would invite
+ *   raising one quietly.
+ * - `total` is every script the build emits. It catches growth that moves
+ *   between the other two — a component the entry stops sharing lands in each
+ *   section that uses it.
+ *
+ * A first visit to a section downloads `entry + section`. It is reported, not
+ * enforced: the two limits it is made of already bound it.
+ *
+ * **The CSS is one stylesheet shared by every section**, limited to 17.5 kB.
+ * Its headroom is under 2%, because the one sheet carries the classes of all
+ * five sections; the limit is kept tight so that growth here stays visible.
+ *
+ * Elsewhere the headroom is roughly a tenth, for the reason `size-budget.mjs` gives: a
+ * budget with room for a whole extra dependency does not fail until after the
+ * mistake has shipped.
  *
  * **Raising one of these is a normal thing to do and should be a visible thing
  * to do.** Edit the number here, in the same commit as the change that needed
  * it, and say why in the message.
- *
- * The CSS figures are near-identical across five very different applications,
- * and that is the finding rather than a coincidence — see the coverage note
- * above. The marketing app is the sharpest version of it: it uses 86% of the
- * sheet it ships against the others' 78%, because it is the app whose screens
- * are made of the components the system was reverse-engineered from.
  */
-const BUDGETS = {
-  javascript: { extension: '.js', gzipLimitKb: 150 },
-  css: { extension: '.css', gzipLimitKb: 14 },
+const BUDGETS_KB = {
+  entry: 120,
+  section: 55,
+  total: 257,
+  css: 17.5,
 };
 
 const kb = (bytes) => Math.round((bytes / 1000) * 100) / 100;
 
 const failures = [];
-const sizes = [];
 
-for (const { slug } of APPS) {
-  const assets = path.join(distOf(slug), 'assets');
-  let files;
-  try {
-    files = readdirSync(assets);
-  } catch {
-    console.error(
-      `perf-check: no build found at ${assets}. Run \`pnpm build:examples\` first.`,
-    );
-    process.exit(1);
-  }
-
-  const row = { app: slug };
-  for (const [name, budget] of Object.entries(BUDGETS)) {
-    const matching = files.filter((file) => file.endsWith(budget.extension));
-
-    // An empty match is a failure, not a pass. A changed asset layout would
-    // otherwise report every budget as satisfied, which is the most dangerous
-    // way for a size check to break.
-    if (matching.length === 0) {
-      failures.push(`${slug} ${name}: no ${budget.extension} asset was emitted`);
-      continue;
-    }
-
-    let raw = 0;
-    let gzip = 0;
-    for (const file of matching) {
-      const contents = readFileSync(path.join(assets, file));
-      raw += contents.byteLength;
-      gzip += gzipSync(contents).byteLength;
-    }
-
-    row[`${name} raw`] = kb(raw);
-    row[`${name} gzip`] = kb(gzip);
-    if (kb(gzip) > budget.gzipLimitKb) {
-      failures.push(
-        `${slug} ${name}: ${kb(gzip)} kB gzip is over the ${budget.gzipLimitKb} kB budget`,
-      );
-    }
-  }
-  sizes.push(row);
+let manifest;
+try {
+  manifest = JSON.parse(readFileSync(path.join(DIST, '.vite', 'manifest.json'), 'utf8'));
+} catch {
+  console.error(
+    `perf-check: no build manifest found in ${DIST}. Run \`pnpm build:examples\` first.`,
+  );
+  process.exit(1);
 }
 
-console.log('\nWhat each example application weighs:\n');
+const gzipOf = new Map();
+const weigh = (file) => {
+  if (!gzipOf.has(file))
+    gzipOf.set(file, gzipSync(readFileSync(path.join(DIST, file))).byteLength);
+  return gzipOf.get(file);
+};
+
+/** A chunk's file and the files of every chunk it imports statically, transitively. */
+function closure(key, seen = new Set()) {
+  const chunk = manifest[key];
+  if (chunk === undefined || seen.has(chunk.file)) return seen;
+  seen.add(chunk.file);
+  for (const imported of chunk.imports ?? []) closure(imported, seen);
+  return seen;
+}
+
+const sum = (files) => [...files].reduce((total, file) => total + weigh(file), 0);
+
+const entryKey = Object.keys(manifest).find((key) => manifest[key].isEntry);
+const entryFiles = closure(entryKey);
+const entry = sum(entryFiles);
+
+const assets = readdirSync(path.join(DIST, 'assets'));
+const scripts = assets.filter((file) => file.endsWith('.js')).map((file) => `assets/${file}`);
+const sheets = assets.filter((file) => file.endsWith('.css')).map((file) => `assets/${file}`);
+
+// An empty match is a failure, not a pass. A changed asset layout would
+// otherwise report every budget as satisfied, which is the most dangerous way
+// for a size check to break.
+if (entryKey === undefined) failures.push('no entry chunk in the build manifest');
+if (sheets.length === 0) failures.push('no .css asset was emitted');
+
+const check = (name, bytes, limit) => {
+  if (kb(bytes) > limit)
+    failures.push(`${name}: ${kb(bytes)} kB gzip is over the ${limit} kB budget`);
+};
+
+const sizes = [];
+for (const { section, prefix } of SECTIONS) {
+  if (prefix === '') continue;
+  const key = `${section}/App.tsx`;
+  if (manifest[key] === undefined) {
+    failures.push(`${section}: no chunk named ${key} in the build manifest`);
+    continue;
+  }
+  const own = [...closure(key)].filter((file) => !entryFiles.has(file));
+  const bytes = sum(own);
+  check(`${section} section js`, bytes, BUDGETS_KB.section);
+  sizes.push({
+    section,
+    'section js gzip': kb(bytes),
+    'first visit js gzip': kb(entry + bytes),
+  });
+}
+
+const total = sum(scripts);
+const css = sum(sheets);
+check('entry js', entry, BUDGETS_KB.entry);
+check('total js', total, BUDGETS_KB.total);
+check('css', css, BUDGETS_KB.css);
+
+console.log('\nWhat the example app weighs, gzip kB:\n');
+console.table([
+  { part: 'entry js', gzip: kb(entry), budget: BUDGETS_KB.entry },
+  { part: 'total js', gzip: kb(total), budget: BUDGETS_KB.total },
+  { part: 'css', gzip: kb(css), budget: BUDGETS_KB.css },
+]);
+console.log(`\nWhat each section adds (budget ${BUDGETS_KB.section} kB):\n`);
 console.table(sizes);
 
 // ---------------------------------------------------------------------------
@@ -126,10 +177,10 @@ console.table(sizes);
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
 const runtime = [];
+const server = await serve();
+const { port } = server.address();
 
-for (const { slug, routes } of APPS) {
-  const server = await serve(distOf(slug));
-  const { port } = server.address();
+for (const { section, prefix, routes } of SECTIONS) {
   const page = await context.newPage();
 
   await page.coverage.startCSSCoverage({ resetOnNavigation: false });
@@ -138,7 +189,7 @@ for (const { slug, routes } of APPS) {
   let paint = 0;
 
   for (const route of routes) {
-    await page.goto(`http://127.0.0.1:${port}/#/${route}`, { waitUntil: 'load' });
+    await open(page, `http://127.0.0.1:${port}/#/${prefix}${route}`);
     await page.waitForTimeout(200);
     const measured = await page.evaluate(() => ({
       nodes: document.getElementsByTagName('*').length,
@@ -182,7 +233,7 @@ for (const { slug, routes } of APPS) {
   }
 
   runtime.push({
-    app: slug,
+    section,
     routes: routes.length,
     'max DOM nodes': nodes,
     'slowest FCP ms': Math.round(paint),
@@ -192,18 +243,20 @@ for (const { slug, routes } of APPS) {
   });
 
   await page.close();
-  server.close();
 }
 
+server.close();
 await browser.close();
 
-console.log('\nReported, not enforced — every route of each app, widest viewport:\n');
+console.log('\nReported, not enforced — every route of each section, widest viewport:\n');
 console.table(runtime);
 
 if (failures.length > 0) {
-  console.error('\nperf-check: an example application is over its size budget.\n');
+  console.error('\nperf-check: the example app is over its size budget.\n');
   for (const failure of failures) console.error(`  - ${failure}`);
   process.exit(1);
 }
 
-console.log(`\nperf-check: ${APPS.length} apps, every one inside its size budget.`);
+console.log(
+  `\nperf-check: the entry, ${sizes.length} sections, the total and the stylesheet are inside their budgets.`,
+);

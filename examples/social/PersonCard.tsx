@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -7,10 +7,40 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
+  Inline,
   Link,
+  Split,
+  Stack,
   Text,
 } from 'kirua';
-import { compactCount, initials, people } from './data';
+import { compactCount, initials, people, type Person } from './data';
+
+export interface FollowCountsProps {
+  person: Person;
+  /** Further facts after the two counts, such as when the person joined. */
+  children?: ReactNode;
+}
+
+/** Followers and following, each figure as loud as a label and tabular. */
+export function FollowCounts({ person, children }: FollowCountsProps) {
+  return (
+    <Inline as="p" wrap gap={4}>
+      <Text inline size="sm">
+        <Text inline size="sm" weight="semibold" tone="primary" numeric>
+          {compactCount(person.followers)}
+        </Text>{' '}
+        followers
+      </Text>
+      <Text inline size="sm">
+        <Text inline size="sm" weight="semibold" tone="primary" numeric>
+          {compactCount(person.following)}
+        </Text>{' '}
+        following
+      </Text>
+      {children}
+    </Inline>
+  );
+}
 
 export interface PersonLinkProps {
   handle: string;
@@ -29,43 +59,32 @@ export function PersonLink({ handle }: PersonLinkProps) {
   return (
     <HoverCard openDelay={150}>
       <HoverCardTrigger asChild>
-        <Link
-          href={`#/profile/${handle}`}
-          variant="block"
-          className="inline-flex min-h-6 items-center font-semibold text-fg"
-        >
-          {person.name}
+        <Link href={`#/social/profile/${handle}`} variant="block">
+          <Text inline size="sm" weight="semibold" tone="primary">
+            {person.name}
+          </Text>
         </Link>
       </HoverCardTrigger>
       <HoverCardContent>
-        <div className="grid gap-3">
-          <div className="flex items-center gap-3">
+        <Stack gap={3}>
+          <Split layout="fit-start" from="base" gap={3} align="center">
             <Avatar size="lg">
               {person.photo && <AvatarImage src={person.photo} alt="" />}
               <AvatarFallback>{initials(person.name)}</AvatarFallback>
             </Avatar>
-            <div className="min-w-0">
-              <p className="truncate text-body-md font-semibold text-fg">{person.name}</p>
-              <p className="truncate text-body-sm text-fg-muted">@{person.handle}</p>
-            </div>
-          </div>
-          <Text size="sm" className="text-pretty">
+            <Stack gap={0}>
+              <Text weight="semibold" tone="primary" truncate>
+                {person.name}
+              </Text>
+              <Text size="sm" tone="muted" truncate>
+                @{person.handle}
+              </Text>
+            </Stack>
+          </Split>
+          <Text size="sm" wrap="pretty">
             {person.bio}
           </Text>
-          <p className="flex gap-4 text-body-sm text-fg-secondary">
-            <span>
-              <strong className="font-semibold text-fg tabular-nums">
-                {compactCount(person.followers)}
-              </strong>{' '}
-              followers
-            </span>
-            <span>
-              <strong className="font-semibold text-fg tabular-nums">
-                {compactCount(person.following)}
-              </strong>{' '}
-              following
-            </span>
-          </p>
+          <FollowCounts person={person} />
           <Button
             size="sm"
             fullWidth
@@ -74,7 +93,7 @@ export function PersonLink({ handle }: PersonLinkProps) {
           >
             {following ? 'Following' : 'Follow'}
           </Button>
-        </div>
+        </Stack>
       </HoverCardContent>
     </HoverCard>
   );

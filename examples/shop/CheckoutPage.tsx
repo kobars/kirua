@@ -17,7 +17,6 @@ import {
   EmptyState,
   Heading,
   Input,
-  Label,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -26,6 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Split,
+  Stack,
 } from 'kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
 import { idr } from './data';
@@ -123,12 +124,12 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
       {/* `Alert` supplies no live-region role: announcing is the consumer's
           choice. `<output>` is already a polite live region. */}
       {placed && (
-        <output
+        <Stack
+          as="output"
           ref={(node) => {
             result.current = node;
           }}
           tabIndex={-1}
-          className="block"
         >
           <Alert status="success" icon={<CheckIcon />}>
             <AlertTitle>Order received</AlertTitle>
@@ -136,7 +137,7 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
               This is an example screen — nothing is really shipped.
             </AlertDescription>
           </Alert>
-        </output>
+        </Stack>
       )}
 
       {Object.keys(errors).length > 0 && (
@@ -161,7 +162,7 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           description="Add an item before checking out."
           action={
             <Button asChild>
-              <a href="#/">Browse products</a>
+              <a href="#/shop/">Browse products</a>
             </Button>
           }
         />
@@ -174,107 +175,112 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
               const form = event.currentTarget;
               setAnswers((previous) => read(form, previous));
             }}
-            className="grid gap-6 md:grid-cols-[1fr_20rem]"
           >
-            <div className="grid content-start gap-5">
-              <Field controlId="name" label="Recipient name" error={errors['name']}>
-                <Input id="name" name="name" autoComplete="name" />
-              </Field>
+            <Split layout="aside-end" asideWidth="lg" from="md" align="start">
+              <Stack gap={5}>
+                <Field controlId="name" label="Recipient name" error={errors['name']}>
+                  <Input id="name" name="name" autoComplete="name" />
+                </Field>
 
-              <Field
-                controlId="phone"
-                label="Phone"
-                description="Used by the courier on arrival."
-                error={errors['phone']}
-              >
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="tel"
-                />
-              </Field>
+                <Field
+                  controlId="phone"
+                  label="Phone"
+                  description="Used by the courier on arrival."
+                  error={errors['phone']}
+                >
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                  />
+                </Field>
 
-              <Field controlId="address" label="Address" error={errors['address']}>
-                <Input id="address" name="address" autoComplete="street-address" />
-              </Field>
+                <Field controlId="address" label="Address" error={errors['address']}>
+                  <Input id="address" name="address" autoComplete="street-address" />
+                </Field>
 
-              <Field controlId="city" label="City">
-                <Select defaultValue="bandung" name="city">
-                  <SelectTrigger id="city">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent aria-label="City">
-                    <SelectItem value="bandung">Bandung</SelectItem>
-                    <SelectItem value="jakarta">Jakarta</SelectItem>
-                    <SelectItem value="surabaya">Surabaya</SelectItem>
-                    <SelectItem value="makassar">Makassar</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
+                <Field controlId="city" label="City">
+                  <Select defaultValue="bandung" name="city">
+                    <SelectTrigger id="city">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent aria-label="City">
+                      <SelectItem value="bandung">Bandung</SelectItem>
+                      <SelectItem value="jakarta">Jakarta</SelectItem>
+                      <SelectItem value="surabaya">Surabaya</SelectItem>
+                      <SelectItem value="makassar">Makassar</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
 
-              <FieldSet>
-                <FieldLegend>Delivery</FieldLegend>
-                <RadioGroup value={delivery} onValueChange={setDelivery} name="shipping">
-                  {(
-                    [
-                      ['standard', 'Standard — 3 to 5 days'],
-                      ['express', 'Express — arrives tomorrow'],
-                      ['collect', 'Collect in store'],
-                    ] as const
-                  ).map(([id, label]) => (
-                    <div key={id} className="flex items-center gap-2">
-                      <RadioGroupItem value={id} id={`ship-${id}`} />
-                      <Label htmlFor={`ship-${id}`}>{label}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </FieldSet>
+                <FieldSet>
+                  <FieldLegend>Delivery</FieldLegend>
+                  <RadioGroup value={delivery} onValueChange={setDelivery} name="shipping">
+                    {(
+                      [
+                        ['standard', 'Standard — 3 to 5 days'],
+                        ['express', 'Express — arrives tomorrow'],
+                        ['collect', 'Collect in store'],
+                      ] as const
+                    ).map(([id, label]) => (
+                      <Field
+                        key={id}
+                        orientation="horizontal"
+                        controlId={`ship-${id}`}
+                        label={label}
+                      >
+                        <RadioGroupItem value={id} />
+                      </Field>
+                    ))}
+                  </RadioGroup>
+                </FieldSet>
 
-              <Field
-                orientation="horizontal"
-                controlId="terms"
-                label="I accept the delivery terms"
-                error={errors['terms']}
-              >
-                <Checkbox
-                  name="terms"
-                  checked={answers.terms}
-                  onCheckedChange={(checked) =>
-                    setAnswers((previous) => ({ ...previous, terms: checked === true }))
-                  }
-                />
-              </Field>
-            </div>
+                <Field
+                  orientation="horizontal"
+                  controlId="terms"
+                  label="I accept the delivery terms"
+                  error={errors['terms']}
+                >
+                  <Checkbox
+                    name="terms"
+                    checked={answers.terms}
+                    onCheckedChange={(checked) =>
+                      setAnswers((previous) => ({ ...previous, terms: checked === true }))
+                    }
+                  />
+                </Field>
+              </Stack>
 
-            <Card className="grid h-max gap-3 p-5">
-              <Heading as="h2" size="body-md">
-                Summary
-              </Heading>
-              <Separator />
-              <DescriptionList>
-                <DescriptionTerm>Subtotal</DescriptionTerm>
-                <DescriptionDetails numeric>{idr(subtotal)}</DescriptionDetails>
-                <DescriptionTerm>Delivery</DescriptionTerm>
-                <DescriptionDetails numeric>
-                  {shipping === 0 ? 'Free' : idr(shipping)}
-                </DescriptionDetails>
-              </DescriptionList>
-              <Separator />
-              {/* The total is part of the same list semantically, but a Separator
+              <Card gap={3}>
+                <Heading as="h2" size="body-md">
+                  Summary
+                </Heading>
+                <Separator />
+                <DescriptionList>
+                  <DescriptionTerm>Subtotal</DescriptionTerm>
+                  <DescriptionDetails numeric>{idr(subtotal)}</DescriptionDetails>
+                  <DescriptionTerm>Delivery</DescriptionTerm>
+                  <DescriptionDetails numeric>
+                    {shipping === 0 ? 'Free' : idr(shipping)}
+                  </DescriptionDetails>
+                </DescriptionList>
+                <Separator />
+                {/* The total is part of the same list semantically, but a Separator
               between two rows would break the grid — so it is its own list of
-              one pair, which is also what the markup said before. */}
-              <DescriptionList>
-                <DescriptionTerm emphasis>Total</DescriptionTerm>
-                <DescriptionDetails emphasis numeric>
-                  {idr(subtotal + shipping)}
-                </DescriptionDetails>
-              </DescriptionList>
-              <Button type="submit" fullWidth size="lg">
-                Pay
-              </Button>
-            </Card>
+              one pair. */}
+                <DescriptionList>
+                  <DescriptionTerm emphasis>Total</DescriptionTerm>
+                  <DescriptionDetails emphasis numeric>
+                    {idr(subtotal + shipping)}
+                  </DescriptionDetails>
+                </DescriptionList>
+                <Button type="submit" fullWidth size="lg">
+                  Pay
+                </Button>
+              </Card>
+            </Split>
           </form>
         )
       )}

@@ -1,13 +1,11 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
   Badge,
   Button,
-  ButtonGroup,
   CommentIcon,
   EmptyState,
-  Heading,
   HeartIcon,
   Item,
   ItemActions,
@@ -17,8 +15,13 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
+  PageHeader,
   SparkleIcon,
+  Stack,
+  ToggleGroup,
+  ToggleGroupItem,
   UserIcon,
+  VisuallyHidden,
 } from 'kirua';
 import { initials, notices, people, type Notice } from './data';
 
@@ -47,31 +50,27 @@ export function Notifications() {
   const unread = notices.filter(isUnread).length;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Heading as="h1" size="heading-sm">
-          Notifications{' '}
-          {unread > 0 && (
-            <Badge status="info" className="ms-1">
-              {unread} new
-            </Badge>
-          )}
-        </Heading>
-        <ButtonGroup aria-label="Filter notifications">
-          {(['all', 'unread'] as const).map((value) => (
-            <Button
-              key={value}
-              variant="secondary"
-              size="sm"
-              aria-pressed={tab === value}
-              onClick={() => setTab(value)}
-              className={tab === value ? 'bg-selected text-on-selected' : undefined}
-            >
-              {value === 'all' ? 'All' : 'Unread'}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </div>
+    <Stack gap={4}>
+      <PageHeader
+        size="heading-sm"
+        align="center"
+        title={<>Notifications {unread > 0 && <Badge status="info">{unread} new</Badge>}</>}
+        actions={
+          <ToggleGroup
+            type="single"
+            value={tab}
+            onValueChange={(next) => (next === 'all' || next === 'unread') && setTab(next)}
+            aria-label="Filter notifications"
+          >
+            <ToggleGroupItem value="all" size="sm" variant="outline">
+              All
+            </ToggleGroupItem>
+            <ToggleGroupItem value="unread" size="sm" variant="outline">
+              Unread
+            </ToggleGroupItem>
+          </ToggleGroup>
+        }
+      />
 
       {shown.length === 0 ? (
         <EmptyState
@@ -90,11 +89,11 @@ export function Notifications() {
             const person = people[notice.handle];
             const Icon = ICON[notice.kind];
             return (
-              <div key={notice.id}>
+              <Fragment key={notice.id}>
                 {index > 0 && <ItemSeparator />}
                 <Item
                   interactive
-                  className={isUnread(notice) ? 'bg-brand-subtle' : undefined}
+                  variant={isUnread(notice) ? 'accent' : 'plain'}
                   onClick={() => setRead((all) => [...all, notice.id])}
                 >
                   <ItemMedia>
@@ -104,19 +103,20 @@ export function Notifications() {
                   </ItemMedia>
                   <ItemContent>
                     <ItemTitle>
+                      {isUnread(notice) && <VisuallyHidden>Unread: </VisuallyHidden>}
                       {person?.name ?? notice.handle} {WORDING[notice.kind]}
                     </ItemTitle>
                     <ItemDescription>{notice.body ?? `${notice.when} ago`}</ItemDescription>
                   </ItemContent>
                   <ItemActions>
-                    <Icon aria-hidden="true" className="text-fg-muted" />
+                    <Icon aria-hidden="true" tone="muted" />
                   </ItemActions>
                 </Item>
-              </div>
+              </Fragment>
             );
           })}
         </ItemGroup>
       )}
-    </div>
+    </Stack>
   );
 }

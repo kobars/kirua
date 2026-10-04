@@ -1,7 +1,7 @@
 import {
   BarChart,
   Card,
-  CardBody,
+  CardContent,
   CardTitle,
   Chart,
   ChartCaption,
@@ -9,7 +9,8 @@ import {
   Container,
   Heading,
   LineChart,
-  ScrollArea,
+  Pane,
+  PaneBody,
   Sparkline,
   Stat,
   StatRow,
@@ -30,46 +31,46 @@ export function Usage() {
   const turns = allConversations.reduce((n, c) => n + c.turns.length, 0);
 
   return (
-    <ScrollArea className="min-h-0 flex-1">
-      <Container width="3xl" pad="md">
-        <Heading as="h1" size="heading-lg">
-          Usage
-        </Heading>
+    <Pane height="screen">
+      <PaneBody>
+        <Container width="3xl" pad="md">
+          <Heading as="h1" size="heading-lg">
+            Usage
+          </Heading>
 
-        <StatRow variant="tile">
-          <Stat variant="tile" value={String(allConversations.length)} label="Conversations" />
-          <Stat variant="tile" value={String(turns)} label="Turns" />
-          <Stat variant="tile" value="95" label="This month" />
-        </StatRow>
+          <StatRow variant="tile">
+            <Stat
+              variant="tile"
+              value={String(allConversations.length)}
+              label="Conversations"
+            />
+            <Stat variant="tile" value={String(turns)} label="Turns" />
+            <Stat variant="tile" value="95" label="This month" />
+          </StatRow>
 
-        <Card>
-          <CardBody>
+          <Card gap={4}>
             <CardTitle as="h2">Conversations per month</CardTitle>
-            <div className="mt-4">
+            <CardContent>
               <Chart label="Conversations started per month, October to March">
                 <BarChart data={usageByMonth} showValues />
                 <ChartCaption>March is the busiest month in the sample.</ChartCaption>
               </Chart>
-            </div>
-          </CardBody>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardBody>
+          <Card gap={4}>
             <CardTitle as="h2">The same six months as a line</CardTitle>
-            <div className="mt-4">
+            <CardContent>
               <Chart label="Conversations per month drawn as a line">
                 <LineChart data={usageByMonth} filled series={2} />
                 <ChartLegend items={[{ label: 'Conversations', series: 2 }]} />
               </Chart>
-            </div>
-          </CardBody>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardBody>
+          <Card gap={4}>
             <CardTitle as="h2">What they were about</CardTitle>
-            <div className="mt-4">
+            <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -82,7 +83,7 @@ export function Usage() {
                   {usageByTopic.map((row, index) => (
                     <TableRow key={row.label}>
                       <TableCell>{row.label}</TableCell>
-                      <TableCell className="tabular-nums">{row.value}</TableCell>
+                      <TableCell numeric>{row.value}</TableCell>
                       <TableCell>
                         <Sparkline
                           data={usageByMonth}
@@ -94,10 +95,10 @@ export function Usage() {
                   ))}
                 </TableBody>
               </Table>
-            </div>
-          </CardBody>
-        </Card>
-      </Container>
-    </ScrollArea>
+            </CardContent>
+          </Card>
+        </Container>
+      </PaneBody>
+    </Pane>
   );
 }

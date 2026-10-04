@@ -9,32 +9,27 @@ import {
   IconButton,
   MonitorIcon,
   MoonIcon,
+  NightSwatch,
   SunIcon,
-} from 'kirua';
-import {
-  NIGHT_PALETTES,
-  STYLE_EXPERIMENTS,
-  useNightPalette,
-  useStyleExperiment,
   type NightPalette,
-  type StyleExperiment,
-} from './styleExperiment';
+} from 'kirua';
+import { NIGHT_PALETTES, useNightPalette } from './useNightPalette';
 import { useTheme, type ThemePreference } from './useTheme';
 import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
 
 /**
- * The theme control: one button at any width, and a menu of three choices.
+ * The theme control: one button at any width, and a menu of three choices,
+ * then the night palette dark mode uses.
  *
  * A menu rather than a row of three toggles, because the header is the most
- * contested space on a phone — three 44px controls there is what pushed the
- * shop's cart button to six pixels of clearance.
+ * contested space on a phone: three more 44px controls there leave the shop's
+ * cart button six pixels of clearance.
  *
  * The trigger shows the theme in force, not the choice made: under "System" it
  * is a sun or a moon depending on what the operating system currently says.
  */
 export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
   const { preference, choose } = useTheme();
-  const { experiment, choose: chooseExperiment } = useStyleExperiment();
   const { palette, choose: choosePalette } = useNightPalette();
 
   const resolved =
@@ -51,7 +46,7 @@ export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
           {resolved === 'dark' ? <MoonIcon /> : <SunIcon />}
         </IconButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-48">
+      <DropdownMenuContent align="end">
         <DropdownMenuRadioGroup
           value={preference}
           onValueChange={(value) => choose(value as ThemePreference)}
@@ -70,43 +65,19 @@ export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
 
-        {/* TEMPORARY: see `styleExperiment.ts`. */}
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Style experiment</DropdownMenuLabel>
+        <DropdownMenuLabel>Night palette</DropdownMenuLabel>
         <DropdownMenuRadioGroup
-          value={experiment}
-          onValueChange={(value) => chooseExperiment(value as StyleExperiment)}
+          value={palette}
+          onValueChange={(value) => choosePalette(value as NightPalette)}
         >
-          {STYLE_EXPERIMENTS.map((option) => (
+          {NIGHT_PALETTES.map((option) => (
             <DropdownMenuRadioItem key={option.id} value={option.id}>
               {option.label}
+              <NightSwatch palette={option.id} />
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
-
-        {experiment === 'hybrid-clay' && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>Night palette</DropdownMenuLabel>
-            <DropdownMenuRadioGroup
-              value={palette}
-              onValueChange={(value) => choosePalette(value as NightPalette)}
-            >
-              {NIGHT_PALETTES.map((option) => (
-                <DropdownMenuRadioItem key={option.id} value={option.id}>
-                  {option.label}
-                  <span
-                    aria-hidden="true"
-                    data-night-swatch={option.id}
-                    className="ms-auto flex h-6 w-9 shrink-0 items-end justify-end rounded-xs border border-line bg-(--exp-night-page) p-1"
-                  >
-                    <span className="h-3.5 w-5 rounded-xs bg-(--exp-night-raised)" />
-                  </span>
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

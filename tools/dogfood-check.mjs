@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 /**
- * Fails when an example application writes a raw HTML element that the design
- * system already exports a component for.
+ * Fails when the example app writes a raw HTML element that the design system
+ * already exports a component for.
  *
- * ## What the example apps are for
+ * ## What the example app is for
  *
- * The five applications under `examples/` are the proof that this design system
- * can be built with. Each one imports the bare specifier `kirua`, exactly as an
- * outside consumer would, and cannot reach into `src`. That only means anything
- * while the applications keep using the system — an example that reaches past a
- * component and writes the markup by hand is measuring nothing, and it is the
- * easiest thing in the world to do by accident under time pressure.
+ * The example app under `examples/`, five applications as five sections, is
+ * the proof that this design system can be built with. It imports the bare
+ * specifier `kirua`, exactly as an outside consumer would, and cannot reach
+ * into `src`. That only means anything while the app keeps using the system —
+ * a screen that reaches past a component and writes the markup by hand is
+ * measuring nothing, and it is the easiest thing in the world to do by
+ * accident under time pressure.
  *
  * Raw markup mistakes it catches:
  *
@@ -92,7 +93,7 @@ function sources(dir) {
  * Blanks out comments and string literals, keeping every byte's position.
  *
  * The scan is a regular expression over source text, so a component's own
- * explanation of why it stopped using `<button>` would report itself as a
+ * explanation of why it does not use `<button>` would report itself as a
  * `<button>`. Replacing the characters with spaces rather than deleting them
  * keeps line and column numbers true, so a hit still points at the real line.
  */

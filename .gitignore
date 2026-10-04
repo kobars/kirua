@@ -37,5 +37,5 @@ coverage
 # on first run and pass — a gate that can never fail.
 .vitest-attachments
 
-# Each example app builds into its own root.
-examples/*/dist
+# The example app builds into its own root.
+examples/dist

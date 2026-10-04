@@ -30,23 +30,23 @@ import {
   DropdownMenuTrigger,
   HeartIcon,
   IconButton,
+  Inline,
   MoreIcon,
+  Placeholder,
   Separator,
   ShareIcon,
+  Split,
+  Stack,
   Text,
   Toggle,
 } from 'kirua';
 import { PersonLink } from './PersonCard';
-import { SURFACE_PROPS, type CardSurface } from './experiment';
-import { cn } from './cn';
 import { compactCount, initials, people, type Post } from './data';
 
 export interface PostCardProps {
   post: Post;
   /** Offered on the card's own menu. Omit it and the entry is not drawn. */
   onDelete?: (id: string) => void;
-  /** TEMPORARY — see `experiment.tsx`. Remove with the experiment. */
-  surface?: CardSurface | undefined;
 }
 
 /** How the replies under a post are ordered. Two answers, so a radio group. */
@@ -55,7 +55,7 @@ const REPLY_ORDERS = [
   { value: 'popular', label: 'Most liked replies first' },
 ];
 
-export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps) {
+export function PostCard({ post, onDelete }: PostCardProps) {
   const [muted, setMuted] = useState(false);
   const [liked, setLiked] = useState(post.liked ?? false);
   const [pinned, setPinned] = useState(false);
@@ -66,7 +66,7 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${post.text}\n${location.origin}${location.pathname}#/profile/${post.handle}`,
+        `${post.text}\n${location.origin}${location.pathname}#/social/profile/${post.handle}`,
       );
       setNotice('Post and profile link copied.');
     } catch {
@@ -78,11 +78,9 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
   const person = people[post.handle];
   if (!person) return null;
 
-  const look = SURFACE_PROPS[surface];
-
   const card = (
-    <Card variant={look.variant} className={cn('grid gap-3 p-4', look.className)}>
-      <header className="flex items-start gap-3">
+    <Card padding="sm" gap={3}>
+      <Split layout="fit-start" from="base" gap={3} align="start">
         <Avatar size="md">
           {/* Half the people here have a portrait and half do not, which is the
               only way to see that both halves of `Avatar` work. `alt=""` — the
@@ -90,59 +88,63 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
           {person.photo && <AvatarImage src={person.photo} alt="" />}
           <AvatarFallback>{initials(person.name)}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="flex flex-wrap items-baseline gap-x-2 text-body-sm">
+        <Inline justify="between" align="start" gap={3}>
+          <Inline as="p" wrap align="baseline" gap={2}>
             <PersonLink handle={post.handle} />
-            <span className="text-fg-muted">@{person.handle}</span>
-            <span className="text-fg-muted">· {post.when}</span>
-          </p>
-        </div>
-        {/* A menu of commands, so `DropdownMenu` rather than a `Popover` of
+            <Text inline size="sm" tone="muted">
+              @{person.handle}
+            </Text>
+            <Text inline size="sm" tone="muted">
+              · {post.when}
+            </Text>
+          </Inline>
+          {/* A menu of commands, so `DropdownMenu` rather than a `Popover` of
             buttons: a menu answers the arrow keys, jumps to an item by its
             first letter, closes on Escape, and reports itself as a `menu` of
             `menuitem`s. The same four commands are `ContextMenuItem`s at the
             bottom of this file for the right-click path, so the two paths share
             one keyboard model. */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <IconButton
-              aria-label={`Options for ${person.name}’s post`}
-              variant="ghost"
-              size="sm"
-            >
-              <MoreIcon />
-            </IconButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            {/* Grouped, because the three commands, the two settings and the
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <IconButton
+                aria-label={`Options for ${person.name}’s post`}
+                variant="ghost"
+                size="sm"
+              >
+                <MoreIcon />
+              </IconButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" width="md">
+              {/* Grouped, because the three commands, the two settings and the
                 destructive one are three different kinds of thing and a menu
                 that does not say so is a list of six. */}
-            <DropdownMenuGroup>
-              <DropdownMenuItem onSelect={() => void copy()}>Copy post</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setPinned(!pinned)}>
-                {pinned ? 'Unpin' : 'Pin'}
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={report}>Report</DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
-              Mute @{person.handle}
-            </DropdownMenuCheckboxItem>
-            {onDelete && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
-                  Delete post
+              <DropdownMenuGroup>
+                <DropdownMenuItem onSelect={() => void copy()}>Copy post</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setPinned(!pinned)}>
+                  {pinned ? 'Unpin' : 'Pin'}
                 </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </header>
+                <DropdownMenuItem onSelect={report}>Report</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem checked={muted} onCheckedChange={setMuted}>
+                Mute @{person.handle}
+              </DropdownMenuCheckboxItem>
+              {onDelete && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="danger" onSelect={() => onDelete(post.id)}>
+                    Delete post
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Inline>
+      </Split>
 
       {pinned && <Text size="sm">Pinned in this session</Text>}
       {muted && <Text size="sm">Muted in this session</Text>}
-      <Text tone="primary" className="text-pretty wrap-anywhere">
+      <Text tone="primary" wrap="anywhere">
         {post.text}
       </Text>
 
@@ -150,70 +152,79 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
         // The box is reserved before the picture arrives, so the feed cannot
         // jump as posts load — once per post, which is the whole reason
         // AspectRatio exists.
-        <AspectRatio ratio={post.media.ratio} className="rounded-md bg-sunken">
-          <div className="grid size-full place-content-center px-6 text-center text-body-sm text-fg-muted">
-            {post.media.caption}
-          </div>
+        <AspectRatio ratio={post.media.ratio} radius="md">
+          <Placeholder>
+            <Text size="sm" tone="muted" align="center">
+              {post.media.caption}
+            </Text>
+          </Placeholder>
         </AspectRatio>
       )}
 
       <Separator />
 
-      <footer className="flex flex-wrap items-center gap-1">
-        <Toggle
-          size="sm"
-          pressed={liked}
-          onPressedChange={setLiked}
-          aria-label={`Like ${person.name}’s post`}
-        >
-          <HeartIcon />
-          <span className="tabular-nums">
-            {compactCount(post.likes + Number(liked) - Number(post.liked ?? false))}
-          </span>
-        </Toggle>
-        <CollapsibleTrigger asChild>
-          <IconButton aria-label="Reply to post" variant="ghost" size="sm">
-            <CommentIcon />
-          </IconButton>
-        </CollapsibleTrigger>
-        <span className="text-body-sm text-fg-secondary tabular-nums">
-          {compactCount(post.comments + replies.length)}
-        </span>
-        <span className="flex-1" />
-        <IconButton aria-label="Share" variant="ghost" size="sm" onClick={() => void copy()}>
-          <ShareIcon />
-        </IconButton>
-        <Toggle size="sm" aria-label="Save">
-          <BookmarkIcon />
-        </Toggle>
-      </footer>
-      <CollapsibleContent className="grid gap-3">
-        <Text size="sm">Replies added here stay in this demo session.</Text>
-        {(replyOrder === 'newest' ? [...replies].reverse() : replies).map((text, index) => (
-          <Text key={`${index}-${text}`} className="wrap-anywhere">
-            {text}
+      <Inline as="footer" wrap justify="between" gap={1}>
+        <Inline gap={1}>
+          <Toggle
+            size="sm"
+            pressed={liked}
+            onPressedChange={setLiked}
+            aria-label={`Like ${person.name}’s post`}
+          >
+            <HeartIcon />
+            <Text inline size="inherit" tone="inherit" numeric>
+              {compactCount(post.likes + Number(liked) - Number(post.liked ?? false))}
+            </Text>
+          </Toggle>
+          <CollapsibleTrigger asChild>
+            <IconButton aria-label="Reply to post" variant="ghost" size="sm">
+              <CommentIcon />
+            </IconButton>
+          </CollapsibleTrigger>
+          <Text inline size="sm" numeric>
+            {compactCount(post.comments + replies.length)}
           </Text>
-        ))}
-        <form
-          className="flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!reply.trim()) return;
-            setReplies((all) => [...all, reply.trim()]);
-            setReply('');
-          }}
-        >
-          <Input
-            aria-label="Write a reply"
-            value={reply}
-            onChange={(event) => setReply(event.target.value)}
-          />
-          <Button type="submit" size="sm" aria-disabled={!reply.trim() || undefined}>
-            Reply
-          </Button>
-        </form>
+        </Inline>
+        <Inline gap={1}>
+          <IconButton aria-label="Share" variant="ghost" size="sm" onClick={() => void copy()}>
+            <ShareIcon />
+          </IconButton>
+          <Toggle size="sm" aria-label="Save">
+            <BookmarkIcon />
+          </Toggle>
+        </Inline>
+      </Inline>
+      <CollapsibleContent>
+        <Stack gap={3}>
+          <Text size="sm">Replies added here stay in this demo session.</Text>
+          {(replyOrder === 'newest' ? [...replies].reverse() : replies).map((text, index) => (
+            <Text key={`${index}-${text}`} wrap="anywhere">
+              {text}
+            </Text>
+          ))}
+          <Inline
+            as="form"
+            align="stretch"
+            gap={2}
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (!reply.trim()) return;
+              setReplies((all) => [...all, reply.trim()]);
+              setReply('');
+            }}
+          >
+            <Input
+              aria-label="Write a reply"
+              value={reply}
+              onChange={(event) => setReply(event.target.value)}
+            />
+            <Button type="submit" size="sm" aria-disabled={!reply.trim() || undefined}>
+              Reply
+            </Button>
+          </Inline>
+        </Stack>
       </CollapsibleContent>
-      <output className="text-body-sm text-fg-secondary">{notice}</output>
+      <Stack as="output">{notice !== '' && <Text size="sm">{notice}</Text>}</Stack>
     </Card>
   );
 
@@ -255,7 +266,7 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
         {onDelete && (
           <>
             <ContextMenuSeparator />
-            <ContextMenuItem className="text-danger-fg" onSelect={() => onDelete(post.id)}>
+            <ContextMenuItem variant="danger" onSelect={() => onDelete(post.id)}>
               Delete post
             </ContextMenuItem>
           </>
