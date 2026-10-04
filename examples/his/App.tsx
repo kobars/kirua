@@ -1,5 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import {
+  AppBody,
+  AppHeader,
+  AppMain,
+  AppRail,
+  AppShell,
   CalendarIcon,
   Command,
   CommandEmpty,
@@ -8,9 +13,10 @@ import {
   CommandItem,
   CommandList,
   GridIcon,
+  Container,
   IconButton,
+  Inline,
   Kbd,
-  Link,
   MenuIcon,
   PillIcon,
   PlusIcon,
@@ -30,11 +36,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  Stack,
   StethoscopeIcon,
+  Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   UserIcon,
+  Visible,
+  Wordmark,
 } from 'kirua';
 import { Appointments } from './Appointments';
 import { Lab } from './Lab';
@@ -45,13 +55,13 @@ import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { APPEARANCE } from '../shared/themeLabels';
-import { patients } from './data';
+import { HOSPITAL, patients } from './data';
 import { useHashRoute } from '../shared/useHashRoute';
 
-/** The destinations, grouped the way the building is. */
+/** The destinations, grouped the way the hospital is. */
 const sections = [
   {
-    label: 'Clinic',
+    label: 'Clinical',
     items: [
       { route: '', label: 'Summary', icon: GridIcon },
       { route: 'patients', label: 'Patients', icon: UserIcon },
@@ -60,7 +70,7 @@ const sections = [
     ],
   },
   {
-    label: 'Diagnostics',
+    label: 'Ancillary services',
     items: [
       { route: 'lab', label: 'Laboratory', icon: StethoscopeIcon },
       { route: 'pharmacy', label: 'Pharmacy', icon: PillIcon },
@@ -71,7 +81,7 @@ const sections = [
 const nav = sections.flatMap((section) => [...section.items]);
 
 export function App() {
-  const [route, navigate] = useHashRoute('');
+  const [route, navigate] = useHashRoute('his', '');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -97,9 +107,9 @@ export function App() {
         go: item.route,
       })),
       ...patients.map((p) => ({
-        id: p.rm,
-        label: `${p.name} — ${p.rm}`,
-        go: `patients/${p.rm}`,
+        id: p.mrn,
+        label: `${p.name} — MRN ${p.mrn}`,
+        go: `patients/${p.mrn}`,
       })),
     ];
     const q = query.trim().toLowerCase();
@@ -116,7 +126,7 @@ export function App() {
   };
 
   const record = route.startsWith('patients/')
-    ? patients.find((p) => p.rm === route.slice('patients/'.length))
+    ? patients.find((p) => p.mrn === route.slice('patients/'.length))
     : undefined;
 
   /**
@@ -127,7 +137,7 @@ export function App() {
   const destinations = (onNavigate?: () => void) => (
     <>
       {sections.map((section, index) => (
-        <div key={section.label} className="contents">
+        <Fragment key={section.label}>
           {index > 0 && <SidebarSeparator />}
           <SidebarGroup>
             <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
@@ -135,7 +145,7 @@ export function App() {
               {section.items.map(({ route: target, label, icon: Icon }) => (
                 <SidebarMenuItem key={label}>
                   <SidebarMenuButton asChild isActive={route === target}>
-                    <a href={`#/${target}`} onClick={onNavigate}>
+                    <a href={`#/his/${target}`} onClick={onNavigate}>
                       <Icon aria-hidden="true" />
                       <SidebarLabel>{label}</SidebarLabel>
                     </a>
@@ -144,121 +154,113 @@ export function App() {
               ))}
             </SidebarMenu>
           </SidebarGroup>
-        </div>
+        </Fragment>
       ))}
     </>
   );
 
   return (
-    <div className="min-h-dvh bg-page text-fg">
-      <header className="sticky top-0 z-sticky border-b border-line-subtle bg-page/95 backdrop-blur-sm print:hidden">
-        <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 md:px-8">
-          <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+    <AppShell>
+      <AppHeader
+        width="7xl"
+        actions={
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconButton
+                  aria-label="Quick search"
+                  variant="ghost"
+                  onClick={() => setPaletteOpen(true)}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <Inline as="span" gap={1.5}>
+                  Quick search <Kbd>⌘</Kbd>
+                  <Kbd>K</Kbd>
+                </Inline>
+              </TooltipContent>
+            </Tooltip>
+            <ThemeMenu labels={APPEARANCE} />
+          </>
+        }
+      >
+        <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <Visible below="md">
             <SheetTrigger asChild>
-              <IconButton aria-label="Menu" variant="ghost" className="md:hidden">
+              <IconButton aria-label="Menu" variant="ghost">
                 <MenuIcon />
               </IconButton>
             </SheetTrigger>
-            <SheetContent side="start" className="overflow-y-auto pt-14">
-              <SheetTitle>SIMRS Healthy Together</SheetTitle>
-              <nav aria-label="Sections" className="mt-4 grid gap-4">
-                {destinations(() => setDrawerOpen(false))}
-              </nav>
-            </SheetContent>
-          </Sheet>
+          </Visible>
+          <SheetContent side="start" scroll gap={4}>
+            <SheetTitle>Larkspur · {HOSPITAL}</SheetTitle>
+            <Stack as="nav" aria-label="Sections" gap={4}>
+              {destinations(() => setDrawerOpen(false))}
+            </Stack>
+          </SheetContent>
+        </Sheet>
 
-          <Link
-            href="#/"
-            variant="block"
-            className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
-          >
-            <StethoscopeIcon aria-hidden="true" className="text-fg-accent" />
-            <span className="hidden sm:inline">SIMRS Healthy Together</span>
-            <span className="sm:hidden">SIMRS</span>
-          </Link>
+        <Wordmark href="#/his/" icon={<StethoscopeIcon />} shortName="Larkspur">
+          Larkspur · Juniper Valley
+        </Wordmark>
+      </AppHeader>
 
-          <span className="flex-1" />
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                aria-label="Quick search"
-                variant="ghost"
-                onClick={() => setPaletteOpen(true)}
-              >
-                <SearchIcon />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span className="flex items-center gap-1.5">
-                Quick search <Kbd>⌘</Kbd>
-                <Kbd>K</Kbd>
-              </span>
-            </TooltipContent>
-          </Tooltip>
-
-          <ThemeMenu labels={APPEARANCE} />
-        </div>
-      </header>
-
-      <div className="mx-auto flex w-full max-w-7xl">
-        {/* An `aside`, not a `div`. `SidebarContent` is the `nav` landmark, so
-            the unit line above it would otherwise be page content belonging to
-            no landmark at all — which is what axe reports as `region`, once per
-            route. The rail really is complementary context: which unit and
-            shift you are working in, beside the navigation that serves it. */}
-        <aside
-          aria-label="Units and sections"
-          className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block print:hidden"
-        >
-          <Sidebar open={railOpen} collapsible="icon" className="border-e-0 bg-transparent">
+      <AppBody width="7xl">
+        <AppRail aria-label="Units and sections">
+          <Sidebar open={railOpen} collapsible="icon" variant="plain">
             {/* Which unit and shift this rail belongs to. The icon carries it
                 when the rail collapses; the words are a `SidebarLabel`, which
                 goes off the screen rather than out of the accessibility tree. */}
-            <SidebarHeader className="h-12">
-              <UserIcon aria-hidden="true" className="text-fg-accent" />
-              <SidebarLabel className="text-body-sm font-medium">
-                Outpatients · morning
+            <SidebarHeader size="sm">
+              <UserIcon aria-hidden="true" tone="accent" />
+              <SidebarLabel>
+                <Text inline size="sm" weight="medium" tone="primary">
+                  Outpatient clinics · day shift
+                </Text>
               </SidebarLabel>
             </SidebarHeader>
             <SidebarContent aria-label="Sections">{destinations()}</SidebarContent>
-            <SidebarFooter className="border-t-0">
+            <SidebarFooter divider={false}>
               <SidebarMenuButton onClick={() => setRailOpen(!railOpen)}>
                 <MenuIcon aria-hidden="true" />
                 <SidebarLabel>{railOpen ? 'Collapse menu' : 'Expand menu'}</SidebarLabel>
               </SidebarMenuButton>
             </SidebarFooter>
           </Sidebar>
-        </aside>
+        </AppRail>
 
-        <main className="min-w-0 flex-1 px-4 py-6 md:px-8">
-          {record ? (
-            <PatientRecord patient={record} />
-          ) : route === 'schedule' ? (
-            <Appointments />
-          ) : route === 'new-visit' ? (
-            <NewVisit />
-          ) : route === 'pharmacy' ? (
-            <Pharmacy />
-          ) : route === 'lab' ? (
-            <Lab />
-          ) : route === 'patients' ? (
-            <PatientList
-              onOpen={(rm) => navigate(`patients/${rm}`)}
-              onNewVisit={() => navigate('new-visit')}
-            />
-          ) : (
-            <Summary />
-          )}
-        </main>
-      </div>
+        <AppMain>
+          <Container width="full" pad="sm">
+            {record ? (
+              <PatientRecord patient={record} />
+            ) : route === 'schedule' ? (
+              <Appointments />
+            ) : route === 'new-visit' ? (
+              <NewVisit />
+            ) : route === 'pharmacy' ? (
+              <Pharmacy />
+            ) : route === 'lab' ? (
+              <Lab />
+            ) : route === 'patients' ? (
+              <PatientList
+                onOpen={(mrn) => navigate(`patients/${mrn}`)}
+                onNewVisit={() => navigate('new-visit')}
+              />
+            ) : (
+              <Summary />
+            )}
+          </Container>
+        </AppMain>
+      </AppBody>
 
       <Command open={paletteOpen} onOpenChange={setPaletteOpen} label="Quick commands">
         <CommandInput
           value={query}
-          placeholder="Search patients or sections…"
-          aria-label="Search patients or sections"
-          aria-controls="simrs-results"
+          placeholder="Search patients, MRNs or sections…"
+          aria-label="Search patients, MRNs or sections"
+          aria-controls="his-results"
           aria-activedescendant={actions[active] ? `action-${actions[active].id}` : undefined}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -278,7 +280,7 @@ export function App() {
           }}
         />
         {actions.length > 0 ? (
-          <CommandList id="simrs-results" aria-label="Results">
+          <CommandList id="his-results" aria-label="Results">
             <CommandGroup heading="Commands">
               {actions.map((action, index) => (
                 <CommandItem
@@ -298,6 +300,6 @@ export function App() {
           <CommandEmpty>Nothing matches “{query}”.</CommandEmpty>
         )}
       </Command>
-    </div>
+    </AppShell>
   );
 }

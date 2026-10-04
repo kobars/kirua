@@ -3,10 +3,11 @@ import {
   Badge,
   Button,
   EmptyState,
-  Heading,
+  Field,
+  Inline,
   Input,
-  Label,
   Link,
+  PageHeader,
   PlusIcon,
   SearchIcon,
   Select,
@@ -14,6 +15,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Split,
+  Stack,
   Table,
   TableBody,
   TableCaption,
@@ -21,11 +24,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Text,
 } from 'kirua';
-import { age, patients } from './data';
+import { age, formatDob, patients, payerTone } from './data';
 
 export interface PatientListProps {
-  onOpen: (rm: string) => void;
+  onOpen: (mrn: string) => void;
   onNewVisit: () => void;
 }
 
@@ -37,53 +41,51 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
     const q = query.trim().toLowerCase();
     return patients.filter((p) => {
       if (payer !== 'all' && p.payer !== payer) return false;
-      return q === '' || p.name.toLowerCase().includes(q) || p.rm.toLowerCase().includes(q);
+      return q === '' || p.name.toLowerCase().includes(q) || p.mrn.includes(q);
     });
   }, [query, payer]);
 
   return (
-    <div className="grid content-start gap-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <Heading as="h1" size="heading-md">
-          Patient list
-        </Heading>
-        <Button leadingIcon={<PlusIcon />} onClick={onNewVisit}>
-          New visit
-        </Button>
-      </div>
+    <Stack gap={5}>
+      <PageHeader
+        title="Patient list"
+        actions={
+          <Button leadingIcon={<PlusIcon />} onClick={onNewVisit}>
+            New visit
+          </Button>
+        }
+      />
 
-      <div className="grid gap-3 sm:grid-cols-[1fr_12rem]">
-        <div className="grid gap-1.5">
-          <Label htmlFor="search">Search by name or record number</Label>
+      <Split layout="aside-end" asideWidth="sm" from="sm" gap={3}>
+        <Field controlId="search" label="Search by name or MRN">
           <Input
-            id="search"
             type="search"
             value={query}
-            placeholder="Siti, or RM-0041…"
+            placeholder="Gonzalez, or 204188…"
             onChange={(event) => setQuery(event.target.value)}
           />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="payer">Payer</Label>
-          <Select value={payer} onValueChange={setPayer}>
-            <SelectTrigger id="payer">
+        </Field>
+        <Select value={payer} onValueChange={setPayer}>
+          <Field controlId="payer" label="Payer">
+            <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent aria-label="Payer">
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="BPJS">BPJS</SelectItem>
-              <SelectItem value="Self-pay">Self-pay</SelectItem>
-              <SelectItem value="Insurance">Insurance</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+          </Field>
+          <SelectContent aria-label="Payer">
+            <SelectItem value="all">All payers</SelectItem>
+            <SelectItem value="Medicare">Medicare</SelectItem>
+            <SelectItem value="Medicaid">Medicaid</SelectItem>
+            <SelectItem value="Commercial">Commercial</SelectItem>
+            <SelectItem value="Self-pay">Self-pay</SelectItem>
+          </SelectContent>
+        </Select>
+      </Split>
 
       {rows.length === 0 ? (
         <EmptyState
           icon={<SearchIcon size="2xl" />}
           title={`No patient matches “${query}”`}
-          description="Try a record number, or widen the payer filter."
+          description="Try an MRN, or widen the payer filter."
           action={
             <Button
               variant="secondary"
@@ -99,13 +101,13 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
       ) : (
         <Table>
           <TableCaption>
-            {rows.length} patients on file. Choose a row to open the record.
+            {rows.length} patients on file. Choose a name to open the chart.
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Record no.</TableHead>
+              <TableHead>MRN</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Age</TableHead>
+              <TableHead>DOB (age)</TableHead>
               <TableHead>Sex</TableHead>
               <TableHead>Payer</TableHead>
               <TableHead>Phone</TableHead>
@@ -114,37 +116,40 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
           </TableHeader>
           <TableBody>
             {rows.map((patient) => (
-              <TableRow key={patient.rm}>
-                <TableCell className="tabular-nums">{patient.rm}</TableCell>
+              <TableRow key={patient.mrn}>
+                <TableCell numeric>{patient.mrn}</TableCell>
                 <TableCell>
                   <Link
                     variant="block"
-                    href={`#/patients/${patient.rm}`}
-                    onClick={() => onOpen(patient.rm)}
-                    className="font-medium text-fg"
+                    href={`#/his/patients/${patient.mrn}`}
+                    onClick={() => onOpen(patient.mrn)}
                   >
-                    {patient.name}
+                    <Text inline size="sm" weight="medium" tone="primary">
+                      {patient.name}
+                    </Text>
                   </Link>
                 </TableCell>
-                <TableCell className="tabular-nums">{age(patient.born)}</TableCell>
+                <TableCell numeric>
+                  {formatDob(patient.born)} ({age(patient.born)})
+                </TableCell>
                 <TableCell>{patient.sex}</TableCell>
                 <TableCell>
-                  <Badge status={patient.payer === 'BPJS' ? 'info' : 'neutral'}>
-                    {patient.payer}
-                  </Badge>
+                  <Badge status={payerTone[patient.payer]}>{patient.payer}</Badge>
                 </TableCell>
-                <TableCell className="tabular-nums">{patient.phone}</TableCell>
+                <TableCell numeric>{patient.phone}</TableCell>
                 <TableCell>
                   {patient.allergies.length === 0 ? (
-                    <span className="text-fg-muted">—</span>
+                    <Text inline size="sm" tone="muted">
+                      None known
+                    </Text>
                   ) : (
-                    <span className="flex flex-wrap gap-1">
+                    <Inline as="span" wrap gap={1}>
                       {patient.allergies.map((allergy) => (
                         <Badge key={allergy} status="danger">
                           {allergy}
                         </Badge>
                       ))}
-                    </span>
+                    </Inline>
                   )}
                 </TableCell>
               </TableRow>
@@ -152,6 +157,6 @@ export function PatientList({ onOpen, onNewVisit }: PatientListProps) {
           </TableBody>
         </Table>
       )}
-    </div>
+    </Stack>
   );
 }

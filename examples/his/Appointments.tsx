@@ -12,6 +12,8 @@ import {
   PaginationNext,
   PaginationPrevious,
   Separator,
+  Split,
+  Stack,
   Table,
   TableBody,
   TableCaption,
@@ -23,14 +25,21 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from 'kirua';
-import { clinics, statusTone, visits } from './data';
+import {
+  departments,
+  encounters,
+  formatDate,
+  formatTime,
+  patients,
+  statusLabel,
+  statusTone,
+} from './data';
 
 const PER_PAGE = 8;
 
 /**
  * Which page numbers a pager shows: always the first and the last, always the
  * three around the current one, and an ellipsis wherever that leaves a gap.
- * Forty-four visits over six pages is what makes the gap real.
  */
 function pageWindow(current: number, total: number): (number | 'gap')[] {
   const wanted = new Set([1, total, current - 1, current, current + 1]);
@@ -43,113 +52,120 @@ function pageWindow(current: number, total: number): (number | 'gap')[] {
 export function Appointments() {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
   const [day, setDay] = useState<Date | undefined>(new Date(2026, 2, 12));
-  const [clinic, setClinic] = useState('all');
+  const [department, setDepartment] = useState('all');
   const [page, setPage] = useState(1);
 
-  const all = visits.filter((v) => clinic === 'all' || v.clinic === clinic);
+  // Appointments only: an emergency visit or an inpatient stay is not booked.
+  const all = encounters.filter(
+    (e) => e.type === 'Outpatient' && (department === 'all' || e.department === department),
+  );
   const pages = Math.max(1, Math.ceil(all.length / PER_PAGE));
   const current = Math.min(page, pages);
   const rows = all.slice((current - 1) * PER_PAGE, current * PER_PAGE);
 
   return (
-    <div className="grid content-start gap-5">
+    <Stack gap={5}>
       <Heading as="h1" size="heading-md">
-        Visit schedule
+        Appointments
       </Heading>
 
-      {/* `minmax(0,1fr)` below `lg`, because a grid item keeps `min-width:
-          auto` and the calendar below is `w-max` — without it the column takes
-          the calendar's full width and drags the page sideways.
-
-          The calendar itself cannot reflow: seven 40-pixel columns plus its own
+      {/* The calendar cannot reflow: seven 40-pixel columns plus its own
           padding need 304 pixels, and a 320-wide phone leaves 288 after the
           page padding. A month grid has no narrower honest shape, so it scrolls
           inside its own card rather than making the document scroll. */}
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[auto_1fr]">
-        <Card className="h-max overflow-x-auto p-3">
+      <Split layout="fit-start" from="lg" gap={5} align="start">
+        <Card padding="sm">
           <Calendar
-            locale="en-GB"
+            locale="en-US"
             month={month}
             onMonthChange={setMonth}
             selected={day}
             onSelect={setDay}
             today={new Date(2026, 2, 12)}
-            className="bg-transparent p-0"
+            variant="plain"
           />
-          <Separator className="my-3" />
-          <Text size="sm" className="px-1">
+          <Separator />
+          <Text size="sm">
             {day === undefined
               ? 'Choose a date.'
-              : new Intl.DateTimeFormat('en-GB', { dateStyle: 'full' }).format(day)}
+              : new Intl.DateTimeFormat('en-US', { dateStyle: 'full' }).format(day)}
           </Text>
         </Card>
 
-        <div className="grid content-start gap-4">
-          <div className="grid gap-2">
-            <span id="clinic-filter" className="text-body-sm font-medium text-fg">
-              Clinic
-            </span>
+        <Stack gap={4}>
+          <Stack gap={2}>
+            <Text inline id="department-filter" size="sm" weight="medium" tone="primary">
+              Department
+            </Text>
             <ToggleGroup
               type="single"
-              value={clinic}
+              value={department}
               onValueChange={(next) => {
                 if (!next) return;
-                setClinic(next);
+                setDepartment(next);
                 setPage(1);
               }}
-              aria-labelledby="clinic-filter"
-              className="flex-wrap"
+              aria-labelledby="department-filter"
+              wrap
             >
               <ToggleGroupItem value="all" size="sm" variant="outline">
                 All
               </ToggleGroupItem>
-              {clinics.map((name) => (
+              {departments.map((name) => (
                 <ToggleGroupItem key={name} value={name} size="sm" variant="outline">
                   {name}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-          </div>
+          </Stack>
 
           <Table>
             <TableCaption>
-              {all.length} visits{clinic === 'all' ? '' : ` in ${clinic}`} · page {current} of{' '}
-              {pages}
+              {all.length} appointments{department === 'all' ? '' : ` in ${department}`} · page{' '}
+              {current} of {pages}
             </TableCaption>
             <TableHeader>
               <TableRow>
+                <TableHead>Date</TableHead>
                 <TableHead>Time</TableHead>
                 <TableHead>Patient</TableHead>
-                <TableHead>Clinic</TableHead>
-                <TableHead>Doctor</TableHead>
-                <TableHead>Reason</TableHead>
+                <TableHead>MRN</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Provider</TableHead>
+                <TableHead>Reason for visit</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((visit) => (
-                <TableRow key={visit.id}>
-                  <TableCell className="tabular-nums">{visit.at.slice(11)}</TableCell>
-                  <TableCell className="tabular-nums">{visit.rm}</TableCell>
-                  <TableCell>{visit.clinic}</TableCell>
-                  <TableCell>{visit.doctor}</TableCell>
-                  <TableCell>{visit.reason}</TableCell>
+              {rows.map((appointment) => (
+                <TableRow key={appointment.id}>
+                  <TableCell numeric>{formatDate(appointment.at)}</TableCell>
+                  <TableCell numeric>{formatTime(appointment.at)}</TableCell>
                   <TableCell>
-                    <Badge status={statusTone[visit.status]}>{visit.status}</Badge>
+                    {patients.find((p) => p.mrn === appointment.mrn)?.name ?? '—'}
+                  </TableCell>
+                  <TableCell numeric>{appointment.mrn}</TableCell>
+                  <TableCell>{appointment.department}</TableCell>
+                  <TableCell>{appointment.provider}</TableCell>
+                  <TableCell>{appointment.reason}</TableCell>
+                  <TableCell>
+                    <Badge status={statusTone[appointment.status]}>
+                      {statusLabel[appointment.status]}
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
 
-          {/* Forty-four rows in one table was a list nobody reaches the end of.
-              The pager shows the first page, the last, and the three around the
+          {/* A clinic day in one table is a list nobody reaches the end of. The
+              pager shows the first page, the last, and the three around the
               current one — the ellipsis is what stands in for the rest. */}
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href="#/schedule"
+                  href="#/his/schedule"
                   label="Previous"
                   onClick={() => setPage(Math.max(1, current - 1))}
                 />
@@ -162,7 +178,7 @@ export function Appointments() {
                 ) : (
                   <PaginationItem key={entry}>
                     <PaginationLink
-                      href="#/schedule"
+                      href="#/his/schedule"
                       isCurrent={entry === current}
                       onClick={() => setPage(entry)}
                     >
@@ -173,15 +189,15 @@ export function Appointments() {
               )}
               <PaginationItem>
                 <PaginationNext
-                  href="#/schedule"
+                  href="#/his/schedule"
                   label="Next"
                   onClick={() => setPage(Math.min(pages, current + 1))}
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Split>
+    </Stack>
   );
 }
