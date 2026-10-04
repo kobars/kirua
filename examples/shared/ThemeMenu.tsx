@@ -97,13 +97,10 @@ export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
                   {option.label}
                   <span
                     aria-hidden="true"
-                    className="ms-auto flex h-6 w-9 shrink-0 items-end justify-end rounded-xs border border-line p-1"
-                    style={{ backgroundColor: option.page }}
+                    data-night-swatch={option.id}
+                    className="ms-auto flex h-6 w-9 shrink-0 items-end justify-end rounded-xs border border-line bg-(--exp-night-page) p-1"
                   >
-                    <span
-                      className="h-3.5 w-5 rounded-xs"
-                      style={{ backgroundColor: option.card }}
-                    />
+                    <span className="h-3.5 w-5 rounded-xs bg-(--exp-night-raised)" />
                   </span>
                 </DropdownMenuRadioItem>
               ))}

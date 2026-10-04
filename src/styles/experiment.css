@@ -15,7 +15,8 @@
  *
  * With no attribute on the root element, nothing here matches. Removing it:
  *
- *   1. delete this file, `examples/shared/styleExperiment.ts` and its imports
+ *   1. delete this file, `examples/shared/styleExperiment.ts` and its imports,
+ *      and the two `src/styles/experiment` tests
  *   2. drop the experiment group from `examples/shared/ThemeMenu.tsx`
  *   3. drop the experiment lines from each example `index.html`, from
  *      `.storybook/preview-head.html` and from `.storybook/preview.tsx`
@@ -24,9 +25,13 @@
  * unlayered CSS can do. The card gap is the exception and sits in the base
  * layer, so a consumer's own gap class still wins.
  *
- * Some component rules below select on a utility class, such as `.bg-primary`
- * for the primary button. `Button` and `IconButton` now mirror their props as
- * `data-variant` and `data-size`, which is what a real variant would select on.
+ * Button rules select on `data-variant`, which `Button` mirrors from its prop,
+ * so renaming a utility class cannot drop them. `Card` has no such attribute
+ * yet, so its ghost variant is still matched by `.bg-transparent`.
+ *
+ * Box shadows have no logical form. Every x-offset is multiplied by `--exp-x`,
+ * which is -1 on a right-to-left card or button, and the shadows that use it
+ * are declared on the card or button so that they resolve in its direction.
  */
 
 /* ------------------------------------------------------------------------ */
@@ -42,6 +47,15 @@
   --font-weight-regular: 500;
   --font-weight-medium: 700;
   --font-weight-semibold: 800;
+}
+
+/* The sign of every horizontal shadow offset: 1 left to right, -1 right to left. */
+:root[data-style-experiment] :is([data-slot='card'], [data-slot='button']) {
+  --exp-x: 1;
+}
+
+:root[data-style-experiment] :is([data-slot='card'], [data-slot='button']):dir(rtl) {
+  --exp-x: -1;
 }
 
 /* A small gap between a card's children, so a title, body, badge and button no
@@ -86,8 +100,13 @@
   --exp-outline-edge: var(--color-blue-500);
   --exp-ink: rgb(11 13 15 / 0.12);
   --exp-edge: rgb(11 13 15 / 0.1);
-  --exp-card-shadow: 6px 6px 0 color-mix(in srgb, var(--exp-tint) 18%, transparent);
+  --exp-card-shade: color-mix(in srgb, var(--exp-tint) 18%, transparent);
   --exp-press-shade: color-mix(in srgb, var(--exp-tint) 30%, transparent);
+}
+
+/* One geometry for both modes; only the shade changes. */
+:root[data-style-experiment='hybrid-clay'] [data-slot='card'] {
+  --exp-card-shadow: calc(6px * var(--exp-x)) 6px 0 var(--exp-card-shade);
 }
 
 /* In light mode the card line is tinted with the brand, as Clay's is. Dark
@@ -119,27 +138,22 @@
  * The filled buttons keep light mode's blue and red with white labels: kirua's
  * dark blue-500 would give white text 3.65:1, and blue-600 gives 4.67:1. */
 :root.dark[data-style-experiment='hybrid-clay'] {
-  --exp-night-shade: #040a14;
-  --exp-night-sunken: #08111d;
-  --exp-night-page: #0e1a2b;
-  --exp-night-raised: #16263b;
-  --exp-night-line: #2a4262;
-  --exp-night-line-strong: #355276;
+  --exp-night-selected: #09325d;
   --color-surface-page: var(--exp-night-page);
   --color-surface-raised: var(--exp-night-raised);
   --color-surface-sunken: var(--exp-night-sunken);
   --color-border-subtle: var(--exp-night-line);
   --color-border-default: var(--exp-night-line-strong);
   --color-action-secondary-border: var(--exp-night-line-strong);
-  --color-action-ghost-bg-hover: #1f3350;
-  --color-action-secondary-bg-hover: #1f3350;
+  --color-action-ghost-bg-hover: var(--exp-night-hover);
+  --color-action-secondary-bg-hover: var(--exp-night-hover);
   --color-chart-grid-line: var(--exp-night-line);
   --color-chart-track-fill: var(--exp-night-sunken);
   --color-field-bg: var(--exp-night-raised);
   --color-field-bg-disabled: var(--exp-night-page);
   --color-field-border-disabled: var(--exp-night-line);
-  --color-surface-brand-subtle: #09325d;
-  --color-field-selected-bg: #09325d;
+  --color-surface-brand-subtle: var(--exp-night-selected);
+  --color-field-selected-bg: var(--exp-night-selected);
   --color-action-primary-bg: var(--color-blue-600);
   --color-action-primary-bg-hover: var(--color-blue-700);
   --color-action-primary-bg-active: var(--color-blue-800);
@@ -154,98 +168,119 @@
   --elevation-overlay:
     0 12px 32px -8px color-mix(in srgb, var(--exp-night-shade) 70%, transparent),
     0 4px 8px -4px color-mix(in srgb, var(--exp-night-shade) 45%, transparent);
-  --exp-card-shadow: 6px 6px 0 var(--exp-night-shade);
+  --exp-card-shade: var(--exp-night-shade);
   --exp-press-shade: var(--exp-night-shade);
   --exp-inverse-line: var(--exp-night-line);
 }
 
-/* The alternative nights. Each one re-points the night colours above, plus the
- * hover fill, measured against its own card. */
+/* The nights. Each one sets the seven night colours, the hover fill measured
+ * against its own card among them. Navy is the default and needs no attribute.
+ * Each selector also matches a swatch element, so the menu shows a night's
+ * colours while the app itself is light; this is the only place they are
+ * written. */
+
+:root.dark[data-style-experiment='hybrid-clay'],
+[data-night-swatch='navy'] {
+  --exp-night-shade: #040a14;
+  --exp-night-sunken: #08111d;
+  --exp-night-page: #0e1a2b;
+  --exp-night-raised: #16263b;
+  --exp-night-line: #2a4262;
+  --exp-night-line-strong: #355276;
+  --exp-night-hover: #1f3350;
+}
 
 /* A nearly neutral cool grey with a pure black shade. */
-:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='graphite'] {
+:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='graphite'],
+[data-night-swatch='graphite'] {
   --exp-night-shade: #000000;
   --exp-night-sunken: #0b0e11;
   --exp-night-page: #15171b;
   --exp-night-raised: #222528;
   --exp-night-line: #3e4348;
   --exp-night-line-strong: #4a4f54;
-  --color-action-ghost-bg-hover: #303336;
-  --color-action-secondary-bg-hover: #303336;
+  --exp-night-hover: #303336;
 }
 
 /* Pure neutral grey, darker than graphite. The card sits as far above the page
  * as the page above the shade, 1.14:1 against 1.12:1, and the sunken well is
  * 1.24:1 under the card. The tightest pairs on the card are the field border at
  * 3.59:1 and the second chart series at 3.65:1; hover is 1.29:1. */
-:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='onyx'] {
+:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='onyx'],
+[data-night-swatch='onyx'] {
   --exp-night-shade: #000000;
   --exp-night-sunken: #050505;
   --exp-night-page: #121212;
   --exp-night-raised: #1f1f1f;
   --exp-night-line: #3f3f3f;
   --exp-night-line-strong: #4d4d4d;
-  --color-action-ghost-bg-hover: #323232;
-  --color-action-secondary-bg-hover: #323232;
+  --exp-night-hover: #323232;
 }
 
 /* Navy's hue at half its chroma, so not a second blue. Shade 1.11:1 to the page. */
-:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='ink'] {
+:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='ink'],
+[data-night-swatch='ink'] {
   --exp-night-shade: #010104;
   --exp-night-sunken: #060a13;
   --exp-night-page: #0d121b;
   --exp-night-raised: #1e232d;
   --exp-night-line: #38404e;
   --exp-night-line-strong: #454d5b;
-  --color-action-ghost-bg-hover: #2c313c;
-  --color-action-secondary-bg-hover: #2c313c;
+  --exp-night-hover: #2c313c;
 }
 
 /* The darkest page; a larger card step carries the edge. Shade 1.10:1 to the
  * page, card 1.32:1 to the page, and the line 1.54:1 to the card, so card
  * borders and table row dividers stay visible. The tightest pairs on the card
  * are the field border at 3.14:1 and the second chart series at 3.19:1. */
-:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='carbon'] {
+:root.dark[data-style-experiment='hybrid-clay'][data-night-palette='carbon'],
+[data-night-swatch='carbon'] {
   --exp-night-shade: #000000;
   --exp-night-sunken: #07090a;
   --exp-night-page: #0f1012;
   --exp-night-raised: #282a2c;
   --exp-night-line: #44474a;
   --exp-night-line-strong: #515457;
-  --color-action-ghost-bg-hover: #36383a;
-  --color-action-secondary-bg-hover: #36383a;
+  --exp-night-hover: #36383a;
 }
 
 /* The press shadow is read on the button, so a button inside a brand or
  * inverse surface casts that surface's shade rather than the page's: on the
  * blue panel the page's pale blue would vanish. */
 :root[data-style-experiment='hybrid-clay'] [data-slot='button'] {
-  --exp-press: 4px 4px 0 var(--exp-press-shade), inset 0 -3px 0 var(--exp-ink);
-  --exp-press-hover: 6px 6px 0 var(--exp-press-shade), inset 0 -3px 0 var(--exp-ink);
-  --exp-press-active: 2px 2px 0 var(--exp-press-shade), inset 0 -1px 0 var(--exp-ink);
+  --exp-press:
+    calc(4px * var(--exp-x)) 4px 0 var(--exp-press-shade), inset 0 -3px 0 var(--exp-ink);
+  --exp-press-hover:
+    calc(6px * var(--exp-x)) 6px 0 var(--exp-press-shade), inset 0 -3px 0 var(--exp-ink);
+  --exp-press-active:
+    calc(2px * var(--exp-x)) 2px 0 var(--exp-press-shade), inset 0 -1px 0 var(--exp-ink);
 }
 
 :root[data-style-experiment='hybrid-clay'] :is(.ctx-brand, .ctx-inverse) {
   --exp-press-shade: color-mix(in srgb, var(--color-surface-page) 55%, black);
 }
 
-:root:not(.dark)[data-style-experiment='hybrid-clay'] [data-slot='button'].bg-danger {
+:root:not(.dark)[data-style-experiment='hybrid-clay']
+  [data-slot='button'][data-variant='danger'] {
   --exp-press-shade: color-mix(in srgb, var(--color-action-danger-bg) 30%, transparent);
 }
 
 /* The gradient covers the hover fill, so hover moves the gradient one step
- * darker as well as lifting. Outside the motion query: it is colour, not
- * movement. */
-:root[data-style-experiment='hybrid-clay']
-  [data-slot='button'].bg-primary:not(
-    :disabled,
-    [aria-disabled='true'],
-    .ctx-brand *,
-    .ctx-inverse *,
-    [data-slot='button-group'] *
-  ):hover {
-  --exp-gradient-start: var(--color-blue-800);
-  --exp-gradient-end: var(--color-blue-700);
+ * darker as well as lifting. Outside the motion query, because it is colour
+ * and not movement, but inside the hover query kirua's own hover fill uses:
+ * after a tap on a touch screen `:hover` sticks, and so would the dark blue. */
+@media (hover: hover) {
+  :root[data-style-experiment='hybrid-clay']
+    [data-slot='button'][data-variant='primary']:not(
+      :disabled,
+      [aria-disabled='true'],
+      .ctx-brand *,
+      .ctx-inverse *,
+      [data-slot='button-group'] *
+    ):hover {
+    --exp-gradient-start: var(--color-blue-800);
+    --exp-gradient-end: var(--color-blue-700);
+  }
 }
 
 /* A blue offset shadow behind a black or brand card reads as a misprint, so
@@ -274,11 +309,15 @@
 
 /* A kirua hover rule that overrides a selected state, patched here so the
  * experiment shows the same selected colour in both modes: the pressed button
- * of a group keeps its fill. */
-:root[data-style-experiment]
-  [data-slot='button-group']
-  [aria-pressed='true'].bg-selected:hover {
-  background-color: var(--color-field-selected-bg);
+ * of a group keeps its fill. `.bg-selected` is the examples' own class for the
+ * pressed button, not a variant. Under the same hover query as the rule it
+ * patches. */
+@media (hover: hover) {
+  :root[data-style-experiment]
+    [data-slot='button-group']
+    [aria-pressed='true'].bg-selected:hover {
+    background-color: var(--color-field-selected-bg);
+  }
 }
 
 /* ------------------------------------------------------------------------ */
@@ -330,18 +369,6 @@
   --exp-tint: var(--color-blue-600);
   --exp-gradient-end: var(--color-blue-500);
   --exp-outline-edge: var(--color-blue-400);
-  --exp-card-shadow:
-    6px 6px 0 color-mix(in srgb, var(--exp-tint) 18%, transparent),
-    inset 0 -4px 0 rgb(5 0 36 / 0.06);
-  --exp-press:
-    4px 4px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
-    inset 0 -3px 0 rgb(5 0 36 / 0.12);
-  --exp-press-hover:
-    6px 6px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
-    inset 0 -3px 0 rgb(5 0 36 / 0.12);
-  --exp-press-active:
-    2px 2px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
-    inset 0 -1px 0 rgb(5 0 36 / 0.12);
 
   /* Clay's radii: 16px controls and a 24px card. The kirua steps hold literal
    * values, so each one is restated rather than derived from one knob. */
@@ -375,9 +402,35 @@
   --color-chart-series-4: #ff9822;
   --exp-tint: var(--color-blue-400);
   --exp-gradient-end: var(--color-blue-300);
-  /* A hard offset reads as a misplaced box on a near-black page: surfaces get a
-   * soft glow, controls a 2px edge straight down. */
+}
+
+/* Clay's shadows, declared on the card and the button so each resolves in its
+ * own direction. The tint they read was resolved on the root. */
+:root[data-style-experiment='clay'] [data-slot='card'] {
+  --exp-card-shadow:
+    calc(6px * var(--exp-x)) 6px 0 color-mix(in srgb, var(--exp-tint) 18%, transparent),
+    inset 0 -4px 0 rgb(5 0 36 / 0.06);
+}
+
+:root[data-style-experiment='clay'] [data-slot='button'] {
+  --exp-press:
+    calc(4px * var(--exp-x)) 4px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
+    inset 0 -3px 0 rgb(5 0 36 / 0.12);
+  --exp-press-hover:
+    calc(6px * var(--exp-x)) 6px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
+    inset 0 -3px 0 rgb(5 0 36 / 0.12);
+  --exp-press-active:
+    calc(2px * var(--exp-x)) 2px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
+    inset 0 -1px 0 rgb(5 0 36 / 0.12);
+}
+
+/* A hard offset reads as a misplaced box on a near-black page: surfaces get a
+ * soft glow, controls a 2px edge straight down. */
+:root.dark[data-style-experiment='clay'] [data-slot='card'] {
   --exp-card-shadow: 0 8px 24px -8px color-mix(in srgb, var(--exp-tint) 35%, transparent);
+}
+
+:root.dark[data-style-experiment='clay'] [data-slot='button'] {
   --exp-press: 0 2px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent);
   --exp-press-hover:
     0 2px 0 color-mix(in srgb, var(--exp-tint) 30%, transparent),
@@ -439,7 +492,7 @@
 }
 
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button']:is(.bg-primary, .bg-danger):not(
+  [data-slot='button']:is([data-variant='primary'], [data-variant='danger']):not(
     :disabled,
     [aria-disabled='true'],
     [data-slot='button-group'] *
@@ -451,15 +504,16 @@
 /* A disabled or loading button keeps the 3px edge width, left transparent by
  * kirua's disabled colours, so turning `loading` on does not narrow it. */
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button']:is(.bg-primary, .bg-danger, .bg-secondary):is(
-    :disabled,
-    [aria-disabled='true']
-  ):not([data-slot='button-group'] *) {
+  [data-slot='button']:is(
+    [data-variant='primary'],
+    [data-variant='danger'],
+    [data-variant='secondary']
+  ):is(:disabled, [aria-disabled='true']):not([data-slot='button-group'] *) {
   border-width: 3px;
 }
 
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button'].bg-primary:not(
+  [data-slot='button'][data-variant='primary']:not(
     :disabled,
     [aria-disabled='true'],
     .ctx-brand *,
@@ -477,7 +531,7 @@
 }
 
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button'].bg-secondary:not(
+  [data-slot='button'][data-variant='secondary']:not(
     :disabled,
     [aria-disabled='true'],
     [data-slot='button-group'] *
@@ -491,14 +545,17 @@
 
 /* An open menu's trigger keeps its hover fill, which the fill above covers. */
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button'].bg-secondary[aria-expanded='true']:not(.ctx-brand *, .ctx-inverse *) {
+  [data-slot='button'][data-variant='secondary'][aria-expanded='true']:not(
+    .ctx-brand *,
+    .ctx-inverse *
+  ) {
   background-color: var(--color-action-secondary-bg-hover);
 }
 
 /* Inside a brand or inverse surface the outline button keeps that context's
  * own colours: the page's brand colour would vanish on the brand panel. */
 :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-  [data-slot='button'].bg-secondary:is(.ctx-brand *, .ctx-inverse *) {
+  [data-slot='button'][data-variant='secondary']:is(.ctx-brand *, .ctx-inverse *) {
   border-color: var(--color-action-secondary-border);
   background-color: transparent;
   color: var(--color-action-secondary-fg);
@@ -520,7 +577,11 @@
    * lifts nor presses, because Radix measures it on pointerdown. */
   @media (hover: hover) and (pointer: fine) {
     :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-      [data-slot='button']:is(.bg-primary, .bg-danger, .bg-secondary):not(
+      [data-slot='button']:is(
+        [data-variant='primary'],
+        [data-variant='danger'],
+        [data-variant='secondary']
+      ):not(
         :disabled,
         [aria-disabled='true'],
         [aria-haspopup],
@@ -532,7 +593,11 @@
   }
 
   :root:is([data-style-experiment='clay'], [data-style-experiment='hybrid-clay'])
-    [data-slot='button']:is(.bg-primary, .bg-danger, .bg-secondary):not(
+    [data-slot='button']:is(
+      [data-variant='primary'],
+      [data-variant='danger'],
+      [data-variant='secondary']
+    ):not(
       :disabled,
       [aria-disabled='true'],
       [aria-haspopup],
