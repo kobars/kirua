@@ -29,7 +29,7 @@ export interface QuantityStepperProps extends Omit<ComponentProps<'div'>, 'onCha
  *
  * @example
  * <QuantityStepper
- *   label="Quantity, Kacamata bulat"
+ *   label="Quantity, Round Glasses"
  *   value={qty}
  *   min={1}
  *   max={10}

@@ -120,7 +120,7 @@ export function Lab() {
                               Awaiting results
                             </span>
                           ) : abnormal > 0 ? (
-                            <Badge status="warning">{abnormal} di luar rentang</Badge>
+                            <Badge status="warning">{abnormal} out of range</Badge>
                           ) : (
                             <Badge status="success">All normal</Badge>
                           )}

@@ -118,7 +118,7 @@ try {
             await page.getByLabel('Phone', { exact: true }).fill('081234567890');
             await page
               .getByLabel('Address', { exact: true })
-              .fill('Jalan Example 123, Bandung');
+              .fill('123 Example Street, Bandung');
             await page.getByRole('radio', { name: /Express/ }).click();
             await visible(page.getByText('Rp 50,000', { exact: true }));
             await page.getByRole('radio', { name: 'Collect in store' }).click();

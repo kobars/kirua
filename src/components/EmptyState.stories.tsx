@@ -32,7 +32,7 @@ export const Playground: Story = {
     <EmptyState
       {...args}
       icon={<SearchIcon size="2xl" />}
-      title="No results for “kacamata”"
+      title="No results for “glasses”"
       description="Check the spelling, or search the whole catalogue instead of this category."
       action={<Button variant="secondary">Clear filters</Button>}
     />
