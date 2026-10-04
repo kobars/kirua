@@ -153,6 +153,36 @@ export const InAGroup: Story = {
   },
 };
 
+export const AnUnreadRowInAGroup: Story = {
+  render: (args) => (
+    <ItemGroup variant="outlined" className="w-96">
+      <Item {...args} interactive variant="accent" data-testid="unread">
+        <ItemContent>
+          <ItemTitle>Sari Rahayu replied to your post</ItemTitle>
+          <ItemDescription>2 minutes ago</ItemDescription>
+        </ItemContent>
+      </Item>
+      <ItemSeparator />
+      <Item {...args} interactive>
+        <ItemContent>
+          <ItemTitle>Bagus Wicaksono followed you</ItemTitle>
+          <ItemDescription>1 hour ago</ItemDescription>
+        </ItemContent>
+      </Item>
+    </ItemGroup>
+  ),
+  /**
+   * A filled row inside an outlined group is a band from edge to edge. With
+   * the row's own corners it showed notches of the page at both ends, which
+   * looks like a separate pill floating in the list.
+   */
+  play: async ({ canvasElement }) => {
+    const row = within(canvasElement).getByTestId('unread');
+    await expect(getComputedStyle(row).borderTopLeftRadius).toBe('0px');
+    await expect(getComputedStyle(row).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  },
+};
+
 export const AsChildMakesTheWholeRowALink: Story = {
   render: (args) => (
     <Item {...args} asChild interactive variant="outline" className="w-96">
@@ -193,5 +223,84 @@ export const ALongTitleTruncates: Story = {
 
     await expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
     await expect(row.scrollWidth).toBe(row.clientWidth);
+  },
+};
+
+export const UnreadCurrentAndFlush: Story = {
+  render: () => (
+    <div className="flex w-96 flex-col gap-3">
+      <Item variant="accent" data-testid="unread">
+        <ItemContent>
+          <ItemTitle>Rin replied to your post</ItemTitle>
+          <ItemDescription>Unread</ItemDescription>
+        </ItemContent>
+      </Item>
+      <Item interactive aria-current="true" data-testid="current">
+        <ItemContent>
+          <ItemTitle>The open thread</ItemTitle>
+        </ItemContent>
+      </Item>
+      <Item inset="none" data-testid="flush">
+        <ItemContent>
+          <ItemTitle>Lines up with the heading above</ItemTitle>
+        </ItemContent>
+      </Item>
+    </div>
+  ),
+  /** The open row's fill follows `aria-current`, so the fill and the announcement agree. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const current = canvas.getByTestId('current');
+    const plain = getComputedStyle(canvas.getByTestId('flush')).backgroundColor;
+
+    await expect(getComputedStyle(current).backgroundColor).not.toBe(plain);
+    await expect(getComputedStyle(canvas.getByTestId('unread')).backgroundColor).not.toBe(
+      plain,
+    );
+    await expect(getComputedStyle(canvas.getByTestId('flush')).paddingInlineStart).toBe('0px');
+  },
+};
+
+export const MediaAtTheTopAndAFigure: Story = {
+  render: () => (
+    <div className="flex w-96 flex-col gap-3">
+      <Item align="start" data-testid="top">
+        <ItemMedia>
+          <Avatar size="sm">
+            <AvatarFallback>DP</AvatarFallback>
+          </Avatar>
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Daypack, 22 litres</ItemTitle>
+          <ItemDescription>Rp 240,000</ItemDescription>
+          <ItemDescription>Two in the cart</ItemDescription>
+          <ItemDescription>Ships tomorrow</ItemDescription>
+        </ItemContent>
+      </Item>
+      <Item size="sm">
+        <ItemMedia variant="figure" data-testid="figure">
+          09:30
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Siti Rahma</ItemTitle>
+        </ItemContent>
+      </Item>
+    </div>
+  ),
+  /** The thumbnail sits level with the name, and the time is small and tabular. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByTestId('top');
+    const media = row.querySelector('[data-slot="item-media"]')!;
+    const title = row.querySelector('[data-slot="item-title"]')!;
+    await expect(
+      Math.abs(media.getBoundingClientRect().top - title.getBoundingClientRect().top),
+    ).toBeLessThan(4);
+
+    const figure = getComputedStyle(canvas.getByTestId('figure'));
+    await expect(figure.fontVariantNumeric).toBe('tabular-nums');
+    await expect(parseFloat(figure.fontSize)).toBeLessThan(
+      parseFloat(getComputedStyle(row.querySelector('[data-slot="item-title"]')!).fontSize),
+    );
   },
 };
