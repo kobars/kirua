@@ -85,6 +85,23 @@ export const Default: Story = {
       </NavigationMenu>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    canvas.getByRole('button', { name: 'Catalogue' }).focus();
+
+    // A trigger and a plain link each draw the ring when reached from the
+    // keyboard.
+    await userEvent.tab();
+    const trigger = canvas.getByRole('button', { name: 'Stories' });
+    await expect(trigger).toHaveFocus();
+    await expect(getComputedStyle(trigger).outlineStyle).toBe('solid');
+
+    await userEvent.tab();
+    const link = canvas.getByRole('link', { name: 'Stores' });
+    await expect(link).toHaveFocus();
+    await expect(getComputedStyle(link).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(link).outlineWidth).toBe('2px');
+  },
 };
 
 export const ThePanelHoldsLinks: Story = {

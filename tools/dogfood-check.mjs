@@ -51,8 +51,8 @@ import { appearanceRecipes, findAppearanceCopies } from './dogfood-appearance.mj
  * Deliberately not exhaustive. Every entry here is an element whose component
  * carries behaviour the raw tag does not — keyboard handling, a `data-slot`, a
  * surface-aware colour — so replacing it is always an improvement rather than a
- * matter of taste. Elements with no component (`<fieldset>`, `<output>`,
- * `<main>`, `<nav>`) are absent on purpose, not by oversight.
+ * matter of taste. Elements with no component (`<output>`, `<main>`, `<nav>`)
+ * are absent on purpose, not by oversight.
  */
 const INSTEAD = {
   button: 'Button, IconButton or Toggle',
@@ -60,6 +60,8 @@ const INSTEAD = {
   select: 'Select',
   textarea: 'Textarea',
   label: 'Label',
+  fieldset: 'FieldSet',
+  legend: 'FieldLegend',
   table: 'Table',
   thead: 'TableHeader',
   tbody: 'TableBody',

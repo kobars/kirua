@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
+import { useState } from 'react';
 import { Button } from './Button';
-import { ArrowRightIcon, SparkleIcon } from './icons';
+import { ArrowRightIcon, SendIcon, SparkleIcon } from './icons';
 
 const meta = {
   tags: ['autodocs'],
@@ -20,6 +22,7 @@ const meta = {
     size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
     fullWidth: { control: 'boolean' },
     disabled: { control: 'boolean' },
+    loading: { control: 'boolean' },
     // These take React nodes, so a text control would produce nonsense.
     leadingIcon: { control: false },
     trailingIcon: { control: false },
@@ -115,6 +118,84 @@ export const Disabled: Story = {
       </Button>
     </div>
   ),
+};
+
+/**
+ * `loading` in place of `disabled`: the button stays where focus is, so a
+ * keyboard user who pressed it is not dropped onto `<body>`.
+ */
+export const Loading: Story = {
+  render: function Render(args) {
+    const [loading, setLoading] = useState(false);
+    const [sent, setSent] = useState(0);
+    return (
+      <div className="flex flex-col items-start gap-3">
+        <Button
+          {...args}
+          type="submit"
+          loading={loading}
+          loadingLabel="Sending"
+          leadingIcon={<SendIcon />}
+          onClick={() => {
+            setSent((n) => n + 1);
+            setLoading(true);
+          }}
+        >
+          Send
+        </Button>
+        <output data-testid="sent">{sent}</output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: /Send/ });
+    const width = button.getBoundingClientRect().width;
+
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+
+    await expect(button).toHaveFocus();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toHaveAttribute('aria-disabled', 'true');
+    await expect(button).toHaveAttribute('type', 'button');
+    await expect(button.getBoundingClientRect().width).toBe(width);
+    await expect(within(button).getByText('Sending')).toBeInTheDocument();
+
+    // A second Enter reaches no handler.
+    await userEvent.keyboard('{Enter}');
+    await expect(canvas.getByTestId('sent')).toHaveTextContent('1');
+  },
+};
+
+/**
+ * An svg from another icon set follows the size step like kirua's own icons,
+ * instead of rendering at its intrinsic 24px.
+ */
+export const ThirdPartyIcons: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      {(['sm', 'md', 'lg'] as const).map((size) => (
+        <Button {...args} key={size} size={size} data-testid={size}>
+          <SparkleIcon />
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" data-raw="">
+            <circle cx="12" cy="12" r="9" fill="currentColor" />
+          </svg>
+          {size}
+        </Button>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const expected = { sm: 16, md: 18, lg: 20 };
+    for (const size of ['sm', 'md', 'lg'] as const) {
+      const button = canvas.getByTestId(size);
+      const [own, raw] = Array.from(button.querySelectorAll('svg'));
+      await expect(raw?.getBoundingClientRect().width).toBe(expected[size]);
+      await expect(raw?.getBoundingClientRect().width).toBe(own?.getBoundingClientRect().width);
+    }
+  },
 };
 
 export const AcrossSurfaces: Story = {

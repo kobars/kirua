@@ -9,6 +9,7 @@ import { Chip } from './Chip';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { DotGrid } from './DotGrid';
 import { Input } from './Input';
+import { InputGroup, InputGroupInput } from './InputGroup';
 import { ScrollArea } from './ScrollArea';
 import { SpotlightPanel } from './SpotlightPanel';
 import { Textarea } from './Textarea';
@@ -116,6 +117,21 @@ describe('the focus ring survives', () => {
     const style = getComputedStyle(button);
     expect(Number.parseFloat(style.outlineWidth)).toBeGreaterThan(0);
     expect(style.outlineStyle).not.toBe('none');
+  });
+
+  it('an input group draws one ring, on the box', () => {
+    const container = render(
+      <InputGroup>
+        <InputGroupInput aria-label="Search" />
+      </InputGroup>,
+    );
+    const group = container.querySelector('[data-slot="input-group"]') as HTMLElement;
+    const input = container.querySelector('input') as HTMLInputElement;
+    input.focus();
+
+    expect(getComputedStyle(group).outlineStyle).toBe('solid');
+    expect(getComputedStyle(group).outlineWidth).toBe('3px');
+    expect(getComputedStyle(input).outlineStyle).toBe('none');
   });
 });
 

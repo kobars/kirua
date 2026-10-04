@@ -2,8 +2,10 @@
 import { CityCombobox } from '../patterns/examples/CityCombobox';
 import CityComboboxSource from '../patterns/examples/CityCombobox.tsx?raw';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import { useState } from 'react';
 import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from './Combobox';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from './Dialog';
 
 const meta = {
   tags: ['autodocs'],
@@ -49,22 +51,25 @@ export const Playground: Story = {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox', { name: 'City' });
     await userEvent.type(input, 'ja');
-    await expect(canvas.getAllByRole('option')).toHaveLength(1);
+    await expect(screen.getAllByRole('option')).toHaveLength(1);
     await userEvent.keyboard('{ArrowDown}{Enter}');
     await expect(input).toHaveValue('Jakarta');
     await expect(input).toHaveAttribute('aria-expanded', 'false');
     await expect(input).toHaveFocus();
     await userEvent.clear(input);
     await userEvent.type(input, 'zzz');
-    await expect(canvas.getByText('No city matches. Try another name.')).toBeVisible();
+    // The panel animates in from transparent, so it is read once it has.
+    await waitFor(() =>
+      expect(screen.getByText('No city matches. Try another name.')).toBeVisible(),
+    );
     await expect(input).not.toHaveAttribute('aria-activedescendant');
     await userEvent.keyboard('{Escape}');
-    await expect(
-      canvas.queryByText('No city matches. Try another name.'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText('No city matches. Try another name.')).not.toBeInTheDocument(),
+    );
     await userEvent.clear(input);
     await userEvent.type(input, 'ban');
-    await userEvent.click(canvas.getByRole('option', { name: 'Bandung' }));
+    await userEvent.click(screen.getByRole('option', { name: 'Bandung' }));
     await expect(input).toHaveValue('Bandung');
     await expect(input).toHaveFocus();
   },
@@ -100,7 +105,8 @@ export const TheAriaWiring: Story = {
               key={id}
               id={`wiring-${id}`}
               isActive={id === 'sby'}
-              aria-selected={id === 'bdg'}
+              // The string form a consumer may write is honoured like the boolean.
+              aria-selected={id === 'bdg' ? 'true' : false}
             >
               {name}
             </ComboboxItem>
@@ -119,14 +125,133 @@ export const TheAriaWiring: Story = {
     await expect(input).toHaveAttribute('aria-activedescendant', 'wiring-sby');
 
     // The highlight and the selection are different, and both are shown.
-    await expect(canvas.getByRole('option', { name: 'Bandung' })).toHaveAttribute(
+    await expect(screen.getByRole('option', { name: 'Bandung' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
-    await expect(canvas.getByRole('option', { name: 'Surabaya' })).toHaveAttribute(
+    await expect(screen.getByRole('option', { name: 'Surabaya' })).toHaveAttribute(
       'aria-selected',
       'false',
     );
-    await expect(canvas.getAllByRole('option')).toHaveLength(4);
+    await expect(screen.getAllByRole('option')).toHaveLength(4);
+
+    const bandung = screen.getByRole('option', { name: 'Bandung' });
+    await expect(bandung.querySelector('svg')).not.toBeNull();
+    await expect(input).toHaveAttribute('aria-autocomplete', 'list');
+
+    // The list is portalled and placed against the input.
+    const list = screen.getByRole('listbox');
+    await expect(canvasElement.contains(list)).toBe(false);
+    await waitFor(() =>
+      expect(Math.round(list.getBoundingClientRect().width)).toBe(
+        Math.round(input.getBoundingClientRect().width),
+      ),
+    );
+  },
+};
+
+/**
+ * Inside a dialog whose body scrolls, the list is portalled to the page, so
+ * the dialog cannot clip it; near the bottom of the screen it flips above the
+ * input. Focus stays in the input throughout, and Escape closes the list and
+ * not the dialog.
+ */
+export const InsideAScrollingDialog: Story = {
+  render: function Render() {
+    const [dialogOpen, setDialogOpen] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const matches = cities.filter(([, name]) =>
+      name.toLowerCase().includes(query.toLowerCase()),
+    );
+    return (
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-h-64">
+          <DialogTitle>Delivery</DialogTitle>
+          <DialogDescription>Choose the city the parcel goes to.</DialogDescription>
+          <Combobox open={open} onOpenChange={setOpen} className="mt-24">
+            <ComboboxInput
+              aria-label="City"
+              value={query}
+              aria-expanded={open && matches.length > 0}
+              aria-controls={open && matches.length > 0 ? 'dialog-cities' : undefined}
+              onFocus={() => setOpen(true)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setOpen(true);
+              }}
+            />
+            {open && matches.length > 0 && (
+              <ComboboxList id="dialog-cities" aria-label="Cities">
+                {matches.map(([id, name]) => (
+                  <ComboboxItem key={id} id={`dialog-${id}`} aria-selected={false}>
+                    {name}
+                  </ComboboxItem>
+                ))}
+              </ComboboxList>
+            )}
+          </Combobox>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+  play: async () => {
+    const input = await screen.findByRole('combobox', { name: 'City' });
+    input.focus();
+    const list = await screen.findByRole('listbox', { name: 'Cities' });
+    const dialog = screen.getByRole('dialog');
+
+    await expect(list.closest('[role="dialog"]')).toBeNull();
+    await expect(dialog.contains(list)).toBe(false);
+    await expect(input).toHaveFocus();
+
+    // Placed on whichever side has room, and never under the dialog's edge.
+    await waitFor(() => {
+      const box = list.getBoundingClientRect();
+      const field = input.getBoundingClientRect();
+      expect(box.height).toBeGreaterThan(0);
+      expect(box.bottom <= field.top + 1 || box.top >= field.bottom - 1).toBe(true);
+      expect(box.bottom).toBeLessThanOrEqual(window.innerHeight);
+    });
+
+    await userEvent.click(within(list).getByRole('option', { name: 'Jakarta' }));
+    await expect(input).toHaveFocus();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
+    await expect(input).toHaveFocus();
+    // The list was the top layer, so Escape closed it and left the dialog.
+    await expect(screen.getByRole('dialog')).toHaveAttribute('data-state', 'open');
+  },
+};
+
+/** A row under the pointer shows it, below the stronger highlight of the row
+ *  the arrows are on. */
+export const RowsAnswerThePointer: Story = {
+  render: (args) => (
+    <div className="h-80 w-full max-w-72">
+      <Combobox {...args}>
+        <ComboboxInput aria-expanded aria-controls="hover-list" aria-label="City" />
+        <ComboboxList id="hover-list" aria-label="City">
+          {cities.map(([id, name]) => (
+            <ComboboxItem
+              key={id}
+              id={`hover-${id}`}
+              isActive={id === 'jkt'}
+              aria-selected={false}
+            >
+              {name}
+            </ComboboxItem>
+          ))}
+        </ComboboxList>
+      </Combobox>
+    </div>
+  ),
+  play: async () => {
+    const option = screen.getByRole('option', { name: 'Surabaya' });
+    await expect(option.className).toContain('hover:bg-ghost-hover');
+    await expect(screen.getByRole('option', { name: 'Jakarta' }).className).toContain(
+      'bg-selected',
+    );
   },
 };

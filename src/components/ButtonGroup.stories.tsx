@@ -80,6 +80,31 @@ export const WithAText: Story = {
   ),
 };
 
+/** The text takes its height from the buttons beside it, small ones too. */
+export const TextBesideSmallButtons: Story = {
+  render: (args) => (
+    <ButtonGroup {...args} aria-label="Results page">
+      <Button variant="secondary" size="sm">
+        Previous
+      </Button>
+      <ButtonGroupText className="text-body-sm">Page 2</ButtonGroupText>
+      <Button variant="secondary" size="sm">
+        Next
+      </Button>
+    </ButtonGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Previous' });
+    const text = canvas.getByText('Page 2');
+
+    await expect(text.getBoundingClientRect().height).toBe(
+      button.getBoundingClientRect().height,
+    );
+    await expect(text.getBoundingClientRect().top).toBe(button.getBoundingClientRect().top);
+  },
+};
+
 export const WithASeparator: Story = {
   render: (args) => (
     <ButtonGroup {...args} aria-label="Publish">

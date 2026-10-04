@@ -24,8 +24,10 @@ export interface QuantityStepperProps extends Omit<ComponentProps<'div'>, 'onCha
  * few-pixel spinners on `<input type="number">`. Controlled — the consumer owns
  * the quantity.
  *
- * A button that would leave the range is disabled, not hidden, so the one
- * beside it does not move under the finger about to tap it.
+ * A button that would leave the range is marked unavailable but stays
+ * focusable: `aria-disabled` and no `onClick`, rather than `disabled`. Hidden,
+ * the one beside it would move under the finger about to tap it; disabled, the
+ * focus on it would fall to `<body>` on the press that reached the limit.
  *
  * @example
  * <QuantityStepper
@@ -65,8 +67,8 @@ export function QuantityStepper({
         aria-label={decrementLabel}
         size="sm"
         variant="ghost"
-        disabled={value <= min}
-        onClick={onDecrement}
+        aria-disabled={value <= min || undefined}
+        onClick={value <= min ? undefined : onDecrement}
       >
         <MinusIcon />
       </IconButton>
@@ -82,8 +84,8 @@ export function QuantityStepper({
         aria-label={incrementLabel}
         size="sm"
         variant="ghost"
-        disabled={value >= max}
-        onClick={onIncrement}
+        aria-disabled={value >= max || undefined}
+        onClick={value >= max ? undefined : onIncrement}
       >
         <PlusIcon />
       </IconButton>

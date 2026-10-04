@@ -11,6 +11,10 @@ export interface LabelProps extends Omit<ComponentProps<'label'>, 'htmlFor'> {
  * control's `id`; the browser then supplies click-to-focus and the accessible
  * name without a client runtime.
  *
+ * Placed after a disabled `Checkbox`, `Switch` or `RadioGroupItem`, it dims
+ * with it: those roots are `peer`s. CSS reaches only a following sibling, so a
+ * label before its control does not dim; `Field` covers that order.
+ *
  * @example <Label htmlFor="email">Email address</Label>
  */
 export function Label({ className, htmlFor, ...props }: LabelProps) {
@@ -18,7 +22,11 @@ export function Label({ className, htmlFor, ...props }: LabelProps) {
     <label
       data-slot="label"
       htmlFor={htmlFor}
-      className={cn('font-text text-body-sm font-medium text-fg', className)}
+      className={cn(
+        'font-text text-body-sm font-medium text-fg select-none',
+        'peer-disabled:cursor-not-allowed peer-disabled:text-on-field-disabled',
+        className,
+      )}
       {...props}
     />
   );

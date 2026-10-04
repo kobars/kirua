@@ -44,6 +44,8 @@ export function Composer({
     return () => window.clearTimeout(timer);
   }, [uploaded]);
 
+  const cannotSend = text.trim() === '' || (uploaded !== null && uploaded < 100);
+
   return (
     <Card className="grid gap-3 p-4">
       <div className="flex gap-3">
@@ -103,8 +105,10 @@ export function Composer({
             size="sm"
             variant="ghost"
             leadingIcon={<PlusIcon />}
-            disabled={uploaded !== null}
-            onClick={() => setUploaded(0)}
+            // Unavailable but still focusable, so the press that starts the
+            // upload does not drop focus onto the page.
+            aria-disabled={uploaded !== null || undefined}
+            onClick={uploaded !== null ? undefined : () => setUploaded(0)}
           >
             Image
           </Button>
@@ -120,12 +124,16 @@ export function Composer({
           <Button
             size="sm"
             trailingIcon={<SendIcon />}
-            disabled={text.trim() === '' || (uploaded !== null && uploaded < 100)}
-            onClick={() => {
-              onPublish(text.trim(), audience, uploaded === 100);
-              setText('');
-              setUploaded(null);
-            }}
+            aria-disabled={cannotSend || undefined}
+            onClick={
+              cannotSend
+                ? undefined
+                : () => {
+                    onPublish(text.trim(), audience, uploaded === 100);
+                    setText('');
+                    setUploaded(null);
+                  }
+            }
           >
             Send
           </Button>

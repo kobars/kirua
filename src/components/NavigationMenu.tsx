@@ -75,8 +75,8 @@ export function NavigationMenuTrigger({
       data-slot="navigation-menu-trigger"
       className={cn(
         'group inline-flex h-9 cursor-pointer items-center gap-1 rounded-pill px-4',
-        'font-text text-body-sm font-medium text-fg outline-none',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'font-text text-body-sm font-medium text-fg',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'data-open:bg-ghost-hover',
         '[--icon-size:var(--icon-sm)]',
@@ -148,9 +148,9 @@ export function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        'flex flex-col gap-1 rounded-sm p-3 outline-none select-none',
+        'flex flex-col gap-1 rounded-sm p-3 select-none',
         'font-text text-body-sm text-fg no-underline',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'data-active:bg-ghost-hover data-active:font-medium',
         className,

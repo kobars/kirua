@@ -32,7 +32,7 @@ export function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        'inline-flex size-5 shrink-0 items-center justify-center rounded-pill',
+        'peer inline-flex size-5 shrink-0 items-center justify-center rounded-pill',
         'border border-field-line bg-field',
         'transition-[border-color] duration-fast ease-out',
         'hover:border-field-line-hover',

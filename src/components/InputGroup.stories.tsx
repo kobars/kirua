@@ -115,5 +115,11 @@ export const TheGroupTakesTheFocusRing: Story = {
       await expect(getComputedStyle(group).borderTopColor).not.toBe(resting);
     });
     await expect(getComputedStyle(input).borderTopWidth).toBe('0px');
+
+    // The same ring `Input` draws, on the box: a border colour alone is too
+    // faint to be the only sign of focus.
+    await expect(getComputedStyle(group).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(group).outlineWidth).toBe('2px');
+    await expect(getComputedStyle(input).outlineStyle).toBe('none');
   },
 };

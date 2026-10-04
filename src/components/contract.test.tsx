@@ -158,8 +158,26 @@ const cases: Case[] = [
   ],
   ['CodeBlock', (p) => <CodeBlock {...p}>code</CodeBlock>, 'DIV'],
   ['Combobox', (p) => <Combobox {...p} />, 'DIV'],
-  ['ComboboxInput', (p) => <ComboboxInput aria-label="Search" {...p} />, 'INPUT'],
-  ['ComboboxList', (p) => <ComboboxList aria-label="Results" {...p} />, 'UL'],
+  // Both parts are positioned by the root's popover, so they render inside it.
+  [
+    'ComboboxInput',
+    (p) => (
+      <Combobox>
+        <ComboboxInput aria-label="Search" {...p} />
+      </Combobox>
+    ),
+    'INPUT',
+  ],
+  [
+    'ComboboxList',
+    (p) => (
+      <Combobox>
+        <ComboboxInput aria-label="Search" />
+        <ComboboxList aria-label="Results" {...p} />
+      </Combobox>
+    ),
+    'UL',
+  ],
   ['QuantityStepper', (p) => <QuantityStepper label="Quantity" value={1} {...p} />, 'DIV'],
   [
     'TableBody',
@@ -323,5 +341,68 @@ describe('a consumer className wins', () => {
     const classes = ref.current?.className.split(/\s+/) ?? [];
     expect(classes).toContain('rounded-none');
     expect(classes.filter((c) => c.startsWith('rounded-'))).toEqual(['rounded-none']);
+  });
+});
+
+/**
+ * `data-variant` and `data-size` are public, like `data-slot`: a consumer
+ * styling a variant from outside selects on them rather than on a utility
+ * class, so they must be present on the root on every path, defaults included.
+ */
+describe('Button and IconButton mirror their variant on the root', () => {
+  it('states the default variant and size', () => {
+    const button = createRef<HTMLButtonElement>();
+    const icon = createRef<HTMLButtonElement>();
+    render(
+      <>
+        <Button ref={button}>Save</Button>
+        <IconButton ref={icon} aria-label="Search">
+          <svg />
+        </IconButton>
+      </>,
+    );
+
+    expect(button.current?.dataset).toMatchObject({ variant: 'primary', size: 'md' });
+    expect(icon.current?.dataset).toMatchObject({ variant: 'ghost', size: 'md' });
+  });
+
+  it('states an explicit variant and size, also through asChild', () => {
+    const button = createRef<HTMLButtonElement>();
+    const icon = createRef<HTMLButtonElement>();
+    render(
+      <>
+        <Button ref={button} asChild variant="secondary" size="sm">
+          <a href="/next">Next</a>
+        </Button>
+        <IconButton ref={icon} asChild aria-label="Home" variant="primary" size="lg">
+          <a href="/" aria-label="Home">
+            <svg />
+          </a>
+        </IconButton>
+      </>,
+    );
+
+    expect(button.current?.tagName).toBe('A');
+    expect(button.current?.dataset).toMatchObject({ variant: 'secondary', size: 'sm' });
+    expect(icon.current?.dataset).toMatchObject({ variant: 'primary', size: 'lg' });
+  });
+
+  it('keeps the ref and the ARIA state when loading through asChild', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(
+      <Button asChild loading ref={ref}>
+        <a href="/save">Save</a>
+      </Button>,
+    );
+
+    expect(ref.current?.tagName).toBe('A');
+    expect(ref.current?.getAttribute('aria-disabled')).toBe('true');
+    expect(ref.current?.getAttribute('aria-busy')).toBe('true');
+  });
+
+  it('opts out of double-tap zoom, so fast repeated taps stay taps', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Add</Button>);
+    expect(getComputedStyle(ref.current as HTMLElement).touchAction).toBe('manipulation');
   });
 });

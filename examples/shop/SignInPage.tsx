@@ -18,7 +18,6 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
   Label,
-  Spinner,
   Stepper,
   StepperItem,
   Text,
@@ -30,6 +29,13 @@ const STEP_LABELS = { done: 'Done', current: 'Current step', upcoming: 'Not star
 const LENGTH = 6;
 /** The code the demo accepts. A real shop would never know it. */
 const EXPECTED = '483920';
+
+/**
+ * The button that sent the code is replaced by the code field, so focus moves
+ * there rather than falling to the page. Module-level, so the ref is stable and
+ * runs once when the field mounts, not on every render.
+ */
+const focusOnMount = (input: HTMLInputElement | null) => input?.focus();
 
 export interface SignInPageProps {
   onSignedIn: () => void;
@@ -90,7 +96,14 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
           {/* `Label` and not `Field`: a `Field` hands its id and aria wiring to
               exactly one control child, and the child here is a group that
               wraps the control. */}
-          <div className="grid gap-2">
+          <form
+            id="phone-step"
+            className="grid gap-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (phoneValid && !sending && !sent) send();
+            }}
+          >
             <Label htmlFor="phone">Phone number</Label>
             <InputGroup>
               <InputGroupAddon>
@@ -106,19 +119,34 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                 onChange={(event) => setPhone(event.target.value)}
               />
             </InputGroup>
-          </div>
+          </form>
 
           {!sent ? (
-            <Button fullWidth disabled={!phoneValid || sending} onClick={send}>
-              {sending ? <Spinner label="Sending the code" /> : 'Send the code'}
+            <Button
+              type="submit"
+              form="phone-step"
+              fullWidth
+              disabled={!phoneValid}
+              loading={sending}
+              loadingLabel="Sending the code"
+            >
+              Send the code
             </Button>
           ) : (
             <div className="grid gap-4">
-              <div className="grid gap-2">
+              <form
+                className="grid gap-2"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  submit(code);
+                }}
+              >
                 <Label htmlFor="otp">Six-digit code</Label>
                 <InputOTP>
                   <InputOTPInput
                     id="otp"
+                    ref={focusOnMount}
+                    pattern="\d*"
                     value={code}
                     aria-label="One-time code"
                     aria-invalid={wrong || undefined}
@@ -129,6 +157,12 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                       setWrong(false);
                       submit(next);
                     }}
+                    // The caret is drawn by the boxes, so the real one is kept
+                    // at the end, where Backspace removes the last digit.
+                    onSelect={(event) => {
+                      const { length } = event.currentTarget.value;
+                      event.currentTarget.setSelectionRange(length, length);
+                    }}
                   />
                   {/* Two groups of three with a separator between them. A code
                       is read aloud in threes, and six unbroken boxes make the
@@ -138,7 +172,7 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                       <InputOTPSlot
                         key={index}
                         char={code[index]}
-                        isActive={code.length === index}
+                        isActive={index === Math.min(code.length, LENGTH - 1)}
                       />
                     ))}
                     <InputOTPSeparator />
@@ -148,16 +182,16 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                         <InputOTPSlot
                           key={index}
                           char={code[index]}
-                          isActive={code.length === index}
+                          isActive={index === Math.min(code.length, LENGTH - 1)}
                         />
                       );
                     })}
                   </InputOTPGroup>
                 </InputOTP>
-              </div>
+              </form>
 
               {wrong && (
-                <Alert status="danger">
+                <Alert status="danger" role="alert">
                   <AlertTitle>That code does not match</AlertTitle>
                   <AlertDescription>Type the six digits again.</AlertDescription>
                 </Alert>
@@ -171,7 +205,7 @@ export function SignInPage({ onSignedIn }: SignInPageProps) {
                 </AlertDescription>
               </Alert>
 
-              <Button variant="ghost" onClick={() => setSent(false)}>
+              <Button type="button" variant="ghost" onClick={() => setSent(false)}>
                 Change number
               </Button>
             </div>

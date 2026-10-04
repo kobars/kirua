@@ -97,7 +97,12 @@ export function Composer({ onSend, busy }: ComposerProps) {
               </TooltipTrigger>
               <TooltipContent>Suggest a prompt</TooltipContent>
             </Tooltip>
-            <Button type="submit" trailingIcon={<SendIcon />} disabled={busy}>
+            <Button
+              type="submit"
+              trailingIcon={<SendIcon />}
+              loading={busy}
+              loadingLabel="Waiting for the reply"
+            >
               Send
             </Button>
           </div>

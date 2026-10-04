@@ -12,6 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
   Field,
+  FieldLegend,
+  FieldSet,
   Heading,
   Kbd,
   Label,
@@ -52,12 +54,11 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
           {/* Three states, not a switch: "system" is a real choice and a
               two-position control cannot say it. The same value backs the
               header menu — one owner, one key. */}
-          <fieldset className="grid gap-3">
-            <legend className="mb-1 text-body-sm font-medium text-fg">Appearance</legend>
+          <FieldSet>
+            <FieldLegend>Appearance</FieldLegend>
             <RadioGroup
               value={theme}
               onValueChange={(value) => onThemeChange(value as ThemePreference)}
-              aria-label="Appearance"
             >
               {(
                 [
@@ -72,7 +73,7 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
                 </div>
               ))}
             </RadioGroup>
-          </fieldset>
+          </FieldSet>
 
           <div className="flex items-center justify-between gap-4">
             <Label htmlFor="sounds">Sound on reply</Label>

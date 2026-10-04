@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { useState } from 'react';
 import { Calendar } from './Calendar';
 
 /** Every story pins `month` and `today`, so no screenshot depends on the clock. */
@@ -67,6 +68,82 @@ export const WithDisabledDates: Story = {
       ]}
     />
   ),
+};
+
+WithDisabledDates.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  // Unavailable, not removed: the day can still be reached and says why it
+  // cannot be chosen.
+  const saturday = canvas.getByRole('button', { name: 'Saturday, March 14, 2026' });
+  await expect(saturday).toHaveAttribute('aria-disabled', 'true');
+  await expect(saturday).toBeEnabled();
+
+  canvas.getByRole('button', { name: 'Friday, March 13, 2026' }).focus();
+  await userEvent.keyboard('{ArrowRight}');
+  await expect(saturday).toHaveFocus();
+};
+
+/**
+ * The date grid pattern: one tab stop, then the arrow, Home, End and Page keys.
+ * The month is the story's state, as it would be the application's.
+ */
+export const TheKeyboardMovesThroughTheGrid: Story = {
+  render: function Render(args) {
+    const [month, setMonth] = useState(MARCH_2026);
+    const [selected, setSelected] = useState<Date | undefined>(new Date(2026, 2, 17));
+    return (
+      <Calendar
+        {...args}
+        month={month}
+        onMonthChange={setMonth}
+        selected={selected}
+        onSelect={setSelected}
+      />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const title = canvasElement.querySelector('[data-slot="calendar-title"]')!;
+    const day = (name: string) => canvas.getByRole('button', { name });
+
+    // Three tab stops: the two month buttons and one day, the selected one.
+    canvas.getByRole('button', { name: 'Previous month' }).focus();
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'Next month' })).toHaveFocus();
+    await userEvent.tab();
+    await expect(day('Tuesday, March 17, 2026')).toHaveFocus();
+    await expect(
+      canvasElement.querySelectorAll('[data-slot="calendar-day"][tabindex="0"]'),
+    ).toHaveLength(1);
+
+    await expect(day('Thursday, March 12, 2026')).toHaveAttribute('aria-current', 'date');
+
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(day('Wednesday, March 18, 2026')).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(day('Wednesday, March 25, 2026')).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}{ArrowLeft}');
+    await expect(day('Tuesday, March 17, 2026')).toHaveFocus();
+
+    // en-US weeks run Sunday to Saturday.
+    await userEvent.keyboard('{End}');
+    await expect(day('Saturday, March 21, 2026')).toHaveFocus();
+    await userEvent.keyboard('{Home}');
+    await expect(day('Sunday, March 15, 2026')).toHaveFocus();
+
+    await userEvent.keyboard('{PageDown}');
+    await waitFor(() => expect(day('Wednesday, April 15, 2026')).toHaveFocus());
+    await expect(title).toHaveTextContent('April 2026');
+
+    await userEvent.keyboard('{Shift>}{PageDown}{/Shift}');
+    await waitFor(() => expect(day('Thursday, April 15, 2027')).toHaveFocus());
+    await expect(title).toHaveTextContent('April 2027');
+
+    await userEvent.keyboard('{Shift>}{PageUp}{/Shift}');
+    await waitFor(() => expect(day('Wednesday, April 15, 2026')).toHaveFocus());
+    await userEvent.keyboard('{Enter}');
+    await expect(day('Wednesday, April 15, 2026')).toHaveAttribute('aria-pressed', 'true');
+  },
 };
 
 export const EveryDayIsNamedInFull: Story = {

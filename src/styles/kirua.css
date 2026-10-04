@@ -232,6 +232,17 @@
     outline-offset: 2px;
   }
 
+  /* An input group draws its ring on the box, as it does in normal mode, so
+     the input's own ring would be a second one inside it. */
+  [data-slot='input-group']:has([data-slot='input-group-input']:focus-visible) {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  [data-slot='input-group-input']:focus-visible {
+    outline: none;
+  }
+
   /* Ornament only. In forced colours both resolve to CanvasText and become
      solid marks competing with the text they sit behind. */
   [data-slot='dot-grid'],
