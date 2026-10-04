@@ -81,6 +81,26 @@
   --color-action-disabled-bg: var(--color-neutral-200);
   --color-action-disabled-fg: var(--color-neutral-400);
 
+  /* The primary button's fill is a diagonal gradient. Brighter blues give
+   * white text 3.65:1 at best, so it runs from one step darker than the brand
+   * blue to the brand blue itself, and every part of the label keeps at least
+   * 4.67:1. Hover moves both ends one step darker. Inside a brand or inverse
+   * surface all four are transparent, and the plain fill shows through. */
+  --color-action-primary-gradient-start: var(--color-blue-700);
+  --color-action-primary-gradient-end: var(--color-blue-600);
+  --color-action-primary-gradient-start-hover: var(--color-blue-800);
+  --color-action-primary-gradient-end-hover: var(--color-blue-700);
+
+  /* A secondary button standing on its own: the card's fill, a brand edge and
+   * a brand label. blue-500 is 3.65:1 on white, over the 3:1 a control
+   * boundary needs. Joined into a group it keeps the plain secondary look
+   * above, so the group still reads as one control. `open` is the fill while
+   * its menu is open; hover is shown by the lift, not by a fill. */
+  --color-action-secondary-raised-bg: var(--color-surface-raised);
+  --color-action-secondary-raised-bg-open: var(--color-action-secondary-bg-hover);
+  --color-action-secondary-raised-border: var(--color-blue-500);
+  --color-action-secondary-raised-fg: var(--color-text-accent);
+
   --color-status-success-bg: var(--color-green-100);
   --color-status-success-fg: var(--color-green-900);
   --color-status-success-solid: var(--color-green-600);
@@ -124,10 +144,9 @@
   --color-chart-grid-line: var(--color-neutral-200);
   --color-chart-track-fill: var(--color-neutral-100);
 
-  /* FIELD — the family every form control reads, and the gate the forms epic
-   * had to wait for. Seven families existed and not one described an input:
-   * no invalid border, no placeholder colour, no selected-row surface.
-   * Inventing them per component is how a token system stops being one.
+  /* FIELD — the family every form control reads: the invalid border, the
+   * placeholder colour, the selected-row surface. Inventing them per component
+   * is how a token system stops being one.
    *
    * Three thresholds apply here and they are not the same number:
    *   - text on the field (`fg`, `placeholder`) needs 4.5:1 — a placeholder is
@@ -164,7 +183,7 @@
    * field. It is a separate token from `--color-status-danger-fg` for exactly
    * that reason: the status pair is always painted together, so red-900 on
    * red-100 is legible anywhere, while red-900 on a black surface measures
-   * 2.42:1. A field is the first component to need one of that pair alone. */
+   * 2.42:1. A field needs one of that pair alone. */
   --color-field-fg-invalid: var(--color-red-900);
 
   --color-field-bg-disabled: var(--color-neutral-100);
@@ -200,26 +219,57 @@
   --z-tooltip: 70;
   --z-toast: 80;
 
-  /* ELEVATION. The one visual layer that opted out of the context system, and it
-   * opted out by a comment rather than by a test.
+  /* ELEVATION. Context-dependent, like colour, and re-pointed per surface.
    *
    * Every shadow primitive is near-black. On a white page that is correct. On a
-   * near-black one it is nothing at all: in dark mode `surface-raised` is
-   * neutral-900 sitting on a neutral-950 page, so an 18%-black shadow between
-   * them is invisible — and `Tooltip` sets `ctx-inverse`, so it loses its
-   * shadow on a light page too. The three components that most need to read as
-   * floating were the three that stopped.
+   * black surface it is nothing at all — and `Tooltip` sets `ctx-inverse`, so
+   * it would lose its shadow on a light page too.
    *
-   * On a dark surface a shadow cannot do the work alone, because there is no
-   * lighter ground for it to fall on. What reads instead is a hairline of light
-   * along the top edge of the raised surface, with a deeper, wider shadow under
-   * it. That is why the dark values start with a `0 0 0 1px` ring.
+   * On a black surface a shadow cannot do the work alone, because there is no
+   * darker ground for it to fall on. What reads instead is a hairline of light
+   * along the edge of the raised surface, with a deeper, wider shadow under it.
+   * That is why the inverse and brand values start with a `0 0 0 1px` ring. Dark
+   * mode does not need one: a night page sits above a darker shade colour, so
+   * its shadows are cast in that shade.
    *
    * Named by role rather than by size, so a component asks for the elevation it
    * means: `raised` for a hint or a chip, `overlay` for a dialog or a menu. */
   --elevation-resting: var(--shadow-sm);
   --elevation-raised: var(--shadow-md);
   --elevation-overlay: var(--shadow-lg);
+
+  /* CLAY SHAPES. The colours of the bold line and the hard offset shadow; the
+   * widths and offsets are primitives, and the shadow utilities in theme.css
+   * assemble them on each element, so a shadow resolves in that element's
+   * direction and surface.
+   *
+   * In light mode the card line and shadow are tinted with the brand. The
+   * button shadow is stronger than the card's, because a button is smaller and
+   * has to read as pressable. A danger button casts its own red. A filled
+   * button also carries a faint dark edge and a dark strip along its lower
+   * inside edge, which read on blue, red and white alike.
+   *
+   * Inside a brand or inverse surface a button casts that surface's own shade:
+   * on the blue panel the page's pale blue would vanish. A black or brand card
+   * stays plain, with no shadow at all: a blue offset behind it reads as a
+   * misprint. `border-inverse` is the line a black surface keeps on the page,
+   * so the navigation bar and the black card do not lose their boundary on a
+   * night page. */
+  --color-border-card: color-mix(
+    in srgb,
+    var(--color-surface-brand) 18%,
+    var(--color-surface-raised)
+  );
+  --color-border-press: color-mix(in srgb, var(--color-neutral-950) 10%, transparent);
+  --color-border-inverse: var(--color-neutral-800);
+  --color-shade-card: color-mix(in srgb, var(--color-surface-brand) 18%, transparent);
+  --color-shade-press: color-mix(in srgb, var(--color-surface-brand) 30%, transparent);
+  --color-shade-press-danger: color-mix(
+    in srgb,
+    var(--color-action-danger-bg) 30%,
+    transparent
+  );
+  --color-shade-strip: color-mix(in srgb, var(--color-neutral-950) 12%, transparent);
 }
 
 /* Applied by SpotlightPanel. */
@@ -243,9 +293,8 @@
 
   /* White, and for the same reason `text-secondary` is white: nothing in the
    * blue ramp reaches 4.5:1 on blue-600. Measured against this surface —
-   * blue-100 3.82:1, blue-50 4.33:1, white 4.67:1. It was blue-100 until the
-   * first component actually set *text* in it: `Link`'s inline variant, whose
-   * four-surface story failed axe at 3.82.
+   * blue-100 3.82:1, blue-50 4.33:1, white 4.67:1. `Link`'s inline variant
+   * sets text in it, so 3.82 fails axe.
    *
    * The consequence is worth stating rather than discovering. On a brand
    * surface, accent cannot be a hue — the surface already is the accent — so
@@ -290,7 +339,7 @@
 
   /* FIELD. White, like the primary action inverts to a white pill here — a
    * translucent field on blue-600 cannot carry 4.5:1 text, for the same reason
-   * `--color-text-secondary` above had to stop being translucent. So the field
+   * `--color-text-secondary` above is not translucent. So the field
    * keeps the light palette, and only the two tokens that sit on the PANEL
    * rather than on the field are re-pointed. */
   --color-field-bg: var(--color-neutral-0);
@@ -319,6 +368,24 @@
   --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.14);
   --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.18), 0 6px 16px -4px rgb(8 36 69 / 0.45);
   --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.22), 0 18px 44px -12px rgb(8 36 69 / 0.55);
+
+  /* CLAY SHAPES. A button casts this surface's own shade, and the primary
+   * gradient and the raised secondary fill step aside for the plain colours
+   * above. */
+  --color-shade-press: color-mix(
+    in srgb,
+    var(--color-surface-page) 55%,
+    var(--color-neutral-1000)
+  );
+  --color-shade-press-danger: var(--color-shade-press);
+  --color-action-primary-gradient-start: transparent;
+  --color-action-primary-gradient-end: transparent;
+  --color-action-primary-gradient-start-hover: transparent;
+  --color-action-primary-gradient-end-hover: transparent;
+  --color-action-secondary-raised-bg: transparent;
+  --color-action-secondary-raised-bg-open: transparent;
+  --color-action-secondary-raised-border: var(--color-action-secondary-border);
+  --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
 }
 
 /* Applied by NavBar, dark Card, dark Chip, Tooltip. */
@@ -377,7 +444,7 @@
   --color-field-border-hover: var(--color-neutral-400);
   --color-field-border-invalid: var(--color-red-500);
 
-  /* red-100, not red-900. This is the token the card's warning was about. */
+  /* red-100, not red-900: red-900 on this surface is illegible. */
   --color-field-fg-invalid: var(--color-red-100);
 
   --color-field-bg-disabled: var(--color-neutral-950);
@@ -392,6 +459,24 @@
   --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.06);
   --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.08), 0 6px 16px -4px rgb(0 0 0 / 0.55);
   --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.1), 0 18px 44px -12px rgb(0 0 0 / 0.7);
+
+  /* CLAY SHAPES. A button casts this surface's own shade, and the primary
+   * gradient and the raised secondary fill step aside for the plain colours
+   * above. */
+  --color-shade-press: color-mix(
+    in srgb,
+    var(--color-surface-page) 55%,
+    var(--color-neutral-1000)
+  );
+  --color-shade-press-danger: var(--color-shade-press);
+  --color-action-primary-gradient-start: transparent;
+  --color-action-primary-gradient-end: transparent;
+  --color-action-primary-gradient-start-hover: transparent;
+  --color-action-primary-gradient-end-hover: transparent;
+  --color-action-secondary-raised-bg: transparent;
+  --color-action-secondary-raised-bg-open: transparent;
+  --color-action-secondary-raised-border: var(--color-action-secondary-border);
+  --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
 }
 
 /* Invented — the reference has no dark mode. It is one block of re-pointed
@@ -406,20 +491,34 @@
  * The system preference is honoured — by the snippet in the host document,
  * which reads a stored choice and falls back to `matchMedia`. That keeps one
  * decision in one place, and it is the place that can run before first paint.
- * The whole switch is documented in `src/foundations/DarkMode.mdx`. */
+ * The whole switch is documented in `src/foundations/DarkMode.mdx`.
+ *
+ * NIGHTS. A shadow reads as shade only when it is darker than the page, and a
+ * near-black page leaves no darker colour: any visible offset there is lighter
+ * and reads as light. So the page rises to a night colour, the card one step
+ * lighter, and cards, buttons, fields and overlays all cast a shade darker than
+ * the page. The light and dark shapes are identical; only the shade changes.
+ *
+ * Every surface, line and hover fill below reads one of seven night roles, and
+ * the night palettes after this block fill those roles. Navy is the default and
+ * needs no attribute; `data-night-palette` on the same element as `.dark`
+ * chooses another. Every text, field and chart pair passes on each night's
+ * page and card, measured by `src/styles/night-contrast.test.tsx`. */
 .dark {
   color-scheme: dark;
 
-  --color-surface-page: var(--color-neutral-950);
-  --color-surface-raised: var(--color-neutral-900);
-  --color-surface-sunken: var(--color-neutral-1000);
+  --color-surface-page: var(--color-night-page);
+  --color-surface-raised: var(--color-night-raised);
+  --color-surface-sunken: var(--color-night-sunken);
   --color-surface-inverse: var(--color-neutral-0);
 
   /* Down the ramp, not up: vivid blue reads brighter against a dark page, and
    * this keeps the same 4.5:1 clearance with white. */
   --color-surface-brand: var(--color-blue-700);
   --color-surface-brand-vivid: var(--color-blue-500);
-  --color-surface-brand-subtle: var(--color-blue-950);
+  /* blue-925, not blue-950: 950 is 1.02:1 against the navy card, and a
+   * selected row has to be seen. */
+  --color-surface-brand-subtle: var(--color-blue-925);
 
   --color-overlay-scrim: color-mix(in srgb, var(--color-neutral-1000) 75%, transparent);
   --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 14%, transparent);
@@ -430,36 +529,42 @@
   --color-text-accent: var(--color-blue-300);
   --color-text-inverse: var(--color-neutral-1000);
 
-  --color-border-subtle: var(--color-neutral-800);
-  --color-border-default: var(--color-neutral-700);
+  --color-border-subtle: var(--color-night-line);
+  --color-border-default: var(--color-night-line-strong);
   --color-border-strong: var(--color-neutral-0);
 
-  /* Up the ramp, like `surface-brand-vivid`: blue-600 falls to 3.33:1 on the
-   * blue-950 fill and blue-700 to 2.41, which fails. blue-500 measures 5.34:1
-   * on the page and 4.27:1 on the fill. */
+  /* Up the ramp, like `surface-brand-vivid`: blue-600 falls under 3:1 on the
+   * selected fill and blue-700 further. blue-500 clears 3:1 against every
+   * night's page and against the selected fill. */
   --color-border-accent: var(--color-blue-500);
   --color-focus-ring: var(--color-blue-400);
   --color-focus-ring-offset: var(--color-neutral-950);
 
-  --color-action-primary-bg: var(--color-blue-500);
-  --color-action-primary-bg-hover: var(--color-blue-400);
-  --color-action-primary-bg-active: var(--color-blue-300);
-  --color-action-primary-fg: var(--color-neutral-1000);
+  /* The filled buttons keep light mode's blue and red with white labels: the
+   * brighter blue-500 would give white text 3.65:1, and blue-600 gives 4.67:1. */
+  --color-action-primary-bg: var(--color-blue-600);
+  --color-action-primary-bg-hover: var(--color-blue-700);
+  --color-action-primary-bg-active: var(--color-blue-800);
+  --color-action-primary-fg: var(--color-neutral-0);
 
   --color-action-secondary-bg: transparent;
-  --color-action-secondary-bg-hover: var(--color-neutral-800);
+  --color-action-secondary-bg-hover: var(--color-night-hover);
   --color-action-secondary-fg: var(--color-neutral-0);
-  --color-action-secondary-border: var(--color-neutral-700);
+  --color-action-secondary-border: var(--color-night-line-strong);
 
-  --color-action-ghost-bg-hover: var(--color-neutral-800);
+  --color-action-ghost-bg-hover: var(--color-night-hover);
   --color-action-ghost-fg: var(--color-neutral-0);
 
-  --color-action-danger-bg: var(--color-red-500);
-  --color-action-danger-bg-hover: var(--color-red-600);
-  --color-action-danger-fg: var(--color-neutral-1000);
+  --color-action-danger-bg: var(--color-red-600);
+  --color-action-danger-bg-hover: var(--color-red-900);
+  --color-action-danger-fg: var(--color-neutral-0);
 
   --color-action-disabled-bg: var(--color-neutral-800);
   --color-action-disabled-fg: var(--color-neutral-600);
+
+  --color-action-secondary-raised-bg: var(--color-surface-raised);
+  --color-action-secondary-raised-bg-open: var(--color-action-secondary-bg-hover);
+  --color-action-secondary-raised-fg: var(--color-text-accent);
 
   --color-status-success-bg: var(--color-green-900);
   --color-status-success-fg: var(--color-green-100);
@@ -471,21 +576,21 @@
   --color-status-info-fg: var(--color-violet-100);
 
   /* CHART SERIES, one step up the ramp. A 600 that reads well on white is too
-   * dark to separate from a neutral-950 page. */
+   * dark to separate from a night page. */
   --color-chart-series-1: var(--color-blue-400);
   --color-chart-series-2: var(--color-violet-500);
   --color-chart-series-3: var(--color-green-500);
   --color-chart-series-4: var(--color-amber-500);
   --color-chart-series-5: var(--color-red-500);
 
-  --color-chart-grid-line: var(--color-neutral-800);
-  --color-chart-track-fill: var(--color-neutral-900);
+  --color-chart-grid-line: var(--color-night-line);
+  --color-chart-track-fill: var(--color-night-sunken);
 
-  /* FIELD. The field sits one step up from the page so it reads as a well.
-   * `--color-field-border` is neutral-500 rather than the `border-default`
-   * neutral-700: 700 measures about 1.4:1 here, well under the 3:1 a control
+  /* FIELD. The field takes the card's colour, one step up from the page, so
+   * it reads as a well. `--color-field-border` is neutral-500 rather than the
+   * strong night line, which is about 1.4:1 here, well under the 3:1 a control
    * boundary needs. */
-  --color-field-bg: var(--color-neutral-900);
+  --color-field-bg: var(--color-night-raised);
   --color-field-fg: var(--color-neutral-0);
   --color-field-placeholder: var(--color-neutral-400);
 
@@ -493,19 +598,105 @@
   --color-field-border-hover: var(--color-neutral-400);
   --color-field-border-invalid: var(--color-red-500);
 
-  /* red-100, not red-900. This is the token the card's warning was about. */
+  /* red-100, not red-900: red-900 on this surface is illegible. */
   --color-field-fg-invalid: var(--color-red-100);
 
-  --color-field-bg-disabled: var(--color-neutral-950);
+  --color-field-bg-disabled: var(--color-night-page);
   --color-field-fg-disabled: var(--color-neutral-500);
-  --color-field-border-disabled: var(--color-neutral-800);
+  --color-field-border-disabled: var(--color-night-line);
 
-  --color-field-selected-bg: var(--color-blue-950);
+  --color-field-selected-bg: var(--color-blue-925);
   --color-field-selected-fg: var(--color-blue-100);
 
-  /* A ring of light along the edge, then a deeper shadow under it. Black alone
-   * has nothing lighter to fall on here. */
-  --elevation-resting: 0 0 0 1px rgb(255 255 255 / 0.06);
-  --elevation-raised: 0 0 0 1px rgb(255 255 255 / 0.08), 0 6px 16px -4px rgb(0 0 0 / 0.55);
-  --elevation-overlay: 0 0 0 1px rgb(255 255 255 / 0.1), 0 18px 44px -12px rgb(0 0 0 / 0.7);
+  /* Light mode's soft drop shadows, cast in the night's shade. A night page is
+   * lighter than its shade, so these read as shade, where a ring of light
+   * would read as a lit edge. */
+  --elevation-resting: 0 1px 2px 0 color-mix(in srgb, var(--color-night-shade) 50%, transparent);
+  --elevation-raised:
+    0 4px 12px -2px color-mix(in srgb, var(--color-night-shade) 60%, transparent),
+    0 2px 4px -2px color-mix(in srgb, var(--color-night-shade) 40%, transparent);
+  --elevation-overlay:
+    0 12px 32px -8px color-mix(in srgb, var(--color-night-shade) 70%, transparent),
+    0 4px 8px -4px color-mix(in srgb, var(--color-night-shade) 45%, transparent);
+
+  /* CLAY SHAPES. The card line is the night line rather than a brand tint,
+   * and every shadow is the night's shade. */
+  --color-border-card: var(--color-night-line);
+  --color-border-inverse: var(--color-night-line);
+  --color-shade-card: var(--color-night-shade);
+  --color-shade-press: var(--color-night-shade);
+  --color-shade-press-danger: var(--color-night-shade);
+}
+
+/* THE NIGHT PALETTES. Each fills the seven night roles from its own ramp in
+ * the primitives. Each selector also matches a swatch element, so a menu can
+ * show a night's colours while the page itself is light; nothing else names
+ * these colours.
+ *
+ * Navy is the default. On its card the tightest pairs are the field border at
+ * 3.33:1 and the second chart series at 3.38:1. The selected fill rises to
+ * 1.35:1 to 1.47:1 against the night pages, and the hover fill is 1.20:1 on
+ * the card. */
+.dark,
+[data-night-swatch='navy'] {
+  --color-night-shade: var(--color-navy-1000);
+  --color-night-sunken: var(--color-navy-975);
+  --color-night-page: var(--color-navy-950);
+  --color-night-raised: var(--color-navy-900);
+  --color-night-hover: var(--color-navy-850);
+  --color-night-line: var(--color-navy-800);
+  --color-night-line-strong: var(--color-navy-750);
+}
+
+.dark[data-night-palette='graphite'],
+[data-night-swatch='graphite'] {
+  --color-night-shade: var(--color-graphite-1000);
+  --color-night-sunken: var(--color-graphite-975);
+  --color-night-page: var(--color-graphite-950);
+  --color-night-raised: var(--color-graphite-900);
+  --color-night-hover: var(--color-graphite-850);
+  --color-night-line: var(--color-graphite-800);
+  --color-night-line-strong: var(--color-graphite-750);
+}
+
+/* The card sits as far above the page as the page above the shade, 1.14:1
+ * against 1.12:1, and the sunken well is 1.24:1 under the card. The tightest
+ * pairs on the card are the field border at 3.59:1 and the second chart series
+ * at 3.65:1; hover is 1.29:1. */
+.dark[data-night-palette='onyx'],
+[data-night-swatch='onyx'] {
+  --color-night-shade: var(--color-onyx-1000);
+  --color-night-sunken: var(--color-onyx-975);
+  --color-night-page: var(--color-onyx-950);
+  --color-night-raised: var(--color-onyx-900);
+  --color-night-hover: var(--color-onyx-850);
+  --color-night-line: var(--color-onyx-800);
+  --color-night-line-strong: var(--color-onyx-750);
+}
+
+/* Shade 1.11:1 to the page. */
+.dark[data-night-palette='ink'],
+[data-night-swatch='ink'] {
+  --color-night-shade: var(--color-ink-1000);
+  --color-night-sunken: var(--color-ink-975);
+  --color-night-page: var(--color-ink-950);
+  --color-night-raised: var(--color-ink-900);
+  --color-night-hover: var(--color-ink-850);
+  --color-night-line: var(--color-ink-800);
+  --color-night-line-strong: var(--color-ink-750);
+}
+
+/* Shade 1.10:1 to the page, card 1.32:1 to the page, and the line 1.54:1 to
+ * the card, so card borders and table row dividers stay visible. The tightest
+ * pairs on the card are the field border at 3.14:1 and the second chart series
+ * at 3.19:1. */
+.dark[data-night-palette='carbon'],
+[data-night-swatch='carbon'] {
+  --color-night-shade: var(--color-carbon-1000);
+  --color-night-sunken: var(--color-carbon-975);
+  --color-night-page: var(--color-carbon-950);
+  --color-night-raised: var(--color-carbon-900);
+  --color-night-hover: var(--color-carbon-850);
+  --color-night-line: var(--color-carbon-800);
+  --color-night-line-strong: var(--color-carbon-750);
 }

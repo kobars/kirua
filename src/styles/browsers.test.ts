@@ -1,12 +1,13 @@
 import packageJson from '../../package.json';
 import viteConfigSource from '../../vite.config.ts?raw';
+import exampleConfigSource from '../../examples/vite.config.ts?raw';
 import kiruaCss from '@/styles/kirua.css?raw';
 import { describe, expect, it } from 'vitest';
 
 /**
- * `styles/kirua.css`, not `index.css`: the layers moved there when the example
- * apps needed their own entry point, and every feature this file looks for
- * lives one import further down.
+ * `styles/kirua.css`, not `index.css`: the layers live there, so that the
+ * example app can import them without the hero page's entry point, and every
+ * feature this file looks for is one import further down.
  */
 
 /**
@@ -24,10 +25,11 @@ const declared = packageJson.browserslist;
  * browser test drags in its Node dependencies — `fsevents` fails to parse as
  * UTF-8 and the whole run dies on it.
  */
-const target = (() => {
-  const block = viteConfigSource.match(/const BUILD_TARGET = \[([^\]]+)\]/)?.[1] ?? '';
+const targetOf = (source: string) => {
+  const block = source.match(/const BUILD_TARGET = \[([^\]]+)\]/)?.[1] ?? '';
   return [...block.matchAll(/'([^']+)'/g)].map(([, value]) => value as string);
-})();
+};
+const target = targetOf(viteConfigSource);
 
 describe('the declared matrix and the build target agree', () => {
   it('names the same four engines', () => {
@@ -43,6 +45,10 @@ describe('the declared matrix and the build target agree', () => {
   ])('%s >= %s in both', (engine, version) => {
     expect(declared).toContain(`${engine} >= ${version}`);
     expect(target).toContain(`${engine}${version}`);
+  });
+
+  it('the example app builds for the same target', () => {
+    expect(targetOf(exampleConfigSource)).toEqual(target);
   });
 });
 

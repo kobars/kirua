@@ -4,9 +4,9 @@
  *
  * A misspelt class is silent. It stays in the markup, no tool objects, and the
  * declaration it was meant to produce is simply absent — so the component
- * renders, and renders wrong. `inset-block-0` shipped this way: it is not a
- * Tailwind utility, so the sheet's `position: fixed` had no offsets and the
- * panel sat at its static position, thousands of pixels down a long page.
+ * renders, and renders wrong. `inset-block-0` is such a class: it is not a
+ * Tailwind utility, so a sheet's `position: fixed` gets no offsets and the
+ * panel sits at its static position, thousands of pixels down a long page.
  *
  * Tailwind itself is the authority here, not a list of prefixes: every
  * candidate token is written into a probe stylesheet, compiled against this
@@ -64,8 +64,8 @@ function callRanges(source) {
  * The character ranges of every `defaultVariants: { … }` object.
  *
  * Its values are variant *names*, not class lists. Most names have no hyphen
- * and were skipped by accident; `Heading`'s are the type scale's own step
- * names, so `defaultVariants: { size: 'heading-md' }` looked exactly like a
+ * and would be skipped anyway; `Heading`'s are the type scale's own step
+ * names, so `defaultVariants: { size: 'heading-md' }` looks exactly like a
  * class that generates nothing.
  */
 function defaultVariantRanges(source) {
@@ -92,11 +92,10 @@ function defaultVariantRanges(source) {
  * string in the file instead would flag product slugs and ARIA attribute names.
  *
  * A quoted **object key** is not a class list, and inside `cva()` it is the
- * name of a variant value. Most of them need no quotes and so were invisible
- * here — until `Heading.variants.ts` named its sizes after the type scale's own
- * steps (`'heading-lg'`, `'display-md'`), which do need quotes and were then
- * reported as eight dead classes that had never been classes at all. A key is
- * a string with a colon straight after its closing quote.
+ * name of a variant value. Most of them need no quotes, but `Heading.variants.ts`
+ * names its sizes after the type scale's own steps (`'heading-lg'`,
+ * `'display-md'`), which do, and would otherwise be reported as dead classes. A
+ * key is a string with a colon straight after its closing quote.
  */
 function classTokens(source) {
   const ranges = callRanges(source);

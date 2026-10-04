@@ -5,9 +5,10 @@ import {
   formatRatio,
   grade,
   resolveColor,
+  type Rgb,
   type WcagLevel,
 } from '@/lib/contrast';
-import { Badge } from '@/components';
+import { Badge, Button, Card, CardBody, CardTitle } from '@/components';
 
 const meta = {
   title: 'Foundations/Colour',
@@ -22,7 +23,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const BLUE = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+const BLUE = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 925, 950];
 const NEUTRAL = [0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 1000];
 
 function Swatch({ token, name }: { token: string; name: string }) {
@@ -50,7 +51,7 @@ export const Ramps: Story = {
             colour&apos;s measured hue, 210 degrees.
           </p>
         </div>
-        <div className="grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-11">
+        <div className="grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-12">
           {BLUE.map((step) => (
             <Swatch key={step} token={`--color-blue-${step}`} name={`blue-${step}`} />
           ))}
@@ -229,6 +230,135 @@ export const ContrastAudit: Story = {
         </p>
       </div>
       <ContrastTable />
+    </div>
+  ),
+};
+
+const NIGHTS = [
+  {
+    id: 'navy',
+    note: 'The default night, and the one plain .dark gives. No attribute needed.',
+  },
+  { id: 'graphite', note: 'A nearly neutral cool grey over a pure black shade.' },
+  { id: 'onyx', note: 'Pure neutral grey, darker than graphite.' },
+  { id: 'ink', note: 'Navy’s hue at half its chroma, so not a second blue.' },
+  { id: 'carbon', note: 'The darkest page, with a larger step up to the card.' },
+] as const;
+
+const NIGHT_ROLES = ['shade', 'sunken', 'page', 'raised', 'hover', 'line', 'line-strong'];
+
+/** The pairs closest to their threshold on some night, measured inside it. */
+const NIGHT_PAIRS = [
+  ['Body copy on the card', '--color-text-secondary', '--color-surface-raised', 4.5],
+  ['Muted copy on the page', '--color-text-muted', '--color-surface-page', 4.5],
+  ['Accent text on the card', '--color-text-accent', '--color-surface-raised', 4.5],
+  ['Field border on the field', '--color-field-border', '--color-field-bg', 3],
+  ['Second chart series on the card', '--color-chart-series-2', '--color-surface-raised', 3],
+  ['Selected row text', '--color-field-selected-fg', '--color-field-selected-bg', 4.5],
+] as const;
+
+/** Reads each pair inside `.dark` with the night's attribute, as the page paints it. */
+function useNightRatios(night: string) {
+  const [ratios, setRatios] = useState<number[]>([]);
+
+  useEffect(() => {
+    const host = document.createElement('div');
+    host.className = 'dark';
+    if (night !== 'navy') host.dataset['nightPalette'] = night;
+    document.body.appendChild(host);
+    const read = (token: string, backdrop?: Rgb) => {
+      const probe = document.createElement('div');
+      host.appendChild(probe);
+      probe.style.color = `var(${token})`;
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return resolveColor(value, backdrop);
+    };
+    const page = read('--color-surface-page');
+    setRatios(
+      NIGHT_PAIRS.map(([, foreground, background]) => {
+        const back = read(background, page);
+        return contrastRatio(read(foreground, back), back);
+      }),
+    );
+    host.remove();
+  }, [night]);
+
+  return ratios;
+}
+
+function Night({ id, note }: (typeof NIGHTS)[number]) {
+  const ratios = useNightRatios(id);
+
+  return (
+    <section
+      className="dark flex flex-col gap-5 rounded-xl bg-page p-6 text-fg"
+      data-night-palette={id === 'navy' ? undefined : id}
+    >
+      <div>
+        <h3 className="font-text text-heading-md font-semibold text-fg">{id}</h3>
+        <p className="mt-1 max-w-2xl font-text text-body-sm text-fg-secondary">{note}</p>
+      </div>
+      <div className="grid grid-cols-4 gap-4 md:grid-cols-7">
+        {NIGHT_ROLES.map((role) => (
+          <Swatch key={role} token={`--color-night-${role}`} name={role} />
+        ))}
+      </div>
+      <div className="flex flex-wrap items-start gap-6">
+        <Card className="w-72">
+          <CardTitle as="h4" className="text-heading-sm">
+            A card on this night
+          </CardTitle>
+          <CardBody>Its shadow is the night’s shade, darker than the page.</CardBody>
+        </Card>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="primary">Enroll</Button>
+          <Button variant="secondary">Explore</Button>
+        </div>
+      </div>
+      <table className="w-full max-w-2xl border-collapse font-text text-body-sm">
+        <tbody>
+          {NIGHT_PAIRS.map(([label, , , minimum], index) => {
+            const ratio = ratios[index];
+            return (
+              <tr key={label} className="border-b border-line-subtle">
+                <td className="py-2 pe-4 text-fg">{label}</td>
+                <td className="py-2 pe-4 font-mono text-fg">
+                  {ratio === undefined ? '…' : formatRatio(ratio)}
+                </td>
+                <td className="py-2 text-fg-secondary">
+                  {ratio === undefined
+                    ? ''
+                    : ratio >= minimum
+                      ? `passes ${minimum}:1`
+                      : `under ${minimum}:1`}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
+export const NightPalettes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h2 className="font-text text-heading-lg font-semibold text-fg">Night palettes</h2>
+        <p className="mt-1 max-w-3xl font-text text-body-md text-fg-secondary">
+          Dark mode is five palettes. A shadow reads as shade only when it is darker than the
+          page, so each night lifts its page off black and keeps a darker shade below it. Each
+          fills the same seven roles, and every text, field and chart pair passes on every
+          night. Choose one with <code className="font-mono">data-night-palette</code> on the
+          element that carries <code className="font-mono">.dark</code>; navy needs no
+          attribute. The ratios below are measured inside each night as this page renders.
+        </p>
+      </div>
+      {NIGHTS.map((night) => (
+        <Night key={night.id} {...night} />
+      ))}
     </div>
   ),
 };

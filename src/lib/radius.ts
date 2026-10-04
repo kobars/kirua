@@ -14,7 +14,11 @@
  * only, which is what React Fast Refresh needs and what
  * `react/only-export-components` enforces.
  */
-export const CARD_RADIUS_PX = { md: 16, lg: 22, xl: 32 } as const;
+export const CARD_RADIUS_PX = { md: 16, lg: 22, card: 24, xl: 32 } as const;
+
+/** `--clay-edge`, the line every filled card draws inside its corner. A corner
+ *  ornament sits inside that line, so it follows the inner radius. */
+export const CARD_EDGE_PX = 3;
 
 /** `--radius-xl`, the reference's hero panel corner. */
 export const PANEL_RADIUS_PX = 32;

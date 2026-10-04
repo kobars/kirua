@@ -60,7 +60,7 @@ describe('cn() cancels every custom scale declared in CSS', () => {
 
 describe('cn() keeps classes that only look like they conflict', () => {
   /**
-   * The trap that cost a session: Tailwind has two `shadow-` utilities.
+   * The trap: Tailwind has two `shadow-` utilities.
    * `shadow-lg` sets the whole box-shadow, `shadow-blue-500` sets only its
    * colour, and they must not cancel each other. `shadow-brand` is a complete
    * shadow, so it belongs in the first group — which only `extend.theme.shadow`

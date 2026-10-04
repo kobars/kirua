@@ -21,26 +21,24 @@ pnpm storybook
 Open **http://localhost:6006**. The component docs include live previews, source
 and props. Open a story to change its controls, colour mode or containing surface.
 
-## 2. Open an application
+## 2. Open the example app
 
-Choose one example as a starting point for reading the code:
+The example app holds five applications as sections — a marketing site, a shop,
+a social app, a hospital system and an assistant — and a hub that links to them:
 
 ```bash
-pnpm example:marketing
-pnpm example:shop
-pnpm example:social
-pnpm example:simrs
-pnpm example:claude
+pnpm example
 ```
 
-Each command starts its own Vite application. Run one at a time, or use the URL
-printed by Vite when several servers are running. Data and actions are local demos.
+Open the URL Vite prints. Each section's routes start with its name, such as
+`#/shop/` or `#/his/patients`, and each section loads only its own code. Data
+and actions are local demos.
 
 ## 3. Compose with the local aliases
 
-Within these example apps, `kirua` points to `src/components/index.ts` and
-`kirua/styles.css` points to that app's stylesheet. These aliases are configured
-in `examples/vite.shared.ts`; they are not installed packages.
+Within the example app, `kirua` points to `src/components/index.ts` and
+`kirua/styles.css` points to the app's stylesheet. These aliases are configured
+in `examples/vite.config.ts`; they are not installed packages.
 
 ```tsx
 import { Button, Card, CardBody, CardTitle, Field, Input } from 'kirua';
@@ -80,7 +78,7 @@ Place these links in the document head, or self-host equivalent font files:
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
 />
 ```
 

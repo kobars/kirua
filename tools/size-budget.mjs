@@ -2,10 +2,6 @@
 /**
  * Fails the build when the application bundle crosses a declared size.
  *
- * Nothing in this repository measured its own weight before this file existed.
- * There was no size check, no budget, and no record of what importing kirua
- * costs — only two prose claims about it, both true and neither watched.
- *
  * **It fails rather than warns, and that is the entire point.** Vite has
  * `build.chunkSizeWarningLimit`, which prints a yellow line and exits 0. A
  * warning in a build log is a budget nobody has ever been stopped by. This runs
@@ -31,76 +27,32 @@ import path from 'node:path';
 const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
 
 /**
- * Measured on 2026-08-20, immediately before these numbers were chosen, so the
- * budget is a record of reality plus headroom rather than an aspiration:
+ * `measured` is the current gzip baseline, and each limit is that baseline plus
+ * roughly a tenth. A budget with room for a whole extra dependency does not
+ * fail until after the mistake has shipped, and the point of a failing gate is
+ * to be reached by the change that caused it rather than by the change three
+ * commits later.
  *
- * ```
- * javascript   329.58 kB raw   104.16 kB gzip
- * css           48.64 kB raw     8.88 kB gzip
- * ```
+ * The JavaScript stays small because Vite drops what no module reaches: the
+ * hero imports a handful of components, and charts are plain SVG, so no
+ * charting library enters the graph.
  *
- * The CSS figure was 8.52 kB when this file was written and moved to 8.90 kB
- * in the same session, when the field token family added twelve variables in
- * four contexts. Re-recorded here rather than left to show as permanent drift:
- * `measured` is a baseline for comparison, so a baseline nobody updates turns
- * the drift column into a constant.
+ * The CSS is larger than this page needs. Tailwind scans source *text*, so
+ * every utility named anywhere in `src` — components the hero never renders,
+ * story-only classes, the board app — ships in this one stylesheet. A second
+ * CSS entry with its own `@source` list is the fix when that is worth doing.
  *
- * It moved again to 9.06 kB with `a600a3c feat(forms)`, the first text-entry
- * slice — Field, Label, Input and Textarea — and was not re-recorded in that
- * commit. Found three commits later by building each one; recorded here so
- * the next reader does not repeat the search.
- *
- * 9.09 kB with the board app skeleton. Tailwind emits one stylesheet for every
- * scanned source, so a utility the board page uses and the hero does not —
- * `max-w-5xl`, `md:p-10` — ships in the hero's CSS too, exactly as story-only
- * classes already do. 0.03 kB is the cost of that today; a second CSS entry
- * with its own `@source` list is the fix if it ever grows past a rounding
- * error, and not before.
- *
- * 9.27 kB with `ScrollArea`: the component's own utilities, its forced-colours
- * rule, and the story-only classes that ride along as above.
- *
- * 104.38 / 9.34 kB after installing fourteen more Radix primitives. Not the
- * stylesheet split that landed alongside it: building both commits against the
- * same `node_modules` produced byte-identical asset hashes, so the split is
- * output-neutral.
- *
- * Vite's own build log prints 105.30 and 8.55 for the same two files. The
- * difference is the compression level each side happens to use, and it is
- * recorded here so nobody spends an afternoon on a 1 kB discrepancy: what
- * matters is that one measurement is compared against itself over time.
- *
- * The headroom is deliberately narrow — roughly a tenth. A budget with room for
- * a whole extra dependency does not fail until after the mistake has shipped,
- * and the point of a failing gate is to be reached by the change that caused it
- * rather than by the change three commits later.
+ * Vite's own build log prints slightly different gzip figures for the same
+ * files, because each side uses its own compression level. What matters is
+ * that one measurement is compared against itself over time.
  *
  * **Raising one of these is a normal thing to do and should be a visible thing
  * to do.** Edit the number here, in the same commit as the change that needed
  * it, and say why in the message.
- *
- * 105.66 / 12.91 kB with the twelve components that closed the gap against
- * shadcn/ui — Item, ButtonGroup, InputGroup, Collapsible, AlertDialog,
- * ContextMenu, Menubar, NavigationMenu, Resizable, Sidebar, InputOTP and
- * Chart. The two numbers moved for different reasons and the difference is
- * worth reading.
- *
- * JavaScript moved 1.28 kB for five more Radix packages and
- * `react-resizable-panels`, because the hero page imports none of them and
- * Vite drops what no module reaches. Charts are plain SVG on purpose, so no
- * charting library entered the graph at all.
- *
- * CSS moved 3.57 kB, and none of it is the hero's. Tailwind scans source
- * *text*, so every utility named anywhere in `src` ships in this one
- * stylesheet whether or not this page renders it — the effect already recorded
- * above for the board app, now twelve components larger. The fix, when it is
- * worth doing, is a second CSS entry with its own `@source` list; the budget is
- * raised to 14 kB here so the gate keeps failing on the *next* surprise rather
- * than on this understood one.
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 105.66, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 12.91, gzipLimitKb: 14 },
+  css: { extension: '.css', measured: 16.44, gzipLimitKb: 18 },
 };
 
 const kb = (bytes) => bytes / 1000;
