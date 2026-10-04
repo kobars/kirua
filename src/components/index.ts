@@ -171,6 +171,7 @@ export {
   TableRow,
   TableHead,
   TableCell,
+  type TableProps,
   type TableHeadProps,
   type TableCellProps,
 } from './Table';

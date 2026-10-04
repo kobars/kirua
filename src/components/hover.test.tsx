@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { cleanup, render } from '@/test/render';
+import { Table, TableBody, TableCell, TableCaption, TableRow } from './Table';
 import { Tabs, TabsList, TabsTrigger } from './Tabs';
 
 afterEach(() => {
@@ -37,6 +38,39 @@ describe('a hovered selected tab keeps its label colour', () => {
       await userEvent.hover(active);
       expect(active.matches(':hover')).toBe(true);
       expect(await settled(active, 'color')).toBe(resting);
+    });
+  }
+});
+
+describe('a pinned table cell takes the fill of its row', () => {
+  // Dark, because there the page, raised and sunken fills all differ, so a
+  // pinned cell left on the surface's fill shows as a block on a hovered row.
+  for (const state of ['hovered', 'selected'] as const) {
+    it(state, async () => {
+      document.documentElement.classList.add('dark');
+      const container = render(
+        <Table surface="raised">
+          <TableCaption>Visits</TableCaption>
+          <TableBody>
+            <TableRow data-selected={state === 'selected' ? '' : undefined}>
+              <TableCell>Maria Gonzalez</TableCell>
+              <TableCell sticky="end">Open</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
+      );
+      const row = container.querySelector('[data-slot="table-row"]') as HTMLElement;
+      const pinned = row.lastElementChild as HTMLElement;
+      const resting = await settled(pinned, 'backgroundColor');
+
+      if (state === 'hovered') {
+        await userEvent.hover(row);
+        expect(row.matches(':hover')).toBe(true);
+      }
+      const fill = await settled(row, 'backgroundColor');
+      expect(fill).not.toBe('rgba(0, 0, 0, 0)');
+      expect(await settled(pinned, 'backgroundColor')).toBe(fill);
+      if (state === 'hovered') expect(fill).not.toBe(resting);
     });
   }
 });
