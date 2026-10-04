@@ -9,7 +9,7 @@ state: backlog
 epic: /epics/delivery.md
 priority: 20
 generated:
-  by: claude-code/fable-5
+  by: lantern-cli/1.0
   at: 2026-08-23T23:30:00+07:00
 ---
 Client-side search over the built pages. No server, in keeping with
