@@ -9,7 +9,7 @@ dense records, social feeds and chat.
 Built with **React 19**, **Tailwind CSS v4** and **Radix Primitives**.
 
 [Storybook](https://kirua-storybook.vercel.app) ·
-Example app: _URL to be added_ ·
+[Example app](https://kirua-examples.vercel.app) ·
 [Getting started](https://kirua-storybook.vercel.app/?path=/docs/getting-started--docs)
 
 | Light                                                                                         | Dark (navy night)                                                                              |
@@ -92,15 +92,16 @@ pnpm example
 
 It opens on a hub at `#/` that links to five sections:
 
-| Section  | What it shows                                                         | Route          |
-| -------- | --------------------------------------------------------------------- | -------------- |
-| Dusk     | A storefront with filters, a product page, cart and checkout          | `#/shop/`      |
-| Larkspur | A US hospital chart: patients, coverage, appointments, labs, pharmacy | `#/his/`       |
-| Commons  | A mobile-first feed, explore, notifications, messages                 | `#/social/`    |
-| Claude   | An assistant transcript, composer, searchable sidebar, usage          | `#/claude/`    |
-| Aozora   | A marketing site with pricing, a story, a guide and a form            | `#/marketing/` |
+| Section  | What it shows                                                         | Route                                                            |
+| -------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Dusk     | A storefront with filters, a product page, cart and checkout          | [`#/shop/`](https://kirua-examples.vercel.app/#/shop/)           |
+| Larkspur | A US hospital chart: patients, coverage, appointments, labs, pharmacy | [`#/his/`](https://kirua-examples.vercel.app/#/his/)             |
+| Commons  | A mobile-first feed, explore, notifications, messages                 | [`#/social/`](https://kirua-examples.vercel.app/#/social/)       |
+| Claude   | An assistant transcript, composer, searchable sidebar, usage          | [`#/claude/`](https://kirua-examples.vercel.app/#/claude/)       |
+| Aozora   | A marketing site with pricing, a story, a guide and a form            | [`#/marketing/`](https://kirua-examples.vercel.app/#/marketing/) |
 
-Each section loads as its own chunk. All data is local sample data.
+Each section loads as its own chunk. All data is local sample data. The
+routes above link to the deployed app.
 
 `pnpm dev` serves the rebuilt reference hero on http://localhost:5173.
 
@@ -175,9 +176,10 @@ export function CollectionCard() {
 }
 ```
 
-`examples/vite.config.ts` and `examples/styles.css` show the same setup working:
-the example app imports from a `kirua` alias that points at
-`src/components/index.ts`, exactly as an outside consumer would.
+`examples/vite.config.ts` and `examples/styles.css` show a working setup: the
+example app imports everything from one `kirua` alias that points at
+`src/components/index.ts`, and its stylesheet names the component and library
+directories as sources while leaving stories and tests out.
 
 Some conventions every component follows:
 
@@ -270,7 +272,7 @@ src/
   lib/             cn(), cva, contrast maths and shared helpers
   foundations/     Storybook pages for colour, type, scales, surfaces and dark mode
   patterns/        the rebuilt reference hero and composed everyday screens
-  board/           a small task-board viewer, built with the system
+  board/           a demo app: a project tracker rendered from Markdown in board/sample
   index.css        the hero page's stylesheet
 examples/
   index.html       the example app: one page, hash-routed
@@ -286,37 +288,38 @@ docs/screenshots/  the images in this README
 
 ## Scripts
 
-| Command                 | What it does                                                                        |
-| ----------------------- | ----------------------------------------------------------------------------------- |
-| `pnpm storybook`        | Storybook on http://localhost:6006                                                  |
-| `pnpm example`          | The example app in development                                                      |
-| `pnpm dev`              | The rebuilt hero page on http://localhost:5173                                      |
-| `pnpm board`            | The task-board viewer                                                               |
-| `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget |
-| `pnpm build:examples`   | Build the example app into `examples/dist`                                          |
-| `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                      |
-| `pnpm check`            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit  |
-| `pnpm test`             | Every Vitest project except WebKit, once                                            |
-| `pnpm test:coverage`    | The tests with coverage thresholds for `src/lib`                                    |
-| `pnpm test:webkit`      | The unit tests again in WebKit                                                      |
-| `pnpm lint`             | oxlint, including Tailwind class rules; warnings fail                               |
-| `pnpm lint:fix`         | Apply the auto-fixable lint findings                                                |
-| `pnpm format`           | Prettier, including Tailwind class order                                            |
-| `pnpm check:examples`   | Build the example app and run every check below in order                            |
-| `pnpm check:dogfood`    | No example writes raw markup a component already covers                             |
-| `pnpm check:usage`      | Every exported component is placed by the example app                               |
-| `pnpm check:classname`  | No `className` or `style` in the example app, and no stylesheet rules of its own    |
-| `pnpm check:responsive` | Every route at five widths: no sideways scroll, WCAG target size                    |
-| `pnpm check:a11y`       | axe on every route, light and dark, phone and desktop                               |
-| `pnpm check:perf`       | JavaScript and CSS budgets per section, plus DOM size, paint and CSS coverage       |
-| `pnpm check:journeys`   | Complete user flows through each section of the built app                           |
-| `pnpm check:lighthouse` | Local Lighthouse measurements, reported rather than gated                           |
-| `pnpm check:storybook`  | Build Storybook and check its toolbar, navigation and portals in a real browser     |
+| Command                 | What it does                                                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `pnpm storybook`        | Storybook on http://localhost:6006                                                                                   |
+| `pnpm example`          | The example app in development                                                                                       |
+| `pnpm dev`              | The rebuilt hero page on http://localhost:5173                                                                       |
+| `pnpm board`            | The project-tracker demo, rendered from `src/board/sample`                                                           |
+| `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
+| `pnpm build:examples`   | Build the example app into `examples/dist`                                                                           |
+| `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                                                       |
+| `pnpm check`            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit                                   |
+| `pnpm test`             | Every Vitest project except WebKit, once                                                                             |
+| `pnpm test:coverage`    | The tests with coverage thresholds for `src/lib`                                                                     |
+| `pnpm test:webkit`      | The unit tests again in WebKit                                                                                       |
+| `pnpm lint`             | oxlint, including Tailwind class rules; warnings fail                                                                |
+| `pnpm lint:fix`         | Apply the auto-fixable lint findings                                                                                 |
+| `pnpm format`           | Prettier, including Tailwind class order                                                                             |
+| `pnpm check:examples`   | Build the example app, then run the dogfood, usage, `className`, responsive, a11y, perf and journeys checks in order |
+| `pnpm check:dogfood`    | No example writes raw markup a component already covers                                                              |
+| `pnpm check:usage`      | Every exported component is placed by the example app, or exempted with a reason                                     |
+| `pnpm check:classname`  | No `className` or `style` in the example app, and no stylesheet rules of its own                                     |
+| `pnpm check:responsive` | Every route at five widths: no sideways scroll, WCAG target size                                                     |
+| `pnpm check:a11y`       | axe on every route, light and dark, phone and desktop                                                                |
+| `pnpm check:perf`       | JavaScript and CSS budgets per section, plus DOM size, paint and CSS coverage                                        |
+| `pnpm check:journeys`   | Complete user flows through each section of the built app                                                            |
+| `pnpm check:lighthouse` | Local Lighthouse measurements, reported rather than gated                                                            |
+| `pnpm check:storybook`  | Build Storybook and check its toolbar, navigation and portals in a real browser                                      |
 
 ## Testing
 
-Tests run in real browsers through Vitest's browser mode and Playwright. Each
-file belongs to exactly one project, chosen by its suffix:
+Tests run in real browsers through Vitest's browser mode and Playwright. A
+file's suffix decides which project runs it; the width projects run the same
+files at three widths, and WebKit runs the unit tests again:
 
 | Project                      | Files                  | Why it is separate                                         |
 | ---------------------------- | ---------------------- | ---------------------------------------------------------- |
@@ -371,10 +374,12 @@ The MIT License does **not** cover third-party artwork. In particular:
   The rebuild of it in `src/patterns/AnimeHero.tsx` and the measured `[FIGMA]`
   values reproduce that design; its rights remain with its author.
 - The character images in `public/characters/` are fan renders of Killua
-  Zoldyck from _Hunter x Hunter_ (Yoshihiro Togashi, Shueisha). They are
-  included only to demonstrate the hero layout, are not licensed for any
-  commercial use, and must be replaced before anything built on this
-  repository is distributed.
+  Zoldyck from _Hunter x Hunter_ (Yoshihiro Togashi, Shueisha). They appear in
+  the hero rebuild and in the Aozora example section, are shown for
+  non-commercial demonstration only, are not covered by the MIT License, and
+  must be replaced in anything you build on this repository.
+
+[NOTICE](NOTICE) repeats these exclusions beside the licence.
 
 ## Credits
 

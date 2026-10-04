@@ -129,8 +129,8 @@ intended visual change, delete the affected PNG, re-run
 `pnpm exec vitest --run --project visual`, and commit the new PNG in the same
 change.
 
-Formatting checks include Storybook configuration, MDX and these public Markdown
-guides. Automated accessibility results cover tested states; also review keyboard
+Formatting checks include Storybook configuration, MDX, `README.md` and
+`CONTRIBUTING.md`. Automated accessibility results cover tested states; also review keyboard
 navigation and composed-page semantics.
 
 ## License
