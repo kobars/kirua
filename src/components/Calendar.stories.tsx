@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { useState } from 'react';
+import { Button } from './Button';
 import { Calendar } from './Calendar';
 
 /** Every story pins `month` and `today`, so no screenshot depends on the clock. */
@@ -186,5 +187,43 @@ export const MovingMonthIsTheConsumersToDo: Story = {
     // The view itself did not move, because nothing told it to.
     await expect(title).toHaveTextContent('March 2026');
     delete document.body.dataset['calendarMonth'];
+  },
+};
+
+/**
+ * The one tab stop follows focus: Tab out of the grid and Shift+Tab back lands
+ * on the day last focused, not on the selected day the grid started from.
+ */
+export const TheTabStopFollowsFocus: Story = {
+  render: (args) => (
+    <div className="grid justify-items-start gap-4">
+      <Calendar {...args} selected={new Date(2026, 2, 17)} />
+      <Button variant="secondary" size="sm">
+        After the calendar
+      </Button>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const day = (name: string) => canvas.getByRole('button', { name });
+    const stops = () =>
+      canvasElement.querySelectorAll('[data-slot="calendar-day"][tabindex="0"]');
+
+    day('Tuesday, March 17, 2026').focus();
+    await userEvent.keyboard('{ArrowRight}{ArrowDown}');
+    await expect(day('Wednesday, March 25, 2026')).toHaveFocus();
+    await expect(stops()).toHaveLength(1);
+
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'After the calendar' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(day('Wednesday, March 25, 2026')).toHaveFocus();
+
+    // A pointer focuses a day too, and the stop moves with it.
+    await userEvent.click(day('Friday, March 6, 2026'));
+    await userEvent.tab();
+    await userEvent.tab({ shift: true });
+    await expect(day('Friday, March 6, 2026')).toHaveFocus();
+    await expect(stops()).toHaveLength(1);
   },
 };

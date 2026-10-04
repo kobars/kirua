@@ -11,3 +11,12 @@
  * have read all along.
  */
 /// <reference types="@vitest/browser-playwright" />
+
+/** The custom browser commands `vite.config.ts` registers. */
+declare module 'vitest/browser' {
+  interface BrowserCommands {
+    ariaSnapshot: (selector: string) => Promise<string>;
+  }
+}
+
+export {};

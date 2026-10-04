@@ -1,7 +1,7 @@
 /* oxlint-disable jsx-a11y/control-has-associated-label --
  * Every day button has `aria-label={dayFormat.format(date)}`. The rule cannot
  * follow a computed value; the stories assert the real names. */
-import type { ComponentProps, KeyboardEvent } from 'react';
+import type { ComponentProps, FocusEvent, KeyboardEvent } from 'react';
 import { cn } from '@/lib/cn';
 import { IconButton } from './IconButton';
 import { ChevronEndIcon, ChevronStartIcon } from './icons';
@@ -65,12 +65,17 @@ function firstWeekday(tag: string): number {
  * A month of days, as a table of buttons. Controlled: `month` and `selected`
  * are the consumer's.
  *
- * The grid is one tab stop, on the selected day, else today, else the first
- * day that can be chosen. The arrow keys move a day or a week (mirrored in a
- * right-to-left page), Home and End go to the ends of the week, Page Up and
- * Page Down a month, and with Shift a year. A move out of the month calls
- * `onMonthChange` and focuses the day once the consumer has rendered it.
- * Every day carries `data-date="YYYY-MM-DD"`.
+ * The grid is one tab stop. It starts on the selected day, else today, else
+ * the first day that can be chosen, and then follows focus, so Tab away and
+ * Shift+Tab back returns to the day last focused. Following focus rewrites
+ * `tabindex` in the focus handler, which runs only in the browser, so the
+ * server markup and hydration are unchanged.
+ *
+ * The arrow keys move a day or a week (mirrored in a right-to-left page), Home
+ * and End go to the ends of the week, Page Up and Page Down a month, and with
+ * Shift a year. A move out of the month calls `onMonthChange` and focuses the
+ * day once the consumer has rendered it. Every day carries
+ * `data-date="YYYY-MM-DD"`.
  *
  * A disabled date stays focusable and reads as unavailable, so moving through
  * the grid never skips a day without saying why.
@@ -134,6 +139,18 @@ export function Calendar({
     date !== undefined && date.getFullYear() === year && date.getMonth() === monthIndex;
   const focusTarget =
     [selected, today].find(inMonth) ?? days.find((date) => !isDisabled(date)) ?? days[0];
+
+  // React writes `tabIndex` only when its own value for a day changes, so the
+  // stop set here survives re-renders. A `selected` changed from outside while
+  // focus is elsewhere can leave a second stop until a day is next focused.
+  const onFocus = (event: FocusEvent<HTMLButtonElement>) => {
+    const focused = event.currentTarget;
+    for (const other of focused
+      .closest('table')
+      ?.querySelectorAll<HTMLElement>('[data-slot="calendar-day"]') ?? []) {
+      other.tabIndex = other === focused ? 0 : -1;
+    }
+  };
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const grid = event.currentTarget.closest('table');
@@ -242,6 +259,7 @@ export function Calendar({
                       aria-current={sameDay(today, date) ? 'date' : undefined}
                       aria-disabled={isDisabled(date) || undefined}
                       onClick={isDisabled(date) ? undefined : () => onSelect?.(date)}
+                      onFocus={onFocus}
                       onKeyDown={onKeyDown}
                       className={cn(
                         'size-10 touch-manipulation rounded-md text-body-sm tabular-nums',
