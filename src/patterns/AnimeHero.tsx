@@ -68,7 +68,7 @@ export function AnimeHero() {
 
           {/* [FIGMA] 70px, matching NavBar. Arbitrary so it cannot drift with --spacing. */}
           {/* oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes */}
-          <div className="ctx-inverse flex h-[4.375rem] shrink-0 items-center gap-1 rounded-lg bg-page px-2 md:gap-2 md:px-3">
+          <div className="ctx-inverse flex h-[4.375rem] shrink-0 items-center gap-1 rounded-lg bg-page px-2 inset-ring-(length:--clay-edge) inset-ring-line-inverse md:gap-2 md:px-3">
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconButton aria-label="Search the gallery" variant="primary" size="md">

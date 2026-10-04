@@ -15,11 +15,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
     />
 
-    <!-- Dark mode, applied before first paint. See
-         board/tasks/dark-mode-wiring.md for why this must be blocking. -->
+    <!-- Dark mode, applied before first paint. Blocking on purpose: a deferred
+         script would let the page paint light first and then flash dark. -->
     <script>
       (() => {
         const stored = localStorage.getItem('kirua-theme');

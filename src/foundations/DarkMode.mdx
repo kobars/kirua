@@ -4,13 +4,44 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Dark mode
 
-The current palette has light and dark modes. Set the `dark` class on `<html>`
-to select dark mode; semantic colour roles update throughout the document,
-including overlays that portal to the body.
+The palette has a light mode and a dark mode, and dark mode comes in five night
+palettes. Set the `dark` class on `<html>` to select dark mode; semantic colour
+roles update throughout the document, including overlays that portal to the body.
 
 ```js
 document.documentElement.classList.toggle('dark', true);
 ```
+
+## Choose a night
+
+A shadow reads as shade only when it is darker than the page, so a dark page
+cannot sit at black: each night lifts its page off black and keeps a darker
+shade below it, which every card, button, field and overlay casts. The shapes
+are the same in both modes; only the colours change.
+
+| Night      | Character                                            |
+| ---------- | ---------------------------------------------------- |
+| `navy`     | The default. Plain `.dark` gives it.                 |
+| `graphite` | A nearly neutral cool grey over a pure black shade.  |
+| `onyx`     | Pure neutral grey, darker than graphite.             |
+| `ink`      | Navy's hue at half its chroma, so not a second blue. |
+| `carbon`   | The darkest page, with a larger step up to the card. |
+
+Set `data-night-palette` on the same element as `.dark` to choose one; remove it
+for navy. It does nothing in light mode, so a choice can be stored and kept
+while the page is light.
+
+```js
+document.documentElement.dataset.nightPalette = 'graphite';
+delete document.documentElement.dataset.nightPalette; // back to navy
+```
+
+Every night fills the same seven roles — shade, sunken, page, card, hover, line
+and strong line — and every text, field and chart pair is measured on each one.
+[Colour](?path=/story/foundations-colour--night-palettes) shows them with live
+ratios. To show a night's colours outside dark mode, such as a swatch in a
+menu, put `data-night-swatch="<night>"` on the element and read
+`--color-night-page` and `--color-night-raised` inside it.
 
 ## Set the initial mode before paint
 
@@ -33,7 +64,21 @@ storage is unavailable, the system preference still works.
     document.documentElement.classList.toggle('dark', dark);
   })();
 </script>
+<script>
+  (() => {
+    const nights = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
+    let night = 'navy';
+    try {
+      const stored = localStorage.getItem('kirua-night-palette');
+      if (nights.includes(stored)) night = stored;
+    } catch {}
+    if (night !== 'navy') document.documentElement.dataset.nightPalette = night;
+  })();
+</script>
 ```
+
+The night is a script of its own, so a theme script that throws on refused
+storage cannot stop it.
 
 If your host enforces a Content Security Policy, authorise the inline script
 through its nonce or hash mechanism. In a framework, integrate this with the
@@ -45,10 +90,13 @@ currently exercised by this repository's checks.
 An application can offer **Light**, **Dark** and **System**. Save explicit choices
 under `kirua-theme`; remove the key for System. Apply the choice immediately and,
 while System is selected, listen for changes to the colour-scheme media query.
+Offer the night beside it, saved under `kirua-night-palette`, with navy removing
+the key.
 
-The example apps share this flow in `examples/shared/useTheme.ts`. That hook is
-application code and is not exported as part of kirua. It assumes storage is
-available; hosts with restricted storage should handle read and write failures.
+The example app keeps this flow in `examples/shared/useTheme.ts` and
+`examples/shared/useNightPalette.ts`. Those hooks are application code and are
+not exported as part of kirua. The theme hook assumes storage is available;
+hosts with restricted storage should handle read and write failures.
 
 The token stylesheet does not select dark mode with a media query. Keeping the
 selection in the host lets an explicit Light choice override a dark system preference.
@@ -63,7 +111,8 @@ stay within that context.
 ## Preview in Storybook
 
 Change **Mode** in the toolbar to switch the Storybook interface, documentation
-page and example documents together. Each preview sets the class on its own
+page and example documents together, and **Night** to choose the night palette
+dark mode uses. Each preview sets the class on its own
 `<html>`, so body-level menus, dialogs and tooltips receive the selected mode too.
 
 Storybook rebuilds the docs page when toolbar globals change, which resets

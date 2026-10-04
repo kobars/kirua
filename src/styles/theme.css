@@ -24,6 +24,9 @@
   --color-line: var(--color-border-default);
   --color-line-strong: var(--color-border-strong);
   --color-line-accent: var(--color-border-accent);
+  --color-line-card: var(--color-border-card);
+  --color-line-press: var(--color-border-press);
+  --color-line-inverse: var(--color-border-inverse);
   --color-ring: var(--color-focus-ring);
   --color-ring-offset: var(--color-focus-ring-offset);
   --color-scrim: var(--color-overlay-scrim);
@@ -38,6 +41,10 @@
   --color-secondary-hover: var(--color-action-secondary-bg-hover);
   --color-on-secondary: var(--color-action-secondary-fg);
   --color-secondary-line: var(--color-action-secondary-border);
+  --color-secondary-raised: var(--color-action-secondary-raised-bg);
+  --color-secondary-raised-open: var(--color-action-secondary-raised-bg-open);
+  --color-secondary-raised-line: var(--color-action-secondary-raised-border);
+  --color-on-secondary-raised: var(--color-action-secondary-raised-fg);
 
   --color-ghost-hover: var(--color-action-ghost-bg-hover);
   --color-on-ghost: var(--color-action-ghost-fg);
@@ -55,7 +62,6 @@
    * inline` compiles an alias to a literal `var()` reference, so
    * `--color-field-fg: var(--color-field-fg)` is a variable pointing at itself
    * — it resolves to nothing, silently, and every field renders with no colour.
-   * The first draft of this block did exactly that.
    *
    * So this follows the `action` family's convention instead: the semantic
    * layer carries the long name (`--color-action-primary-fg`) and the utility
@@ -110,17 +116,100 @@
 }
 
 /* Type, radius and easing utilities come straight from the primitive @theme
- * block — they carry no context-dependent meaning, so no alias. Elevation used
- * to be in that list and did not belong there; it is aliased above.
+ * block — they carry no context-dependent meaning, so no alias. Elevation does
+ * carry one, which is why it is aliased above.
  *
  * The stacking order needs `@utility` rather than `@theme`, because Tailwind
  * has no `--z-*` theme namespace to generate from: `z-*` takes a bare number.
  * Written out one per layer so a component names its layer and never a number.
  * `cn.ts` lists these under the `z` group, or two of them would stop cancelling. */
-/* MOTION. The scale was declared, consumed by every `@keyframes`, and bypassed
- * by every component, which wrote Tailwind's raw `duration-200` instead. That
- * matched by coincidence and would have stopped matching the moment the scale
- * was retuned — which is the entire reason a scale exists.
+/* CLAY SHADOWS. A hard offset shadow, down and towards the end of the line.
+ * Box shadows have no logical form, so every horizontal offset is multiplied
+ * by `--shadow-dir`, which each utility sets on its own element: 1 left to
+ * right, -1 right to left. Declared on the element rather than inherited, so a
+ * left-to-right button inside a right-to-left card still casts to its own end.
+ * The colour is read on the element too, which is what lets a surface context
+ * re-point it. A danger button names its own colour in `--press-shade`.
+ *
+ * `press` is a button at rest, `press-lifted` the same button raised under the
+ * pointer, `press-down` while it is pressed. The inset strip along the lower
+ * edge is part of each. */
+@utility shadow-card {
+  --shadow-dir: 1;
+  box-shadow: calc(var(--clay-offset-card) * var(--shadow-dir)) var(--clay-offset-card) 0
+    var(--color-shade-card);
+  &:dir(rtl) {
+    --shadow-dir: -1;
+  }
+}
+@utility shadow-press {
+  --shadow-dir: 1;
+  box-shadow:
+    calc(var(--clay-offset-rest) * var(--shadow-dir)) var(--clay-offset-rest) 0
+      var(--press-shade, var(--color-shade-press)),
+    inset 0 calc(var(--clay-strip-rest) * -1) 0 var(--color-shade-strip);
+  &:dir(rtl) {
+    --shadow-dir: -1;
+  }
+}
+@utility shadow-press-lifted {
+  --shadow-dir: 1;
+  box-shadow:
+    calc(var(--clay-offset-lift) * var(--shadow-dir)) var(--clay-offset-lift) 0
+      var(--press-shade, var(--color-shade-press)),
+    inset 0 calc(var(--clay-strip-rest) * -1) 0 var(--color-shade-strip);
+  &:dir(rtl) {
+    --shadow-dir: -1;
+  }
+}
+@utility shadow-press-down {
+  --shadow-dir: 1;
+  box-shadow:
+    calc(var(--clay-offset-down) * var(--shadow-dir)) var(--clay-offset-down) 0
+      var(--press-shade, var(--color-shade-press)),
+    inset 0 calc(var(--clay-strip-down) * -1) 0 var(--color-shade-strip);
+  &:dir(rtl) {
+    --shadow-dir: -1;
+  }
+}
+
+/* The primary button's diagonal fill, at rest and under hover. A utility of
+ * its own rather than Tailwind's gradient stops, which ship a registered
+ * property per stop for one gradient. It starts under the edge: from the
+ * padding box it would repeat there, and the edge would show the wrong end of
+ * it as a ring. */
+@utility bg-primary-gradient {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-action-primary-gradient-start),
+    var(--color-action-primary-gradient-end)
+  );
+  background-origin: border-box;
+}
+@utility bg-primary-gradient-hover {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-action-primary-gradient-start-hover),
+    var(--color-action-primary-gradient-end-hover)
+  );
+  background-origin: border-box;
+}
+
+/* A button's transition. Colour follows the pointer on kirua's ease-out
+ * curve; the shadow and the lift spring, so a two-pixel move reads as a press
+ * rather than as a slide. */
+@utility transition-press {
+  transition-property: color, background-color, border-color, box-shadow, translate, scale;
+  transition-duration: var(--duration-fast);
+  transition-timing-function:
+    var(--ease-out), var(--ease-out), var(--ease-out), var(--ease-spring), var(--ease-spring),
+    var(--ease-out);
+}
+
+/* MOTION. Components use these named utilities, never Tailwind's raw
+ * `duration-200`: a raw number matches the scale only by coincidence and stops
+ * matching the moment the scale is retuned — which is the entire reason a scale
+ * exists.
  *
  * The mapping is by role, and it is short enough to state in full:
  *   fast  — a state a pointer is driving: hover, press, a menu item highlight.

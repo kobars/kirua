@@ -6,7 +6,7 @@ import { docsThemes } from './theme';
 export function ThemedDocsContainer(props: PropsWithChildren<DocsContainerProps>) {
   const globals = useDocsGlobals(props.context);
   const host = useRef<HTMLDivElement>(null);
-  useDocumentMode(globals.mode);
+  useDocumentMode(globals.mode, globals.night);
   const sync = useCallback(
     (frame: HTMLIFrameElement) => {
       frame.contentWindow?.postMessage(

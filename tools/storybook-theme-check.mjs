@@ -20,6 +20,11 @@ async function chooseMode(mode) {
   await documentMode(docs, mode);
 }
 
+async function chooseNight(title) {
+  await page.getByRole('button', { name: /^Night palette of dark mode / }).click();
+  await page.getByText(title, { exact: true }).click();
+}
+
 async function documentMode(frame, mode) {
   await frame.locator(mode === 'dark' ? 'html.dark' : 'html:not(.dark)').waitFor();
 }
@@ -61,6 +66,21 @@ try {
     true,
     'Props table must fill its available width',
   );
+  const navyPreview = await background(specimen.locator('body'));
+  await chooseNight('Graphite');
+  await docs.locator('html[data-night-palette="graphite"]').waitFor();
+  await specimen.locator('html[data-night-palette="graphite"]').waitFor();
+  assert.notEqual(
+    await background(specimen.locator('body')),
+    navyPreview,
+    'Preview background must follow Night',
+  );
+  await chooseNight('Navy night');
+  // Docs remount their specimens on a global change, and a fresh frame has no
+  // attribute before it has a theme at all, so wait for dark mode as well.
+  await specimen.locator('html.dark:not([data-night-palette])').waitFor();
+  assert.equal(await background(specimen.locator('body')), navyPreview);
+
   await page.getByRole('button', { name: /^Surface context / }).click();
   await page.getByText('Brand (ctx-brand)', { exact: true }).click();
   await specimen.locator('#storybook-root > .ctx-brand').waitFor();
@@ -127,7 +147,7 @@ try {
   await documentMode(page.frameLocator('iframe').first(), 'dark');
   assert.deepEqual(errors, [], 'Documentation must not produce browser errors');
   console.log(
-    'storybook-theme-check: mode toggles, docs navigation/reload, isolated previews, open portals, fixed-mode stories and phone layout passed.',
+    'storybook-theme-check: mode and night toggles, docs navigation/reload, isolated previews, open portals, fixed-mode stories and phone layout passed.',
   );
 } catch (error) {
   console.error('Browser errors:', errors);

@@ -1,8 +1,4 @@
 /**
- * Matched to the code that already exists rather than imposed on it — single
- * quotes, semicolons, trailing commas, 96 columns. Reformatting a whole
- * codebase to a tool's defaults buries real history under whitespace.
- *
  * `prettier-plugin-tailwindcss` sorts class names into Tailwind's canonical
  * order. It only ever reorders; it never rewrites a class. Rewriting is
  * oxlint's job — see `better-tailwindcss/enforce-canonical-classes` in

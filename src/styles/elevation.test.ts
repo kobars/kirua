@@ -1,11 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 /**
- * A shadow nobody can see is still a valid shadow, which is how a comment came
- * to stand in for a test here: `theme.css` claimed elevation carried no
- * context-dependent meaning, and every shadow primitive was near-black. On the
- * dark page and on the inverse surfaces that meant no elevation at all, and
- * nothing failed.
+ * A shadow nobody can see is still a valid shadow, so nothing fails when one
+ * disappears. Every shadow primitive is near-black: on the inverse surfaces a
+ * shadow that is not re-pointed means no elevation at all.
  *
  * These assertions are about *contrast against the surface*, not about exact
  * values — the values are a design decision and may be retuned. What must stay
@@ -61,8 +59,8 @@ describe('elevation is context-dependent', () => {
   });
 
   /**
-   * The assertion the card was raised for. On a near-black surface a black
-   * shadow is invisible, so the dark values must carry a light edge.
+   * On a near-black surface a black shadow is invisible, so the dark values
+   * must carry a light edge.
    */
   it.each(utilities)('%s has a light edge on a dark surface', (utility) => {
     expect(hasLightEdge(shadowOn('ctx-inverse', utility))).toBe(true);
