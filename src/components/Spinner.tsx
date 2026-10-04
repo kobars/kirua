@@ -12,7 +12,12 @@ export interface SpinnerProps extends ComponentProps<'output'> {
  *
  * The root is an `<output>`, which already is a polite live region.
  *
- * @example <Button disabled><Spinner /> Saving…</Button>
+ * Inside a button, prefer `Button`'s `loading`, which renders this in place of
+ * the leading icon and keeps the button focusable, where `disabled` drops the
+ * focus to the page.
+ *
+ * @example <Button loading loadingLabel="Saving">Save</Button>
+ * @example <Spinner label="Loading results" />
  */
 export function Spinner({ className, label = 'Loading', ...props }: SpinnerProps) {
   return (

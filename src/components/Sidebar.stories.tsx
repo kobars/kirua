@@ -111,6 +111,19 @@ export const Playground: Story = {
       </Sidebar>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    canvas.getByRole('button', { name: 'Toggle the sidebar' }).focus();
+    await userEvent.tab();
+
+    // `outline-none` beside a `focus-visible:outline-2` cancels the ring: the
+    // first sets the outline-style variable the second reads to `none`.
+    const row = canvas.getAllByRole('button').find((el) => el === document.activeElement);
+    await expect(row).toHaveAttribute('data-slot', 'sidebar-menu-button');
+    const style = getComputedStyle(row as HTMLElement);
+    await expect(style.outlineStyle).toBe('solid');
+    await expect(style.outlineWidth).toBe('2px');
+  },
 };
 
 export const Collapsible: Story = {

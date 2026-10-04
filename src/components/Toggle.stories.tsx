@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { utilityValue } from '@/test/utility';
 import { BookmarkIcon, HeartIcon } from './icons';
 import { Toggle } from './Toggle';
 
@@ -75,5 +76,33 @@ export const PressedIsAnnounced: Story = {
     await expect(button).toHaveAttribute('aria-pressed', 'false');
     await userEvent.click(button);
     await expect(button).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+/** A pressed toggle that cannot be changed reads as disabled, not as the live
+ *  choice. */
+export const PressedAndDisabled: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-3">
+      <Toggle {...args} pressed disabled aria-label="Bookmarked">
+        <BookmarkIcon />
+      </Toggle>
+      <Toggle {...args} pressed aria-label="Liked">
+        <HeartIcon />
+      </Toggle>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const locked = canvas.getByRole('button', { name: 'Bookmarked' });
+    await expect(locked).toHaveAttribute('aria-pressed', 'true');
+    await waitFor(() =>
+      expect(getComputedStyle(locked).backgroundColor).toBe(
+        utilityValue('bg-disabled', 'backgroundColor', locked.parentElement!),
+      ),
+    );
+    await expect(getComputedStyle(locked).backgroundColor).not.toBe(
+      getComputedStyle(canvas.getByRole('button', { name: 'Liked' })).backgroundColor,
+    );
   },
 };

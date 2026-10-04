@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
+import { Button } from './Button';
 import { Field } from './Field';
 import { Input } from './Input';
 import { Label } from './Label';
@@ -75,4 +76,27 @@ export const Disabled: Story = {
       <Input {...args} id={args.id ?? 'username'} readOnly />
     </div>
   ),
+};
+
+/**
+ * Beside a button in a narrow row, the input shrinks instead of pushing the row
+ * past its container: an input's own minimum is about twenty characters wide.
+ */
+export const ShrinksInARow: Story = {
+  render: () => (
+    <div className="flex w-48 gap-2" data-testid="row">
+      <Input aria-label="Voucher code" />
+      <Button variant="secondary" className="shrink-0">
+        Apply
+      </Button>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByTestId('row');
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+    await expect(canvas.getByRole('textbox').getBoundingClientRect().right).toBeLessThanOrEqual(
+      row.getBoundingClientRect().right,
+    );
+  },
 };

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import { DatePicker } from './DatePicker';
 import { Field } from './Field';
 
@@ -68,7 +68,7 @@ export const OpenAndChoose: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button', { name: /Visit date/ });
+    const trigger = canvas.getByRole('combobox', { name: /Visit date/ });
 
     await userEvent.click(trigger);
 
@@ -84,5 +84,48 @@ export const OpenAndChoose: Story = {
       await expect(document.body.dataset['pickedDate']).toBe('2026-03-17');
     });
     delete document.body.dataset['pickedDate'];
+  },
+};
+
+/**
+ * The panel opens with focus on the chosen date, else on today, so the arrow
+ * keys work at once. The trigger is a combobox, which reads the chosen date as
+ * its value after the label.
+ */
+export const OpensOnTheChosenDay: Story = {
+  render: (args) => (
+    <div className="grid w-72 gap-4">
+      <Field controlId="dp-chosen" label="Visit date">
+        <DatePicker {...args} value={new Date(2026, 2, 17)} />
+      </Field>
+      <Field controlId="dp-none" label="Follow-up date">
+        <DatePicker {...args} />
+      </Field>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chosen = canvas.getByRole('combobox', { name: 'Visit date' });
+    await expect(chosen).toHaveTextContent('March 17, 2026');
+    await expect(chosen).toHaveAttribute('aria-haspopup', 'dialog');
+    await expect(chosen).toHaveAttribute('aria-expanded', 'false');
+
+    chosen.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Tuesday, March 17, 2026' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(chosen).toHaveFocus());
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+
+    const empty = canvas.getByRole('combobox', { name: 'Follow-up date' });
+    empty.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Thursday, March 12, 2026' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   },
 };

@@ -70,6 +70,8 @@ try {
             await go('contact');
             await page.getByRole('button', { name: 'Send message' }).click();
             await visible(page.getByText('Enter your name.', { exact: true }));
+            // Focus goes to the first field to fix, not back to the page.
+            assert.equal(await page.evaluate(() => document.activeElement?.id), 'contact-name');
             await audit(page, 'contact invalid');
             await page.getByLabel('Your name').fill('Example Reader');
             await page
@@ -87,6 +89,21 @@ try {
             await page.getByRole('button', { name: 'Increase quantity', exact: true }).click();
             assert.equal(await page.getByText('Added to cart', { exact: true }).count(), 0);
             await page.getByRole('button', { name: 'Decrease quantity', exact: true }).click();
+            // At either end of the range the button is marked unavailable and
+            // keeps focus, rather than disabling itself out from under it.
+            for (const name of ['Increase quantity', 'Decrease quantity']) {
+              const stepper = page.getByRole('button', { name, exact: true });
+              await stepper.focus();
+              for (let n = 0; n < 40; n++) {
+                if ((await stepper.getAttribute('aria-disabled')) === 'true') break;
+                await page.keyboard.press('Enter');
+              }
+              assert.equal(await stepper.getAttribute('aria-disabled'), 'true', name);
+              assert.equal(
+                await page.evaluate(() => document.activeElement?.getAttribute('aria-label')),
+                name,
+              );
+            }
             const scrollBehavior = await page
               .locator('[data-slot="carousel"]')
               .evaluate((el) => getComputedStyle(el).scrollBehavior);
@@ -114,7 +131,16 @@ try {
               'alert',
             );
             await audit(page, 'checkout invalid');
+            // Each summary entry moves focus to its field.
+            await page
+              .getByRole('link', {
+                name: 'A phone number starts with 0 and has 9 to 13 digits.',
+              })
+              .click();
+            assert.equal(await page.evaluate(() => document.activeElement?.id), 'phone');
             await page.getByLabel('Recipient name').fill('Demo Buyer');
+            // Once sent back, the form re-validates as it changes.
+            await visible(page.getByText('3 fields need fixing'));
             await page.getByLabel('Phone', { exact: true }).fill('081234567890');
             await page
               .getByLabel('Address', { exact: true })
@@ -130,10 +156,32 @@ try {
               await page.getByRole('button', { name: 'Pay', exact: true }).count(),
               0,
             );
+            await go('sign-in');
+            const phone = page.getByLabel('Phone number');
+            await phone.fill('812 3456 7890');
+            // Enter submits the step, and the code field takes the focus.
+            await phone.press('Enter');
+            const code = page.getByRole('textbox', { name: 'One-time code', exact: true });
+            await eventually(async () =>
+              assert.equal(await page.evaluate(() => document.activeElement?.id), 'otp'),
+            );
+            await page.keyboard.type('123456');
+            await visible(
+              page.getByRole('alert').filter({ hasText: 'That code does not match' }),
+            );
+            await audit(page, 'sign-in wrong code');
+            // The real caret is pinned to the end, where the boxes draw it, so
+            // Backspace after ArrowLeft removes the last digit.
+            await page.keyboard.press('ArrowLeft');
+            await page.keyboard.press('ArrowLeft');
+            await page.keyboard.press('Backspace');
+            assert.equal(await code.inputValue(), '12345');
           } else if (slug === 'simrs') {
             await go('new-visit');
             await page.getByRole('button', { name: 'Save the visit' }).click();
             await visible(page.getByText('5 fields need attention'));
+            await page.getByRole('link', { name: 'A clinic is required.' }).click();
+            assert.equal(await page.evaluate(() => document.activeElement?.id), 'clinic');
             assert.equal(
               await page
                 .getByRole('combobox', { name: 'Patient', exact: true })
@@ -142,6 +190,7 @@ try {
             );
             await audit(page, 'visit invalid');
             await select(page, 'Patient');
+            await visible(page.getByText('4 fields need attention'));
             await select(page, 'Clinic');
             await select(page, 'Doctor');
             await page.getByRole('combobox', { name: 'Diagnosis (ICD-10)' }).fill('zzzz');
@@ -159,8 +208,14 @@ try {
             assert.equal(await page.getByRole('alert').count(), 0);
             await select(page, 'Patient');
             await select(page, 'Clinic');
-            await page.getByRole('button', { name: 'Visit date', exact: true }).click();
+            await page.getByRole('combobox', { name: 'Visit date', exact: true }).click();
             await page.locator('[data-slot="calendar-day"]').first().click();
+            // A combobox reads its text as its value, so the chosen date is
+            // announced after the label.
+            const dateSnapshot = await page
+              .getByRole('combobox', { name: 'Visit date', exact: true })
+              .ariaSnapshot();
+            assert.match(dateSnapshot, /combobox "Visit date".*2026/);
             await page.getByLabel('Reason for the visit').fill('Routine demonstration visit');
             await page
               .getByRole('checkbox', { name: 'The patient consents to the examination' })
@@ -176,7 +231,13 @@ try {
             await page
               .getByLabel('Write a post')
               .fill('A usable design system needs working examples.');
-            await page.getByRole('button', { name: 'Send', exact: true }).click();
+            // Sent from the keyboard: the button empties the box and stays
+            // focused, unavailable until there is something to send again.
+            await page.getByRole('button', { name: 'Send', exact: true }).press('Enter');
+            assert.equal(
+              await page.evaluate(() => document.activeElement?.textContent?.trim()),
+              'Send',
+            );
             await visible(
               page.getByText('A usable design system needs working examples.', { exact: true }),
             );

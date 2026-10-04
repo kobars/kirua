@@ -16,7 +16,6 @@ import {
   Field,
   Heading,
   Input,
-  Label,
   Select,
   SelectContent,
   SelectGroup,
@@ -28,6 +27,7 @@ import {
   Separator,
   Textarea,
 } from 'kirua';
+import { ErrorLinks } from '../shared/ErrorLinks';
 import { clinicGroups, diagnoses, doctors, patients } from './data';
 
 /**
@@ -41,13 +41,30 @@ export function NewVisit() {
   const [clinic, setClinic] = useState('');
   const [patient, setPatient] = useState('');
   const [doctor, setDoctor] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [reason, setReason] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [attempts, setAttempts] = useState(0);
   const [saved, setSaved] = useState(false);
 
+  // Validated on submit, then live: once the form has been sent back, each
+  // message clears the moment its field is valid and the count follows.
+  const validate = () => {
+    const found: Record<string, string> = {};
+    if (patient === '') found['rm'] = 'Choose a patient first.';
+    if (clinic === '') found['clinic'] = 'A clinic is required.';
+    if (date === undefined) found['date'] = 'A visit date is required.';
+    if (reason.trim().length < 5)
+      found['reason'] = 'Describe the reason in at least five characters.';
+    if (!consent) found['consent'] = 'Patient consent must be ticked.';
+    return found;
+  };
+  const errors = attempts > 0 ? validate() : {};
+
+  // Focus moves on a submit, not on every change to the messages.
   const result = useRef<HTMLElement>(null);
   useEffect(() => {
     result.current?.focus();
-  }, [errors, saved]);
+  }, [attempts, saved]);
 
   // The combobox's own state. kirua supplies the parts and the ARIA; the query,
   // the filtered rows and the highlighted one are application state, which is
@@ -60,21 +77,17 @@ export function NewVisit() {
   const matches = diagnoses.filter((entry) =>
     `${entry.code} ${entry.label}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
+  const activeId =
+    listOpen && matches[active] ? `diagnosis-${matches[active].code}` : undefined;
+  // The arrows can move the highlight past the bottom of a scrolled list.
+  useEffect(() => {
+    if (activeId) document.getElementById(activeId)?.scrollIntoView({ block: 'nearest' });
+  }, [activeId]);
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const found: Record<string, string> = {};
-
-    if (String(form.get('rm') ?? '').trim() === '') found['rm'] = 'Choose a patient first.';
-    if (clinic === '') found['clinic'] = 'A clinic is required.';
-    if (date === undefined) found['date'] = 'A visit date is required.';
-    if (String(form.get('reason') ?? '').trim().length < 5)
-      found['reason'] = 'Describe the reason in at least five characters.';
-    if (form.get('consent') !== 'on') found['consent'] = 'Patient consent must be ticked.';
-
-    setErrors(found);
-    setSaved(Object.keys(found).length === 0);
+    setAttempts((n) => n + 1);
+    setSaved(Object.keys(validate()).length === 0);
   };
 
   return (
@@ -108,7 +121,9 @@ export function NewVisit() {
           role="alert"
         >
           <AlertTitle>{Object.keys(errors).length} fields need attention</AlertTitle>
-          <AlertDescription>The full message is under each field.</AlertDescription>
+          <AlertDescription>
+            <ErrorLinks errors={errors} />
+          </AlertDescription>
         </Alert>
       )}
 
@@ -127,7 +142,9 @@ export function NewVisit() {
             setDiagnosis(null);
             setListOpen(false);
             setActive(0);
-            setErrors({});
+            setReason('');
+            setConsent(false);
+            setAttempts(0);
             setSaved(false);
           }}
           className="grid gap-5"
@@ -234,7 +251,7 @@ export function NewVisit() {
               codes long and a doctor knows the first letters. Focus never
               leaves the input, so `aria-activedescendant` is what announces the
               highlighted row. */}
-          <Combobox>
+          <Combobox open={listOpen} onOpenChange={setListOpen}>
             <Field
               controlId="diagnosis"
               label="Diagnosis (ICD-10)"
@@ -245,12 +262,13 @@ export function NewVisit() {
                 name="diagnosis"
                 value={query}
                 placeholder="J06, hypertension…"
-                aria-expanded={listOpen}
+                aria-expanded={listOpen && matches.length > 0}
                 aria-controls={listOpen && matches.length > 0 ? 'diagnosis-list' : undefined}
-                aria-activedescendant={
-                  listOpen && matches[active] ? `diagnosis-${matches[active].code}` : undefined
-                }
+                aria-activedescendant={activeId}
                 onFocus={() => setListOpen(true)}
+                // A press on the field that is already focused reopens a list
+                // closed with Escape.
+                onClick={() => setListOpen(true)}
                 onBlur={() => setListOpen(false)}
                 onChange={(event) => {
                   setQuery(event.target.value);
@@ -260,8 +278,11 @@ export function NewVisit() {
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'ArrowDown') {
+                    // A closed list opens on its first row; an open one steps.
+                    setActive((n) =>
+                      listOpen ? Math.max(0, Math.min(matches.length - 1, n + 1)) : 0,
+                    );
                     setListOpen(true);
-                    setActive((n) => Math.max(0, Math.min(matches.length - 1, n + 1)));
                   } else if (event.key === 'ArrowUp') setActive((n) => Math.max(0, n - 1));
                   else if (event.key === 'Enter' && listOpen && matches[active]) {
                     event.preventDefault();
@@ -315,27 +336,25 @@ export function NewVisit() {
               name="reason"
               rows={3}
               placeholder="A cough for two weeks, no fever…"
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
             />
           </Field>
 
           <Separator />
 
-          <div className="grid gap-1.5">
-            <div className="flex items-start gap-2">
-              <Checkbox
-                id="consent"
-                name="consent"
-                aria-invalid={errors['consent'] !== undefined}
-                aria-describedby={errors['consent'] ? 'consent-error' : undefined}
-              />
-              <Label htmlFor="consent">The patient consents to the examination</Label>
-            </div>
-            {errors['consent'] && (
-              <p id="consent-error" className="text-body-sm text-invalid">
-                {errors['consent']}
-              </p>
-            )}
-          </div>
+          <Field
+            orientation="horizontal"
+            controlId="consent"
+            label="The patient consents to the examination"
+            error={errors['consent']}
+          >
+            <Checkbox
+              name="consent"
+              checked={consent}
+              onCheckedChange={(checked) => setConsent(checked === true)}
+            />
+          </Field>
 
           <div className="flex flex-wrap justify-end gap-3">
             <Button type="reset" variant="secondary">

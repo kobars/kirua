@@ -43,6 +43,9 @@ export function SelectTrigger({
         'aria-invalid:border-field-line-invalid',
         'data-placeholder:text-placeholder',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',
+        // A long value is cut with an ellipsis rather than wrapping out of
+        // the fixed height. Radix renders the value as the one span here.
+        '[&>span]:min-w-0 [&>span]:truncate',
         className,
       )}
       {...props}
@@ -79,7 +82,10 @@ export function SelectContent({
         position={position}
         sideOffset={sideOffset}
         className={cn(
-          'z-popover max-h-72 min-w-(--radix-select-trigger-width) overflow-hidden',
+          // Capped by the room Radix measures below or above the trigger, so
+          // on a short screen the list scrolls rather than running off it.
+          'z-popover max-h-[min(18rem,var(--radix-select-content-available-height))]',
+          'min-w-(--radix-select-trigger-width) overflow-hidden',
           'rounded-lg border border-line-subtle bg-raised text-fg shadow-overlay',
           'data-open:animate-pop-in data-closed:animate-pop-out',
           className,

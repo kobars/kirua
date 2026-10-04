@@ -51,11 +51,14 @@ export function TabsTrigger({
       className={cn(
         'inline-flex h-10 items-center rounded-pill px-5',
         'font-text text-body-sm font-medium text-fg-muted',
-        'transition-colors duration-fast ease-out',
+        'transition-[color,background-color,border-color] duration-fast ease-out',
         'hover:text-fg',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        // The active tab is marked by fill AND weight, not colour alone.
-        'data-active:bg-primary data-active:text-on-primary',
+        // The active tab is marked by fill AND weight, not colour alone. Its
+        // label keeps its colour on hover: `hover:text-fg` would otherwise
+        // turn it dark on the blue fill in light mode, where the two tokens
+        // differ, and only there.
+        'data-active:bg-primary data-active:text-on-primary data-active:hover:text-on-primary',
         'data-active:font-semibold',
         'disabled:pointer-events-none disabled:text-on-disabled',
         className,

@@ -208,7 +208,7 @@ export function PostCard({ post, onDelete, surface = 'neutral' }: PostCardProps)
             value={reply}
             onChange={(event) => setReply(event.target.value)}
           />
-          <Button type="submit" size="sm" disabled={!reply.trim()}>
+          <Button type="submit" size="sm" aria-disabled={!reply.trim() || undefined}>
             Reply
           </Button>
         </form>

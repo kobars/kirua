@@ -49,13 +49,17 @@ export function ButtonGroup({ className, orientation, ...props }: ButtonGroupPro
 /**
  * A static label sharing the group's shape — "of 12" between two pagers, a
  * unit after a stepper. Not focusable, so it carries no role.
+ *
+ * It takes its height from the buttons beside it, so it matches a group of
+ * `sm` buttons as well as `md`. A group holding nothing but this text is only
+ * as tall as its padding. The text size is the consumer's, through `className`.
  */
 export function ButtonGroupText({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="button-group-text"
       className={cn(
-        'inline-flex h-11 items-center rounded-pill border-2 border-secondary-line',
+        'inline-flex items-center self-stretch rounded-pill border-2 border-secondary-line',
         'bg-secondary px-4 font-text text-body-md font-medium text-on-secondary',
         className,
       )}

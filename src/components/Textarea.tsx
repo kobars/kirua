@@ -18,7 +18,7 @@ export function Textarea({ className, ...props }: TextareaProps) {
     <textarea
       data-slot="textarea"
       className={cn(
-        'min-h-24 w-full resize-y rounded-md border border-field-line bg-field px-3 py-2.5',
+        'min-h-24 w-full min-w-0 resize-y rounded-md border border-field-line bg-field px-3 py-2.5',
         'font-text text-body-md text-on-field shadow-resting placeholder:text-placeholder',
         'transition-[border-color,box-shadow] duration-fast ease-out',
         'hover:border-field-line-hover focus-visible:border-ring',

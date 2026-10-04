@@ -8,7 +8,7 @@ export { AvatarStack, type AvatarStackProps, type AvatarItem } from './AvatarSta
 export { Badge, type BadgeProps } from './Badge';
 export { Alert, AlertTitle, AlertDescription, type AlertProps } from './Alert';
 export { alertVariants } from './Alert.variants';
-export { Field, type FieldProps } from './Field';
+export { Field, FieldLegend, FieldSet, type FieldProps } from './Field';
 export { Label, type LabelProps } from './Label';
 export { Input, type InputProps } from './Input';
 export { Textarea, type TextareaProps } from './Textarea';

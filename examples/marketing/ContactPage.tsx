@@ -79,8 +79,15 @@ export function ContactPage() {
               event.preventDefault();
               setSubmitted(true);
               const validEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-              if (name.trim() !== '' && validEmail && message.trim().length >= 10)
-                setSent(true);
+              // Focus goes to the first field to fix, which also reads out its
+              // message, rather than staying on the button.
+              const firstInvalid = [
+                name.trim() === '' && 'contact-name',
+                !validEmail && 'contact-email',
+                message.trim().length < 10 && 'contact-message',
+              ].find(Boolean);
+              if (firstInvalid) document.getElementById(firstInvalid)?.focus();
+              else setSent(true);
             }}
             noValidate
           >

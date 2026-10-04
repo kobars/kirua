@@ -24,7 +24,7 @@ export function Checkbox({ className, ...props }: CheckboxProps) {
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        'inline-flex size-5 shrink-0 items-center justify-center rounded-xs',
+        'peer group/checkbox inline-flex size-5 shrink-0 items-center justify-center rounded-xs',
         'border border-field-line bg-field text-on-primary',
         'transition-[background-color,border-color] duration-fast ease-out',
         'hover:border-field-line-hover',
@@ -32,6 +32,8 @@ export function Checkbox({ className, ...props }: CheckboxProps) {
         'data-checked:border-primary data-checked:bg-primary',
         'data-indeterminate:border-primary data-indeterminate:bg-primary',
         'aria-invalid:border-field-line-invalid',
+        // Checked is the stronger fact: a ticked box keeps its own edge.
+        'aria-invalid:data-checked:border-primary aria-invalid:data-indeterminate:border-primary',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled',
         'disabled:data-checked:bg-disabled disabled:data-checked:text-on-disabled',
         className,
@@ -42,7 +44,10 @@ export function Checkbox({ className, ...props }: CheckboxProps) {
         data-slot="checkbox-indicator"
         className="flex items-center justify-center [--icon-size:var(--icon-sm)]"
       >
-        {props.checked === 'indeterminate' ? <MinusIcon /> : <CheckIcon />}
+        {/* Chosen by the state Radix renders, not by the `checked` prop, which
+            an uncontrolled checkbox never passes. */}
+        <CheckIcon className="group-data-indeterminate/checkbox:hidden" />
+        <MinusIcon className="hidden group-data-indeterminate/checkbox:block" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

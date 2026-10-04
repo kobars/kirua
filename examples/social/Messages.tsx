@@ -157,7 +157,9 @@ export function Messages() {
               size="sm"
               variant="ghost"
               className="-me-1.5"
-              disabled={draft.trim() === ''}
+              // Focusable while empty: the submit handler already ignores an
+              // empty draft, and a disabled button would drop focus after a send.
+              aria-disabled={draft.trim() === '' || undefined}
             >
               <SendIcon />
             </IconButton>

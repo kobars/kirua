@@ -29,6 +29,24 @@ describe('dark mode is a class on the document, and nothing else', () => {
    * turned off from inside the page. The preference is read by the head
    * snippet instead — one decision, in the one place that runs before paint.
    */
+  /**
+   * The browser draws scrollbars, autofill and the native date and time
+   * pickers itself, and reads only `color-scheme` to pick their palette.
+   */
+  it('tells the browser which scheme its own widgets should use', () => {
+    const root = document.documentElement;
+    expect(getComputedStyle(root).colorScheme).toBe('light');
+
+    const inverse = document.createElement('div');
+    inverse.className = 'ctx-inverse';
+    document.body.appendChild(inverse);
+    expect(getComputedStyle(inverse).colorScheme).toBe('dark');
+    inverse.remove();
+
+    root.classList.add('dark');
+    expect(getComputedStyle(root).colorScheme).toBe('dark');
+  });
+
   it('does not re-point tokens from a media query', () => {
     const withoutComments = semanticCss.replace(/\/\*[\s\S]*?\*\//g, '');
     expect(withoutComments).not.toContain('prefers-color-scheme');

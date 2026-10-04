@@ -161,8 +161,8 @@ export function SidebarMenuButton({
       aria-current={isActive ? 'page' : undefined}
       className={cn(
         'flex h-10 w-full cursor-pointer items-center gap-3 rounded-md px-3',
-        'font-text text-body-sm text-fg no-underline outline-none',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'font-text text-body-sm text-fg no-underline',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'aria-[current="page"]:bg-selected aria-[current="page"]:font-medium',
         'aria-[current="page"]:text-on-selected',

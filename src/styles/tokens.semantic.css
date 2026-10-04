@@ -8,6 +8,11 @@
  * and re-points these variables for everything inside it. */
 
 :root {
+  /* What the browser paints itself: scrollbars, autofill, the time and date
+   * pickers, a native select's popup. Without it they stay light on a dark
+   * page, because the class switch below is invisible to the browser. */
+  color-scheme: light;
+
   --color-surface-page: var(--color-neutral-0);
   --color-surface-raised: var(--color-neutral-0);
   --color-surface-sunken: var(--color-neutral-50);
@@ -318,6 +323,8 @@
 
 /* Applied by NavBar, dark Card, dark Chip, Tooltip. */
 .ctx-inverse {
+  color-scheme: dark;
+
   --color-surface-page: var(--color-neutral-1000);
   --color-surface-raised: var(--color-neutral-900);
   --color-surface-sunken: var(--color-neutral-950);
@@ -401,6 +408,8 @@
  * decision in one place, and it is the place that can run before first paint.
  * The whole switch is documented in `src/foundations/DarkMode.mdx`. */
 .dark {
+  color-scheme: dark;
+
   --color-surface-page: var(--color-neutral-950);
   --color-surface-raised: var(--color-neutral-900);
   --color-surface-sunken: var(--color-neutral-1000);

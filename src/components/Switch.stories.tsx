@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { utilityValue } from '@/test/utility';
 import { Label } from './Label';
 import { Switch } from './Switch';
 
@@ -68,5 +69,45 @@ export const ItIsASwitchAndTheThumbTravels: Story = {
     await waitFor(async () => {
       await expect(thumb.getBoundingClientRect().x).toBeGreaterThan(before);
     });
+  },
+};
+
+/**
+ * Disabled on and disabled off are told apart by the track as well as the
+ * thumb's position, and the label after a disabled switch dims with it.
+ */
+export const DisabledOnAndOff: Story = {
+  render: (args) => (
+    <div className="grid gap-3">
+      <div className="flex items-center gap-3">
+        <Switch {...args} id="disabled-off" disabled checked={false} />
+        <Label htmlFor="disabled-off">Off, locked</Label>
+      </div>
+      <div className="flex items-center gap-3">
+        <Switch {...args} id="disabled-on" disabled checked />
+        <Label htmlFor="disabled-on">On, locked</Label>
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const off = canvas.getByRole('switch', { name: 'Off, locked' });
+    const on = canvas.getByRole('switch', { name: 'On, locked' });
+
+    await waitFor(() =>
+      expect(getComputedStyle(off).backgroundColor).not.toBe(
+        getComputedStyle(on).backgroundColor,
+      ),
+    );
+    const label = canvas.getByText('Off, locked');
+    await expect(getComputedStyle(label).color).toBe(
+      utilityValue('text-on-field-disabled', 'color', label.parentElement!),
+    );
+
+    // 2px between thumb and track at the end the thumb rests against.
+    const track = on.getBoundingClientRect();
+    const thumb = on.querySelector('[data-slot="switch-thumb"]')!.getBoundingClientRect();
+    await expect(track.right - thumb.right).toBe(2);
+    await expect(thumb.top - track.top).toBe(2);
   },
 };

@@ -12,7 +12,8 @@ import { cn } from '@/lib/cn';
  *
  * The group's state is read from its own descendants with `has-*`, so nothing
  * has to be told twice: disable the input and the whole box dims, set
- * `aria-invalid` on the input and the whole box turns invalid.
+ * `aria-invalid` on the input and the whole box turns invalid, focus the
+ * input and the box draws the focus ring.
  *
  * @example
  * <InputGroup>
@@ -26,10 +27,15 @@ export function InputGroup({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot="input-group"
       className={cn(
-        'flex h-11 w-full items-center gap-2 rounded-md border border-field-line bg-field px-3',
+        'group/input-group flex h-11 w-full items-center gap-2 rounded-md border border-field-line bg-field px-3',
         'shadow-resting transition-[border-color] duration-fast ease-out',
         'hover:border-field-line-hover',
-        'has-[input:focus-visible]:border-ring',
+        // The ring `Input` draws, moved to the box. Scoped to the input's own
+        // slot, so a button inside an addon does not light up the whole group.
+        'has-[[data-slot=input-group-input]:focus-visible]:border-ring',
+        'has-[[data-slot=input-group-input]:focus-visible]:outline-2',
+        'has-[[data-slot=input-group-input]:focus-visible]:outline-offset-2',
+        'has-[[data-slot=input-group-input]:focus-visible]:outline-ring',
         'has-[input[aria-invalid="true"]]:border-field-line-invalid',
         'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-field-line-disabled',
         'has-[input:disabled]:bg-field-disabled',
@@ -71,6 +77,7 @@ export function InputGroupAddon({ className, ...props }: ComponentProps<'div'>) 
       data-slot="input-group-addon"
       className={cn(
         'flex shrink-0 items-center gap-1.5 text-fg-muted [--icon-size:var(--icon-sm)]',
+        'group-has-[input:disabled]/input-group:text-on-field-disabled',
         className,
       )}
       {...props}

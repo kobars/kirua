@@ -25,7 +25,11 @@ import { cn } from '@/lib/cn';
  *   />
  *   <InputOTPGroup>
  *     {Array.from({ length: 6 }, (_, index) => (
- *       <InputOTPSlot key={index} char={code[index]} isActive={code.length === index} />
+ *       <InputOTPSlot
+ *         key={index}
+ *         char={code[index]}
+ *         isActive={index === Math.min(code.length, 5)}
+ *       />
  *     ))}
  *   </InputOTPGroup>
  * </InputOTP>
@@ -50,7 +54,21 @@ export function InputOTP({ className, ...props }: ComponentProps<'div'>) {
  * disappears — the caret included, because the active box draws its own.
  *
  * Give it an `aria-label`, and set `autoComplete="one-time-code"` to let a
- * phone offer the code from the message.
+ * phone offer the code from the message. `pattern="\d*"` brings up the digit
+ * keypad on iOS as well.
+ *
+ * The real caret is invisible, so ArrowLeft can move it away from the box that
+ * is drawn as active, and Backspace then deletes a digit in the middle. Pin it
+ * to the end from the consumer's own client code (a handler here would stop the
+ * field rendering on a server for a form that works without script):
+ *
+ * @example
+ * <InputOTPInput
+ *   onSelect={(event) => {
+ *     const { length } = event.currentTarget.value;
+ *     event.currentTarget.setSelectionRange(length, length);
+ *   }}
+ * />
  */
 export function InputOTPInput({ className, ...props }: ComponentProps<'input'>) {
   return (
@@ -93,23 +111,38 @@ export interface InputOTPSlotProps extends ComponentProps<'div'> {
    * mistake — `code[4]` on a two-digit entry is how an empty box is asked for.
    */
   char?: string | undefined;
-  /** Whether the caret is here. Exactly one slot should have this. */
+  /**
+   * Where the next character goes. Exactly one slot should have this, and one
+   * still should once the code is full: pass
+   * `index === Math.min(code.length, length - 1)`, or a focused, complete code
+   * looks unfocused.
+   */
   isActive?: boolean;
 }
 
+/**
+ * The active box is marked only while the input really has focus, so a page
+ * that has just loaded shows no ring and no blinking caret. The outline, and
+ * not the border, is the keyboard cue, because an invalid code's red border
+ * would hide a border-colour change.
+ */
 export function InputOTPSlot({ className, char, isActive, ...props }: InputOTPSlotProps) {
   return (
     <div
       data-slot="input-otp-slot"
       data-filled={char ? '' : undefined}
+      data-active={isActive ? '' : undefined}
       className={cn(
         'relative flex h-12 w-10 items-center justify-center rounded-md',
         'border border-field-line bg-field shadow-resting',
         'font-text text-heading-sm text-on-field tabular-nums',
         'transition-[border-color] duration-fast ease-out',
         'group-has-[input:focus-visible]/otp:border-field-line-hover',
-        isActive && 'border-ring',
+        'group-has-[input:focus]/otp:data-active:border-ring',
         'group-has-[input[aria-invalid="true"]]/otp:border-field-line-invalid',
+        'group-has-[input:focus-visible]/otp:data-active:outline-2',
+        'group-has-[input:focus-visible]/otp:data-active:outline-offset-0',
+        'group-has-[input:focus-visible]/otp:data-active:outline-ring',
         'group-has-[input:disabled]/otp:border-field-line-disabled',
         'group-has-[input:disabled]/otp:bg-field-disabled',
         className,
@@ -117,9 +150,9 @@ export function InputOTPSlot({ className, char, isActive, ...props }: InputOTPSl
       {...props}
     >
       {char}
-      {isActive && (
+      {isActive && !char && (
         <span
-          className="absolute h-6 w-px animate-pulse-soft bg-fg"
+          className="absolute hidden h-6 w-px animate-pulse-soft bg-fg group-has-[input:focus]/otp:block"
           data-slot="input-otp-caret"
         />
       )}

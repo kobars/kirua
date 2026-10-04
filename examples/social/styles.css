@@ -12,6 +12,10 @@
 @source '.';
 @source '../shared';
 @source '../../src/components';
+/* A story or a test is not part of any application, and the classes only
+   they use would ship in every app's stylesheet. */
+@source not '../../src/components/**/*.stories.tsx';
+@source not '../../src/components/**/*.test.{ts,tsx}';
 @source '../../src/lib';
 
 @import '../../src/styles/kirua.css';

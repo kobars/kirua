@@ -60,8 +60,8 @@ export function MenubarTrigger({
       data-slot="menubar-trigger"
       className={cn(
         'flex cursor-pointer items-center rounded-sm px-3 py-1.5 select-none',
-        'font-text text-body-sm font-medium text-fg outline-none',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'font-text text-body-sm font-medium text-fg',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'data-open:bg-ghost-hover',
         className,
