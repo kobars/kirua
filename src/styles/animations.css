@@ -27,15 +27,15 @@
   /* Radix publishes the content's natural height as
    * `--radix-accordion-content-height` during the animation, which is what
    * allows a panel to animate open to `auto`. */
-  --animate-accordion-down: accordion-down var(--duration-base) var(--ease-out);
-  --animate-accordion-up: accordion-up var(--duration-fast) var(--ease-out);
+  --animate-accordion-down: accordion-down var(--duration-base) var(--ease-out-soft);
+  --animate-accordion-up: accordion-up var(--duration-fast) var(--ease-out-soft);
 
   /* Collapsible publishes the same measurement under its own name, and a
    * keyframe cannot choose between two variables — an unset one makes `height`
    * invalid, which reads as "the animation stopped working". Two more
    * keyframes is the whole cost of not guessing. */
-  --animate-collapsible-down: collapsible-down var(--duration-base) var(--ease-out);
-  --animate-collapsible-up: collapsible-up var(--duration-fast) var(--ease-out);
+  --animate-collapsible-down: collapsible-down var(--duration-base) var(--ease-out-soft);
+  --animate-collapsible-up: collapsible-up var(--duration-fast) var(--ease-out-soft);
 
   /* `pulse-soft` is Skeleton: it breathes rather than sweeps, because a sweep
    * needs a gradient the width of an element the consumer sizes. `spin-steady`

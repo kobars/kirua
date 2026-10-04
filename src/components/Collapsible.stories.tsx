@@ -119,11 +119,19 @@ export const ARailWithAGap: Story = {
       ))}
     </div>
   ),
-  /** The disclosure owns the space under its trigger, and the rule is a border. */
+  /**
+   * The disclosure owns the space under its trigger, and the rule is a border.
+   * The space is inside the panel, so it is clipped and animated with the
+   * panel's height; as a gap on the root it would snap in and out.
+   */
   play: async ({ canvasElement }) => {
     const root = within(canvasElement).getByTestId('gap-3');
+    const panel = root.querySelector('[data-slot="collapsible-content"]') as HTMLElement;
     await expect(root).toHaveAttribute('data-slot', 'collapsible');
-    await expect(getComputedStyle(root).rowGap).toBe('12px');
+    await expect(getComputedStyle(panel.firstElementChild as HTMLElement).paddingTop).toBe(
+      '12px',
+    );
+    await expect(getComputedStyle(root).rowGap).not.toBe('12px');
     await expect(getComputedStyle(root).borderInlineStartWidth).toBe('2px');
   },
 };

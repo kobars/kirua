@@ -51,7 +51,12 @@ export function CollapsibleContent({
       className="overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up"
       {...props}
     >
-      <div className={cn('font-text text-body-sm text-fg-secondary', className)}>
+      <div
+        className={cn(
+          'pt-(--collapsible-gap) font-text text-body-sm text-fg-secondary',
+          className,
+        )}
+      >
         {children}
       </div>
     </CollapsiblePrimitive.Content>
