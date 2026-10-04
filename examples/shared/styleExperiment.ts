@@ -76,16 +76,15 @@ export type NightPalette = 'navy' | 'graphite' | 'onyx' | 'ink' | 'carbon';
 
 const NIGHT_KEY = 'kirua-night-palette';
 
-/* `page` and `card` repeat each night's page and card colours from
- * `experiment.css`, for the swatch beside its name in the menu. */
-export const NIGHT_PALETTES: { id: NightPalette; label: string; page: string; card: string }[] =
-  [
-    { id: 'navy', label: 'Navy night', page: '#0e1a2b', card: '#16263b' },
-    { id: 'graphite', label: 'Graphite', page: '#15171b', card: '#222528' },
-    { id: 'onyx', label: 'Onyx', page: '#121212', card: '#1f1f1f' },
-    { id: 'ink', label: 'Ink', page: '#0d121b', card: '#1e232d' },
-    { id: 'carbon', label: 'Carbon', page: '#0f1012', card: '#282a2c' },
-  ];
+/* The swatch beside each name reads the night's colours from `experiment.css`
+ * through `data-night-swatch`, so they are written only there. */
+export const NIGHT_PALETTES: { id: NightPalette; label: string }[] = [
+  { id: 'navy', label: 'Navy night' },
+  { id: 'graphite', label: 'Graphite' },
+  { id: 'onyx', label: 'Onyx' },
+  { id: 'ink', label: 'Ink' },
+  { id: 'carbon', label: 'Carbon' },
+];
 
 const isNightPalette = (value: unknown): value is NightPalette =>
   NIGHT_PALETTES.some((option) => option.id === value);

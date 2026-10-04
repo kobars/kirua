@@ -27,27 +27,40 @@
           (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', dark);
       })();
-
-      // TEMPORARY: the style experiment, applied before first paint too. See
-      // examples/shared/styleExperiment.ts.
+    </script>
+    <script>
+      // TEMPORARY: the style experiment, applied before first paint too, by
+      // the rule examples/shared/styleExperiment.ts follows: a valid value in
+      // the link wins, else a valid stored one, else the default. A script of
+      // its own, so the theme script above throwing on refused storage cannot
+      // stop it.
       (() => {
-        try {
-          const style =
-            new URLSearchParams(location.search).get('style') ??
-            localStorage.getItem('kirua-style-experiment');
-          if (style === 'clay' || style === 'hybrid' || style === 'hybrid-clay')
-            document.documentElement.dataset.styleExperiment = style;
-        } catch {}
-      })();
-
-      (() => {
-        try {
-          const night =
-            new URLSearchParams(location.search).get('night') ??
-            localStorage.getItem('kirua-night-palette');
-          if (['graphite', 'onyx', 'ink', 'carbon'].includes(night))
-            document.documentElement.dataset.nightPalette = night;
-        } catch {}
+        const params = new URLSearchParams(location.search);
+        const pick = (param, key, ids, fallback) => {
+          const fromUrl = params.get(param);
+          if (ids.includes(fromUrl)) return fromUrl;
+          try {
+            const stored = localStorage.getItem(key);
+            return ids.includes(stored) ? stored : fallback;
+          } catch {
+            return fallback;
+          }
+        };
+        const root = document.documentElement;
+        const style = pick(
+          'style',
+          'kirua-style-experiment',
+          ['off', 'clay', 'hybrid', 'hybrid-clay'],
+          'off',
+        );
+        if (style !== 'off') root.dataset.styleExperiment = style;
+        const night = pick(
+          'night',
+          'kirua-night-palette',
+          ['navy', 'graphite', 'onyx', 'ink', 'carbon'],
+          'navy',
+        );
+        if (night !== 'navy') root.dataset.nightPalette = night;
       })();
     </script>
   </head>
