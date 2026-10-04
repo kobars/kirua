@@ -5,8 +5,7 @@ import { sample } from './sources';
 /**
  * The reader must agree with `board/tools/okf.mjs`, which is local-only and
  * cannot be imported here. So each case below is a shape the real bundle
- * uses, with the value the original reader produces for it — checked by
- * running that reader on the same text when this file was written.
+ * uses, with the value the original reader produces for it.
  */
 describe('parseYaml', () => {
   it('reads scalars, and strips one layer of quotes', () => {
