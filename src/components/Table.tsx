@@ -21,6 +21,11 @@ import { tableCellVariants } from './TableCell.variants';
  * `TableCaption` is the accessible name. Wrap its text in `VisuallyHidden`
  * when a visible heading above already names the table.
  *
+ * `sticky` on a `TableHead` and the `TableCell`s below it pins that column
+ * while the rest scroll: `start` for the column that names the row, `end`
+ * for its actions. Pass `surface="raised"` when the table sits in a `Card`,
+ * so the pinned cells paint the card's fill rather than the page's.
+ *
  * @example
  * <Table>
  *   <TableCaption>Today's appointments</TableCaption>
@@ -32,12 +37,25 @@ import { tableCellVariants } from './TableCell.variants';
  *   </TableBody>
  * </Table>
  */
-export function Table({ className, ...props }: ComponentProps<'table'>) {
+export interface TableProps extends ComponentProps<'table'> {
+  /**
+   * The surface the table sits on, which a pinned column paints as its fill.
+   * `raised` inside a `Card`, `page` everywhere else. Only pinned cells read
+   * it; every other cell is transparent.
+   */
+  surface?: 'page' | 'raised' | undefined;
+}
+
+export function Table({ className, surface = 'page', ...props }: TableProps) {
   return (
     <div
       data-slot="table-scroll"
+      data-surface={surface}
       tabIndex={0}
-      className="w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className={cn(
+        'w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        '[--table-fill:var(--color-page)] data-[surface=raised]:[--table-fill:var(--color-raised)]',
+      )}
     >
       <table
         data-slot="table"
@@ -81,7 +99,7 @@ export function TableRow({ className, ...props }: ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'border-b border-line-subtle transition-colors duration-fast ease-out',
+        'group/row border-b border-line-subtle transition-colors duration-fast ease-out',
         'hover:bg-sunken',
         'data-selected:bg-selected data-selected:text-on-selected',
         className,
@@ -91,7 +109,8 @@ export function TableRow({ className, ...props }: ComponentProps<'tr'>) {
   );
 }
 
-export interface TableHeadProps extends ComponentProps<'th'> {
+export interface TableHeadProps
+  extends ComponentProps<'th'>, Pick<VariantProps<typeof tableCellVariants>, 'sticky'> {
   /**
    * Makes the column sortable: the label becomes a button that calls
    * `onSort`, and the cell carries `aria-sort` with this value. The sort
@@ -123,6 +142,7 @@ export function TableHead({
   scope = 'col',
   sort,
   onSort,
+  sticky,
   children,
   ...props
 }: TableHeadProps) {
@@ -134,6 +154,7 @@ export function TableHead({
       className={cn(
         'border-b border-line px-3 py-2.5 text-start font-semibold text-nowrap text-fg',
         'relative',
+        tableCellVariants({ sticky }),
         className,
       )}
       {...props}
@@ -164,13 +185,20 @@ export function TableHead({
 export interface TableCellProps
   extends ComponentProps<'td'>, VariantProps<typeof tableCellVariants> {}
 
-export function TableCell({ className, numeric, tone, nowrap, ...props }: TableCellProps) {
+export function TableCell({
+  className,
+  numeric,
+  tone,
+  nowrap,
+  sticky,
+  ...props
+}: TableCellProps) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
         'relative px-3 py-2.5 align-middle',
-        tableCellVariants({ numeric, tone, nowrap }),
+        tableCellVariants({ numeric, tone, nowrap, sticky }),
         className,
       )}
       {...props}

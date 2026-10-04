@@ -2,8 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Badge } from './Badge';
+import { Card } from './Card';
+import { IconButton } from './IconButton';
+import { MoreIcon } from './icons';
 import {
   Table,
+  type TableProps,
   TableBody,
   TableCaption,
   TableCell,
@@ -139,6 +143,91 @@ export const AWideTableScrollsItself: Story = {
     await expect(frame.scrollWidth).toBe(frame.clientWidth);
     // A scrolling region has to be reachable by keyboard.
     await expect(scroller).toHaveAttribute('tabindex', '0');
+  },
+};
+
+function PinnedTable({ surface, label }: { surface: TableProps['surface']; label: string }) {
+  return (
+    <Table surface={surface} data-testid={label}>
+      <TableCaption className="sr-only">{label}</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead sticky="start">Patient</TableHead>
+          {['Time', 'Department', 'Provider', 'Status'].map((h) => (
+            <TableHead key={h}>{h}</TableHead>
+          ))}
+          <TableHead sticky="end">
+            <span className="sr-only">Actions</span>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {visits.map(([time, patient, department, provider, status, label]) => (
+          <TableRow key={patient}>
+            <TableCell sticky="start" nowrap>
+              {patient}
+            </TableCell>
+            <TableCell nowrap>{time}</TableCell>
+            <TableCell nowrap>{department}</TableCell>
+            <TableCell nowrap>{provider}</TableCell>
+            <TableCell>
+              <Badge status={status}>{label}</Badge>
+            </TableCell>
+            <TableCell sticky="end">
+              <IconButton aria-label={`Actions for ${patient}`} size="sm" variant="ghost">
+                <MoreIcon />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+export const StickyColumns: Story = {
+  render: () => (
+    <div className="grid w-80 grid-cols-[minmax(0,1fr)] gap-6">
+      <PinnedTable surface="page" label="On the page" />
+      <Card padding="sm">
+        <PinnedTable surface="raised" label="In a card" />
+      </Card>
+    </div>
+  ),
+  /**
+   * What would fail silently: a pinned cell that scrolls with the rest, and a
+   * pinned cell whose fill does not match what it sits on — the page's fill
+   * inside a card reads as a patch over the table. The hovered and selected
+   * fills need a real pointer and are in `hover.test.tsx`.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const close = (a: number, b: number) => expect(Math.abs(a - b)).toBeLessThan(1);
+
+    for (const label of ['On the page', 'In a card']) {
+      const table = canvas.getByTestId(label);
+      const scroller = table.closest('[data-slot="table-scroll"]') as HTMLElement;
+      await expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
+
+      scroller.scrollLeft = scroller.scrollWidth;
+      await new Promise(requestAnimationFrame);
+
+      const box = scroller.getBoundingClientRect();
+      const row = within(table).getAllByRole('row')[1] as HTMLElement;
+      const first = row.firstElementChild as HTMLElement;
+      const last = row.lastElementChild as HTMLElement;
+      close(first.getBoundingClientRect().left, box.left);
+      close(last.getBoundingClientRect().right, box.right);
+      await expect(getComputedStyle(last).position).toBe('sticky');
+    }
+
+    const card = canvasElement.querySelector('[data-slot="card"]') as HTMLElement;
+    const inCard = canvas.getByTestId('In a card');
+    const row = within(inCard).getAllByRole('row')[1] as HTMLElement;
+    const pinned = row.lastElementChild as HTMLElement;
+    await expect(getComputedStyle(pinned).backgroundColor).toBe(
+      getComputedStyle(card).backgroundColor,
+    );
   },
 };
 
