@@ -406,3 +406,13 @@ describe('Button and IconButton mirror their variant on the root', () => {
     expect(getComputedStyle(ref.current as HTMLElement).touchAction).toBe('manipulation');
   });
 });
+
+describe('Combobox open state', () => {
+  it('takes `open` only together with `onOpenChange`', () => {
+    // @ts-expect-error -- a controlled list that cannot hear Escape or a press outside.
+    const unheard = <Combobox open />;
+    const controlled = <Combobox open onOpenChange={() => {}} />;
+    const radixOwned = <Combobox />;
+    expect([unheard, controlled, radixOwned]).toHaveLength(3);
+  });
+});

@@ -221,7 +221,87 @@ export const InsideAScrollingDialog: Story = {
     await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
     await expect(input).toHaveFocus();
     // The list was the top layer, so Escape closed it and left the dialog.
-    await expect(screen.getByRole('dialog')).toHaveAttribute('data-state', 'open');
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+  },
+};
+
+/** A dialog holding a combobox whose open state nobody wired: no `open`, no
+ *  `onOpenChange`. Radix holds it; the consumer holds only the query. */
+function UnwiredInDialog({ id }: { id: string }) {
+  const [query, setQuery] = useState('');
+  const matches = cities.filter(([, name]) => name.toLowerCase().includes(query.toLowerCase()));
+  const shown = query !== '' && matches.length > 0;
+  return (
+    <Dialog defaultOpen>
+      <DialogContent>
+        <DialogTitle>Delivery</DialogTitle>
+        <DialogDescription>Choose the city the parcel goes to.</DialogDescription>
+        <Combobox className="mt-4">
+          <ComboboxInput
+            aria-label="City"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            aria-expanded={shown}
+            aria-controls={shown ? id : undefined}
+          />
+          {shown && (
+            <ComboboxList id={id} aria-label="Cities">
+              {matches.map(([key, name]) => (
+                <ComboboxItem key={key} id={`${id}-${key}`} aria-selected={false}>
+                  {name}
+                </ComboboxItem>
+              ))}
+            </ComboboxList>
+          )}
+        </Combobox>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/**
+ * With no `open` and no `onOpenChange`, Escape still closes the list, and the
+ * next Escape closes the dialog around it: the list never holds on to a key
+ * it cannot act on.
+ */
+export const EscapeWithoutWiring: Story = {
+  render: () => <UnwiredInDialog id="unwired-escape" />,
+  play: async () => {
+    const input = await screen.findByRole('combobox', { name: 'City' });
+    const dialog = screen.getByRole('dialog');
+    // Typed once the dialog has scaled in: the list takes the input's width,
+    // and measuring an input mid-animation trips a ResizeObserver loop.
+    await Promise.all(dialog.getAnimations().map((animation) => animation.finished));
+    await userEvent.type(input, 'a');
+    await screen.findByRole('listbox', { name: 'Cities' });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  },
+};
+
+/** With nothing wired, a press outside the field and the list closes the list
+ *  and leaves the dialog open. */
+export const PressOutsideWithoutWiring: Story = {
+  render: () => <UnwiredInDialog id="unwired-outside" />,
+  play: async () => {
+    const input = await screen.findByRole('combobox', { name: 'City' });
+    const dialog = screen.getByRole('dialog');
+    await Promise.all(dialog.getAnimations().map((animation) => animation.finished));
+    await userEvent.type(input, 'a');
+    await screen.findByRole('listbox', { name: 'Cities' });
+
+    await userEvent.click(screen.getByText('Choose the city the parcel goes to.'));
+    await waitFor(() => expect(screen.queryByRole('listbox')).toBeNull());
+    await expect(dialog).toHaveAttribute('data-state', 'open');
+
+    // Closed, so the run's accessibility check sees no stale `aria-expanded`.
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   },
 };
 

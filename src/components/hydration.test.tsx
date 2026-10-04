@@ -58,9 +58,31 @@ function PublicComposition() {
             <kirua.DropdownMenuItem>Save</kirua.DropdownMenuItem>
           </kirua.DropdownMenuContent>
         </kirua.DropdownMenu>
+        {/* Its tab stop moves in a focus handler, which must leave the server
+            markup alone. Dates are pinned, so both renders agree. */}
+        <kirua.Calendar
+          month={new Date(2026, 2, 1)}
+          today={new Date(2026, 2, 12)}
+          selected={new Date(2026, 2, 17)}
+        />
       </kirua.SpotlightContent>
     </kirua.SpotlightPanel>
   );
+}
+
+async function hydrate(recoverableErrors: unknown[] = []) {
+  container = document.createElement('div');
+  container.innerHTML = renderToString(<PublicComposition />);
+  document.body.appendChild(container);
+  const serverRoot = container.firstElementChild;
+
+  await act(async () => {
+    root = hydrateRoot(container as HTMLDivElement, <PublicComposition />, {
+      onRecoverableError: (error) => recoverableErrors.push(error),
+    });
+    await Promise.resolve();
+  });
+  return serverRoot;
 }
 
 describe('the public composition hydrates', () => {
@@ -69,22 +91,27 @@ describe('the public composition hydrates', () => {
     const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const recoverableErrors: unknown[] = [];
 
-    container = document.createElement('div');
-    container.innerHTML = renderToString(<PublicComposition />);
-    document.body.appendChild(container);
-    const serverRoot = container.firstElementChild;
-
-    await act(async () => {
-      root = hydrateRoot(container as HTMLDivElement, <PublicComposition />, {
-        onRecoverableError: (error) => recoverableErrors.push(error),
-      });
-      await Promise.resolve();
-    });
+    const serverRoot = await hydrate(recoverableErrors);
+    if (!container) throw new Error('not hydrated');
 
     expect(serverRoot).not.toBeNull();
     expect(container.firstElementChild).toBe(serverRoot);
     expect(recoverableErrors).toEqual([]);
     expect(consoleError).not.toHaveBeenCalled();
     expect(consoleWarn).not.toHaveBeenCalled();
+  });
+
+  it("moves the calendar's tab stop with focus once hydrated", async () => {
+    await hydrate();
+    const day = (date: string) =>
+      container?.querySelector<HTMLButtonElement>(`[data-date="${date}"]`) ?? null;
+
+    expect(day('2026-03-17')?.tabIndex).toBe(0);
+    await act(async () => day('2026-03-25')?.focus());
+
+    expect(day('2026-03-25')?.tabIndex).toBe(0);
+    expect(
+      container?.querySelectorAll('[data-slot="calendar-day"][tabindex="0"]'),
+    ).toHaveLength(1);
   });
 });

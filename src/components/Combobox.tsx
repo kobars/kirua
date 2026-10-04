@@ -8,16 +8,30 @@ import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 import { CheckIcon } from './icons';
 
-export interface ComboboxProps extends ComponentProps<'div'> {
-  /**
-   * Whether the list may show. Defaults to `true`, so a list the consumer
-   * renders is a list on screen; pass the consumer's own open state to let a
-   * press outside the field or Escape close it through `onOpenChange`.
-   */
-  open?: boolean;
-  /** Called with `false` when Escape is pressed or the pointer goes down outside. */
-  onOpenChange?: (open: boolean) => void;
-}
+/**
+ * Radix holds the open state, or the consumer holds it and hears every change.
+ * `open` without `onOpenChange` does not type-check: Escape and a press outside
+ * would do nothing, and inside a dialog the list would swallow the Escape that
+ * should close it.
+ */
+type ComboboxOpenState =
+  | {
+      /**
+       * Left out, Radix holds the open state: the list shows when it is
+       * rendered, and Escape or a press outside closes it until the combobox
+       * remounts.
+       */
+      open?: undefined;
+      onOpenChange?: ((open: boolean) => void) | undefined;
+    }
+  | {
+      /** The consumer's open state. `onOpenChange` is then required. */
+      open: boolean;
+      /** Called with `false` when Escape is pressed or the pointer goes down outside. */
+      onOpenChange: (open: boolean) => void;
+    };
+
+export type ComboboxProps = ComponentProps<'div'> & ComboboxOpenState;
 
 /**
  * A text box that filters a list. The query, the filtered items and the
@@ -39,6 +53,11 @@ export interface ComboboxProps extends ComponentProps<'div'> {
  *   is shown, because there is no listbox to point at;
  * - leave Home and End to the caret.
  *
+ * Pass `open` with `onOpenChange` for a list that reopens as the user types.
+ * Leave both out only for a list that never needs to come back once
+ * dismissed: `aria-expanded` has to follow the list, and only a consumer that
+ * holds the open state can write it.
+ *
  * @example
  * <Combobox open={open} onOpenChange={setOpen}>
  *   <ComboboxInput
@@ -55,10 +74,10 @@ export interface ComboboxProps extends ComponentProps<'div'> {
  *   )}
  * </Combobox>
  */
-export function Combobox({ className, open = true, onOpenChange, ...props }: ComboboxProps) {
+export function Combobox({ className, open, onOpenChange, ...props }: ComboboxProps) {
   return (
     <PopoverPrimitive.Root
-      open={open}
+      {...(open === undefined ? { defaultOpen: true } : { open })}
       {...(onOpenChange === undefined ? {} : { onOpenChange })}
     >
       <div data-slot="combobox" className={cn('relative', className)} {...props} />

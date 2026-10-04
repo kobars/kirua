@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vite';
+import type { BrowserCommand } from 'vitest/node';
 
 const dirname = import.meta.dirname;
 const REM = 16;
@@ -40,6 +41,15 @@ const WIDTHS = [
 ] as const;
 
 /**
+ * Playwright's ARIA snapshot of one element on the test page: the role, name,
+ * value and state Playwright reads from it, in whichever engine the project
+ * runs. A test reaches it through `commands` from `vitest/browser`.
+ */
+const ariaSnapshot: BrowserCommand<[selector: string]> = ({ iframe }, selector) =>
+  iframe.locator(selector).ariaSnapshot();
+const commands = { ariaSnapshot };
+
+/**
  * One instance, deliberately unnamed: Vitest names the nested project after the
  * instance when one is given, which then collides with the project's own name.
  * The width lives in the project name instead.
@@ -59,6 +69,7 @@ const browser = (
   // approved baseline, which is worth less than nothing.
   screenshotFailures: false,
   provider: playwright({ contextOptions }),
+  commands,
   instances: [{ browser: 'chromium' as const, viewport: { width, height: 900 } }],
 });
 
@@ -139,6 +150,7 @@ const webkitProjects = process.env['KIRUA_WEBKIT']
             headless: true as const,
             screenshotFailures: false,
             provider: playwright({}),
+            commands,
             instances: [
               {
                 browser: 'webkit' as const,
