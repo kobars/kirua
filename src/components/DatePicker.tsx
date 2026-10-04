@@ -1,3 +1,8 @@
+/* oxlint-disable jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
+ * The trigger is a `<button role="combobox">`, as Radix's own `SelectTrigger`
+ * is: a native `<select>` cannot open a calendar. `PopoverTrigger` adds
+ * `aria-expanded` and `aria-controls` at runtime, which a static rule cannot
+ * see; `DatePicker.stories.tsx` asserts them. */
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { Calendar, type CalendarProps } from './Calendar';
@@ -27,6 +32,9 @@ export interface DatePickerProps extends Omit<ComponentProps<'button'>, 'onSelec
  *
  * `month` and `value` are separate props: a reader may page through March
  * without choosing a date in it.
+ *
+ * The panel opens with focus on the chosen date, else on today, so the arrow
+ * keys work at once.
  *
  * @example
  * <DatePicker
@@ -70,9 +78,14 @@ export function DatePicker({
 
   return (
     <Popover {...popoverProps}>
+      {/* `combobox`, not the button's own role: a combobox exposes its text as
+          its value, so the chosen date is announced after the label, as a
+          `SelectTrigger`'s value is. It also makes `aria-required` and
+          `aria-invalid` valid here. */}
       <PopoverTrigger asChild>
         <button
           type="button"
+          role="combobox"
           data-slot="date-picker"
           className={cn(
             'flex h-11 w-full items-center justify-between gap-2 rounded-md px-3',
@@ -91,7 +104,20 @@ export function DatePicker({
           <CalendarIcon aria-hidden="true" className="shrink-0 opacity-60" />
         </button>
       </PopoverTrigger>
-      <PopoverContent aria-label={panelLabel} className="w-auto p-0">
+      <PopoverContent
+        aria-label={panelLabel}
+        className="w-auto p-0"
+        // Open on the day the grid would take focus on (the chosen date, else
+        // today), not on "Previous month", the first button in the panel.
+        onOpenAutoFocus={(event) => {
+          const day = (event.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
+            '[data-slot="calendar-day"][tabindex="0"]',
+          );
+          if (!day) return;
+          event.preventDefault();
+          day.focus();
+        }}
+      >
         <Calendar
           month={month}
           onMonthChange={onMonthChange}

@@ -13,7 +13,7 @@ export interface ThemeMenuLabels {
   system: string;
 }
 
-/** The wording four of the five applications use, and so the default. */
+/** The wording four of the five sections use, and so the default. */
 export const DEFAULT: ThemeMenuLabels = {
   trigger: 'Theme',
   light: 'Light',

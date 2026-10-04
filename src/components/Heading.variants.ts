@@ -4,6 +4,8 @@ import { cva } from '@/lib/cva';
 export const headingVariants = cva('text-balance text-fg', {
   variants: {
     size: {
+      /** A page's one hero headline: grows from `display-md` to `display-xl` with the screen. */
+      'display-hero': 'font-display text-display-md md:text-display-lg xl:text-display-xl',
       'display-xl': 'font-display text-display-xl',
       'display-lg': 'font-display text-display-lg',
       'display-md': 'font-display text-display-md',

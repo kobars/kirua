@@ -1,23 +1,26 @@
-/** Local mobile/desktop lab measurements. Timing scores are reported, not gated. */
+/**
+ * Local mobile/desktop lab measurements of the hub and each section's first
+ * route. Timing scores are reported, not gated.
+ */
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
-import { APPS, distOf, serve } from './example-apps.mjs';
+import { SECTIONS, serve } from './example-apps.mjs';
 const output = process.env.KIRUA_REVIEW_OUTPUT ?? '/tmp/kirua-review';
 await mkdir(output, { recursive: true });
 const results = [];
-for (const { slug } of APPS) {
-  const server = await serve(distOf(slug), { compress: true });
-  try {
+const server = await serve(undefined, { compress: true });
+try {
+  for (const { section, prefix } of SECTIONS) {
     for (const device of ['mobile', 'desktop']) {
-      const report = `${output}/lighthouse-${slug}-${device}`;
+      const report = `${output}/lighthouse-${section}-${device}`;
       await new Promise((resolve, reject) => {
         const child = spawn(
           'pnpm',
           [
             'dlx',
             'lighthouse@13.4.1',
-            `http://127.0.0.1:${server.address().port}/`,
+            `http://127.0.0.1:${server.address().port}/#/${prefix}`,
             '--quiet',
             '--chrome-flags=--headless --no-sandbox',
             '--output=json',
@@ -36,7 +39,7 @@ for (const { slug } of APPS) {
       if (data.runtimeError) throw new Error(JSON.stringify(data.runtimeError));
       const score = (key) => Math.round(data.categories[key].score * 100);
       results.push({
-        app: slug,
+        section,
         device,
         performance: score('performance'),
         accessibility: score('accessibility'),
@@ -48,9 +51,9 @@ for (const { slug } of APPS) {
       });
       console.log(results.at(-1));
     }
-  } finally {
-    server.close();
   }
+} finally {
+  server.close();
 }
 await writeFile(`${output}/lighthouse-summary.json`, JSON.stringify(results, null, 2));
 console.table(results);

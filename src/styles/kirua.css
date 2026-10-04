@@ -81,6 +81,14 @@
   }
 }
 
+/* A button that stands on its own, not joined into a `ButtonGroup`. A joined
+ * button keeps the plain shape, so the group still reads as one control with
+ * one selected part. `solo-enabled` is the same, and not disabled: the edge
+ * colour, the press shadow, the gradient and the lift are for a button that
+ * can be pressed. */
+@custom-variant solo (&:not([data-slot='button-group'] *));
+@custom-variant solo-enabled (&:not(:disabled, [aria-disabled='true'], [data-slot='button-group'] *));
+
 @custom-variant data-active {
   &:where([data-state='active'], [data-active]:not([data-active='false'])) {
     @slot;
@@ -169,6 +177,15 @@
     text-transform: uppercase;
   }
 
+  /* The capitals and the tracking belong to the display face, so text set in
+   * the body face inside it — a caption in a placeholder whose letter is
+   * display type — does not inherit them. A utility still wins: an eyebrow's
+   * `uppercase` is in a later layer. */
+  .font-text {
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -230,6 +247,17 @@
   :focus-visible {
     outline: 3px solid Highlight;
     outline-offset: 2px;
+  }
+
+  /* An input group draws its ring on the box, as it does in normal mode, so
+     the input's own ring would be a second one inside it. */
+  [data-slot='input-group']:has([data-slot='input-group-input']:focus-visible) {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  [data-slot='input-group-input']:focus-visible {
+    outline: none;
   }
 
   /* Ornament only. In forced colours both resolve to CanvasText and become

@@ -12,7 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
   Field,
+  FieldLegend,
+  FieldSet,
   Heading,
+  Inline,
   Kbd,
   Label,
   RadioGroup,
@@ -23,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Stack,
   Switch,
 } from 'kirua';
 import { shortcuts } from './data';
@@ -33,7 +37,7 @@ export interface SettingsDialogProps {
    * The control that opens it. Passing the trigger in rather than lifting
    * `open` into the page is what `DialogTrigger` is for: Radix then owns the
    * open state, restores focus to the trigger on close, and marks the trigger
-   * `aria-expanded` — three things the page was doing none of with a boolean.
+   * `aria-expanded` — three things a boolean in the page does not do.
    */
   trigger: ReactNode;
   theme: ThemePreference;
@@ -45,19 +49,20 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogTitle>Settings</DialogTitle>
-        <DialogDescription>Nothing here is saved. It is a sample screen.</DialogDescription>
+        <Stack gap={6}>
+          <Stack gap={0}>
+            <DialogTitle>Settings</DialogTitle>
+            <DialogDescription>Nothing here is saved. It is a sample screen.</DialogDescription>
+          </Stack>
 
-        <div className="mt-6 grid gap-6">
           {/* Three states, not a switch: "system" is a real choice and a
               two-position control cannot say it. The same value backs the
               header menu — one owner, one key. */}
-          <fieldset className="grid gap-3">
-            <legend className="mb-1 text-body-sm font-medium text-fg">Appearance</legend>
+          <FieldSet>
+            <FieldLegend>Appearance</FieldLegend>
             <RadioGroup
               value={theme}
               onValueChange={(value) => onThemeChange(value as ThemePreference)}
-              aria-label="Appearance"
             >
               {(
                 [
@@ -66,18 +71,22 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
                   ['system', 'Follow the system'],
                 ] as const
               ).map(([value, label]) => (
-                <div key={value} className="flex items-center gap-2">
-                  <RadioGroupItem value={value} id={`theme-${value}`} />
-                  <Label htmlFor={`theme-${value}`}>{label}</Label>
-                </div>
+                <Field
+                  key={value}
+                  orientation="horizontal"
+                  controlId={`theme-${value}`}
+                  label={label}
+                >
+                  <RadioGroupItem value={value} />
+                </Field>
               ))}
             </RadioGroup>
-          </fieldset>
+          </FieldSet>
 
-          <div className="flex items-center justify-between gap-4">
+          <Inline justify="between" gap={4}>
             <Label htmlFor="sounds">Sound on reply</Label>
             <Switch id="sounds" />
-          </div>
+          </Inline>
 
           <Field controlId="model" label="Model" description="Longer answers cost more.">
             <Select defaultValue="balanced">
@@ -94,7 +103,7 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
 
           <Separator />
 
-          <div className="grid gap-3">
+          <Stack gap={3}>
             <Heading as="h3" size="body-sm">
               Keyboard shortcuts
             </Heading>
@@ -103,17 +112,17 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
                 <Fragment key={what}>
                   <DescriptionTerm>{what}</DescriptionTerm>
                   <DescriptionDetails>
-                    <span className="inline-flex items-center gap-1">
+                    <Inline as="span" gap={1} justify="end">
                       {keys.map((key) => (
                         <Kbd key={key}>{key}</Kbd>
                       ))}
-                    </span>
+                    </Inline>
                   </DescriptionDetails>
                 </Fragment>
               ))}
             </DescriptionList>
-          </div>
-        </div>
+          </Stack>
+        </Stack>
 
         <DialogFooter>
           <DialogClose asChild>

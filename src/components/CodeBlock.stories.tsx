@@ -44,7 +44,7 @@ export const WithACopyControl: Story = {
         }
       >
         {`export function Greeting({ name }: { name: string }) {
-  return <p className="text-body-md text-fg">Halo, {name}</p>;
+  return <p className="text-body-md text-fg">Hello, {name}</p>;
 }`}
       </CodeBlock>
     </div>

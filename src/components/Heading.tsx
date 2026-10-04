@@ -16,9 +16,9 @@ export interface HeadingProps
  * defines, because the surface contexts re-point that token — a heading on
  * `.ctx-brand` is white without asking.
  *
- * To hide one visually, pass `className="sr-only"`: a section that needs a name
- * for the accessibility tree and not on the screen is a real case, and the
- * heading must stay in the tree rather than leave it.
+ * To hide one visually, wrap it in `<VisuallyHidden asChild>`: a section that
+ * needs a name for the accessibility tree and not on the screen is a real case,
+ * and the heading must stay in the tree rather than leave it.
  *
  * @example
  * <Heading as="h1" size="heading-lg">Three plans, and the free one is not a trial</Heading>

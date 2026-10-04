@@ -1,9 +1,25 @@
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
+import type { IconSize } from './icons';
+
+/** Literal strings, because Tailwind reads source text: a computed name generates nothing. */
+const SIZES = {
+  xs: '[--icon-size:var(--icon-xs)]',
+  sm: '[--icon-size:var(--icon-sm)]',
+  md: '[--icon-size:var(--icon-md)]',
+  lg: '[--icon-size:var(--icon-lg)]',
+  xl: '[--icon-size:var(--icon-xl)]',
+  '2xl': '[--icon-size:var(--icon-2xl)]',
+} as const satisfies Record<IconSize, string>;
 
 export interface SpinnerProps extends ComponentProps<'output'> {
   /** What the wait is for. */
   label?: string;
+  /**
+   * A step of the icon scale. Unset follows the `--icon-size` of the control
+   * it sits in, which is what a spinner inside a button wants.
+   */
+  size?: IconSize;
 }
 
 /**
@@ -12,11 +28,20 @@ export interface SpinnerProps extends ComponentProps<'output'> {
  *
  * The root is an `<output>`, which already is a polite live region.
  *
- * @example <Button disabled><Spinner /> Saving…</Button>
+ * Inside a button, prefer `Button`'s `loading`, which renders this in place of
+ * the leading icon and keeps the button focusable, where `disabled` drops the
+ * focus to the page.
+ *
+ * @example <Button loading loadingLabel="Saving">Save</Button>
+ * @example <Spinner label="Loading results" size="sm" />
  */
-export function Spinner({ className, label = 'Loading', ...props }: SpinnerProps) {
+export function Spinner({ className, label = 'Loading', size, ...props }: SpinnerProps) {
   return (
-    <output data-slot="spinner" className={cn('inline-flex shrink-0', className)} {...props}>
+    <output
+      data-slot="spinner"
+      className={cn('inline-flex shrink-0', size && SIZES[size], className)}
+      {...props}
+    >
       <svg
         viewBox="0 0 24 24"
         fill="none"

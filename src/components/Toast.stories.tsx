@@ -41,7 +41,7 @@ export const Statuses: Story = {
       </Toast>
       <Toast {...args} status="success" icon={<CheckIcon />}>
         <ToastTitle>Added to cart</ToastTitle>
-        <ToastDescription>Kacamata bulat — 1 item.</ToastDescription>
+        <ToastDescription>Round Glasses — 1 item.</ToastDescription>
       </Toast>
       <Toast {...args} status="warning">
         <ToastTitle>Only two left</ToastTitle>
@@ -63,7 +63,7 @@ export const AnchoredToTheCorner: Story = {
       <ToastViewport>
         <Toast {...args} status="success" icon={<CheckIcon />} close={<ToastClose />}>
           <ToastTitle>Added to cart</ToastTitle>
-          <ToastDescription>Kacamata bulat — 1 item.</ToastDescription>
+          <ToastDescription>Round Glasses — 1 item.</ToastDescription>
         </Toast>
       </ToastViewport>
     </div>

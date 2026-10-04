@@ -130,3 +130,87 @@ export const ItTrapsAndReturnsFocus: Story = {
     });
   },
 };
+
+export const GapPaddingAndScroll: Story = {
+  render: () => (
+    <div className="min-h-96">
+      <Sheet open modal={false}>
+        <SheetContent side="start" gap={4} scroll showCloseButton={false} data-testid="scrolls">
+          <SheetTitle>Sections</SheetTitle>
+          {Array.from({ length: 40 }, (_, index) => (
+            <Button key={index} variant="ghost" justify="between">
+              Destination {index + 1}
+            </Button>
+          ))}
+        </SheetContent>
+      </Sheet>
+      <Sheet open modal={false}>
+        <SheetContent
+          side="end"
+          gap={6}
+          padding="none"
+          showCloseButton={false}
+          data-testid="flush"
+        >
+          <SheetTitle>Edge to edge</SheetTitle>
+          <SheetDescription>Content that draws its own edges.</SheetDescription>
+        </SheetContent>
+      </Sheet>
+    </div>
+  ),
+  /** A sheet taller than the screen scrolls inside itself instead of running off it. */
+  play: async () => {
+    const scrolls = document.querySelector('[data-testid="scrolls"]') as HTMLElement;
+    const flush = document.querySelector('[data-testid="flush"]') as HTMLElement;
+
+    await expect(getComputedStyle(scrolls).overflowY).toBe('auto');
+    await expect(scrolls.scrollHeight).toBeGreaterThan(scrolls.clientHeight);
+    await expect(getComputedStyle(scrolls).rowGap).toBe('16px');
+    await expect(getComputedStyle(flush).rowGap).toBe('24px');
+    await expect(getComputedStyle(flush).paddingTop).toBe('0px');
+  },
+};
+
+export const AFooterOfRowsAndATitleClearOfClose: Story = {
+  render: () => (
+    <div className="min-h-96">
+      <Sheet open modal={false}>
+        <SheetContent side="start" data-testid="sheet">
+          <SheetTitle data-testid="title">A title long enough to wrap on a phone</SheetTitle>
+          <SheetFooter orientation="vertical" data-testid="footer">
+            <Button variant="secondary">View the cart</Button>
+            <Button>Check out</Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    </div>
+  ),
+  /**
+   * The footer's rows span the sheet, and the title stops short of the close
+   * button rather than running under it.
+   */
+  play: async () => {
+    const sheet = document.querySelector<HTMLElement>('[data-testid="sheet"]')!;
+    const title = document.querySelector<HTMLElement>('[data-testid="title"]')!;
+    const footer = document.querySelector<HTMLElement>('[data-testid="footer"]')!;
+    const close = within(sheet).getByRole('button', { name: 'Close' });
+
+    const [first, second] = Array.from(footer.children) as HTMLElement[];
+    await expect(first!.getBoundingClientRect().width).toBe(footer.clientWidth);
+    await expect(second!.getBoundingClientRect().top).toBeGreaterThan(
+      first!.getBoundingClientRect().bottom - 1,
+    );
+
+    // The text box, not the element: the title's end padding holds the button.
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    const text = range.getBoundingClientRect();
+    const button = close.getBoundingClientRect();
+    const overlaps =
+      text.right > button.left &&
+      text.left < button.right &&
+      text.bottom > button.top &&
+      text.top < button.bottom;
+    await expect(overlaps).toBe(false);
+  },
+};

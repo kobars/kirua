@@ -23,17 +23,18 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
 
+/** `Button` renders the spinner itself while `loading`. */
 export const InsideAControl: Story = {
-  render: (args) => (
+  render: () => (
     <div className="flex flex-wrap items-center gap-4">
-      <Button size="sm" disabled>
-        <Spinner {...args} label="Saving" /> Saving
+      <Button size="sm" loading loadingLabel="Saving">
+        Save
       </Button>
-      <Button size="md" disabled>
-        <Spinner {...args} label="Saving" /> Saving
+      <Button size="md" loading loadingLabel="Saving">
+        Save
       </Button>
-      <Button size="lg" disabled>
-        <Spinner {...args} label="Saving" /> Saving
+      <Button size="lg" loading loadingLabel="Saving">
+        Save
       </Button>
     </div>
   ),
@@ -64,10 +65,10 @@ export const ItTakesTheSizeOfItsControl: Story = {
 };
 
 export const TheLabelIsOverridable: Story = {
-  render: (args) => <Spinner {...args} label="Menghitung ulang" />,
+  render: (args) => <Spinner {...args} label="Recalculating totals" />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
-      'Menghitung ulang',
+      'Recalculating totals',
     );
   },
 };

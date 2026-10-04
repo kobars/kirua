@@ -75,8 +75,8 @@ export function NavigationMenuTrigger({
       data-slot="navigation-menu-trigger"
       className={cn(
         'group inline-flex h-9 cursor-pointer items-center gap-1 rounded-pill px-4',
-        'font-text text-body-sm font-medium text-fg outline-none',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'font-text text-body-sm font-medium text-fg',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'data-open:bg-ghost-hover',
         '[--icon-size:var(--icon-sm)]',
@@ -94,15 +94,42 @@ export function NavigationMenuTrigger({
   );
 }
 
+const contentWidths = { sm: 'md:w-sm', md: 'md:w-md', lg: 'md:w-lg' } as const;
+
+export interface NavigationMenuContentProps extends ComponentProps<
+  typeof NavigationMenuPrimitive.Content
+> {
+  /**
+   * A fixed width from `md` up. Unset, the panel is as wide as its content —
+   * which, for a grid of links, is as wide as the menu before Radix has
+   * measured anything, so a two-column panel needs one. Below `md` the panel
+   * spans the menu.
+   */
+  width?: keyof typeof contentWidths;
+}
+
+/**
+ * One panel of links.
+ *
+ * @example
+ * <NavigationMenuContent width="md">
+ *   <Grid columns={2} gap={1}>
+ *     <NavigationMenuLink href="#/bags">Bags</NavigationMenuLink>
+ *     <NavigationMenuLink href="#/shoes">Shoes</NavigationMenuLink>
+ *   </Grid>
+ * </NavigationMenuContent>
+ */
 export function NavigationMenuContent({
   className,
+  width,
   ...props
-}: ComponentProps<typeof NavigationMenuPrimitive.Content>) {
+}: NavigationMenuContentProps) {
   return (
     <NavigationMenuPrimitive.Content
       data-slot="navigation-menu-content"
       className={cn(
         'w-full p-3 md:w-auto',
+        width && contentWidths[width],
         'data-open:animate-fade-in data-closed:animate-fade-out',
         className,
       )}
@@ -140,17 +167,40 @@ function NavigationMenuViewport({
   );
 }
 
+const linkShapes = {
+  /** A tile in a panel: a name, and a line under it. */
+  panel: 'flex flex-col gap-1 rounded-sm p-3',
+  /** A link in the menu's own row, shaped like the triggers beside it. */
+  top: 'inline-flex h-9 items-center rounded-pill px-4 font-medium',
+} as const;
+
+export interface NavigationMenuLinkProps extends ComponentProps<
+  typeof NavigationMenuPrimitive.Link
+> {
+  /** `top` for a link that sits in the list beside the triggers, not inside a panel. */
+  variant?: keyof typeof linkShapes;
+}
+
+/**
+ * A link, in a panel or in the menu's own row.
+ *
+ * @example
+ * <NavigationMenuItem>
+ *   <NavigationMenuLink variant="top" href="#/orders">Orders</NavigationMenuLink>
+ * </NavigationMenuItem>
+ */
 export function NavigationMenuLink({
   className,
+  variant = 'panel',
   ...props
-}: ComponentProps<typeof NavigationMenuPrimitive.Link>) {
+}: NavigationMenuLinkProps) {
   return (
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        'flex flex-col gap-1 rounded-sm p-3 outline-none select-none',
-        'font-text text-body-sm text-fg no-underline',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        linkShapes[variant],
+        'font-text text-body-sm text-fg no-underline select-none',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'data-active:bg-ghost-hover data-active:font-medium',
         className,

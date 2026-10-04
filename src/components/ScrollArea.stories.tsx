@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, waitFor } from 'storybook/test';
+import { Badge } from './Badge';
 import { Card, CardBody, CardTitle } from './Card';
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from './Item';
 import { ScrollArea } from './ScrollArea';
 
 const meta = {
@@ -96,5 +98,41 @@ export const NoOverflow: Story = {
     // Radix measures after mount, so give it a frame before claiming absence.
     await new Promise((resolve) => requestAnimationFrame(resolve));
     await expect(canvasElement.querySelector('[data-slot="scroll-bar"]')).toBeNull();
+  },
+};
+
+/**
+ * A row that truncates inside a vertical region. Radix's content box is a
+ * table, which grows to its widest line; the title must cut with an ellipsis
+ * and the badge at the row's end must stay inside the region.
+ */
+export const TruncatesInside: Story = {
+  render: (args) => (
+    <ScrollArea {...args} className="h-40 w-72 rounded-lg border border-line">
+      {['Maya', 'Eko', 'Rin'].map((name) => (
+        <Item key={name} size="sm" data-testid="row">
+          <ItemContent>
+            <ItemTitle>{name} wrote a message much longer than the region is wide</ItemTitle>
+            <ItemDescription>
+              A preview line that is also far too long to fit here
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <Badge status="info">3</Badge>
+          </ItemActions>
+        </Item>
+      ))}
+    </ScrollArea>
+  ),
+  play: async ({ canvasElement }) => {
+    const region = canvasElement.querySelector<HTMLElement>('[data-slot="scroll-area"]')!;
+    const title = canvasElement.querySelector<HTMLElement>('[data-slot="item-title"]')!;
+    const badge = canvasElement.querySelector<HTMLElement>('[data-slot="badge"]')!;
+    // Cut, not clipped: the title is narrower than its own text.
+    await expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
+    const inside = region.getBoundingClientRect();
+    const end = badge.getBoundingClientRect();
+    await expect(end.left).toBeGreaterThanOrEqual(inside.left);
+    await expect(end.right).toBeLessThanOrEqual(inside.right);
   },
 };

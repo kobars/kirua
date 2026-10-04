@@ -1,13 +1,22 @@
 import { cva } from '@/lib/cva';
+import { innerGapScale } from './layout.styles';
 
 export const cardVariants = cva(
-  ['relative flex flex-col', 'transition-colors duration-base ease-out'],
+  // A small gap, so a title, body, badge and button do not touch. No larger:
+  // a card has no header to group a title with its description, so a large
+  // gap would split them.
+  ['relative flex flex-col gap-3', 'transition-colors duration-base ease-out'],
   {
     variants: {
+      /**
+       * Every filled card carries the Clay edge. Only the light card casts the
+       * offset shadow: behind a black or brand card it reads as a misprint, so
+       * those keep the edge in their own context's colour and nothing else.
+       */
       variant: {
-        light: 'border border-line-subtle bg-raised text-fg',
-        dark: 'ctx-inverse bg-page text-fg',
-        brand: 'ctx-brand bg-brand text-fg',
+        light: 'border-(length:--clay-edge) border-line-card bg-raised text-fg shadow-card',
+        dark: 'ctx-inverse border-(length:--clay-edge) border-line-inverse bg-page text-fg',
+        brand: 'ctx-brand border-(length:--clay-edge) border-line-subtle bg-brand text-fg',
         ghost: 'bg-transparent',
       },
       /**
@@ -32,22 +41,37 @@ export const cardVariants = cva(
         sm: 'p-4',
         md: 'p-5 md:p-6',
         lg: 'p-6 md:p-8' /* 32px at md+, against a measured 31 [FIGMA] */,
+        /** A full-width band — a quotation, a call to action — not a card in a grid. */
+        xl: 'p-8 md:p-12',
       },
+      /** The rhythm between the card's direct children, replacing the base gap. */
+      gap: innerGapScale,
       /**
-       * **22, not 24, and the reference file disagrees with itself.** Its white
-       * card (`35:19`) is a rectangle at radius 22 and its black card (`35:188`)
-       * a frame at radius 24. The nav bar is also 22, so two nodes say 22 and one
-       * says 24 — and the whole `--radius` scale is derived from a single knob, so
-       * adopting 24 would move every step in the system to honour one node.
-       *
-       * See the note beside `--radius` in `tokens.primitives.css`.
+       * Clip children to the rounded corner: a `Pane`, a full-bleed image, a
+       * resizable group running edge to edge.
+       */
+      clip: { true: 'overflow-hidden', false: '' },
+      /**
+       * As tall as the cell it sits in, so a row of cards in a grid ends on
+       * one line and a `CardFooter` or the content after a growing
+       * `CardContent` lines up across the row.
+       */
+      fill: { true: 'h-full', false: '' },
+      /**
+       * **`card` is 24px, and the reference file disagrees with itself.** Its
+       * white card (`35:19`) is a rectangle at radius 22 and its black card
+       * (`35:188`) a frame at radius 24. The Clay card takes the frame's 24 as
+       * its own step, `--radius-card`, so the `--radius` knob and every step
+       * derived from it stay where the other two nodes put them. `lg` keeps the
+       * 22 for a screen rebuilt to the reference.
        */
       radius: {
         md: 'rounded-md',
-        lg: 'rounded-lg' /* 22px [FIGMA] — the reference's card corner */,
+        lg: 'rounded-lg' /* 22px [FIGMA] — the reference's white card corner */,
+        card: 'rounded-card' /* 24px [FIGMA] — the reference's black card corner */,
         xl: 'rounded-xl',
       },
     },
-    defaultVariants: { variant: 'light', padding: 'md', radius: 'xl' },
+    defaultVariants: { variant: 'light', padding: 'md', radius: 'card' },
   },
 );

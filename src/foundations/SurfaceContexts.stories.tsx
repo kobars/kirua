@@ -27,7 +27,15 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const CONTEXTS = [
+interface Context {
+  name: string;
+  className: string;
+  /** A night palette other than the default navy. */
+  night?: string;
+  note: string;
+}
+
+const CONTEXTS: Context[] = [
   {
     name: 'page',
     className: 'bg-page',
@@ -46,9 +54,15 @@ const CONTEXTS = [
   {
     name: 'dark',
     className: 'dark bg-page',
-    note: 'Dark mode changes the document palette. The same components use the resulting colour roles.',
+    note: 'Dark mode changes the document palette. The same components use the resulting colour roles. Navy is the default night.',
   },
-] as const;
+  ...['graphite', 'onyx', 'ink', 'carbon'].map((night) => ({
+    name: `dark[data-night-palette="${night}"]`,
+    className: 'dark bg-page',
+    night,
+    note: `The ${night} night: the same roles, re-pointed to another night palette.`,
+  })),
+];
 
 function Specimen() {
   return (
@@ -74,11 +88,15 @@ function Specimen() {
   );
 }
 
-export const TheFourSurfaces: Story = {
+export const EverySurface: Story = {
   render: () => (
     <div className="flex flex-col">
       {CONTEXTS.map((context) => (
-        <section key={context.name} className={`flex flex-col gap-4 p-8 ${context.className}`}>
+        <section
+          key={context.name}
+          className={`flex flex-col gap-4 p-8 ${context.className}`}
+          data-night-palette={context.night}
+        >
           <div className="flex flex-col gap-1">
             <code className="font-mono text-body-md font-semibold text-fg">
               .{context.name}
@@ -109,6 +127,7 @@ export const TheFourSurfaces: Story = {
  */
 function useContextRatio(
   contextClass: string,
+  night: string | undefined,
   foreground: string,
   background: string,
 ): { ratio: number; level: string } | null {
@@ -117,6 +136,7 @@ function useContextRatio(
   useEffect(() => {
     const host = document.createElement('div');
     host.className = contextClass;
+    if (night) host.dataset['nightPalette'] = night;
     document.body.appendChild(host);
 
     const read = (token: string, backdrop?: Rgb): Rgb => {
@@ -135,7 +155,7 @@ function useContextRatio(
 
     host.remove();
     setResult({ ratio, level: grade(ratio) });
-  }, [contextClass, foreground, background]);
+  }, [contextClass, night, foreground, background]);
 
   return result;
 }
@@ -161,18 +181,20 @@ const FIELD_PAIRS = [
 
 function FieldRow({
   contextClass,
+  night,
   label,
   foreground,
   background,
   requirement,
 }: {
   contextClass: string;
+  night: string | undefined;
   label: string;
   foreground: string;
   background: string;
   requirement: string;
 }) {
-  const measured = useContextRatio(contextClass, foreground, background);
+  const measured = useContextRatio(contextClass, night, foreground, background);
 
   return (
     <div className="flex flex-wrap items-center gap-4 py-1.5">
@@ -202,13 +224,18 @@ export const FieldTokens: Story = {
   render: () => (
     <div className="flex flex-col">
       {CONTEXTS.map((context) => (
-        <section key={context.name} className={`flex flex-col gap-3 p-8 ${context.className}`}>
+        <section
+          key={context.name}
+          className={`flex flex-col gap-3 p-8 ${context.className}`}
+          data-night-palette={context.night}
+        >
           <code className="font-mono text-body-md font-semibold text-fg">.{context.name}</code>
           <div className="flex flex-col">
             {FIELD_PAIRS.map(([label, foreground, background, requirement]) => (
               <FieldRow
                 key={label}
                 contextClass={context.className}
+                night={context.night}
                 label={label}
                 foreground={foreground}
                 background={background}

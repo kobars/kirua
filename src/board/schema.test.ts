@@ -112,7 +112,7 @@ describe('the sample bundle', () => {
   });
 
   it('counts the columns exactly as validate.mjs printed them for this bundle', () => {
-    // `node board/tools/validate.mjs src/board/sample`, 2026-08-23:
+    // `node board/tools/validate.mjs src/board/sample` prints:
     //   board: backlog 1 · ready 2 · doing 1 · blocked 1 · done 1 · held 1
     expect(columnCounts(board.tasks)).toEqual({
       backlog: 1,

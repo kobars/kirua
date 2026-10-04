@@ -13,3 +13,6 @@ export const MD = 48;
 
 /** `--breakpoint-lg`. */
 export const LG = 64;
+
+/** `--breakpoint-sm`. */
+export const SM = 40;

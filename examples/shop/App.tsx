@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react';
 import {
+  AppBody,
+  AppHeader,
+  AppMain,
+  AppShell,
   Badge,
   Button,
   CartIcon,
@@ -14,18 +18,18 @@ import {
   DropdownMenuTrigger,
   EmptyState,
   FilterIcon,
-  Heading,
+  Grid,
   IconButton,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  Link,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  PageHeader,
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -42,12 +46,17 @@ import {
   SheetContent,
   SheetTitle,
   SheetTrigger,
+  Split,
+  Stack,
+  Text,
   Toast,
   ToastClose,
   ToastDescription,
   ToastTitle,
   ToastViewport,
   UserIcon,
+  Visible,
+  Wordmark,
 } from 'kirua';
 import { CartSheet, type CartLine } from './CartSheet';
 import { CheckoutPage } from './CheckoutPage';
@@ -65,7 +74,7 @@ import { useHashRoute } from '../shared/useHashRoute';
 const PER_PAGE = 6;
 
 export function App() {
-  const [route, navigate] = useHashRoute('');
+  const [route, navigate] = useHashRoute('shop', '');
   const [filters, setFilters] = useState<FilterState>(emptyFilters);
   const [sort, setSort] = useState('popular');
   const [page, setPage] = useState(1);
@@ -130,8 +139,9 @@ export function App() {
     ? orders.find((o) => o.id === route.slice('orders/'.length))
     : undefined;
 
-  const filterPanel = (
+  const filterPanel = (heading: boolean) => (
     <Filters
+      heading={heading}
       value={filters}
       onChange={(next) => {
         setFilters(next);
@@ -151,283 +161,291 @@ export function App() {
   );
 
   return (
-    <div className="min-h-dvh bg-page text-fg">
-      <header className="sticky top-0 z-sticky border-b border-line-subtle bg-page/95 backdrop-blur-sm">
-        {/* `gap-2` below `sm`. Six items sit in this row and five gaps at 12px
-            spend 60 of the 288 pixels a 320-wide phone leaves after the page
-            padding — more than any single control here costs. */}
-        <div className="mx-auto flex w-full max-w-6xl items-center gap-2 px-4 py-3 sm:gap-3 md:px-8">
-          <Link href="#/" variant="block" className="text-body-lg font-semibold text-fg">
-            Dusk
-          </Link>
+    <AppShell>
+      <AppHeader
+        width="6xl"
+        actions={
+          <>
+            <Visible from="lg">
+              <InputGroup size="sm" width="xs">
+                <InputGroupAddon>
+                  <SearchIcon />
+                </InputGroupAddon>
+                <InputGroupInput
+                  value={query}
+                  aria-label="Search products"
+                  placeholder="Search products"
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setPage(1);
+                  }}
+                />
+                {query !== '' && (
+                  <InputGroupAddon>
+                    <IconButton
+                      aria-label="Clear search"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setQuery('')}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </InputGroupAddon>
+                )}
+              </InputGroup>
+            </Visible>
 
-          {/* A `<nav>` of links, not a menu of commands: these go somewhere.
-              Hidden below `md`, where the same categories are reachable from the
-              filter sheet. */}
-          <NavigationMenu className="hidden md:flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <IconButton aria-label="Account" variant="ghost">
+                  <UserIcon />
+                </IconButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>
+                  {signedIn ? 'Signed in as 0812…' : 'Not signed in'}
+                </DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <a href="#/shop/orders">My orders</a>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {signedIn ? (
+                  <DropdownMenuItem onSelect={() => setSignedIn(false)}>
+                    Sign out
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <a href="#/shop/sign-in">Sign in</a>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <ThemeMenu />
+
+            <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
+              <Visible below="md">
+                <SheetTrigger asChild>
+                  {/* The label goes below `sm` for the same reason the cart's
+                      does, and it is the wider of the two. `aria-label`
+                      carries the name once the word is gone. */}
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    leadingIcon={<FilterIcon />}
+                    aria-label="Filter"
+                  >
+                    <Visible from="sm">Filter</Visible>
+                  </Button>
+                </SheetTrigger>
+              </Visible>
+              <SheetContent side="start" gap={4} scroll>
+                <SheetTitle>Filter</SheetTitle>
+                {filterPanel(false)}
+              </SheetContent>
+            </Sheet>
+
+            {/* The label is dropped below `sm`. At 375 the row is a logo, the
+                account and theme menus, Filter and this; keeping every word
+                left six pixels of clearance, which reads as a clipped edge. */}
+            <Button
+              variant="secondary"
+              size="sm"
+              leadingIcon={<CartIcon />}
+              onClick={() => {
+                setToast(null);
+                setCartOpen(true);
+              }}
+              aria-label="Cart"
+            >
+              <Visible from="sm">Cart</Visible>
+              {count > 0 && <Badge status="info">{count}</Badge>}
+            </Button>
+          </>
+        }
+      >
+        <Wordmark href="#/shop/" icon={<CartIcon />}>
+          Dusk
+        </Wordmark>
+
+        {/* A `<nav>` of links, not a menu of commands: these go somewhere.
+            Hidden below `md`, where the same categories are reachable from the
+            filter sheet. */}
+        <Visible from="md">
+          <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Catalogue</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid w-md grid-cols-2 gap-1">
+                <NavigationMenuContent width="md">
+                  <Grid columns={2} gap={1}>
                     <NavigationMenuLink
-                      href="#/"
+                      href="#/shop/"
                       onClick={() => {
                         setCategory('all');
                         setPage(1);
                       }}
                     >
-                      <span className="font-medium">Everything</span>
-                      <span className="text-caption text-fg-muted">
+                      <Text inline size="sm" weight="medium" tone="primary">
+                        Everything
+                      </Text>
+                      <Text inline size="caption" tone="muted">
                         {products.length} items in the catalogue
-                      </span>
+                      </Text>
                     </NavigationMenuLink>
                     {categories.map((item) => (
                       <NavigationMenuLink
                         key={item.id}
-                        href="#/"
+                        href="#/shop/"
                         onClick={() => {
                           setCategory(item.id);
                           setPage(1);
                         }}
                       >
-                        <span className="font-medium">{item.label}</span>
-                        <span className="text-caption text-fg-muted">{item.blurb}</span>
+                        <Text inline size="sm" weight="medium" tone="primary">
+                          {item.label}
+                        </Text>
+                        <Text inline size="caption" tone="muted">
+                          {item.blurb}
+                        </Text>
                       </NavigationMenuLink>
                     ))}
-                  </div>
+                  </Grid>
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink href="#/orders" className="px-4">
+                <NavigationMenuLink variant="top" href="#/shop/orders">
                   Orders
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+        </Visible>
+      </AppHeader>
 
-          <span className="min-w-0 flex-1" />
+      <AppBody width="full">
+        <AppMain>
+          {detail ? (
+            <ProductPage product={detail} onAdd={add} />
+          ) : order ? (
+            <OrderPage order={order} />
+          ) : route === 'orders' ? (
+            <OrdersPage onOpen={(id) => navigate(`orders/${id}`)} />
+          ) : route === 'sign-in' ? (
+            <SignInPage
+              onSignedIn={() => {
+                setSignedIn(true);
+                navigate('orders');
+              }}
+            />
+          ) : route === 'checkout' ? (
+            <CheckoutPage lines={lines} onPlaced={() => setLines([])} />
+          ) : (
+            <Container width="6xl">
+              <Split layout="aside-start" asideWidth="md" from="md">
+                <Visible from="md">
+                  <Stack as="aside">{filterPanel(true)}</Stack>
+                </Visible>
 
-          <div className="hidden w-56 lg:block">
-            <InputGroup className="h-9">
-              <InputGroupAddon>
-                <SearchIcon />
-              </InputGroupAddon>
-              <InputGroupInput
-                value={query}
-                aria-label="Search products"
-                placeholder="Search products"
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setPage(1);
-                }}
-              />
-              {query !== '' && (
-                <InputGroupAddon>
-                  <IconButton
-                    aria-label="Clear search"
-                    size="sm"
-                    variant="ghost"
-                    className="-me-1.5"
-                    onClick={() => setQuery('')}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </InputGroupAddon>
-              )}
-            </InputGroup>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <IconButton aria-label="Account" variant="ghost">
-                <UserIcon />
-              </IconButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>
-                {signedIn ? 'Signed in as 0812…' : 'Not signed in'}
-              </DropdownMenuLabel>
-              <DropdownMenuItem asChild>
-                <a href="#/orders">My orders</a>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {signedIn ? (
-                <DropdownMenuItem onSelect={() => setSignedIn(false)}>
-                  Sign out
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem asChild>
-                  <a href="#/sign-in">Sign in</a>
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <ThemeMenu />
-
-          <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-            <SheetTrigger asChild>
-              {/* The label goes below `sm` for the same reason the cart's does,
-                  and it is the wider of the two. `aria-label` carries the name
-                  once the word is gone. */}
-              <Button
-                variant="secondary"
-                size="sm"
-                leadingIcon={<FilterIcon />}
-                aria-label="Filter"
-                className="md:hidden"
-              >
-                <span className="hidden sm:inline">Filter</span>
-              </Button>
-            </SheetTrigger>
-            {/* `pt-14` clears the sheet's own close control, which is
-                absolutely positioned in the top-end corner and would otherwise
-                sit on top of the panel's Reset button. */}
-            <SheetContent side="start" className="overflow-y-auto pt-14">
-              <SheetTitle className="sr-only">Filter</SheetTitle>
-              {filterPanel}
-            </SheetContent>
-          </Sheet>
-
-          {/* The label is dropped below `sm`. At 375 the row is a logo, the
-              account and theme menus, Filter and this; keeping every word left
-              six pixels of clearance, which reads as a clipped edge. */}
-          <Button
-            variant="secondary"
-            size="sm"
-            leadingIcon={<CartIcon />}
-            onClick={() => {
-              setToast(null);
-              setCartOpen(true);
-            }}
-            aria-label="Cart"
-          >
-            <span className="hidden sm:inline">Cart</span>
-            {count > 0 && (
-              <Badge status="info" className="sm:ms-1">
-                {count}
-              </Badge>
-            )}
-          </Button>
-        </div>
-      </header>
-
-      <main>
-        {detail ? (
-          <ProductPage product={detail} onAdd={add} />
-        ) : order ? (
-          <OrderPage order={order} />
-        ) : route === 'orders' ? (
-          <OrdersPage onOpen={(id) => navigate(`orders/${id}`)} />
-        ) : route === 'sign-in' ? (
-          <SignInPage
-            onSignedIn={() => {
-              setSignedIn(true);
-              navigate('orders');
-            }}
-          />
-        ) : route === 'checkout' ? (
-          <CheckoutPage lines={lines} onPlaced={() => setLines([])} />
-        ) : (
-          <Container width="6xl" className="md:grid-cols-[16rem_1fr]">
-            <aside className="hidden md:block">{filterPanel}</aside>
-
-            <div className="grid content-start gap-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Heading as="h1" size="heading-md">
-                    {categories.find((c) => c.id === category)?.label ?? 'Catalogue'}{' '}
-                    <span className="text-body-md font-normal text-fg-muted tabular-nums">
-                      ({matches.length})
-                    </span>
-                  </Heading>
-                  {(category !== 'all' || query !== '') && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setCategory('all');
-                        setQuery('');
-                        setPage(1);
-                      }}
-                    >
-                      Clear filters
-                    </Button>
-                  )}
-                </div>
-                <div className="w-48">
-                  <Select value={sort} onValueChange={setSort}>
-                    <SelectTrigger aria-label="Sort by">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent aria-label="Sort by">
-                      <SelectItem value="popular">Most popular</SelectItem>
-                      <SelectItem value="cheapest">Lowest price</SelectItem>
-                      <SelectItem value="dearest">Highest price</SelectItem>
-                      <SelectItem value="rating">Highest rated</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {shown.length === 0 ? (
-                <EmptyState
-                  icon={<SearchIcon size="2xl" />}
-                  title="Nothing matches"
-                  description="Try widening the price range, or clearing one of the filters."
-                  action={
-                    <Button variant="secondary" onClick={() => setFilters(emptyFilters)}>
-                      Reset filter
-                    </Button>
-                  }
-                />
-              ) : (
-                <>
-                  {/* One column on a phone, two from `sm`, three from `lg`. The
-                      hardest reflow in the set, and the reason the card has no
-                      fixed width of its own. */}
-                  <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {shown.map((product) => (
-                      <li key={product.id}>
-                        <ProductCard product={product} onAdd={add} />
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#/"
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        />
-                      </PaginationItem>
-                      {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-                        <PaginationItem key={n}>
-                          <PaginationLink
-                            href="#/"
-                            isCurrent={n === current}
-                            onClick={() => setPage(n)}
+                <Stack gap={5}>
+                  <PageHeader
+                    title={
+                      <>
+                        {categories.find((c) => c.id === category)?.label ?? 'Catalogue'}{' '}
+                        <Text inline weight="normal" tone="muted" numeric>
+                          ({matches.length})
+                        </Text>
+                      </>
+                    }
+                    align="center"
+                    actions={
+                      <>
+                        {(category !== 'all' || query !== '') && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setCategory('all');
+                              setQuery('');
+                              setPage(1);
+                            }}
                           >
-                            {n}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#/"
-                          onClick={() => setPage((p) => Math.min(pages, p + 1))}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </>
-              )}
-            </div>
-          </Container>
-        )}
-      </main>
+                            Clear filters
+                          </Button>
+                        )}
+                        <Select value={sort} onValueChange={setSort}>
+                          <SelectTrigger aria-label="Sort by" width="xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent aria-label="Sort by">
+                            <SelectItem value="popular">Most popular</SelectItem>
+                            <SelectItem value="cheapest">Lowest price</SelectItem>
+                            <SelectItem value="dearest">Highest price</SelectItem>
+                            <SelectItem value="rating">Highest rated</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </>
+                    }
+                  />
+
+                  {shown.length === 0 ? (
+                    <EmptyState
+                      icon={<SearchIcon size="2xl" />}
+                      title="Nothing matches"
+                      description="Try widening the price range, or clearing one of the filters."
+                      action={
+                        <Button variant="secondary" onClick={() => setFilters(emptyFilters)}>
+                          Reset filter
+                        </Button>
+                      }
+                    />
+                  ) : (
+                    <>
+                      {/* One column on a phone, two from `sm`, three from `lg`.
+                          The hardest reflow in the set, and the reason the card
+                          has no fixed width of its own. */}
+                      <Grid as="ul" columns={1} sm={2} lg={3} gap={4}>
+                        {shown.map((product) => (
+                          <li key={product.id}>
+                            <ProductCard product={product} onAdd={add} />
+                          </li>
+                        ))}
+                      </Grid>
+
+                      <Pagination>
+                        <PaginationContent>
+                          <PaginationItem>
+                            <PaginationPrevious
+                              href="#/shop/"
+                              onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            />
+                          </PaginationItem>
+                          {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+                            <PaginationItem key={n}>
+                              <PaginationLink
+                                href="#/shop/"
+                                isCurrent={n === current}
+                                onClick={() => setPage(n)}
+                              >
+                                {n}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+                          <PaginationItem>
+                            <PaginationNext
+                              href="#/shop/"
+                              onClick={() => setPage((p) => Math.min(pages, p + 1))}
+                            />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
+                    </>
+                  )}
+                </Stack>
+              </Split>
+            </Container>
+          )}
+        </AppMain>
+      </AppBody>
 
       <CartSheet
         open={cartOpen}
@@ -452,6 +470,6 @@ export function App() {
           </Toast>
         )}
       </ToastViewport>
-    </div>
+    </AppShell>
   );
 }

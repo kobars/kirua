@@ -9,6 +9,7 @@ import { Chip } from './Chip';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { DotGrid } from './DotGrid';
 import { Input } from './Input';
+import { InputGroup, InputGroupInput } from './InputGroup';
 import { ScrollArea } from './ScrollArea';
 import { SpotlightPanel } from './SpotlightPanel';
 import { Textarea } from './Textarea';
@@ -21,8 +22,8 @@ afterEach(cleanup);
  * small user-chosen palette, for people who cannot read the colours a designer
  * picked, and it is the mode a token system fails hardest in.
  *
- * Two failures were **measured before anything was changed**, not predicted:
- * `bg-brand` computes to plain white, and `shadow-overlay` computes to `none`.
+ * Measured, not predicted: without the rules this file checks, `bg-brand`
+ * computes to plain white, and `shadow-overlay` computes to `none`.
  * So both of the ways this system separates one surface from another — fill and
  * elevation — stop working at the same time.
  */
@@ -107,6 +108,18 @@ describe('a scrollbar thumb still reads', () => {
   });
 });
 
+describe('a filled button keeps a readable label', () => {
+  /**
+   * Forced colours replaces the background colour and the label colour, but a
+   * gradient is an image, and an image the mode left in place would sit under
+   * a system-coloured label it was never measured against.
+   */
+  it('drops the primary gradient', () => {
+    const style = styleOf(render(<Button>Pay</Button>), '[data-slot="button"]');
+    expect(style.backgroundImage).toBe('none');
+  });
+});
+
 describe('the focus ring survives', () => {
   it('is still drawn, and at a system colour', () => {
     const container = render(<Button>Go</Button>);
@@ -116,6 +129,21 @@ describe('the focus ring survives', () => {
     const style = getComputedStyle(button);
     expect(Number.parseFloat(style.outlineWidth)).toBeGreaterThan(0);
     expect(style.outlineStyle).not.toBe('none');
+  });
+
+  it('an input group draws one ring, on the box', () => {
+    const container = render(
+      <InputGroup>
+        <InputGroupInput aria-label="Search" />
+      </InputGroup>,
+    );
+    const group = container.querySelector('[data-slot="input-group"]') as HTMLElement;
+    const input = container.querySelector('input') as HTMLInputElement;
+    input.focus();
+
+    expect(getComputedStyle(group).outlineStyle).toBe('solid');
+    expect(getComputedStyle(group).outlineWidth).toBe('3px');
+    expect(getComputedStyle(input).outlineStyle).toBe('none');
   });
 });
 

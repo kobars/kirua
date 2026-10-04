@@ -17,7 +17,7 @@ import {
 import { MILESTONES, PRINCIPLES } from './data';
 
 /**
- * The long-form page, and the first real body copy in this repository.
+ * The long-form page: real body copy.
  *
  * Everything else here is an application: labels, rows and controls. A story
  * page is paragraphs, and paragraphs are what the content primitives have to be
@@ -40,7 +40,7 @@ export function StoryPage() {
 
       <Separator />
 
-      <div className="grid gap-4">
+      <Section gap="lg">
         <Heading as="h2" size="heading-md">
           How it began
         </Heading>
@@ -63,18 +63,18 @@ export function StoryPage() {
         <List>
           {PRINCIPLES.map((principle) => (
             <ListItem key={principle.title}>
-              <Text inline tone="primary" className="font-medium">
+              <Text inline tone="primary" weight="medium">
                 {principle.title}.
               </Text>{' '}
               {principle.body}
             </ListItem>
           ))}
         </List>
-      </div>
+      </Section>
 
       <Separator />
 
-      <div className="grid gap-4">
+      <Section gap="lg">
         <Heading as="h2" size="heading-md">
           Four years, four changes
         </Heading>
@@ -88,19 +88,17 @@ export function StoryPage() {
           {MILESTONES.map((milestone) => (
             <TimelineItem key={milestone.at}>
               <TimelineTime dateTime={milestone.at}>{milestone.when}</TimelineTime>
-              <Text size="md" tone="primary" className="font-medium">
+              <Text size="md" tone="primary" weight="medium">
                 {milestone.what}
               </Text>
               <Text size="sm">{milestone.detail}</Text>
             </TimelineItem>
           ))}
         </Timeline>
-      </div>
+      </Section>
 
       <Card variant="brand" padding="lg" glint={['top-start', 'bottom-end']}>
-        <CardTitle as="h2" className="text-heading-lg">
-          The part we will not change
-        </CardTitle>
+        <CardTitle as="h2">The part we will not change</CardTitle>
         <CardBody>
           An artist who leaves takes everything with them: full-resolution files, a documented
           manifest, and no account required to open either. We would rather be left easily than

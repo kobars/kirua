@@ -12,7 +12,7 @@
     /* Paths resolve relative to this file — `baseUrl` is deprecated in TS 6. */
     "paths": {
       "@/*": ["./src/*"],
-      /* The example apps import the bare specifier an outside consumer would.
+      /* The example app imports the bare specifier an outside consumer would.
        * `src` keeps `@/`. Both aliases are deleted the day kirua is a
        * published package. */
       "kirua": ["./src/components/index.ts"],
@@ -38,11 +38,10 @@
     "noFallthroughCasesInSwitch": true
   },
   /* `vitest.shims.d.ts` is named explicitly because it sits outside `src` and
-   * carries the browser-matcher type references the test suite needs. It was
-   * present but unreachable until this line existed. */
+   * carries the browser-matcher type references the test suite needs. */
   "include": ["src", "examples", ".storybook", "vitest.shims.d.ts"],
-  /* The example Vite configs belong to the node project: they import `vite` and
-   * run under Node. Listed in both, they would compile twice under different
-   * `module` settings. */
-  "exclude": ["examples/vite.shared.ts", "examples/*/vite.config.ts"]
+  /* The example app's Vite config belongs to the node project: it imports
+   * `vite` and runs under Node. Listed in both, it would compile twice under
+   * different `module` settings. */
+  "exclude": ["examples/vite.config.ts", "examples/dist"]
 }

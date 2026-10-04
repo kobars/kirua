@@ -2,10 +2,9 @@ import primitivesCss from '@/styles/tokens.primitives.css?raw';
 import { describe, expect, it } from 'vitest';
 
 /**
- * The scale was declared, used by every `@keyframes`, and bypassed by every
- * component — which wrote `duration-200` and `duration-100` instead. Those
- * matched `--duration-base` and `--duration-fast` by coincidence, and a scale
- * that matches by coincidence is not a scale.
+ * A component that writes `duration-200` or `duration-100` matches
+ * `--duration-base` or `--duration-fast` only by coincidence, and a scale that
+ * matches by coincidence is not a scale.
  *
  * So the assertion is the coupling itself: a named utility must resolve to the
  * token, and the token must be what the component actually gets.
@@ -47,8 +46,8 @@ describe('the motion scale is declared and used', () => {
   /**
    * `--ease-out` IS a Tailwind theme namespace, so declaring it in `@theme`
    * replaces Tailwind's own `ease-out` curve rather than sitting beside it.
-   * Worth pinning: it means the seven `ease-out` utilities in the components
-   * are already on kirua's curve and need no rename.
+   * Worth pinning: it means the `ease-out` utilities in the components are on
+   * kirua's curve and need no rename.
    */
   it('ease-out is kirua’s curve, not Tailwind’s', () => {
     const declared = primitivesCss.match(/--ease-out:\s*([^;]+);/)?.[1]?.trim();
@@ -58,8 +57,8 @@ describe('the motion scale is declared and used', () => {
 
   /**
    * The reduced-motion block in `index.css` overrides `transition-duration`,
-   * which is exactly the property these utilities set — so moving the
-   * components onto the named scale did not step outside its cover.
+   * which is exactly the property these utilities set — so the named scale
+   * stays inside its cover.
    */
   it('reduced motion still overrides the property the scale sets', () => {
     expect(primitivesCss).not.toContain('prefers-reduced-motion');

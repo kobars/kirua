@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Opens every route of every example application at five widths and fails on
- * either of two defects: a page that scrolls sideways, or a control too small
- * to hit with a finger.
+ * Opens every route of the example app at five widths and fails on either of
+ * two defects: a page that scrolls sideways, or a control too small to hit
+ * with a finger.
  *
  * The `storybook:*` projects run every story at three widths, but a story is
  * one component. They cannot catch a shell whose sticky header is wider than
@@ -18,7 +18,7 @@
  *   - **320** — the real floor. A Galaxy Fold's cover screen and an iPhone SE
  *     in a larger text size both land here, and 55 pixels below 375 is enough
  *     to overrun a row of `shrink-0` buttons that fits at 375.
- *   - **375** — the width the sweep already had, kept so its history compares.
+ *   - **375** — the most common phone width.
  *   - **768** — `md`. Rails expand, drawers become sidebars.
  *   - **1024** — `lg`. The second column appears.
  *   - **1440** — a laptop. Catches a `max-w` that was never set, so a line of
@@ -41,7 +41,7 @@
  *     pnpm build:examples && node tools/responsive-check.mjs
  */
 import { chromium } from 'playwright';
-import { eachRoute, ROUTE_COUNT } from './example-apps.mjs';
+import { eachRoute, open, ROUTE_COUNT } from './example-apps.mjs';
 
 const WIDTHS = [
   { width: 320, height: 812, phone: true },
@@ -68,8 +68,8 @@ for (const size of WIDTHS) {
   });
   const page = await context.newPage();
 
-  await eachRoute(async ({ slug, label, url }) => {
-    await page.goto(url, { waitUntil: 'load' });
+  await eachRoute(async ({ section, label, url }) => {
+    await open(page, url);
     // A hash change does not reload the document, so give React a frame to
     // render the new route before measuring.
     await page.waitForTimeout(200);
@@ -198,7 +198,7 @@ for (const size of WIDTHS) {
 
     const ok = result.scrollWidth === result.clientWidth;
     rows.push({
-      app: slug,
+      section,
       route: label,
       width: size.width,
       scrollWidth: result.scrollWidth,
@@ -209,7 +209,7 @@ for (const size of WIDTHS) {
     if (!ok) {
       const w = result.widest;
       overflows.push(
-        `${slug} #/${label} at ${size.width}px: scrollWidth ${result.scrollWidth} > clientWidth ${result.clientWidth}` +
+        `${section} ${label} at ${size.width}px: scrollWidth ${result.scrollWidth} > clientWidth ${result.clientWidth}` +
           (w
             ? ` — widest is <${w.tag}${w.slot ? ` data-slot="${w.slot}"` : ''}> ending at ${w.right}px`
             : ''),
@@ -218,7 +218,7 @@ for (const size of WIDTHS) {
 
     for (const s of result.small) {
       targets.push(
-        `${slug} #/${label} at ${size.width}px: <${s.tag}${s.slot ? ` data-slot="${s.slot}"` : ''}>` +
+        `${section} ${label} at ${size.width}px: <${s.tag}${s.slot ? ` data-slot="${s.slot}"` : ''}>` +
           ` "${s.name}" is ${s.w}x${s.h}, under ${MIN_TARGET}x${MIN_TARGET}`,
       );
     }

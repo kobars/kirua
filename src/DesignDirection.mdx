@@ -11,6 +11,9 @@ remaining useful for shopping, publishing and community workflows.
 ## The base identity
 
 Use round shapes, clear silhouettes, friendly text and a strong blue accent.
+Cards and standing buttons are Clay shapes: a bold line and a hard shadow offset
+down and towards the end of the line, so they read as flat cut-outs laid on the
+page. Text is set in Nunito; Luckiest Guy is kept for display headlines.
 Keep display headlines short. Let artwork and a few decorative details carry the
 playfulness; keep prices, navigation, forms and long text easy to scan.
 
@@ -45,7 +48,7 @@ range without introducing a second theme or a new component API.
     <tr>
       <td>Theme and mode</td>
       <td>Which coordinated palette does it use?</td>
-      <td>The current blue palette in light or dark mode</td>
+      <td>The blue palette in light mode, or in dark mode on one of five nights</td>
     </tr>
     <tr>
       <td>Surface context</td>
@@ -61,38 +64,39 @@ variant expresses its role, such as a dangerous action, within those decisions.
 
 ## What exists today
 
-The repository has one base style, one blue palette, light/dark modes and local
-brand/inverse contexts. Anime Hero is a reusable composition; the five example
-apps demonstrate more layouts using local sample data.
+The repository has one base style with Clay shapes, one blue palette, a light
+mode, a dark mode with five night palettes, and local brand/inverse contexts. Anime Hero is a reusable composition; the five sections
+of the example app demonstrate more layouts using local sample data.
 
 There is no named style registry, theme package, template installer or runtime
-style selector. The example apps share their visual foundations. Changing a
+style selector. The example sections share their visual foundations. Changing a
 palette or shape currently involves editing CSS and checking dependent assets.
 
-## Review of the extension points
+## Extension points
 
 **Colour has the strongest foundation.** Components mostly consume semantic
 roles, and existing tests exercise contrast across contexts. A new palette needs
 the full set of surface, text, action, field, status and focus roles. Changing one
 brand swatch does not create a complete theme.
 
-**Style is only partly configurable.** Font and radius scales exist, but ornament
-geometry is also represented in JavaScript constants in `src/lib/radius.ts`.
-Changing the CSS radius alone can misalign CornerGlint. A named style needs a
-coordinated geometry contract or a way to omit that ornament.
+**Style is only partly configurable.** Font, radius and Clay shape tokens exist,
+but ornament geometry is also represented in JavaScript constants in
+`src/lib/radius.ts`: the card corner and the edge the ornament sits inside.
+Changing the CSS radius or edge alone can misalign CornerGlint. A named style
+needs a coordinated geometry contract or a way to omit that ornament.
 
 **Density needs design work.** Heights and padding are expressed in component
 variants. A compact style cannot yet be selected globally. Test a dense table and
 a mobile form before deciding whether density belongs to each component or to a
 shared style setting.
 
-**Templates need explicit boundaries.** Example apps combine layouts, sample
+**Templates need explicit boundaries.** Example sections combine layouts, sample
 data, navigation and state. A reusable template needs named content inputs,
 responsive behaviour, loading/error/empty states and clearly identified demo
 integrations. Extract successful screens individually.
 
 **Documentation needs executable examples.** Prop tables explain individual
-parts; forms, searchable lists and overlays also need application code. The new
+parts; forms, searchable lists and overlays also need application code. The
 interactive stories show these responsibilities and include interaction checks.
 
 ## Try a limited visual adjustment

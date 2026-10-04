@@ -9,9 +9,7 @@ import { cva } from '@/lib/cva';
  *
  * One component with a variant rather than two components, because they share
  * their semantics exactly — a value and the label that says what it counts —
- * and differ only in arrangement. `examples/claude/Usage.tsx` had three
- * headline figures rendered inline, because settling was the only option the
- * component offered.
+ * and differ only in arrangement.
  */
 export const statVariants = cva('text-fg-secondary', {
   variants: {

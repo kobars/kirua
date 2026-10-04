@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { utilityValue } from '@/test/utility';
 import { Checkbox } from './Checkbox';
 import { Label } from './Label';
 
@@ -92,5 +93,62 @@ export const TheLabelTogglesIt: Story = {
     await expect(box).not.toBeChecked();
     await userEvent.click(canvas.getByText('I have read the terms'));
     await expect(box).toBeChecked();
+  },
+};
+
+/**
+ * The dash or the tick is chosen from the state Radix renders, so an
+ * uncontrolled checkbox that starts indeterminate shows a dash too.
+ */
+export const UncontrolledIndeterminate: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-2">
+      <Checkbox {...args} id="uncontrolled" defaultChecked="indeterminate" />
+      <Label htmlFor="uncontrolled">Some rows selected</Label>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const box = canvas.getByRole('checkbox', { name: 'Some rows selected' });
+    const [tick, dash] = Array.from(box.querySelectorAll('svg'));
+
+    await expect(dash?.checkVisibility()).toBe(true);
+    await expect(tick?.checkVisibility()).toBe(false);
+
+    await userEvent.click(box);
+    await expect(box).toBeChecked();
+    await expect(box.querySelector('svg')?.checkVisibility()).toBe(true);
+  },
+};
+
+/** A disabled box dims the label after it, and a checked box keeps its own
+ *  edge when the field is invalid. */
+export const DisabledAndInvalid: Story = {
+  render: (args) => (
+    <div className="grid gap-3">
+      <div className="flex items-center gap-2">
+        <Checkbox {...args} id="locked" disabled />
+        <Label htmlFor="locked">Locked by your administrator</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <Checkbox {...args} id="invalid-checked" defaultChecked aria-invalid />
+        <Label htmlFor="invalid-checked">Checked, in a form with an error</Label>
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const label = canvas.getByText('Locked by your administrator');
+    await expect(getComputedStyle(label).color).toBe(
+      utilityValue('text-on-field-disabled', 'color', label.parentElement!),
+    );
+    await expect(getComputedStyle(label).cursor).toBe('not-allowed');
+
+    const box = canvas.getByRole('checkbox', { name: /Checked, in a form/ });
+    await waitFor(() =>
+      expect(getComputedStyle(box).borderTopColor).toBe(
+        utilityValue('border-primary', 'borderTopColor', box.parentElement!),
+      ),
+    );
   },
 };

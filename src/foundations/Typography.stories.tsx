@@ -27,6 +27,13 @@ const TEXT = [
   { cls: 'text-caption', px: '12 / 16' },
 ];
 
+const WEIGHTS = [
+  { cls: 'font-light', weight: '400', role: 'reserved for large, quiet type' },
+  { cls: 'font-regular', weight: '500', role: 'body copy' },
+  { cls: 'font-medium', weight: '700', role: 'labels and buttons' },
+  { cls: 'font-semibold', weight: '800', role: 'titles' },
+];
+
 export const Scale: Story = {
   render: () => (
     <div className="flex flex-col gap-12">
@@ -53,11 +60,11 @@ export const Scale: Story = {
 
       <section className="flex flex-col gap-6">
         <div>
-          <h2 className="font-text text-heading-lg font-semibold text-fg">Text — Fredoka</h2>
+          <h2 className="font-text text-heading-lg font-semibold text-fg">Text — Nunito</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            The working face, and the one that does 95% of the job. Fredoka is a real text
-            family with a 300&ndash;600 weight range, which is why the system can use it for
-            headings, labels, and body copy without reaching for a second family.
+            The working face, and the one that does 95% of the job. Nunito is a rounded text
+            family with a full weight range, which is why the system can use it for headings,
+            labels, and body copy without reaching for a second family.
           </p>
         </div>
         {TEXT.map((step) => (
@@ -66,6 +73,28 @@ export const Scale: Story = {
               {step.cls} · {step.px}
             </span>
             <span className={`font-text text-fg ${step.cls}`}>
+              Whether you create chibi characters, digital comics, or lively cartoon animations.
+            </span>
+          </div>
+        ))}
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <div>
+          <h2 className="font-text text-heading-lg font-semibold text-fg">The weight ramp</h2>
+          <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
+            Nunito looks lighter than its number suggests, and a step of 100 between two levels
+            is too small to see in it. So the ramp skips: body copy at 500, labels and buttons
+            at 700, titles at 800. The utilities keep their roles — a label is still{' '}
+            <code className="font-mono">font-medium</code> — and the tokens carry the numbers.
+          </p>
+        </div>
+        {WEIGHTS.map((step) => (
+          <div key={step.cls} className="flex flex-col gap-1 border-b border-line-subtle pb-5">
+            <span className="font-mono text-caption text-fg-muted">
+              {step.cls} · {step.weight} · {step.role}
+            </span>
+            <span className={`font-text text-heading-sm text-fg ${step.cls}`}>
               Whether you create chibi characters, digital comics, or lively cartoon animations.
             </span>
           </div>

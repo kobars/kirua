@@ -4,6 +4,8 @@ import { cn } from '@/lib/cn';
 import { CheckIcon } from './icons';
 import {
   menuContentStyles,
+  menuContentWidths,
+  menuDangerItemStyles,
   menuIndicatorItemStyles,
   menuIndicatorStyles,
   menuItemStyles,
@@ -54,17 +56,20 @@ export function DropdownMenuContent({
   className,
   sideOffset = 8,
   container,
+  width,
   ...props
 }: ComponentProps<typeof MenuPrimitive.Content> & {
   /** See `DialogContent`'s `container`. */
   container?: ComponentProps<typeof MenuPrimitive.Portal>['container'];
+  /** A fixed width. Unset, the menu is as wide as its longest row, and never narrower than 13rem. */
+  width?: keyof typeof menuContentWidths;
 }) {
   return (
     <MenuPrimitive.Portal container={container}>
       <MenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
-        className={cn(menuContentStyles, className)}
+        className={cn(menuContentStyles, width && menuContentWidths[width], className)}
         {...props}
       />
     </MenuPrimitive.Portal>
@@ -73,12 +78,17 @@ export function DropdownMenuContent({
 
 export function DropdownMenuItem({
   className,
+  variant = 'default',
   ...props
-}: ComponentProps<typeof MenuPrimitive.Item>) {
+}: ComponentProps<typeof MenuPrimitive.Item> & {
+  /** `danger` for a row that destroys something. Published as `data-variant`. */
+  variant?: 'default' | 'danger';
+}) {
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
-      className={cn(menuItemStyles, className)}
+      data-variant={variant}
+      className={cn(menuItemStyles, variant === 'danger' && menuDangerItemStyles, className)}
       {...props}
     />
   );

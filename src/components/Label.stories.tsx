@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
+import { Checkbox } from './Checkbox';
 import { Label } from './Label';
+import { Switch } from './Switch';
 
 const meta = {
   tags: ['autodocs'],
@@ -41,5 +43,46 @@ export const Playground: Story = {
 
     await userEvent.click(label);
     await expect(input).toHaveFocus();
+  },
+};
+
+/**
+ * A label dims with the control directly before it, and only that one: an
+ * unrelated disabled control earlier in the same row leaves it at full colour.
+ * Inside a form Radix adds a hidden input after the control, which the rule
+ * steps over.
+ */
+export const DimsOnlyWithItsOwnControl: Story = {
+  render: () => (
+    <div className="grid gap-4">
+      <div className="flex items-center gap-2">
+        <Checkbox id="dim-pinned" />
+        <Label htmlFor="dim-pinned">Pinned</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <Checkbox id="dim-archived" disabled />
+        <Label htmlFor="dim-archived">Archived</Label>
+        <Checkbox id="dim-starred" />
+        <Label htmlFor="dim-starred">Starred</Label>
+      </div>
+      <form className="flex items-center gap-2" onSubmit={(event) => event.preventDefault()}>
+        <Checkbox id="dim-locked" name="locked" disabled />
+        <Label htmlFor="dim-locked">Locked</Label>
+        <Switch id="dim-notify" name="notify" />
+        <Label htmlFor="dim-notify">Notify me</Label>
+      </form>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const colour = (text: string) => getComputedStyle(canvas.getByText(text)).color;
+    const full = colour('Pinned');
+
+    await expect(colour('Archived')).not.toBe(full);
+    await expect(colour('Starred')).toBe(full);
+
+    await expect(canvasElement.querySelector('form input[aria-hidden]')).not.toBeNull();
+    await expect(colour('Locked')).not.toBe(full);
+    await expect(colour('Notify me')).toBe(full);
   },
 };

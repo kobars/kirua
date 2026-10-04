@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './Accordion';
+import { Checkbox } from './Checkbox';
 
 /**
  * `args` is declared and never spread: Radix types the root as a discriminated
@@ -86,5 +87,31 @@ export const TheTriggerIsAHeading: Story = {
       await expect(trigger).toHaveAttribute('aria-expanded', 'true');
       await expect(canvas.getByText('S, M, L and XL.')).toBeVisible();
     });
+  },
+};
+
+export const AControlInTheFirstRow: Story = {
+  render: () => (
+    <div className="w-72">
+      <Accordion type="single" defaultValue="brand">
+        <AccordionItem value="brand">
+          <AccordionTrigger>Brand</AccordionTrigger>
+          <AccordionContent>
+            <Checkbox aria-label="Dusk" />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  ),
+  /**
+   * A 20px checkbox right under the trigger keeps its 24px target circle clear
+   * of the trigger's box, which is what WCAG 2.5.8's spacing exception asks.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'Brand' }).getBoundingClientRect();
+    const box = canvas.getByRole('checkbox', { name: 'Dusk' }).getBoundingClientRect();
+    const centre = box.top + box.height / 2;
+    await expect(centre - 12).toBeGreaterThanOrEqual(trigger.bottom);
   },
 };

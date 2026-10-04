@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { Card } from './Card';
+import { Inline } from './Inline';
 import { Skeleton } from './Skeleton';
+import { Stack } from './Stack';
 
 const meta = {
   tags: ['autodocs'],
@@ -58,5 +61,39 @@ export const TheShapesAreSilent: Story = {
     await expect(shapes).toHaveLength(2);
     for (const shape of shapes) await expect(shape).toHaveAttribute('aria-hidden', 'true');
     await expect(region).toHaveAttribute('aria-busy', 'true');
+  },
+};
+
+export const ShapesWithoutClasses: Story = {
+  render: () => (
+    <Card padding="sm" gap={3} className="max-w-sm">
+      <Stack as="output" gap={3} aria-busy="true" aria-label="Loading post">
+        <Inline gap={3}>
+          <Skeleton shape="circle" data-testid="circle" />
+          <Stack gap={2}>
+            <Skeleton shape="caption" width="sm" />
+            <Skeleton shape="caption" width="xs" />
+          </Stack>
+        </Inline>
+        <Skeleton shape="text" width="full" />
+        <Skeleton shape="text" width="11/12" />
+        <Skeleton shape="text" width="4/5" />
+        <Skeleton shape="text" width="2/3" />
+        <Skeleton shape="text" width="1/2" />
+        <Skeleton shape="caption" width="md" />
+        <Skeleton shape="media" width="full" data-testid="media" />
+      </Stack>
+    </Card>
+  ),
+  /** The circle is Avatar's `md`, the media block a picture's height. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const circle = canvas.getByTestId('circle').getBoundingClientRect();
+
+    await expect(Math.round(circle.width)).toBe(40);
+    await expect(Math.round(circle.height)).toBe(40);
+    await expect(Math.round(canvas.getByTestId('media').getBoundingClientRect().height)).toBe(
+      176,
+    );
   },
 };

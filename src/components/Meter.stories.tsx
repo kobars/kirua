@@ -126,3 +126,23 @@ export const WidthIsTheValue: Story = {
     ).toBeCloseTo(86 / 120, 2);
   },
 };
+
+export const AShortBarKeepsItsLength: Story = {
+  render: (args) => (
+    <table>
+      <tbody>
+        <tr>
+          <td data-testid="cell">
+            <Text size="sm">12</Text>
+            <Meter {...args} size="sm" value={12} />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  ),
+  /** An auto-width cell would shrink the bar to the number; `sm` holds 8rem. */
+  play: async ({ canvasElement }) => {
+    const meter = canvasElement.querySelector<HTMLElement>('[data-slot="meter"]')!;
+    await expect(Math.round(meter.getBoundingClientRect().width)).toBe(128);
+  },
+};

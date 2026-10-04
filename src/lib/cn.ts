@@ -12,7 +12,9 @@ import { extendTailwindMerge } from 'tailwind-merge';
  *
  * `z` is in `classGroups` because Tailwind has no `--z-*` theme namespace
  * — the named layers are `@utility` rules in theme.css, so tailwind-merge has
- * no way to learn them from the CSS.
+ * no way to learn them from the CSS. The Clay shadows, the primary gradient
+ * and `transition-press` are `@utility` rules too, listed so they cancel
+ * against their neighbours rather than being read as colours.
  */
 const twMerge = extendTailwindMerge({
   extend: {
@@ -34,7 +36,17 @@ const twMerge = extendTailwindMerge({
         'pulse-soft',
         'spin-steady',
       ],
-      shadow: ['brand', 'resting', 'raised', 'overlay'],
+      shadow: [
+        'brand',
+        'resting',
+        'raised',
+        'overlay',
+        'card',
+        'press',
+        'press-lifted',
+        'press-down',
+      ],
+      ease: ['spring'],
     },
     classGroups: {
       'font-size': [
@@ -54,9 +66,11 @@ const twMerge = extendTailwindMerge({
           ],
         },
       ],
-      rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] }],
+      rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill', 'card', 'control'] }],
       'font-family': [{ font: ['display', 'text', 'mono'] }],
       duration: [{ duration: ['fast', 'base', 'slow'] }],
+      transition: [{ transition: ['press'] }],
+      'bg-image': [{ bg: ['primary-gradient', 'primary-gradient-hover'] }],
       z: [
         {
           z: [

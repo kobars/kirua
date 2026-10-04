@@ -21,6 +21,23 @@ export const sidebarVariants = cva(
         /** Always open. The right choice on a screen wide enough to spare it. */
         none: 'w-64',
       },
+      /**
+       * `plain` drops the fill and the dividing edge, for a rail that sits on
+       * the page background beside the content rather than as a panel.
+       */
+      variant: {
+        panel: '',
+        plain: 'border-e-0 bg-transparent',
+      },
+      /**
+       * The open width. `sm` is 13rem, for a rail of five short destinations;
+       * `lg` is 18rem, for a list of long titles — conversations, documents.
+       */
+      width: {
+        md: '',
+        sm: 'w-52',
+        lg: 'w-72',
+      },
     },
     defaultVariants: { collapsible: 'icon' },
   },

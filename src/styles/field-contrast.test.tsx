@@ -8,17 +8,15 @@ afterEach(cleanup);
  * Every field pair, in every surface context, measured in the browser from the
  * tokens that ship.
  *
- * The forms epic is the largest gap in this system, and `Field` is its
- * keystone. A token family invented per component is how a token system stops
- * being one — and a token family invented *without* measuring is how one ships
- * an input nobody can read.
+ * A token family invented per component is how a token system stops being one
+ * — and a token family invented *without* measuring is how one ships an input
+ * nobody can read.
  *
- * The card that opened this named the specific failure to look for: **a black
- * surface once kept `red-900` at 2.42:1.** That is not hypothetical here. The
- * status ramp is always painted as a `bg`/`fg` pair, so `red-900` on `red-100`
- * is legible on any surface — but a field's validation *message* sits on the
- * surface with no paired background, and it is the first thing in this system
- * to need one half of that pair alone.
+ * The specific failure to look for: **`red-900` on a black surface is
+ * 2.42:1.** The status ramp is always painted as a `bg`/`fg` pair, so `red-900`
+ * on `red-100` is legible on any surface — but a field's validation *message*
+ * sits on the surface with no paired background, and needs one half of that
+ * pair alone.
  */
 
 /**
@@ -33,12 +31,20 @@ afterEach(cleanup);
 const TEXT = 4.5;
 const BOUNDARY = 3;
 
-/** The four surfaces a component can find itself on. `page` is bare `:root`. */
+/**
+ * The surfaces a component can find itself on. `page` is bare `:root`; dark
+ * mode is measured once per night palette, because each night re-points the
+ * page, the card and the lines a field sits between.
+ */
 const CONTEXTS = [
-  ['page', ''],
-  ['brand', 'ctx-brand'],
-  ['inverse', 'ctx-inverse'],
-  ['dark', 'dark'],
+  ['page', '', undefined],
+  ['brand', 'ctx-brand', undefined],
+  ['inverse', 'ctx-inverse', undefined],
+  ['dark (navy)', 'dark', undefined],
+  ['dark (graphite)', 'dark', 'graphite'],
+  ['dark (onyx)', 'dark', 'onyx'],
+  ['dark (ink)', 'dark', 'ink'],
+  ['dark (carbon)', 'dark', 'carbon'],
 ] as const;
 
 /**
@@ -50,8 +56,9 @@ const CONTEXTS = [
  * `color-mix(… transparent)`, and WCAG contrast is defined on the final
  * rendered colour. The backdrop is the context's own page surface.
  */
-function inContext(contextClass: string) {
-  const host = render(<div className={contextClass} />).firstElementChild as HTMLElement;
+function inContext(contextClass: string, night?: string) {
+  const host = render(<div className={contextClass} data-night-palette={night} />)
+    .firstElementChild as HTMLElement;
 
   const read = (token: string, backdrop?: Rgb): Rgb => {
     const probe = document.createElement('div');
@@ -127,9 +134,9 @@ const PAIRS: Pair[] = [
   },
 ];
 
-describe.each(CONTEXTS)('on %s', (contextName, contextClass) => {
+describe.each(CONTEXTS)('on %s', (contextName, contextClass, night) => {
   it.each(PAIRS.map((pair) => [pair.name, pair] as const))('%s', (_label, pair) => {
-    const { read, page } = inContext(contextClass);
+    const { read, page } = inContext(contextClass, night);
 
     // Composite a translucent token over the surface it is really drawn on.
     const background = read(pair.background, page);
@@ -150,8 +157,8 @@ describe('the exemption is recorded rather than assumed', () => {
    * look enabled. What is asserted is that the tokens exist and resolve, so an
    * exemption cannot quietly become a missing variable.
    */
-  it.each(CONTEXTS)('%s declares the disabled trio', (_name, contextClass) => {
-    const { read, page } = inContext(contextClass);
+  it.each(CONTEXTS)('%s declares the disabled trio', (_name, contextClass, night) => {
+    const { read, page } = inContext(contextClass, night);
 
     for (const token of [
       '--color-field-bg-disabled',
@@ -170,8 +177,8 @@ describe('the exemption is recorded rather than assumed', () => {
    */
   it.each(CONTEXTS)(
     '%s makes disabled text quieter than enabled text',
-    (_name, contextClass) => {
-      const { read, page } = inContext(contextClass);
+    (_name, contextClass, night) => {
+      const { read, page } = inContext(contextClass, night);
       const field = read('--color-field-bg', page);
 
       const enabled = contrastRatio(read('--color-field-fg', field), field);

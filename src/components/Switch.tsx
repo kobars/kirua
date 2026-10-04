@@ -20,12 +20,19 @@ export function Switch({ className, ...props }: SwitchProps) {
     <SwitchPrimitive.Root
       data-slot="switch"
       className={cn(
-        'inline-flex h-6 w-11 shrink-0 items-center rounded-pill p-0.5',
+        // 1px of padding inside the 1px border leaves 40px for a 20px thumb
+        // and its 20px travel, so the gap is 2px at both ends and above and
+        // below it.
+        'peer inline-flex h-6 w-11 shrink-0 items-center rounded-pill px-px',
         'border border-transparent bg-field-line',
-        'transition-colors duration-fast ease-out',
+        'transition-[color,background-color,border-color] duration-fast ease-out',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+        'enabled:data-unchecked:hover:bg-field-line-hover',
         'data-checked:bg-primary',
-        'disabled:cursor-not-allowed disabled:bg-disabled',
+        // Off and on stay distinct when disabled, as on `Checkbox`: the empty
+        // field fill when off, the disabled action fill when on.
+        'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled',
+        'disabled:data-checked:border-transparent disabled:data-checked:bg-disabled',
         className,
       )}
       {...props}

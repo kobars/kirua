@@ -14,9 +14,9 @@ export interface Turn {
 
 /** How many conversations to draw in the usage chart, by month. */
 export const usageByMonth = [
-  { label: 'Okt', value: 34 },
+  { label: 'Oct', value: 34 },
   { label: 'Nov', value: 51 },
-  { label: 'Des', value: 28 },
+  { label: 'Dec', value: 28 },
   { label: 'Jan', value: 66 },
   { label: 'Feb', value: 72 },
   { label: 'Mar', value: 95 },

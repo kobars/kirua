@@ -7,33 +7,43 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
+  AppBody,
+  AppHeader,
+  AppMain,
+  AppRail,
+  AppShell,
   Badge,
+  BottomNav,
+  BottomNavLink,
   Button,
   Card,
   CommentIcon,
+  Container,
   GridIcon,
   Heading,
   HeartIcon,
   IconButton,
-  Link,
+  Inline,
   SearchIcon,
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarLabel,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   Skeleton,
   SparkleIcon,
+  Stack,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   UserIcon,
+  VisuallyHidden,
+  Wordmark,
 } from 'kirua';
 import { Composer } from './Composer';
-import { ExperimentBar } from './ExperimentBar';
-import { readSurface, writeSurface, type CardSurface } from './experiment';
 import { Explore } from './Explore';
 import { Messages } from './Messages';
 import { Notifications } from './Notifications';
@@ -57,14 +67,12 @@ const nav = [
  * rail beside it.
  */
 export function App() {
-  const [route, navigate] = useHashRoute('');
+  const [route, navigate] = useHashRoute('social', '');
   const [loadingMore, setLoadingMore] = useState(false);
   const [published, setPublished] = useState<Post[]>([]);
   const [shown, setShown] = useState(3);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleted, setDeleted] = useState<string[]>([]);
-  /** TEMPORARY — see `experiment.tsx`. */
-  const [surface, setSurface] = useState<CardSurface>(readSurface);
 
   useEffect(() => {
     if (!loadingMore) return;
@@ -82,66 +90,63 @@ export function App() {
   const unread = notices.filter((notice) => notice.unread).length;
 
   return (
-    <div className="min-h-dvh bg-page text-fg">
-      <header className="sticky top-0 z-sticky border-b border-line-subtle bg-page/95 backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-4xl items-center gap-2 px-4 py-3">
-          <Link
-            href="#/"
-            variant="block"
-            className="flex items-center gap-2 text-body-md font-semibold [--icon-size:var(--icon-lg)]"
-          >
-            <SparkleIcon aria-hidden="true" className="text-fg-accent" />
-            Commons
-          </Link>
-          <span className="flex-1" />
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                aria-label="Search"
-                variant="ghost"
-                onClick={() => navigate('explore')}
-              >
-                <SearchIcon />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>Search</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton
-                aria-label="Profile"
-                variant="ghost"
-                onClick={() => navigate('profile/rin')}
-              >
-                <UserIcon />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>Profile</TooltipContent>
-          </Tooltip>
+    <AppShell>
+      <AppHeader
+        width="4xl"
+        actions={
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconButton
+                  aria-label="Search"
+                  variant="ghost"
+                  onClick={() => navigate('explore')}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </TooltipTrigger>
+              <TooltipContent>Search</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconButton
+                  aria-label="Profile"
+                  variant="ghost"
+                  onClick={() => navigate('profile/rin')}
+                >
+                  <UserIcon />
+                </IconButton>
+              </TooltipTrigger>
+              <TooltipContent>Profile</TooltipContent>
+            </Tooltip>
+            <ThemeMenu />
+          </>
+        }
+      >
+        <Wordmark href="#/social/" icon={<SparkleIcon />}>
+          Commons
+        </Wordmark>
+      </AppHeader>
 
-          <ThemeMenu />
-        </div>
-      </header>
-
-      <div className="mx-auto flex w-full max-w-4xl gap-6">
+      <AppBody width="4xl">
         {/* The rail repeats the bottom bar, which is why it starts at `md`:
             below that the bar is the navigation and a second copy would be
             two ways to reach the same five places on a 375px screen. */}
-        <div className="sticky top-15 hidden h-[calc(100dvh-3.75rem)] md:block">
-          <Sidebar collapsible="none" className="w-52 border-e-0 bg-transparent">
+        <AppRail aria-label="Sections" from="md">
+          <Sidebar collapsible="none" variant="plain" width="sm">
             <SidebarContent aria-label="Main">
               <SidebarGroup>
                 <SidebarMenu>
                   {nav.map(({ route: target, label, icon: Icon }) => (
                     <SidebarMenuItem key={label}>
                       <SidebarMenuButton asChild isActive={route === target}>
-                        <a href={`#/${target}`}>
+                        <a href={`#/social/${target}`}>
                           <Icon aria-hidden="true" />
                           <SidebarLabel>{label}</SidebarLabel>
                           {label === 'Notifications' && unread > 0 && (
-                            <Badge status="info" className="ms-auto">
-                              {unread}
-                            </Badge>
+                            <SidebarMenuBadge>
+                              <Badge status="info">{unread}</Badge>
+                            </SidebarMenuBadge>
                           )}
                         </a>
                       </SidebarMenuButton>
@@ -151,88 +156,82 @@ export function App() {
               </SidebarGroup>
             </SidebarContent>
           </Sidebar>
-        </div>
+        </AppRail>
 
-        <main className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)] gap-4 p-4 pb-24 md:pb-4">
-          {profile ? (
-            <Profile person={profile} surface={surface} />
-          ) : route === 'explore' ? (
-            <Explore onOpen={(handle) => navigate(`profile/${handle}`)} />
-          ) : route === 'notifications' ? (
-            <Notifications />
-          ) : route === 'messages' ? (
-            <Messages />
-          ) : (
-            <>
-              {/* The other four routes name themselves on the screen and a
-                  timeline does not, so the page needs a heading it never shows.
-                  `sr-only` rather than `hidden`, which would take it out of the
-                  accessibility tree and leave the page unnamed either way. */}
-              <Heading as="h1" className="sr-only">
-                Home
-              </Heading>
+        <AppMain>
+          <Container width="full" gap="sm">
+            {profile ? (
+              <Profile person={profile} />
+            ) : route === 'explore' ? (
+              <Explore onOpen={(handle) => navigate(`profile/${handle}`)} />
+            ) : route === 'notifications' ? (
+              <Notifications />
+            ) : route === 'messages' ? (
+              <Messages />
+            ) : (
+              <>
+                {/* The other four routes name themselves on the screen and a
+                    timeline does not, so the page needs a heading it never
+                    shows — visually hidden rather than hidden, which would take
+                    it out of the accessibility tree and leave the page unnamed
+                    either way. */}
+                <VisuallyHidden asChild>
+                  <Heading as="h1">Home</Heading>
+                </VisuallyHidden>
 
-              <ExperimentBar
-                value={surface}
-                onChange={(next) => {
-                  setSurface(next);
-                  writeSurface(next);
-                }}
-              />
-              <Composer
-                onPublish={(text, audience, image) => {
-                  setPublished((all) => [
-                    {
-                      id: crypto.randomUUID(),
-                      handle: 'rin',
-                      when: `Now · ${audience}`,
-                      text,
-                      likes: 0,
-                      comments: 0,
-                      ...(image
-                        ? { media: { ratio: 16 / 9, caption: 'Demo image attachment' } }
-                        : {}),
-                    },
-                    ...all,
-                  ]);
-                }}
-              />
-              {feed.slice(0, shown).map((post) => (
-                <PostCard key={post.id} post={post} onDelete={setDeleting} surface={surface} />
-              ))}
+                <Composer
+                  onPublish={(text, audience, image) => {
+                    setPublished((all) => [
+                      {
+                        id: crypto.randomUUID(),
+                        handle: 'rin',
+                        when: `Now · ${audience}`,
+                        text,
+                        likes: 0,
+                        comments: 0,
+                        ...(image
+                          ? { media: { ratio: 16 / 9, caption: 'Demo image attachment' } }
+                          : {}),
+                      },
+                      ...all,
+                    ]);
+                  }}
+                />
+                {feed.slice(0, shown).map((post) => (
+                  <PostCard key={post.id} post={post} onDelete={setDeleting} />
+                ))}
 
-              {loadingMore && (
-                <output aria-busy="true" aria-label="Loading posts" className="grid gap-4">
-                  {/* A `Card`, because the thing it stands in for is a `Card`.
-                      This was three utilities typed by hand, which happened to
-                      draw a box the same size and shape and would have drifted
-                      away from PostCard the first time either changed. */}
-                  {[0, 1].map((n) => (
-                    <Card key={n} radius="lg" padding="none" className="grid gap-3 p-4">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="size-10 rounded-pill" />
-                        <div className="grid gap-2">
-                          <Skeleton className="h-3 w-32" />
-                          <Skeleton className="h-3 w-20" />
-                        </div>
-                      </div>
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-4/5" />
-                      <Skeleton className="h-44 w-full rounded-md" />
-                    </Card>
-                  ))}
-                </output>
-              )}
+                {loadingMore && (
+                  <Stack as="output" gap={4} aria-busy="true" aria-label="Loading posts">
+                    {/* A `Card`, because the thing it stands in for is a `Card`,
+                        so the two cannot drift apart in size or shape. */}
+                    {[0, 1].map((n) => (
+                      <Card key={n} radius="lg" padding="sm" gap={3}>
+                        <Inline gap={3}>
+                          <Skeleton shape="circle" />
+                          <Stack gap={2}>
+                            <Skeleton shape="caption" width="sm" />
+                            <Skeleton shape="caption" width="xs" />
+                          </Stack>
+                        </Inline>
+                        <Skeleton shape="caption" width="full" />
+                        <Skeleton shape="caption" width="4/5" />
+                        <Skeleton shape="media" width="full" />
+                      </Card>
+                    ))}
+                  </Stack>
+                )}
 
-              {shown < feed.length && !loadingMore && (
-                <Button variant="secondary" fullWidth onClick={() => setLoadingMore(true)}>
-                  Load more
-                </Button>
-              )}
-            </>
-          )}
-        </main>
-      </div>
+                {shown < feed.length && !loadingMore && (
+                  <Button variant="secondary" fullWidth onClick={() => setLoadingMore(true)}>
+                    Load more
+                  </Button>
+                )}
+              </>
+            )}
+          </Container>
+        </AppMain>
+      </AppBody>
 
       <AlertDialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
         <AlertDialogContent>
@@ -259,31 +258,23 @@ export function App() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* A phone-only bottom bar. Everything in it is reachable from the header
+      {/* A phone-only bottom bar. Everything in it is reachable from the rail
           on a wide screen, so it is hidden rather than duplicated there. */}
-      <nav
-        aria-label="Main"
-        className="fixed inset-x-0 bottom-0 z-sticky border-t border-line-subtle bg-page px-4 py-2 md:hidden"
-      >
-        <ul className="mx-auto flex max-w-2xl items-center justify-around">
-          {nav.map(({ route: target, label, icon: Icon }) => (
-            <li key={label}>
-              <Link
-                href={`#/${target}`}
-                aria-current={route === target ? 'page' : undefined}
-                variant="block"
-                className="relative flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-md px-2 text-caption text-fg-secondary [--icon-size:var(--icon-lg)] hover:text-fg aria-[current=page]:text-fg"
-              >
-                <Icon aria-hidden="true" />
-                {label}
-                {label === 'Notifications' && unread > 0 && (
-                  <span className="sr-only">, {unread} unread</span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
+      <BottomNav aria-label="Main">
+        {nav.map(({ route: target, label, icon: Icon }) => (
+          <BottomNavLink
+            key={label}
+            href={`#/social/${target}`}
+            icon={<Icon />}
+            current={route === target}
+          >
+            {label}
+            {label === 'Notifications' && unread > 0 && (
+              <VisuallyHidden>, {unread} unread</VisuallyHidden>
+            )}
+          </BottomNavLink>
+        ))}
+      </BottomNav>
+    </AppShell>
   );
 }
