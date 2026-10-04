@@ -160,7 +160,7 @@ export function ConversationSidebar({
                       <ContextMenuTrigger asChild>
                         <SidebarMenuButton asChild isActive={conversation.id === current}>
                           <a
-                            href={`#/claude/${conversation.id}`}
+                            href={`#/assistant/${conversation.id}`}
                             onClick={() => onPick(conversation.id)}
                           >
                             <SidebarLabel>{conversation.title}</SidebarLabel>

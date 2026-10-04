@@ -51,7 +51,7 @@ const HUB_LINKS = [
   { section: 'shop', title: 'Dusk — a kirua example' },
   { section: 'his', title: 'Larkspur — a kirua example' },
   { section: 'social', title: 'Commons — a kirua example' },
-  { section: 'claude', title: 'Claude — a kirua example' },
+  { section: 'assistant', title: 'Lumen — a kirua example' },
   { section: 'marketing', title: 'Aozora — a kirua example' },
 ];
 const server = await serve();
