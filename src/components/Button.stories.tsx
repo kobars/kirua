@@ -265,6 +265,31 @@ export const AsLink: Story = {
   ),
 };
 
+export const OnlyAChevronTurnsOver: Story = {
+  render: () => (
+    <div className="flex gap-3">
+      <Button variant="secondary" aria-expanded="true" trailingIcon={<ChevronDownIcon />}>
+        Open menu
+      </Button>
+      <Button variant="secondary" aria-expanded="true" trailingIcon={<ArrowRightIcon />}>
+        Open step
+      </Button>
+    </div>
+  ),
+  /**
+   * An expanded control turns its chevron over, and nothing else: an arrow
+   * turned over points backwards, which is a different instruction.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const icon = (name: string) =>
+      canvas.getByRole('button', { name }).querySelector('svg') as SVGElement;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    await expect(getComputedStyle(icon('Open menu')).rotate).toBe('180deg');
+    await expect(getComputedStyle(icon('Open step')).rotate).toBe('none');
+  },
+};
+
 export const JustifiedBetween: Story = {
   render: () => (
     <div className="w-72">
