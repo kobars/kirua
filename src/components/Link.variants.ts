@@ -33,7 +33,20 @@ export const linkVariants = cva(
     variants: {
       variant: {
         inline: 'text-fg-accent underline hover:text-fg',
-        block: 'hover:underline',
+        /**
+         * At least 24px tall, the WCAG 2.5.8 minimum for a target that is not
+         * inside a sentence: one line of body text is about 19px, and a name in
+         * a table row is exactly such a target. Flex centres the line in the
+         * extra height, and an inline-flex box still wraps a long title.
+         *
+         * The box is atomic, so a truncating parent cannot put its ellipsis
+         * inside it. `max-w-full` holds the link to the parent's width, and
+         * the text inside truncates itself:
+         * `<Link variant="block"><Text inline truncate>…</Text></Link>`.
+         * Never inside running text either: the 24px box would make its own
+         * line taller than the lines around it. That is `inline`'s job.
+         */
+        block: 'inline-flex min-h-6 max-w-full items-center hover:underline',
         /**
          * Underlined always, in the colour of the text around it: a link on a
          * tinted surface — an alert — where the accent colour was measured
