@@ -1,0 +1,13 @@
+The MIT License in LICENSE covers the code in this repository. It does not
+cover third-party artwork:
+
+- The character images in public/characters/ are fan renders of Killua Zoldyck
+  from Hunter x Hunter (Yoshihiro Togashi, Shueisha). They are shown for
+  non-commercial demonstration only and must be replaced in anything built on
+  this repository.
+- The hero design reproduced in src/patterns/AnimeHero.tsx, and the values
+  marked [FIGMA] in the stylesheets, come from "Figma Anime Website UI Design:
+  Futuristic & Interactive Hero Section" by @Dsingr on Figma Community. Its
+  rights remain with its author.
+
+See the License section of README.md.
