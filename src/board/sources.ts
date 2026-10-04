@@ -1,11 +1,10 @@
 /**
  * Where a bundle comes from, decided at build time and never by the app.
  *
- * The real `board/` is never committed, so it exists only on a machine that
- * keeps one. The committed sample under
- * `./sample` exists everywhere. `main.tsx` globs the real board and passes it
- * to `choose`; Storybook and tests import `sample` directly, so they render
- * the same board on every machine. The reasoning is written beside the sample
+ * An optional `board/` folder at the repository root, if present, is shown
+ * instead of the committed sample under `./sample`. `main.tsx` globs that
+ * folder and passes it to `choose`; Storybook and tests import `sample`
+ * directly, so they render the same board on every machine. The reasoning is written beside the sample
  * in `src/board/sample/index.md`.
  */
 
