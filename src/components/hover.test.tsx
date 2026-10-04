@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { cleanup, render } from '@/test/render';
+import { Button } from './Button';
 import { Table, TableBody, TableCell, TableCaption, TableRow } from './Table';
 import { Tabs, TabsList, TabsTrigger } from './Tabs';
 
@@ -73,4 +74,25 @@ describe('a pinned table cell takes the fill of its row', () => {
       if (state === 'hovered') expect(fill).not.toBe(resting);
     });
   }
+});
+
+describe('a hovered button still presses down', () => {
+  // A mouse press is a hover too, so a hover rule that outranks the press
+  // holds the button up for every click with a mouse. Space sets `:active`
+  // on a focused button, which stands in for holding the mouse button.
+  it('sinks below its resting position while pressed', async () => {
+    const container = render(<Button>Save</Button>);
+    const button = container.querySelector('[data-slot="button"]') as HTMLElement;
+
+    await userEvent.hover(button);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(getComputedStyle(button).translate).toBe('0px -2px');
+
+    button.focus();
+    await userEvent.keyboard('{Space>}');
+    expect(button.matches(':active')).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(getComputedStyle(button).translate).toBe('0px 2px');
+    await userEvent.keyboard('{/Space}');
+  });
 });
