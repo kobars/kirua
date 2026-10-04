@@ -15,10 +15,16 @@ import {
   CartIcon,
   Container,
   Eyebrow,
+  Grid,
   Heading,
+  Inline,
+  Placeholder,
+  Price,
   QuantityStepper,
+  Rating,
   Separator,
-  StarIcon,
+  Split,
+  Stack,
   Tabs,
   TabsContent,
   TabsList,
@@ -26,6 +32,7 @@ import {
   Text,
   ToggleGroup,
   ToggleGroupItem,
+  Visible,
 } from 'kirua';
 import { idr, type Product } from './data';
 
@@ -43,19 +50,23 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="#/">Catalogue</BreadcrumbLink>
+            <BreadcrumbLink href="#/shop/">Catalogue</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           {/* Three crumbs do not fit beside a product name at 320px, so the
               middle one collapses to an ellipsis there. It is `aria-hidden`,
               and the brand is a link on the page below, so nothing is lost to
               a screen reader — the crumb it replaces was a duplicate. */}
-          <BreadcrumbItem className="sm:hidden">
-            <BreadcrumbEllipsis />
-          </BreadcrumbItem>
-          <BreadcrumbItem className="hidden sm:flex">
-            <BreadcrumbLink href="#/">{product.brand}</BreadcrumbLink>
-          </BreadcrumbItem>
+          <Visible below="sm">
+            <BreadcrumbItem>
+              <BreadcrumbEllipsis />
+            </BreadcrumbItem>
+          </Visible>
+          <Visible from="sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#/shop/">{product.brand}</BreadcrumbLink>
+            </BreadcrumbItem>
+          </Visible>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage>{product.name}</BreadcrumbPage>
@@ -63,58 +74,53 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <Carousel label={`Photos of ${product.name}`} className="scroll-p-1 p-1">
+      <Grid md={2} gap={8}>
+        <Carousel label={`Photos of ${product.name}`} inset>
           {['Front', 'Side', 'Detail', 'Boxed'].map((view) => (
-            <CarouselItem key={view} className="w-[min(20rem,80vw)]">
-              <AspectRatio ratio={1} className="rounded-lg bg-sunken">
-                <div className="grid size-full place-content-center text-body-sm text-fg-muted">
-                  {view}
-                </div>
+            <CarouselItem key={view} size="md">
+              <AspectRatio ratio={1} radius="lg">
+                <Placeholder>
+                  <Text inline size="sm" tone="muted">
+                    {view}
+                  </Text>
+                </Placeholder>
               </AspectRatio>
             </CarouselItem>
           ))}
         </Carousel>
 
-        <div className="grid content-start gap-5">
-          <div className="grid gap-1">
+        <Stack gap={5}>
+          <Stack gap={1}>
             <Eyebrow>{product.brand}</Eyebrow>
             <Heading as="h1" size="heading-lg">
               {product.name}
             </Heading>
-            <p className="flex items-center gap-1.5 text-body-sm text-fg-secondary [--icon-size:var(--icon-sm)]">
-              <StarIcon aria-hidden="true" className="text-warning-solid" />
-              <span className="tabular-nums">{product.rating.toFixed(1)}</span>
-              <span className="text-fg-muted">· {product.reviews} reviews</span>
-            </p>
-          </div>
+            <Rating value={product.rating}>· {product.reviews} reviews</Rating>
+          </Stack>
 
-          <p className="flex flex-wrap items-baseline gap-3">
-            <span className="text-heading-lg font-semibold text-fg tabular-nums">
-              {idr(product.price)}
-            </span>
-            {product.was !== undefined && (
-              <span className="text-body-md text-fg-muted tabular-nums line-through">
-                {idr(product.was)}
-              </span>
-            )}
+          <Inline wrap align="baseline" gap={3}>
+            <Price
+              size="lg"
+              amount={idr(product.price)}
+              was={product.was === undefined ? undefined : idr(product.was)}
+            />
             <Badge status={product.stock > 5 ? 'success' : 'warning'}>
               {product.stock > 5 ? 'In stock' : `${product.stock} left`}
             </Badge>
-          </p>
+          </Inline>
 
-          <Text className="text-pretty">{product.blurb}</Text>
+          <Text wrap="pretty">{product.blurb}</Text>
 
           <Separator />
 
-          <div className="grid gap-2">
+          <Stack gap={2} align="start">
             {/* Not a `Label`: kirua types `htmlFor` as required, and there is
                 no single control to point at — a ToggleGroup is several. A
                 plain element referenced by `aria-labelledby` names the group,
                 which is what a group needs. */}
-            <span id="size-label" className="text-body-sm font-medium text-fg">
+            <Text inline id="size-label" size="sm" weight="medium" tone="primary">
               Size
-            </span>
+            </Text>
             <ToggleGroup
               type="single"
               value={size}
@@ -127,29 +133,30 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-          </div>
+          </Stack>
 
           <form
-            className="flex flex-wrap items-center gap-3"
             onSubmit={(event) => {
               event.preventDefault();
               onAdd(product, quantity);
             }}
           >
-            <QuantityStepper
-              label={`Quantity, ${product.name}`}
-              value={quantity}
-              min={1}
-              max={product.stock}
-              onDecrement={() => setQuantity((n) => n - 1)}
-              onIncrement={() => setQuantity((n) => n + 1)}
-            />
-            <Button size="lg" leadingIcon={<CartIcon />} className="grow" type="submit">
-              Add to cart
-            </Button>
+            <Split layout="fit-start" from="base" align="center" gap={3}>
+              <QuantityStepper
+                label={`Quantity, ${product.name}`}
+                value={quantity}
+                min={1}
+                max={product.stock}
+                onDecrement={() => setQuantity((n) => n - 1)}
+                onIncrement={() => setQuantity((n) => n + 1)}
+              />
+              <Button size="lg" leadingIcon={<CartIcon />} fullWidth type="submit">
+                Add to cart
+              </Button>
+            </Split>
           </form>
-        </div>
-      </div>
+        </Stack>
+      </Grid>
 
       <Tabs defaultValue="detail">
         <TabsList>
@@ -157,19 +164,21 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
           <TabsTrigger value="delivery">Delivery</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
-        <TabsContent value="detail" className="max-w-prose text-body-md text-fg-secondary">
-          <p>
+        <TabsContent value="detail">
+          <Text measure="prose">
             {product.blurb} In {product.colour.toLowerCase()}, available in{' '}
             {product.size.join(', ')}.
-          </p>
+          </Text>
         </TabsContent>
-        <TabsContent value="delivery" className="max-w-prose text-body-md text-fg-secondary">
-          <p>Shipped from Bandung within one working day. Free delivery over Rp 500,000.</p>
+        <TabsContent value="delivery">
+          <Text measure="prose">
+            Shipped from Bandung within one working day. Free delivery over Rp 500,000.
+          </Text>
         </TabsContent>
-        <TabsContent value="reviews" className="max-w-prose text-body-md text-fg-secondary">
-          <p>
+        <TabsContent value="reviews">
+          <Text measure="prose">
             {product.reviews} reviews, averaging {product.rating.toFixed(1)} out of 5.
-          </p>
+          </Text>
         </TabsContent>
       </Tabs>
     </Container>

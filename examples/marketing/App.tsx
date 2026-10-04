@@ -1,15 +1,23 @@
 import {
+  AppMain,
+  AppShell,
   Button,
   Container,
   DotGrid,
   IconButton,
+  Inline,
   NavBar,
   SearchIcon,
+  Separator,
   SparkleIcon,
+  Split,
+  Stack,
   Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  Visible,
+  Wordmark,
 } from 'kirua';
 import { ContactPage } from './ContactPage';
 import { GuidePage } from './GuidePage';
@@ -29,51 +37,61 @@ const ROUTES = [
 ];
 
 /**
- * A marketing site, which is the archetype the other four example apps are not:
+ * A marketing site, which is the archetype the other four sections are not:
  * anonymous, persuasive and typographic rather than signed in and task-oriented.
  *
  * That is why the black pill `NavBar` and the `SpotlightPanel` family live here.
  * They are the components the design system was reverse-engineered from, and
- * until this app existed the repository had no page that wanted them.
+ * this is the section whose pages want them.
  */
 export function App() {
-  const [route] = useHashRoute('');
+  const [route] = useHashRoute('marketing', '');
 
   const items = ROUTES.map((item) => ({
     label: item.label,
-    href: `#/${item.route}`,
+    href: `#/marketing/${item.route}`,
     current: item.route === route,
   }));
 
   return (
-    <div className="min-h-dvh overflow-x-clip bg-page text-fg">
-      <header className="mx-auto flex w-full max-w-7xl min-w-0 items-center gap-3 p-4 md:gap-4 md:px-8">
-        <NavBar aria-label="Main" items={items} className="min-w-0 flex-1" />
+    <AppShell>
+      <Stack as="header" gap={0}>
+        <Container width="7xl" pad="xs">
+          <Split layout="fit-end" from="base" align="center" gap={4}>
+            {/* The site's controls sit inside the pill, which sets `ctx-inverse`
+              for them, so the primary button renders as the white pill. */}
+            <NavBar
+              aria-label="Main"
+              items={items}
+              actions={
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <IconButton aria-label="Search the site" variant="ghost" size="md">
+                        <SearchIcon />
+                      </IconButton>
+                    </TooltipTrigger>
+                    <TooltipContent>Search the site</TooltipContent>
+                  </Tooltip>
 
-        <DotGrid rows={5} cols={5} className="hidden text-brand-vivid xl:block" />
+                  <ThemeMenu />
 
-        {/* [FIGMA] 70px, matching NavBar's own height. Arbitrary so it cannot
-            drift with --spacing. */}
-        {/* oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes */}
-        <div className="ctx-inverse flex h-[4.375rem] shrink-0 items-center gap-1 rounded-lg bg-page px-2 md:gap-2 md:px-3">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <IconButton aria-label="Search the site" variant="ghost" size="md">
-                <SearchIcon />
-              </IconButton>
-            </TooltipTrigger>
-            <TooltipContent>Search the site</TooltipContent>
-          </Tooltip>
+                  <Visible from="sm">
+                    <Button variant="primary" size="md" asChild>
+                      <a href="#/marketing/pricing">Start free</a>
+                    </Button>
+                  </Visible>
+                </>
+              }
+            />
+            <Visible from="xl">
+              <DotGrid rows={5} cols={5} tone="brand" />
+            </Visible>
+          </Split>
+        </Container>
+      </Stack>
 
-          <ThemeMenu />
-
-          <Button variant="primary" size="md" className="hidden sm:inline-flex" asChild>
-            <a href="#/pricing">Start free</a>
-          </Button>
-        </div>
-      </header>
-
-      <main>
+      <AppMain>
         {route === 'pricing' ? (
           <PricingPage />
         ) : route === 'story' ? (
@@ -85,22 +103,19 @@ export function App() {
         ) : (
           <HomePage />
         )}
-      </main>
+      </AppMain>
 
-      <footer>
-        <Container width="7xl" gap="sm" pad="lg">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line-subtle pt-6">
-            <span className="flex items-center gap-2 text-body-md font-semibold text-fg [--icon-size:var(--icon-lg)]">
-              <SparkleIcon aria-hidden="true" className="text-fg-accent" />
-              Aozora
-            </span>
-            <span className="flex-1" />
+      <Stack as="footer" gap={0}>
+        <Container width="7xl" gap="md" pad="lg">
+          <Separator />
+          <Inline wrap justify="between" gap={2}>
+            <Wordmark icon={<SparkleIcon />}>Aozora</Wordmark>
             <Text size="sm">
               An example application. Every pixel comes from the kirua design system.
             </Text>
-          </div>
+          </Inline>
         </Container>
-      </footer>
-    </div>
+      </Stack>
+    </AppShell>
   );
 }

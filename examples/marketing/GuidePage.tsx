@@ -31,8 +31,7 @@ const MANIFEST = `{
 }`;
 
 /**
- * Prose about code: the one kind of page this repository writes most and had no
- * screen for. It is where an inline `Code` earns its place — a file name or a
+ * Prose about code. It is where an inline `Code` earns its place — a file name or a
  * key in a sentence has nowhere else to go, because `CodeBlock` always draws a
  * bordered container and cannot sit on a line of text.
  */
@@ -52,17 +51,16 @@ export function GuidePage() {
 
       <Separator />
 
-      <div className="grid gap-4">
+      <Section gap="lg">
         <Heading as="h2" size="heading-md">
           The four steps
         </Heading>
-        {/* The numbers were drawn by hand here — a pill, a background token
-            and a hand-kept index. They are the list's own markers now, which
-            is what `List` is for. */}
+        {/* The step numbers are the list's own markers, which is what `List`
+            is for: no hand-kept index to fall out of step. */}
         <List variant="number">
           {PUBLISH_STEPS.map((step) => (
             <ListItem key={step.title}>
-              <Text inline tone="primary" className="font-medium">
+              <Text inline tone="primary" weight="medium">
                 {step.title}.
               </Text>{' '}
               {step.body}
@@ -73,19 +71,15 @@ export function GuidePage() {
         <Alert status="info">
           <AlertTitle>Nothing is published until you say so</AlertTitle>
           <AlertDescription>
-            A gallery stays private while you build it. Press
-            <span className="mx-1 inline-flex items-center gap-1">
-              <Kbd>⌘</Kbd>
-              <Kbd>Enter</Kbd>
-            </span>
-            in the editor to publish, and the same chord again to take it back down.
+            A gallery stays private while you build it. Press <Kbd>⌘</Kbd> <Kbd>Enter</Kbd> in
+            the editor to publish, and the same chord again to take it back down.
           </AlertDescription>
         </Alert>
-      </div>
+      </Section>
 
       <Separator />
 
-      <div className="grid gap-4">
+      <Section gap="lg">
         <Heading as="h2" size="heading-md">
           Getting your files back out
         </Heading>
@@ -113,12 +107,10 @@ export function GuidePage() {
           <Code>python -m http.server</Code> in the folder itself. Opening it needs no Aozora
           account, and it keeps working after the account is closed.
         </Text>
-      </div>
+      </Section>
 
       <Card variant="dark" padding="lg" glint="top-end">
-        <CardTitle as="h2" className="text-heading-lg">
-          Still stuck?
-        </CardTitle>
+        <CardTitle as="h2">Still stuck?</CardTitle>
         <CardBody>
           Write to us with the gallery handle and what you expected to happen. A person reads
           every message, and the reply time is one working day.

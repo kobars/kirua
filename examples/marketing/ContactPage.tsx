@@ -13,14 +13,16 @@ import {
   Eyebrow,
   Field,
   Heading,
+  Inline,
   Input,
-  Label,
   Section,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Split,
+  Stack,
   Text,
   Textarea,
   Toast,
@@ -68,13 +70,14 @@ export function ContactPage() {
         </Text>
       </Section>
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <Card padding="lg">
-          <CardTitle as="h2" className="text-heading-md">
+      <Split layout="wide-narrow" from="md" gap={4}>
+        <Card padding="lg" gap={4}>
+          <CardTitle as="h2" size="heading-md">
             Write to us
           </CardTitle>
-          <form
-            className="mt-4 grid gap-4"
+          <Stack
+            as="form"
+            gap={4}
             onSubmit={(event) => {
               event.preventDefault();
               setSubmitted(true);
@@ -108,21 +111,20 @@ export function ContactPage() {
               />
             </Field>
 
-            <div className="grid gap-1.5">
-              <Label htmlFor="contact-topic">What is this about?</Label>
-              <Select value={topic} onValueChange={setTopic}>
-                <SelectTrigger id="contact-topic">
+            <Select value={topic} onValueChange={setTopic}>
+              <Field controlId="contact-topic" label="What is this about?">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent aria-label="What is this about?">
-                  {TOPICS.map((entry) => (
-                    <SelectItem key={entry.id} value={entry.id}>
-                      {entry.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              </Field>
+              <SelectContent aria-label="What is this about?">
+                {TOPICS.map((entry) => (
+                  <SelectItem key={entry.id} value={entry.id}>
+                    {entry.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <Field
               controlId="contact-message"
@@ -138,25 +140,33 @@ export function ContactPage() {
               />
             </Field>
 
-            <div className="flex items-start gap-2">
+            <Field
+              orientation="horizontal"
+              controlId="contact-subscribe"
+              label={
+                <Text inline size="sm" weight="normal">
+                  Send me the monthly note about what changed. Roughly twelve emails a year.
+                </Text>
+              }
+            >
               <Checkbox
-                id="contact-subscribe"
                 checked={subscribe}
                 onCheckedChange={(next) => setSubscribe(next === true)}
               />
-              <Label htmlFor="contact-subscribe" className="font-normal text-fg-secondary">
-                Send me the monthly note about what changed. Roughly twelve emails a year.
-              </Label>
-            </div>
+            </Field>
 
-            <Button type="submit" variant="primary" size="md" className="justify-self-start">
-              Send message
-            </Button>
-          </form>
+            {/* A row, so the button keeps its own width while the fields above
+                take the column's. */}
+            <Inline>
+              <Button type="submit" variant="primary" size="md">
+                Send message
+              </Button>
+            </Inline>
+          </Stack>
         </Card>
 
-        <Card padding="lg" className="gap-4">
-          <CardTitle as="h2" className="text-heading-md">
+        <Card padding="lg" gap={4}>
+          <CardTitle as="h2" size="heading-md">
             The studio
           </CardTitle>
           <CardBody>
@@ -172,7 +182,7 @@ export function ContactPage() {
             ))}
           </DescriptionList>
         </Card>
-      </div>
+      </Split>
 
       <ToastViewport>
         {sent && (

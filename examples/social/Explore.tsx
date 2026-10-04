@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
   Button,
   Card,
-  CardBody,
   CloseIcon,
   EmptyState,
   Heading,
   IconButton,
+  Inline,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
@@ -21,6 +21,7 @@ import {
   ItemSeparator,
   ItemTitle,
   SearchIcon,
+  Stack,
   Text,
 } from 'kirua';
 import { compactCount, initials, people, posts, topics } from './data';
@@ -58,7 +59,7 @@ export function Explore({ onOpen }: ExploreProps) {
   }, [query]);
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-4">
+    <Stack gap={4}>
       <Heading as="h1" size="heading-sm">
         Explore
       </Heading>
@@ -79,7 +80,6 @@ export function Explore({ onOpen }: ExploreProps) {
               aria-label="Clear search"
               size="sm"
               variant="ghost"
-              className="-me-1.5"
               onClick={() => setQuery('')}
             >
               <CloseIcon />
@@ -88,7 +88,7 @@ export function Explore({ onOpen }: ExploreProps) {
         )}
       </InputGroup>
 
-      <ul className="flex flex-wrap gap-2">
+      <Inline as="ul" wrap gap={2}>
         {topics.map((item) => (
           <li key={item.id}>
             <Button
@@ -101,7 +101,7 @@ export function Explore({ onOpen }: ExploreProps) {
             </Button>
           </li>
         ))}
-      </ul>
+      </Inline>
 
       {handles.length === 0 && matchingPosts.length === 0 ? (
         <EmptyState
@@ -127,7 +127,7 @@ export function Explore({ onOpen }: ExploreProps) {
               const person = people[handle];
               if (!person) return null;
               return (
-                <div key={handle}>
+                <Fragment key={handle}>
                   {index > 0 && <ItemSeparator />}
                   <Item interactive onClick={() => onOpen(handle)}>
                     <ItemMedia>
@@ -139,36 +139,38 @@ export function Explore({ onOpen }: ExploreProps) {
                       <ItemTitle>{person.name}</ItemTitle>
                       <ItemDescription>{person.bio}</ItemDescription>
                     </ItemContent>
-                    <ItemActions className="text-caption text-fg-muted tabular-nums">
-                      {compactCount(person.followers)}
+                    <ItemActions>
+                      <Text inline size="caption" tone="muted" numeric>
+                        {compactCount(person.followers)}
+                      </Text>
                     </ItemActions>
                   </Item>
-                </div>
+                </Fragment>
               );
             })}
           </ItemGroup>
 
           {matchingPosts.length > 0 && (
-            <section className="grid gap-3">
+            <Stack as="section" gap={3}>
               <Heading as="h2" size="body-md">
                 Posts
               </Heading>
               {matchingPosts.map((post) => (
                 <Card key={post.id}>
-                  <CardBody>
+                  <Stack gap={1}>
                     <Text size="sm">
                       {people[post.handle]?.name ?? post.handle} · {post.when}
                     </Text>
-                    <Text tone="primary" className="mt-1 text-pretty">
+                    <Text tone="primary" wrap="pretty">
                       {post.text}
                     </Text>
-                  </CardBody>
+                  </Stack>
                 </Card>
               ))}
-            </section>
+            </Stack>
           )}
         </>
       )}
-    </div>
+    </Stack>
   );
 }

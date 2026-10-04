@@ -4,14 +4,18 @@ import {
   AvatarFallback,
   Button,
   Card,
+  Inline,
   Label,
   PlusIcon,
   Progress,
   SendIcon,
+  Split,
+  Stack,
   Text,
   Textarea,
   ToggleGroup,
   ToggleGroupItem,
+  VisuallyHidden,
 } from 'kirua';
 
 const LIMIT = 280;
@@ -47,40 +51,40 @@ export function Composer({
   const cannotSend = text.trim() === '' || (uploaded !== null && uploaded < 100);
 
   return (
-    <Card className="grid gap-3 p-4">
-      <div className="flex gap-3">
+    <Card padding="sm" gap={3}>
+      <Split layout="fit-start" from="base" gap={3} align="start">
         <Avatar size="md">
           <AvatarFallback>RN</AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
-          <Label htmlFor="compose" className="sr-only">
-            Write a post
-          </Label>
+        <Stack gap={0}>
+          <VisuallyHidden asChild>
+            <Label htmlFor="compose">Write a post</Label>
+          </VisuallyHidden>
           <Textarea
             id="compose"
+            variant="bare"
             rows={3}
             value={text}
             maxLength={LIMIT}
             placeholder="What are you working on?"
-            className="resize-none border-0 bg-transparent px-0 shadow-none"
             onChange={(event) => setText(event.target.value)}
           />
-        </div>
-      </div>
+        </Stack>
+      </Split>
 
       {uploaded !== null && (
-        <div className="grid gap-1.5">
-          <div className="flex items-baseline justify-between">
+        <Stack gap={1.5}>
+          <Inline justify="between" align="baseline">
             <Text size="sm">{uploaded < 100 ? 'Uploading the image…' : 'Image uploaded'}</Text>
-            <Text size="sm" tone="muted" inline className="tabular-nums">
+            <Text size="sm" tone="muted" inline numeric>
               {uploaded}%
             </Text>
-          </div>
+          </Inline>
           <Progress value={uploaded} aria-label="Image upload" />
-        </div>
+        </Stack>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <Inline wrap justify="between" gap={3}>
         <ToggleGroup
           type="single"
           value={audience}
@@ -100,7 +104,7 @@ export function Composer({
           ))}
         </ToggleGroup>
 
-        <div className="flex items-center gap-3">
+        <Inline gap={3}>
           <Button
             size="sm"
             variant="ghost"
@@ -112,15 +116,16 @@ export function Composer({
           >
             Image
           </Button>
-          <span
+          <Text
+            inline
+            size="sm"
+            numeric
             aria-live={left <= 20 ? 'polite' : 'off'}
-            className={[
-              'text-body-sm tabular-nums',
-              left <= 20 ? 'font-medium text-invalid' : 'text-fg-muted',
-            ].join(' ')}
+            tone={left <= 20 ? 'danger' : 'muted'}
+            weight={left <= 20 ? 'medium' : undefined}
           >
             {left}
-          </span>
+          </Text>
           <Button
             size="sm"
             trailingIcon={<SendIcon />}
@@ -137,8 +142,8 @@ export function Composer({
           >
             Send
           </Button>
-        </div>
-      </div>
+        </Inline>
+      </Inline>
     </Card>
   );
 }
