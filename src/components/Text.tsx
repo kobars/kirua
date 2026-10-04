@@ -16,11 +16,38 @@ export interface TextProps extends ComponentProps<'p'>, VariantProps<typeof text
  * @example
  * // Inside a sentence, quieter than the words around it.
  * <Text inline size="sm" tone="muted">12 items</Text>
+ *
+ * @example
+ * // A figure in a row of figures: tabular, and as loud as a label.
+ * <Text inline numeric weight="semibold" tone="primary">1,204</Text>
+ *
+ * @example
+ * // A count inside a control: the control's size and its pressed colour.
+ * <Toggle size="sm"><HeartIcon /><Text inline size="inherit" tone="inherit" numeric>{likes}</Text></Toggle>
  */
-export function Text({ inline = false, size, tone, className, ...props }: TextProps) {
+export function Text({
+  inline = false,
+  size,
+  tone,
+  weight,
+  numeric,
+  truncate,
+  wrap,
+  align,
+  measure,
+  className,
+  ...props
+}: TextProps) {
   const Comp = inline ? 'span' : 'p';
   return (
-    <Comp data-slot="text" className={cn(textVariants({ size, tone }), className)} {...props} />
+    <Comp
+      data-slot="text"
+      className={cn(
+        textVariants({ size, tone, weight, numeric, truncate, wrap, align, measure }),
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

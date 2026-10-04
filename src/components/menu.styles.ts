@@ -32,6 +32,15 @@ export const menuItemStyles = [
   'data-[disabled]:pointer-events-none data-[disabled]:text-fg-muted',
 ];
 
+/**
+ * A row that destroys something — delete, remove, leave. The colour is a
+ * second signal, never the only one: the label still has to say what goes.
+ */
+export const menuDangerItemStyles = 'text-danger-fg data-[highlighted]:text-danger-fg';
+
+/** Fixed widths for a menu whose labels would otherwise set an uneven one. */
+export const menuContentWidths = { md: 'w-56', lg: 'w-64' } as const;
+
 /** Extra inline padding on a row that reserves room for a tick or a dot. */
 export const menuIndicatorItemStyles = [...menuItemStyles, 'ps-9'];
 

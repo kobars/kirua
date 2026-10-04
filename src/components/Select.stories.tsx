@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { useState } from 'react';
 import { Field } from './Field';
 import {
   Select,
@@ -129,5 +130,126 @@ export const ChooseWithTheKeyboard: Story = {
     await waitFor(async () => {
       await expect(document.querySelector('[data-slot="select-content"]')).toBeNull();
     });
+  },
+};
+
+/** A long value is cut with an ellipsis instead of wrapping out of the
+ *  trigger's fixed height. */
+export const ALongValueIsCut: Story = {
+  render: (args) => (
+    <div className="w-40">
+      <Select {...args} defaultValue="ortho">
+        <SelectTrigger aria-label="Clinic">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent aria-label="Clinic">
+          <SelectItem value="ortho">Orthopaedics and sports medicine</SelectItem>
+          <SelectItem value="dental">Dental</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('combobox', { name: 'Clinic' });
+    const value = trigger.querySelector('span') as HTMLElement;
+
+    await expect(trigger.getBoundingClientRect().height).toBe(44);
+    await expect(getComputedStyle(value).textOverflow).toBe('ellipsis');
+    await expect(value.scrollWidth).toBeGreaterThan(value.clientWidth);
+  },
+};
+
+/**
+ * The list is capped by the room Radix measures, here a 320px box standing in
+ * for a short screen, so it scrolls instead of running past the edge.
+ */
+export const TheListFitsTheRoomItHas: Story = {
+  render: function Render(args) {
+    const [boundary, setBoundary] = useState<HTMLDivElement | null>(null);
+    return (
+      <div ref={setBoundary} className="h-80 w-72 overflow-hidden" data-testid="boundary">
+        <Select {...args}>
+          <SelectTrigger aria-label="Ward">
+            <SelectValue placeholder="Choose a ward" />
+          </SelectTrigger>
+          <SelectContent aria-label="Ward" collisionBoundary={boundary} container={boundary}>
+            {Array.from({ length: 24 }, (_, index) => (
+              <SelectItem key={index} value={`ward-${index + 1}`}>
+                Ward {index + 1}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox', { name: 'Ward' });
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+
+    const list = await within(document.body).findByRole('listbox');
+    const content = list.closest('[data-slot="select-content"]') as HTMLElement;
+    const bottom = canvas.getByTestId('boundary').getBoundingClientRect().bottom;
+    await waitFor(() =>
+      expect(content.getBoundingClientRect().bottom).toBeLessThanOrEqual(bottom),
+    );
+    await expect(content.getBoundingClientRect().height).toBeLessThan(288);
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(document.querySelector('[data-slot="select-content"]')).toBeNull(),
+    );
+  },
+};
+
+export const AFieldInsideTheSelect: Story = {
+  render: () => (
+    <Select defaultValue="general">
+      <Field controlId="ward" label="Clinic">
+        <SelectTrigger width="xs" data-testid="trigger">
+          <SelectValue />
+        </SelectTrigger>
+      </Field>
+      <SelectContent aria-label="Clinic">
+        {clinics.map(([value, label]) => (
+          <SelectItem key={value} value={value}>
+            {label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  ),
+  /**
+   * `Select` renders no element, so the `Field` can sit inside it and hand its
+   * id to the trigger — the focusable control the label must name.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox', { name: 'Clinic' });
+    await expect(trigger).toHaveAttribute('id', 'ward');
+  },
+};
+
+export const TriggerWidths: Story = {
+  render: () => (
+    <div className="grid gap-3">
+      {(['xs', 'sm', 'md', 'lg'] as const).map((width) => (
+        <Select key={width}>
+          <SelectTrigger width={width} aria-label={`Width ${width}`} data-testid={width}>
+            <SelectValue placeholder={`width="${width}"`} />
+          </SelectTrigger>
+          <SelectContent aria-label={`Width ${width}`}>
+            <SelectItem value="one">One</SelectItem>
+          </SelectContent>
+        </Select>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(Math.round(canvas.getByTestId('xs').getBoundingClientRect().width)).toBe(192);
+    await expect(Math.round(canvas.getByTestId('lg').getBoundingClientRect().width)).toBe(320);
   },
 };

@@ -8,7 +8,7 @@ export { AvatarStack, type AvatarStackProps, type AvatarItem } from './AvatarSta
 export { Badge, type BadgeProps } from './Badge';
 export { Alert, AlertTitle, AlertDescription, type AlertProps } from './Alert';
 export { alertVariants } from './Alert.variants';
-export { Field, type FieldProps } from './Field';
+export { Field, FieldLegend, FieldSet, type FieldProps } from './Field';
 export { Label, type LabelProps } from './Label';
 export { Input, type InputProps } from './Input';
 export { Textarea, type TextareaProps } from './Textarea';
@@ -37,6 +37,44 @@ export { Container, type ContainerProps } from './Container';
 export { containerVariants } from './Container.variants';
 export { Section, type SectionProps } from './Section';
 export { sectionVariants } from './Section.variants';
+export { type Gap, type ShellWidth } from './layout.styles';
+export { Stack, type StackProps, type StackElement } from './Stack';
+export { Inline, type InlineProps, type InlineElement } from './Inline';
+export { Grid, type GridProps, type GridElement } from './Grid';
+export { Split, type SplitProps } from './Split';
+export { Visible, type VisibleProps } from './Visible';
+export { VisuallyHidden, type VisuallyHiddenProps } from './VisuallyHidden';
+export {
+  AppShell,
+  AppHeader,
+  AppBody,
+  AppRail,
+  AppMain,
+  type AppShellProps,
+  type AppHeaderProps,
+  type AppBodyProps,
+  type AppRailProps,
+} from './AppShell';
+export {
+  Pane,
+  PaneHeader,
+  PaneBody,
+  PaneFooter,
+  type PaneProps,
+  type PaneBodyProps,
+} from './Pane';
+export { PageHeader, type PageHeaderProps } from './PageHeader';
+export { Placeholder, type PlaceholderProps } from './Placeholder';
+export { Price, type PriceProps } from './Price';
+export { Rating, type RatingProps } from './Rating';
+export { MessageBubble, type MessageBubbleProps } from './MessageBubble';
+export {
+  BottomNav,
+  BottomNavLink,
+  type BottomNavProps,
+  type BottomNavLinkProps,
+} from './BottomNav';
+export { Wordmark, type WordmarkProps } from './Wordmark';
 export { Link, type LinkProps } from './Link';
 export { linkVariants } from './Link.variants';
 export { Heading, type HeadingProps } from './Heading';
@@ -52,9 +90,12 @@ export {
   CardEyebrow,
   CardTitle,
   CardBody,
+  CardContent,
   CardFooter,
   type CardProps,
   type CardTitleProps,
+  type CardBodyProps,
+  type CardContentProps,
 } from './Card';
 export {
   SpotlightPanel,
@@ -62,6 +103,7 @@ export {
   SpotlightContent,
   type SpotlightPanelProps,
   type SpotlightMediaProps,
+  type SpotlightContentProps,
 } from './SpotlightPanel';
 
 export {
@@ -114,11 +156,11 @@ export {
   CommandEmpty,
   type CommandItemProps,
 } from './Command';
-export { Carousel, CarouselItem, type CarouselProps } from './Carousel';
+export { Carousel, CarouselItem, type CarouselProps, type CarouselItemProps } from './Carousel';
 export { QuantityStepper, type QuantityStepperProps } from './QuantityStepper';
 export { CodeBlock, type CodeBlockProps } from './CodeBlock';
 export { Code } from './Code';
-export { List, ListItem, type ListProps } from './List';
+export { List, ListItem, type ListProps, type ListItemProps } from './List';
 export { listVariants } from './List.variants';
 export {
   Table,
@@ -129,6 +171,8 @@ export {
   TableRow,
   TableHead,
   TableCell,
+  type TableHeadProps,
+  type TableCellProps,
 } from './Table';
 export {
   Breadcrumb,
@@ -181,6 +225,7 @@ export {
   SheetDescription,
   SheetFooter,
   type SheetContentProps,
+  type SheetFooterProps,
 } from './Sheet';
 export { sheetContentVariants } from './SheetContent.variants';
 export {
@@ -216,6 +261,7 @@ export {
   type ToggleGroupItemProps,
 } from './ToggleGroup';
 export { Kbd, type KbdProps } from './Kbd';
+export { NightSwatch, type NightSwatchProps, type NightPalette } from './NightSwatch';
 export { kbdVariants } from './Kbd.variants';
 
 export {
@@ -229,6 +275,7 @@ export {
   ItemSeparator,
   type ItemProps,
   type ItemGroupProps,
+  type ItemMediaProps,
 } from './Item';
 export { itemVariants } from './Item.variants';
 export { itemGroupVariants } from './ItemGroup.variants';
@@ -238,10 +285,17 @@ export {
   ButtonGroupText,
   ButtonGroupSeparator,
   type ButtonGroupProps,
+  type ButtonGroupTextProps,
 } from './ButtonGroup';
 export { buttonGroupVariants } from './ButtonGroup.variants';
 
-export { InputGroup, InputGroupInput, InputGroupAddon, InputGroupText } from './InputGroup';
+export {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupText,
+  type InputGroupProps,
+} from './InputGroup';
 
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './Collapsible';
 
@@ -292,6 +346,8 @@ export {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
+  type NavigationMenuContentProps,
+  type NavigationMenuLinkProps,
 } from './NavigationMenu';
 
 export {
@@ -311,9 +367,13 @@ export {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarLabel,
   SidebarSeparator,
   type SidebarProps,
+  type SidebarHeaderProps,
+  type SidebarFooterProps,
   type SidebarMenuButtonProps,
 } from './Sidebar';
 export { sidebarVariants } from './Sidebar.variants';

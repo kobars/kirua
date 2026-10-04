@@ -22,7 +22,7 @@ export interface EmptyStateProps extends Omit<ComponentProps<'div'>, 'title'> {
  * @example
  * <EmptyState
  *   icon={<SearchIcon size="2xl" />}
- *   title="No results for “kacamata”"
+ *   title="No results for “glasses”"
  *   description="Check the spelling, or search the whole catalogue."
  *   action={<Button variant="secondary">Clear filters</Button>}
  * />

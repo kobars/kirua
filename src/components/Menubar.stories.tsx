@@ -116,7 +116,10 @@ export const TheWholeBarIsOneTabStop: Story = {
     canvas.getByRole('button', { name: 'Before' }).focus();
 
     await userEvent.tab();
-    await expect(canvas.getByRole('menuitem', { name: 'File' })).toHaveFocus();
+    const file = canvas.getByRole('menuitem', { name: 'File' });
+    await expect(file).toHaveFocus();
+    await expect(getComputedStyle(file).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(file).outlineWidth).toBe('2px');
 
     await userEvent.keyboard('{ArrowRight}');
     await expect(canvas.getByRole('menuitem', { name: 'Edit' })).toHaveFocus();

@@ -39,7 +39,7 @@ export const InsideASentence: Story = {
 };
 
 export const TheWholeThingYouClick: Story = {
-  args: { variant: 'block', children: 'Kacamata bulat' },
+  args: { variant: 'block', children: 'Round Glasses' },
   render: (args) => (
     <div className="text-heading-md font-semibold text-fg">
       <Link {...args} />
@@ -47,7 +47,7 @@ export const TheWholeThingYouClick: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const link = canvas.getByRole('link', { name: 'Kacamata bulat' });
+    const link = canvas.getByRole('link', { name: 'Round Glasses' });
     const parent = link.parentElement!;
 
     await expect(getComputedStyle(link).textDecorationLine).toBe('none');
@@ -77,4 +77,23 @@ export const OnEverySurface: Story = {
       ))}
     </div>
   ),
+};
+
+export const InheritingTheSurroundingColour: Story = {
+  render: () => (
+    <Text tone="primary">
+      Fix the{' '}
+      <Link variant="inherit" href="#phone">
+        phone number
+      </Link>{' '}
+      before you continue.
+    </Text>
+  ),
+  /** Underlined, in the colour of the text it sits in rather than the accent. */
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'phone number' });
+    const text = link.parentElement!;
+    await expect(getComputedStyle(link).textDecorationLine).toBe('underline');
+    await expect(getComputedStyle(link).color).toBe(getComputedStyle(text).color);
+  },
 };

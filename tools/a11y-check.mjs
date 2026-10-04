@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Runs axe-core against every route of every example application, in light mode
- * and dark mode, and fails on a violation.
+ * Runs axe-core against every route of every section of the example app, in
+ * light mode and dark mode, and fails on a violation.
  *
  * ## Why this exists beside the Storybook run
  *
@@ -26,13 +26,17 @@
  * that can pass in one mode and fail in the other. Running light only would
  * check half of the shipped design.
  *
+ * Dark mode is five night palettes, each re-pointing the page, the card and
+ * the lines. The default night runs at both widths like light mode; the other
+ * four run at desktop width, because a night changes colours and not the tree.
+ *
  *     pnpm build:examples && node tools/a11y-check.mjs
  */
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
-import { APPS, eachRoute } from './example-apps.mjs';
+import { SECTIONS, eachRoute, open } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(
@@ -46,16 +50,25 @@ const AXE_SOURCE = await readFile(
  * A responsive shell does not resize — it *swaps*. `Sidebar` collapses to a rail
  * of icons, a `TabsList` becomes a `Select`, a row of buttons folds into a
  * menu. The narrow tree and the wide tree are different documents, so a name
- * that goes missing on the rail is invisible to a desktop-only run. That
- * failure is not hypothetical here: the rail losing every accessible name is
- * already recorded in `CLAUDE.md` under the `sr-only` rule.
+ * that goes missing on the rail is invisible to a desktop-only run: a rail
+ * whose labels are `hidden` rather than `sr-only` loses every accessible name,
+ * and only the narrow run sees it.
  */
 const WIDTHS = [
   { name: 'phone', width: 375, height: 812 },
   { name: 'desktop', width: 1280, height: 900 },
 ];
 
-const THEMES = ['light', 'dark'];
+const THEMES = [
+  { name: 'light', scheme: 'light', widths: WIDTHS },
+  { name: 'dark', scheme: 'dark', widths: WIDTHS },
+  ...['graphite', 'onyx', 'ink', 'carbon'].map((night) => ({
+    name: `dark/${night}`,
+    scheme: 'dark',
+    night,
+    widths: WIDTHS.filter((size) => size.name === 'desktop'),
+  })),
+];
 
 /**
  * `color-contrast` needs real painted pixels, and axe skips it when it cannot
@@ -72,22 +85,36 @@ const browser = await chromium.launch();
 const violations = [];
 let runs = 0;
 
-for (const theme of THEMES) {
-  for (const size of WIDTHS) {
+for (const { name: theme, scheme, night, widths } of THEMES) {
+  for (const size of widths) {
     const context = await browser.newContext({
       viewport: { width: size.width, height: size.height },
       deviceScaleFactor: 1,
-      colorScheme: theme,
+      colorScheme: scheme,
       isMobile: size.name === 'phone',
       hasTouch: size.name === 'phone',
     });
+    // The host document's blocking script reads the stored night before paint.
+    if (night)
+      await context.addInitScript((value) => {
+        try {
+          localStorage.setItem('kirua-night-palette', value);
+        } catch {
+          // The blank page between sections has no storage.
+        }
+      }, night);
     const page = await context.newPage();
 
-    await eachRoute(async ({ slug, label, url }) => {
-      await page.goto(url, { waitUntil: 'load' });
+    await eachRoute(async ({ section, label, url }) => {
+      await open(page, url);
       // A hash change does not reload the document, so React needs a frame to
       // render the new route before axe walks the tree.
       await page.waitForTimeout(250);
+      if (
+        night &&
+        (await page.evaluate(() => document.documentElement.dataset.nightPalette)) !== night
+      )
+        throw new Error(`${section} ${label}: the ${night} night was not applied`);
       await page.addScriptTag({ content: AXE_SOURCE });
 
       const result = await page.evaluate(
@@ -98,7 +125,7 @@ for (const theme of THEMES) {
 
       for (const violation of result.violations) {
         violations.push({
-          app: slug,
+          section,
           route: label,
           theme,
           width: size.name,
@@ -119,8 +146,8 @@ await browser.close();
 const IMPACT_ORDER = ['critical', 'serious', 'moderate', 'minor'];
 
 console.log(
-  `\naxe-core on ${APPS.length} apps, ${runs} route views ` +
-    `(${THEMES.join(' + ')} x ${WIDTHS.map((w) => w.name).join(' + ')}):\n`,
+  `\naxe-core on ${SECTIONS.length} sections, ${runs} route views ` +
+    `(${THEMES.map((theme) => `${theme.name} x ${theme.widths.map((w) => w.name).join(' + ')}`).join(', ')}):\n`,
 );
 
 if (violations.length === 0) {
@@ -132,7 +159,7 @@ if (violations.length === 0) {
 // defect to fix and eight lines of noise to read.
 const byRule = new Map();
 for (const v of violations) {
-  const key = `${v.rule}|${v.app}`;
+  const key = `${v.rule}|${v.section}`;
   const entry = byRule.get(key) ?? { ...v, routes: new Set(), where: new Set() };
   entry.routes.add(`${v.route} (${v.theme}/${v.width})`);
   for (const node of v.nodes) entry.where.add(node);
@@ -145,7 +172,7 @@ const grouped = [...byRule.values()].sort(
 
 console.table(
   grouped.map((g) => ({
-    app: g.app,
+    section: g.section,
     rule: g.rule,
     impact: g.impact,
     views: g.routes.size,
@@ -156,7 +183,7 @@ console.table(
 console.error('\na11y-check: axe reported violations on a composed screen.\n');
 for (const g of grouped) {
   console.error(`  ${g.impact.toUpperCase()} ${g.rule} — ${g.help}`);
-  console.error(`    ${g.app}: ${[...g.routes].slice(0, 6).join(', ')}`);
+  console.error(`    ${g.section}: ${[...g.routes].slice(0, 6).join(', ')}`);
   for (const where of [...g.where].slice(0, 4)) console.error(`      ${where}`);
   console.error('');
 }

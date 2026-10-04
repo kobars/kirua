@@ -1,7 +1,7 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { ThemedDocsContainer } from './ThemedDocsContainer';
 import { StorySurface } from './StorySurface';
-import { colourMode } from './theme';
+import { colourMode, nightPalette } from './theme';
 import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
@@ -10,6 +10,7 @@ import './docs.css';
 const withSurface: Decorator = (Story, context) => (
   <StorySurface
     mode={colourMode(context.globals)}
+    night={nightPalette(context.globals)}
     surface={context.globals['surface']}
     bare={context.parameters.surface === 'none'}
     fixedMode={context.storyGlobals?.['mode'] !== undefined}
@@ -21,7 +22,11 @@ const withSurface: Decorator = (Story, context) => (
 
 const preview: Preview = {
   decorators: [withSurface],
-  initialGlobals: { mode: 'light', surface: 'page' },
+  initialGlobals: {
+    mode: 'light',
+    surface: 'page',
+    nightPalette: 'navy',
+  },
   globalTypes: {
     mode: {
       description: 'Colour mode',
@@ -44,6 +49,22 @@ const preview: Preview = {
           { value: 'page', title: 'Page (default)' },
           { value: 'brand', title: 'Brand (ctx-brand)' },
           { value: 'inverse', title: 'Inverse (ctx-inverse)' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+    // Applies in dark mode only; a light page has no night.
+    nightPalette: {
+      description: 'Night palette of dark mode',
+      toolbar: {
+        title: 'Night',
+        icon: 'moon',
+        items: [
+          { value: 'navy', title: 'Navy night' },
+          { value: 'graphite', title: 'Graphite' },
+          { value: 'onyx', title: 'Onyx' },
+          { value: 'ink', title: 'Ink' },
+          { value: 'carbon', title: 'Carbon' },
         ],
         dynamicTitle: true,
       },

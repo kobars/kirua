@@ -6,19 +6,23 @@ import {
   AccordionTrigger,
   Button,
   Checkbox,
+  Field,
+  Grid,
   Heading,
   IconButton,
+  Inline,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  Label,
   MinusIcon,
   PlusIcon,
   RadioGroup,
   RadioGroupItem,
   SearchIcon,
   Slider,
+  Stack,
   Text,
+  Visible,
 } from 'kirua';
 import { brands, categories, colours, idr, sizes, type Category } from './data';
 import { emptyFilters, type FilterState } from './filterState';
@@ -35,7 +39,16 @@ export interface FiltersProps {
   onQueryChange: (next: string) => void;
   category: Category | 'all';
   onCategoryChange: (next: Category | 'all') => void;
+  /**
+   * Off inside the filter sheet, whose own title names the panel. The sheet's
+   * close control sits in its top-end corner, so the panel's buttons start on
+   * the row below the title instead of underneath that control.
+   */
+  heading?: boolean;
 }
+
+/** Every collapsible section, so "open all" has something to name. */
+const SECTIONS = ['category', 'price', 'brand', 'size'] as const;
 
 /**
  * The same component in two places: a column from `md` up, and inside a `Sheet`
@@ -43,9 +56,6 @@ export interface FiltersProps {
  * filter to open the colour filter would be maddening on a phone, which is the
  * whole difference between `single` and `multiple`.
  */
-/** Every collapsible section, so "open all" has something to name. */
-const SECTIONS = ['category', 'price', 'brand', 'size'] as const;
-
 export function Filters({
   value,
   onChange,
@@ -53,6 +63,7 @@ export function Filters({
   onQueryChange,
   category,
   onCategoryChange,
+  heading = true,
 }: FiltersProps) {
   const [open, setOpen] = useState<string[]>([...SECTIONS]);
 
@@ -65,12 +76,14 @@ export function Filters({
     });
 
   return (
-    <div className="grid gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <Heading as="h2" size="body-md">
-          Filter
-        </Heading>
-        <div className="flex items-center gap-1">
+    <Stack gap={4}>
+      <Inline justify={heading ? 'between' : 'end'} gap={3}>
+        {heading && (
+          <Heading as="h2" size="body-md">
+            Filter
+          </Heading>
+        )}
+        <Inline gap={1}>
           {/* Plus and minus, because the control does the opposite of what it
               shows: a minus closes what is open. A chevron would say
               "expand this one" and this one is all of them. */}
@@ -85,10 +98,10 @@ export function Filters({
           <Button variant="ghost" size="sm" onClick={() => onChange(emptyFilters)}>
             Reset
           </Button>
-        </div>
-      </div>
+        </Inline>
+      </Inline>
 
-      <div className="lg:hidden">
+      <Visible below="lg">
         <InputGroup>
           <InputGroupAddon>
             <SearchIcon />
@@ -100,7 +113,7 @@ export function Filters({
             onChange={(event) => onQueryChange(event.target.value)}
           />
         </InputGroup>
-      </div>
+      </Visible>
 
       <Accordion type="multiple" value={open} onValueChange={setOpen}>
         <AccordionItem value="category">
@@ -109,17 +122,20 @@ export function Filters({
             <RadioGroup
               value={category}
               onValueChange={(next) => onCategoryChange(next as Category | 'all')}
-              className="grid gap-2 pt-2"
+              gap={2}
             >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="all" id="category-all" />
-                <Label htmlFor="category-all">Everything</Label>
-              </div>
+              <Field orientation="horizontal" controlId="category-all" label="Everything">
+                <RadioGroupItem value="all" />
+              </Field>
               {categories.map((item) => (
-                <div key={item.id} className="flex items-center gap-2">
-                  <RadioGroupItem value={item.id} id={`category-${item.id}`} />
-                  <Label htmlFor={`category-${item.id}`}>{item.label}</Label>
-                </div>
+                <Field
+                  key={item.id}
+                  orientation="horizontal"
+                  controlId={`category-${item.id}`}
+                  label={item.label}
+                >
+                  <RadioGroupItem value={item.id} />
+                </Field>
               ))}
             </RadioGroup>
           </AccordionContent>
@@ -127,8 +143,8 @@ export function Filters({
 
         <AccordionItem value="price">
           <AccordionTrigger>Price</AccordionTrigger>
-          <AccordionContent className="pt-3">
-            <div className="grid gap-4 pt-2">
+          <AccordionContent>
+            <Stack gap={4}>
               <Slider
                 value={value.price}
                 min={0}
@@ -139,64 +155,73 @@ export function Filters({
                   onChange({ ...value, price: [low ?? 0, high ?? 800000] })
                 }
               />
-              <Text size="sm" className="tabular-nums">
+              <Text size="sm" numeric>
                 {idr(value.price[0])} – {idr(value.price[1])}
               </Text>
-            </div>
+            </Stack>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="brand">
           <AccordionTrigger>Brand</AccordionTrigger>
           <AccordionContent>
-            <div className="grid gap-3 pt-1">
+            <Stack gap={3}>
               {brands.map((brand) => (
-                <div key={brand} className="flex items-center gap-2">
+                <Field
+                  key={brand}
+                  orientation="horizontal"
+                  controlId={`brand-${brand}`}
+                  label={brand}
+                >
                   <Checkbox
-                    id={`brand-${brand}`}
                     checked={value.brands.includes(brand)}
                     onCheckedChange={() => toggle('brands', brand)}
                   />
-                  <Label htmlFor={`brand-${brand}`}>{brand}</Label>
-                </div>
+                </Field>
               ))}
-            </div>
+            </Stack>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="size">
           <AccordionTrigger>Size</AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-wrap gap-3 pt-1">
+            <Inline wrap gap={3}>
               {sizes.map((size) => (
-                <div key={size} className="flex items-center gap-2">
+                <Field
+                  key={size}
+                  orientation="horizontal"
+                  controlId={`size-${size}`}
+                  label={size}
+                >
                   <Checkbox
-                    id={`size-${size}`}
                     checked={value.sizes.includes(size)}
                     onCheckedChange={() => toggle('sizes', size)}
                   />
-                  <Label htmlFor={`size-${size}`}>{size}</Label>
-                </div>
+                </Field>
               ))}
-            </div>
+            </Inline>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="colour">
           <AccordionTrigger>Colour</AccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <Grid columns={2} gap={3}>
               {colours.map((colour) => (
-                <div key={colour} className="flex items-center gap-2">
+                <Field
+                  key={colour}
+                  orientation="horizontal"
+                  controlId={`colour-${colour}`}
+                  label={colour}
+                >
                   <Checkbox
-                    id={`colour-${colour}`}
                     checked={value.colours.includes(colour)}
                     onCheckedChange={() => toggle('colours', colour)}
                   />
-                  <Label htmlFor={`colour-${colour}`}>{colour}</Label>
-                </div>
+                </Field>
               ))}
-            </div>
+            </Grid>
           </AccordionContent>
         </AccordionItem>
 
@@ -204,7 +229,6 @@ export function Filters({
           <AccordionTrigger>Condition</AccordionTrigger>
           <AccordionContent>
             <RadioGroup
-              className="pt-1"
               value={value.condition}
               onValueChange={(condition) =>
                 onChange({ ...value, condition: condition as FilterState['condition'] })
@@ -218,15 +242,14 @@ export function Filters({
                   ['used', 'Used'],
                 ] as const
               ).map(([id, label]) => (
-                <div key={id} className="flex items-center gap-2">
-                  <RadioGroupItem value={id} id={`cond-${id}`} />
-                  <Label htmlFor={`cond-${id}`}>{label}</Label>
-                </div>
+                <Field key={id} orientation="horizontal" controlId={`cond-${id}`} label={label}>
+                  <RadioGroupItem value={id} />
+                </Field>
               ))}
             </RadioGroup>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    </div>
+    </Stack>
   );
 }

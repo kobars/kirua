@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { Button } from './Button';
-import { Card, CardBody, CardEyebrow, CardFooter, CardTitle } from './Card';
+import { Card, CardBody, CardContent, CardEyebrow, CardFooter, CardTitle } from './Card';
+import { List, ListItem } from './List';
 import { Stat, StatRow } from './Stat';
+import { Text } from './Text';
 import { ArrowRightIcon, BookmarkIcon, HeartIcon, SendIcon } from './icons';
 
 const meta = {
@@ -17,11 +20,11 @@ const meta = {
   },
   title: 'Components/Card',
   component: Card,
-  args: { variant: 'light', padding: 'lg', radius: 'xl' },
+  args: { variant: 'light', padding: 'lg', radius: 'card' },
   argTypes: {
     variant: { control: 'inline-radio', options: ['light', 'dark', 'brand', 'ghost'] },
     padding: { control: 'inline-radio', options: ['none', 'sm', 'md', 'lg'] },
-    radius: { control: 'inline-radio', options: ['md', 'lg', 'xl'] },
+    radius: { control: 'inline-radio', options: ['md', 'lg', 'card', 'xl'] },
   },
 } satisfies Meta<typeof Card>;
 
@@ -77,8 +80,8 @@ export const Paddings: Story = {
 
 export const Radii: Story = {
   render: () => (
-    <div className="grid gap-6 md:grid-cols-3">
-      {(['md', 'lg', 'xl'] as const).map((radius) => (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {(['md', 'lg', 'card', 'xl'] as const).map((radius) => (
         <Card key={radius} radius={radius} padding="md">
           <CardEyebrow>radius=&quot;{radius}&quot;</CardEyebrow>
           <CardBody className="mt-1">Glints, when enabled, follow the corner.</CardBody>
@@ -104,4 +107,154 @@ export const WithStats: Story = {
       </CardFooter>
     </Card>
   ),
+};
+
+const INNER_GAPS = [2, 3, 4, 5, 6] as const;
+
+export const Gaps: Story = {
+  render: () => (
+    <div className="grid gap-6 md:grid-cols-3">
+      {INNER_GAPS.map((gap) => (
+        <Card key={gap} gap={gap} padding="md" data-testid={`gap-${gap}`}>
+          <CardTitle as="h2" size="heading-sm">
+            gap={'{'}
+            {gap}
+            {'}'}
+          </CardTitle>
+          <CardBody>The card spaces its children; no margin on the paragraph.</CardBody>
+        </Card>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const gap of INNER_GAPS) {
+      await expect(getComputedStyle(canvas.getByTestId(`gap-${gap}`)).rowGap).toBe(
+        `${gap * 4}px`,
+      );
+    }
+  },
+};
+
+export const ABandWithClippedContent: Story = {
+  render: () => (
+    <div className="grid gap-6">
+      <Card variant="brand" padding="xl" glint={['top-start', 'bottom-end']} data-testid="band">
+        <CardBody size="lg">
+          “I moved four years of commissions across in an afternoon, and the export convinced me
+          before the import did.”
+        </CardBody>
+      </Card>
+      <Card padding="none" clip data-testid="clipped">
+        <div className="h-24 bg-sunken" />
+      </Card>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(getComputedStyle(canvas.getByTestId('clipped')).overflow).toBe('hidden');
+  },
+};
+
+export const TitleAndBodySizes: Story = {
+  render: () => (
+    <Card padding="md" gap={4}>
+      {(['display-md', 'heading-lg', 'heading-md', 'heading-sm', 'body-md'] as const).map(
+        (size) => (
+          <CardTitle key={size} as="h2" size={size} data-testid={size}>
+            size=&quot;{size}&quot;
+          </CardTitle>
+        ),
+      )}
+      <CardTitle as="h2" size="display-md" numeric data-testid="numeric">
+        $12{' '}
+        <Text inline size="md" weight="normal">
+          per month
+        </Text>
+      </CardTitle>
+      <CardBody size="md">A body paragraph at the default size.</CardBody>
+      <CardBody size="lg">A lead paragraph, one size up.</CardBody>
+    </Card>
+  ),
+  /** Only the size moves: the weight stays the title's. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const title = canvas.getByTestId('body-md');
+    await expect(getComputedStyle(title).fontWeight).toBe(
+      getComputedStyle(canvas.getByTestId('heading-lg')).fontWeight,
+    );
+    await expect(parseFloat(getComputedStyle(title).fontSize)).toBeLessThan(
+      parseFloat(getComputedStyle(canvas.getByTestId('heading-lg')).fontSize),
+    );
+    // A price as a title: tabular, in the title's face, not the display face.
+    const price = getComputedStyle(canvas.getByTestId('numeric'));
+    await expect(price.fontVariantNumeric).toBe('tabular-nums');
+    await expect(price.fontFamily).toBe(getComputedStyle(title).fontFamily);
+    await expect(getComputedStyle(title).getPropertyValue('text-wrap-style')).toBe('balance');
+  },
+};
+
+export const FillsItsCell: Story = {
+  render: () => (
+    <ul className="grid grid-cols-2 gap-4" data-testid="row">
+      {['Round glasses', 'A denim jacket with a name long enough to wrap twice'].map((name) => (
+        <li key={name}>
+          <Card padding="sm" gap={3} fill>
+            <CardContent grow>
+              <CardTitle size="body-md">{name}</CardTitle>
+            </CardContent>
+            <Button size="sm">Add to cart</Button>
+          </Card>
+        </li>
+      ))}
+    </ul>
+  ),
+  /** Both cards are as tall as the row, so their buttons sit on one line. */
+  play: async ({ canvasElement }) => {
+    const row = within(canvasElement).getByTestId('row');
+    const [first, second] = Array.from(row.querySelectorAll('[data-slot="button"]'));
+    await expect(Math.round(first!.getBoundingClientRect().bottom)).toBe(
+      Math.round(second!.getBoundingClientRect().bottom),
+    );
+  },
+};
+
+export const BlockContent: Story = {
+  render: () => (
+    <div className="grid gap-6 md:grid-cols-2">
+      {INNER_GAPS.map((gap) => (
+        <Card key={gap} padding="md" data-testid={`content-${gap}`}>
+          <CardTitle as="h2" size="heading-sm">
+            Visits this week
+          </CardTitle>
+          <CardContent gap={gap} grow={gap === 3}>
+            <List size="sm">
+              <ListItem>Monday — 42</ListItem>
+              <ListItem>Tuesday — 38</ListItem>
+            </List>
+            <CardBody>Updated an hour ago.</CardBody>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm" variant="secondary">
+              Open report
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  ),
+  /**
+   * Block content is a `div`: a list inside the `<p>` of `CardBody` is invalid
+   * HTML that a server render's parser would close early.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const content = canvas
+      .getByTestId('content-3')
+      .querySelector('[data-slot="card-content"]')!;
+
+    await expect(content.tagName).toBe('DIV');
+    await expect(content.querySelector('ul')).not.toBeNull();
+    await expect(getComputedStyle(content).flexGrow).toBe('1');
+  },
 };

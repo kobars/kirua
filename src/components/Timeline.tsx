@@ -17,16 +17,15 @@ import {
  * `<time datetime>`, a stepper marks its position with `aria-current="step"`.
  * A flag would have made one of those two wrong on every render.
  *
- * It replaced a two-column `<Table>` on the shop's order page. A table invites
- * comparison across rows; delivery history is a sequence. The test is the shape
- * of the data, not the word "history" — `simrs/PatientRecord.tsx` keeps its
- * six-column visit table, where you genuinely do compare across.
+ * A table invites comparison across rows; a delivery history is a sequence.
+ * The test is the shape of the data, not the word "history" — a six-column
+ * visit history, where you genuinely do compare across, stays a `Table`.
  *
  * @example
  * <Timeline>
  *   <TimelineItem>
  *     <TimelineTime dateTime="2026-03-11T09:12">11 Mar 2026, 09:12</TimelineTime>
- *     <Text size="sm" tone="primary">Tiba di gudang Bandung</Text>
+ *     <Text size="sm" tone="primary">Arrived at the Bandung warehouse</Text>
  *   </TimelineItem>
  * </Timeline>
  */

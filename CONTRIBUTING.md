@@ -1,8 +1,47 @@
 # Contributing to kirua
 
-Start with the README and Storybook's Design direction guide. The workspace
-currently develops one base style; proposals for more styles should show the
-same content in both an expressive screen and an everyday workflow.
+Start with the [README](README.md) and Storybook's **Design direction** guide.
+kirua has one base style, with Clay shapes and five night palettes for dark
+mode. Proposals for another style should show the same content in both an
+expressive screen and an everyday workflow.
+
+## Setup
+
+```bash
+pnpm install
+pnpm exec playwright install chromium webkit
+pnpm storybook
+```
+
+The test suite and the example-app checks run in real browsers, so the
+Playwright browsers are needed before `pnpm check` or `pnpm check:examples`.
+
+## Components
+
+A new or changed component follows the conventions the rest of the system
+already does:
+
+1. Props extend `ComponentProps<'tag'>`; `ref` reaches the rendered root
+   element; `className` is merged last through `cn()`; `{...props}` lands on
+   the element that carries the `data-slot` attribute.
+2. Colours come from the semantic token layer only — never a primitive such as
+   `bg-blue-600`, never a raw hex. A new colour role is added to
+   `src/styles/tokens.semantic.css` for every context and night, with its
+   reasoning beside it.
+3. Directional styles are logical (`ps-`, `me-`, `inset-s-`), never `left` or
+   `right`.
+4. Radix supplies behaviour; kirua files supply appearance. Do not hand-roll a
+   primitive Radix already covers. Exit animations are `@keyframes`, not
+   transitions.
+5. Components hold no state and read no browser API during render, so they
+   stay renderable on the server. No `"use client"` directives.
+6. Variant definitions live in a sibling `*.variants.ts` file, so a component
+   module exports components only.
+7. Sub-components are flat named exports, never static properties.
+8. A new custom scale name (text size, radius, font, shadow, animation,
+   duration) is also listed in `src/lib/cn.ts`, or conflicting classes stop
+   cancelling.
+9. The exported component has JSDoc with an `@example`.
 
 ## Documentation
 
@@ -39,6 +78,22 @@ provenance, compiler/linter directives and explanations of non-obvious behaviour
 Remove comments that repeat nearby code, narrate past work or defend routine choices.
 Put instructions for users in the visible docs instead of only above a story export.
 
+## The example app
+
+The example app in `examples/` is one hash-routed app with a hub and five
+sections. It is written only with kirua's components and their props:
+
+- No `className` and no `style` prop anywhere in `examples/**/*.tsx`.
+- `examples/styles.css` holds only `@import` and `@source` lines.
+- No raw HTML element where the system exports a component for it. A
+  legitimate exception takes a `dogfood-allow: <reason>` comment on the line
+  above.
+
+When a screen needs something the system cannot express, add the component or
+prop to the system — with its story and tests — rather than styling the screen.
+Every exported component should be placed by at least one section; a component
+that fits no section is better exempted with a reason than forced into one.
+
 ## Verification
 
 ```bash
@@ -56,9 +111,29 @@ pnpm exec vitest --run --project storybook:lg src/components/Field.stories.tsx
 Also check changed stories at `storybook:below-md` and `storybook:md`. The Storybook
 check builds the docs and exercises real toolbar mode changes, navigation, isolated
 previews and open portals. Review the built docs at narrow and wide widths. Test
-theme/surface controls on a story and open an overlay to inspect its portal. Changes to example applications also need
-`pnpm check:examples`.
+the Mode, Surface and Night controls on a story and open an overlay to inspect
+its portal.
+
+Changes to the example app, or to any component it uses, also need:
+
+```bash
+pnpm check:examples
+```
+
+It builds the app and runs the dogfood, usage, `className`, responsive,
+accessibility, performance and journey checks in order. Each also runs alone, for
+example `pnpm check:a11y`.
+
+Visual baselines in `src/components/__screenshots__` are committed. To approve an
+intended visual change, delete the affected PNG, re-run
+`pnpm exec vitest --run --project visual`, and commit the new PNG in the same
+change.
 
 Formatting checks include Storybook configuration, MDX and these public Markdown
 guides. Automated accessibility results cover tested states; also review keyboard
 navigation and composed-page semantics.
+
+## License
+
+By contributing, you agree that your contributions are licensed under the
+[MIT License](LICENSE) that covers this repository.

@@ -9,9 +9,9 @@ afterEach(cleanup);
  *
  * It is the only edge in this system that is not grey, and it exists so a box
  * can say it belongs to the brand rather than to the page — a message a person
- * wrote, beside one a machine did. The chat example is what needed it: a
- * question, the model's reasoning and a block of code were all
- * `border-line-subtle bg-sunken`, three meanings wearing one appearance.
+ * wrote, beside one a machine did. Without it a question, the model's
+ * reasoning and a block of code would be three meanings wearing one
+ * appearance.
  *
  * The reason this file exists rather than a comment beside the token: the four
  * values were chosen *by* their measured ratios, and a number nobody recomputes
@@ -30,12 +30,20 @@ afterEach(cleanup);
  */
 const BOUNDARY = 3;
 
-/** The four surfaces a component can find itself on. `page` is bare `:root`. */
+/**
+ * The surfaces a component can find itself on. `page` is bare `:root`; dark
+ * mode is measured once per night palette, because each night re-points the
+ * page, the card and the lines a field sits between.
+ */
 const CONTEXTS = [
-  ['page', ''],
-  ['brand', 'ctx-brand'],
-  ['inverse', 'ctx-inverse'],
-  ['dark', 'dark'],
+  ['page', '', undefined],
+  ['brand', 'ctx-brand', undefined],
+  ['inverse', 'ctx-inverse', undefined],
+  ['dark (navy)', 'dark', undefined],
+  ['dark (graphite)', 'dark', 'graphite'],
+  ['dark (onyx)', 'dark', 'onyx'],
+  ['dark (ink)', 'dark', 'ink'],
+  ['dark (carbon)', 'dark', 'carbon'],
 ] as const;
 
 /**
@@ -43,8 +51,9 @@ const CONTEXTS = [
  * probe outside it returns the `:root` value, so an audit written that way
  * measures the light palette four times and reports four passes.
  */
-function inContext(contextClass: string) {
-  const host = render(<div className={contextClass} />).firstElementChild as HTMLElement;
+function inContext(contextClass: string, night?: string) {
+  const host = render(<div className={contextClass} data-night-palette={night} />)
+    .firstElementChild as HTMLElement;
 
   const read = (token: string, backdrop?: Rgb): Rgb => {
     const probe = document.createElement('div');
@@ -58,9 +67,9 @@ function inContext(contextClass: string) {
   return { read, page: read('--color-surface-page') };
 }
 
-describe.each(CONTEXTS)('on %s', (contextName, contextClass) => {
+describe.each(CONTEXTS)('on %s', (contextName, contextClass, night) => {
   it('the accent edge is visible against the page behind it', () => {
-    const { read, page } = inContext(contextClass);
+    const { read, page } = inContext(contextClass, night);
     const ratio = contrastRatio(read('--color-border-accent', page), page);
 
     expect(
@@ -82,9 +91,9 @@ describe.each(CONTEXTS)('on %s', (contextName, contextClass) => {
  */
 const WITH_A_SUBTLE_FILL = CONTEXTS.filter(([name]) => name !== 'brand');
 
-describe.each(WITH_A_SUBTLE_FILL)('on %s', (contextName, contextClass) => {
+describe.each(WITH_A_SUBTLE_FILL)('on %s', (contextName, contextClass, night) => {
   it('the accent edge is visible against the fill it encloses', () => {
-    const { read, page } = inContext(contextClass);
+    const { read, page } = inContext(contextClass, night);
     const fill = read('--color-surface-brand-subtle', page);
     const ratio = contrastRatio(read('--color-border-accent', fill), fill);
 
@@ -106,13 +115,12 @@ describe.each(WITH_A_SUBTLE_FILL)('on %s', (contextName, contextClass) => {
  * On a blue panel the accent colour *is* white — `--color-text-accent` is white
  * there for the same reason — and white is also the strongest neutral edge
  * available. The two genuinely coincide, so asserting they differ would be
- * asserting that a blue panel has a colour it does not have. Written down here
- * because the first version of this test failed on exactly that and the failure
- * was the test being wrong, not the token.
+ * asserting that a blue panel has a colour it does not have. A failure there
+ * would be the test being wrong, not the token.
  */
-describe.each(CONTEXTS)('on %s', (contextName, contextClass) => {
+describe.each(CONTEXTS)('on %s', (contextName, contextClass, night) => {
   it('the accent edge differs from the neutral edges', () => {
-    const { read, page } = inContext(contextClass);
+    const { read, page } = inContext(contextClass, night);
     const accent = read('--color-border-accent', page);
 
     const neutrals = ['--color-border-subtle', '--color-border-default'];

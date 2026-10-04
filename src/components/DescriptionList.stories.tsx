@@ -50,7 +50,7 @@ export const Layouts: Story = {
           <DescriptionTerm>Layout</DescriptionTerm>
           <DescriptionDetails>{layout}</DescriptionDetails>
           <DescriptionTerm>Address</DescriptionTerm>
-          <DescriptionDetails>Jalan Cendana 14, Yogyakarta 55223</DescriptionDetails>
+          <DescriptionDetails>14 Cendana Street, Yogyakarta 55223</DescriptionDetails>
         </DescriptionList>
       ))}
     </div>

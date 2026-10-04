@@ -1,24 +1,29 @@
 import type { PropsWithChildren } from 'react';
 import { TooltipProvider } from '../src/components';
 import { useDocumentMode, useEmbeddedGlobals } from './previewMode';
-import type { Mode } from './theme';
+import type { Mode, Night } from './theme';
 
 export function StorySurface({
   children,
   mode,
+  night,
   surface,
   bare,
   fixedMode,
   fixedSurface,
 }: PropsWithChildren<{
   mode: Mode;
+  night: Night;
   surface: unknown;
   bare: boolean;
   fixedMode: boolean;
   fixedSurface: boolean;
 }>) {
   const embedded = useEmbeddedGlobals();
-  useDocumentMode(!fixedMode && embedded ? embedded.mode : mode);
+  useDocumentMode(
+    !fixedMode && embedded ? embedded.mode : mode,
+    !fixedMode && embedded ? embedded.night : night,
+  );
   if (!fixedSurface && embedded) surface = embedded.surface;
   const surfaceClass =
     surface === 'brand'

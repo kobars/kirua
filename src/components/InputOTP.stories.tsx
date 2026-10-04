@@ -54,7 +54,11 @@ function Code({
       />
       <InputOTPGroup>
         {Array.from({ length }, (_, index) => (
-          <InputOTPSlot key={index} char={code[index]} isActive={code.length === index} />
+          <InputOTPSlot
+            key={index}
+            char={code[index]}
+            isActive={index === Math.min(code.length, length - 1)}
+          />
         ))}
       </InputOTPGroup>
     </InputOTP>
@@ -84,11 +88,19 @@ export const Grouped: Story = {
         />
         <InputOTPGroup>
           {[0, 1, 2].map((index) => (
-            <InputOTPSlot key={index} char={code[index]} isActive={code.length === index} />
+            <InputOTPSlot
+              key={index}
+              char={code[index]}
+              isActive={index === Math.min(code.length, 5)}
+            />
           ))}
           <InputOTPSeparator />
           {[3, 4, 5].map((index) => (
-            <InputOTPSlot key={index} char={code[index]} isActive={code.length === index} />
+            <InputOTPSlot
+              key={index}
+              char={code[index]}
+              isActive={index === Math.min(code.length, 5)}
+            />
           ))}
         </InputOTPGroup>
       </InputOTP>
@@ -145,5 +157,46 @@ export const ItKeepsOnlyDigitsAndOnlyAsManyAsFit: Story = {
 
     await userEvent.paste('56789');
     await expect(input.value).toBe('123456');
+  },
+};
+
+/**
+ * The ring and the caret follow real focus: none on a page that has just
+ * loaded, the first box once focused, and still the last box when the code is
+ * full, including over an invalid code's red border.
+ */
+export const TheCueFollowsFocus: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <Code />
+      <Code length={4} initial="1234" invalid />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const [first, second] = Array.from(
+      canvasElement.querySelectorAll<HTMLElement>('[data-slot="input-otp"]'),
+    );
+    const slots = (root: HTMLElement | undefined) =>
+      Array.from(root?.querySelectorAll<HTMLElement>('[data-slot="input-otp-slot"]') ?? []);
+    const outline = (el: HTMLElement | undefined) =>
+      getComputedStyle(el as HTMLElement).outlineStyle;
+    const caret = first?.querySelector<HTMLElement>('[data-slot="input-otp-caret"]');
+
+    await expect(outline(slots(first)[0])).toBe('none');
+    await expect(getComputedStyle(caret as HTMLElement).display).toBe('none');
+
+    const input = first?.querySelector('input') as HTMLInputElement;
+    input.focus();
+    await expect(outline(slots(first)[0])).toBe('solid');
+    await expect(getComputedStyle(caret as HTMLElement).display).toBe('block');
+
+    await userEvent.keyboard('123456');
+    await expect(input.value).toBe('123456');
+    await expect(outline(slots(first)[5])).toBe('solid');
+    await expect(first?.querySelector('[data-slot="input-otp-caret"]')).toBeNull();
+
+    const invalid = second?.querySelector('input') as HTMLInputElement;
+    invalid.focus();
+    await expect(outline(slots(second)[3])).toBe('solid');
   },
 };

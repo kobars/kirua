@@ -109,3 +109,34 @@ export const ArrowKeysMoveInsideOneTabStop: Story = {
     await expect(list).toHaveFocus();
   },
 };
+
+export const WrapsOntoASecondLine: Story = {
+  render: () => (
+    <div className="w-64">
+      <ToggleGroup
+        type="single"
+        defaultValue="09:00"
+        aria-label="Time"
+        wrap
+        data-testid="group"
+      >
+        {['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30'].map(
+          (time) => (
+            <ToggleGroupItem key={time} value={time} variant="outline">
+              {time}
+            </ToggleGroupItem>
+          ),
+        )}
+      </ToggleGroup>
+    </div>
+  ),
+  /** Eight slots in a 256px column run onto more lines instead of overflowing it. */
+  play: async ({ canvasElement }) => {
+    const group = within(canvasElement).getByTestId('group');
+    const tops = new Set(
+      Array.from(group.children).map((item) => Math.round(item.getBoundingClientRect().top)),
+    );
+    await expect(tops.size).toBeGreaterThan(1);
+    await expect(group.scrollWidth).toBeLessThanOrEqual(group.clientWidth);
+  },
+};

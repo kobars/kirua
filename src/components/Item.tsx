@@ -4,6 +4,7 @@ import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
 import { itemVariants } from './Item.variants';
 import { itemGroupVariants } from './ItemGroup.variants';
+import { itemMediaVariants } from './ItemMedia.variants';
 
 export interface ItemProps extends ComponentProps<'div'>, VariantProps<typeof itemVariants> {
   asChild?: boolean;
@@ -32,12 +33,21 @@ export interface ItemProps extends ComponentProps<'div'>, VariantProps<typeof it
  *   </Item>
  * </ItemGroup>
  */
-export function Item({ className, variant, size, interactive, asChild, ...props }: ItemProps) {
+export function Item({
+  className,
+  variant,
+  size,
+  interactive,
+  inset,
+  align,
+  asChild,
+  ...props
+}: ItemProps) {
   const Root = asChild ? Slot : 'div';
   return (
     <Root
       data-slot="item"
-      className={cn(itemVariants({ variant, size, interactive }), className)}
+      className={cn(itemVariants({ variant, size, interactive, inset, align }), className)}
       {...props}
     />
   );
@@ -56,12 +66,26 @@ export function ItemGroup({ className, variant, ...props }: ItemGroupProps) {
   );
 }
 
-/** The leading figure — an avatar, an icon, a thumbnail. Never grows. */
-export function ItemMedia({ className, ...props }: ComponentProps<'div'>) {
+export interface ItemMediaProps
+  extends ComponentProps<'div'>, VariantProps<typeof itemMediaVariants> {}
+
+/**
+ * What leads the row — an avatar, an icon, a thumbnail, or a short figure.
+ * Never grows.
+ *
+ * @example
+ * <Item asChild interactive size="sm">
+ *   <a href="#/visits/14">
+ *     <ItemMedia variant="figure">09:30</ItemMedia>
+ *     <ItemContent><ItemTitle>Siti Rahma</ItemTitle></ItemContent>
+ *   </a>
+ * </Item>
+ */
+export function ItemMedia({ className, variant, ...props }: ItemMediaProps) {
   return (
     <div
       data-slot="item-media"
-      className={cn('flex shrink-0 items-center justify-center text-fg-muted', className)}
+      className={cn(itemMediaVariants({ variant }), className)}
       {...props}
     />
   );

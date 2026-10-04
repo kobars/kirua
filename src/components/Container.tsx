@@ -10,8 +10,8 @@ export interface ContainerProps
  * One page's shell: centred, width-limited, padded, and safe to put a table in.
  *
  * The tidier markup is a side effect. The argument is the grid column — see
- * `Container.variants.ts`. A rule people have to know became a default they get
- * for free, and the rule had already been missed five times.
+ * `Container.variants.ts`: a rule people would have to know is a default they
+ * get for free.
  *
  * @example
  * <Container width="3xl" pad="md">

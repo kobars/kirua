@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
+import { useState } from 'react';
 import { Badge } from './Badge';
 import {
   Table,
@@ -31,32 +32,32 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const visits = [
-  ['07:30', 'Siti Rahayu', 'General practice', 'dr. Andi', 'success', 'Done'],
-  ['08:00', 'Budi Santoso', 'Dental', 'drg. Maya', 'warning', 'Waiting'],
-  ['08:15', 'Ayu Lestari', 'Paediatrics', 'dr. Rina', 'info', 'In consultation'],
-  ['09:00', 'Joko Widodo', 'Ophthalmology', 'dr. Hendra', 'neutral', 'Scheduled'],
+  ['7:30 AM', 'Maria Gonzalez', 'Family Medicine', 'Andrew Park, MD', 'success', 'Completed'],
+  ['8:00 AM', 'James Whitaker', 'Orthopedics', 'Thomas Brennan, MD', 'warning', 'Checked in'],
+  ['8:15 AM', 'Aaliyah Johnson', 'Pediatrics', 'Rachel Levin, MD', 'info', 'With provider'],
+  ['9:00 AM', 'Robert Chen', 'Ophthalmology', 'Mei Zhao, MD', 'neutral', 'Scheduled'],
 ] as const;
 
 export const Playground: Story = {
   render: (args) => (
     <Table {...args}>
-      <TableCaption>Today's visits — 4 patients</TableCaption>
+      <TableCaption>Today's appointments — 4 patients</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Time</TableHead>
           <TableHead>Patient</TableHead>
-          <TableHead>Clinic</TableHead>
-          <TableHead>Doctor</TableHead>
+          <TableHead>Department</TableHead>
+          <TableHead>Provider</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {visits.map(([time, patient, clinic, doctor, status, label]) => (
+        {visits.map(([time, patient, department, provider, status, label]) => (
           <TableRow key={patient}>
             <TableCell className="tabular-nums">{time}</TableCell>
             <TableCell className="font-medium text-fg">{patient}</TableCell>
-            <TableCell>{clinic}</TableCell>
-            <TableCell>{doctor}</TableCell>
+            <TableCell>{department}</TableCell>
+            <TableCell>{provider}</TableCell>
             <TableCell>
               <Badge status={status}>{label}</Badge>
             </TableCell>
@@ -76,24 +77,24 @@ export const Playground: Story = {
 export const RowHeaders: Story = {
   render: (args) => (
     <Table {...args}>
-      <TableCaption>Fee by clinic</TableCaption>
+      <TableCaption>Office visit charge by department</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Clinic</TableHead>
+          <TableHead>Department</TableHead>
           <TableHead>Self-pay</TableHead>
-          <TableHead>BPJS</TableHead>
+          <TableHead>Medicare allowed</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableHead scope="row">General practice</TableHead>
-          <TableCell>Rp 75,000</TableCell>
-          <TableCell>Rp 0</TableCell>
+          <TableHead scope="row">Family Medicine</TableHead>
+          <TableCell>$165.00</TableCell>
+          <TableCell>$92.47</TableCell>
         </TableRow>
         <TableRow>
-          <TableHead scope="row">Dental</TableHead>
-          <TableCell>Rp 150,000</TableCell>
-          <TableCell>Rp 25,000</TableCell>
+          <TableHead scope="row">Cardiology</TableHead>
+          <TableCell>$310.00</TableCell>
+          <TableCell>$131.28</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -107,19 +108,21 @@ export const AWideTableScrollsItself: Story = {
         <TableCaption className="sr-only">A table wider than its frame</TableCaption>
         <TableHeader>
           <TableRow>
-            {['Time', 'Patient', 'Clinic', 'Doctor', 'Reason', 'Status'].map((h) => (
-              <TableHead key={h}>{h}</TableHead>
-            ))}
+            {['Time', 'Patient', 'Department', 'Provider', 'Reason for visit', 'Status'].map(
+              (h) => (
+                <TableHead key={h}>{h}</TableHead>
+              ),
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell>07:30</TableCell>
-            <TableCell>Siti Rahayu</TableCell>
-            <TableCell>General practice</TableCell>
-            <TableCell>dr. Andi Wijaya</TableCell>
-            <TableCell>General examination</TableCell>
-            <TableCell>Done</TableCell>
+            <TableCell>7:30 AM</TableCell>
+            <TableCell>Maria Gonzalez</TableCell>
+            <TableCell>Family Medicine</TableCell>
+            <TableCell>Andrew Park, MD</TableCell>
+            <TableCell>Annual physical</TableCell>
+            <TableCell>Completed</TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -136,5 +139,96 @@ export const AWideTableScrollsItself: Story = {
     await expect(frame.scrollWidth).toBe(frame.clientWidth);
     // A scrolling region has to be reachable by keyboard.
     await expect(scroller).toHaveAttribute('tabindex', '0');
+  },
+};
+
+export const NumericToneAndNowrap: Story = {
+  render: () => (
+    <Table>
+      <TableCaption>Stock on hand</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Medication</TableHead>
+          <TableHead>Expires</TableHead>
+          <TableHead>Stock</TableHead>
+          <TableHead>Note</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell tone="primary">amoxicillin 500 MG Oral Capsule</TableCell>
+          <TableCell nowrap tone="secondary" data-testid="nowrap">
+            Mar 12, 2027
+          </TableCell>
+          <TableCell numeric data-testid="numeric">
+            1,240
+          </TableCell>
+          <TableCell tone="muted">Par level 200</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(getComputedStyle(canvas.getByTestId('numeric')).fontVariantNumeric).toBe(
+      'tabular-nums',
+    );
+    await expect(getComputedStyle(canvas.getByTestId('nowrap')).whiteSpace).toBe('nowrap');
+  },
+};
+
+function SortableTable() {
+  const [up, setUp] = useState(true);
+  const rows = [
+    ['Acetaminophen', 820],
+    ['Amoxicillin', 1240],
+    ['Ibuprofen', 310],
+  ] as const;
+  const sorted = [...rows].sort((a, b) => (up ? a[1] - b[1] : b[1] - a[1]));
+  return (
+    <Table>
+      <TableCaption>Medications by stock</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Medication</TableHead>
+          <TableHead sort={up ? 'ascending' : 'descending'} onSort={() => setUp(!up)}>
+            Stock
+          </TableHead>
+          <TableHead sort="none" onSort={() => undefined}>
+            Bin
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {sorted.map(([name, stock]) => (
+          <TableRow key={name}>
+            <TableCell>{name}</TableCell>
+            <TableCell numeric>{stock}</TableCell>
+            <TableCell>A-12</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+export const SortableColumns: Story = {
+  render: () => <SortableTable />,
+  /**
+   * `aria-sort` is on the header cell, where a screen reader reads it, and the
+   * button inside it is what changes it.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByRole('columnheader', { name: 'Stock' });
+
+    await expect(header).toHaveAttribute('aria-sort', 'ascending');
+    await expect(canvas.getByRole('columnheader', { name: 'Bin' })).toHaveAttribute(
+      'aria-sort',
+      'none',
+    );
+    await userEvent.click(within(header).getByRole('button', { name: 'Stock' }));
+    await expect(header).toHaveAttribute('aria-sort', 'descending');
+    await expect(canvas.getAllByRole('row')[1]).toHaveTextContent('Amoxicillin');
   },
 };

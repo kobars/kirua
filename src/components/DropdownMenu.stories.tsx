@@ -102,8 +102,7 @@ export const KeyboardNavigation: Story = {
     // Opened with the **keyboard**, and the distinction is real: a mouse click
     // opens the menu and deliberately leaves focus on the trigger, while Enter
     // opens it and moves focus to the first item. Driving this with `click`
-    // silently tests the mouse path, and the first draft of this story did
-    // exactly that and failed here.
+    // would silently test the mouse path and fail here.
     trigger.focus();
     await userEvent.keyboard('{Enter}');
     await screen.findByRole('menu');

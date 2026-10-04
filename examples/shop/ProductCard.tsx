@@ -3,11 +3,16 @@ import {
   Badge,
   Button,
   Card,
+  CardContent,
   CardTitle,
   CartIcon,
   Eyebrow,
+  Inline,
   Link,
-  StarIcon,
+  Placeholder,
+  Price,
+  Rating,
+  Stack,
 } from 'kirua';
 import { idr, type Product } from './data';
 
@@ -18,52 +23,37 @@ export interface ProductCardProps {
 
 export function ProductCard({ product, onAdd }: ProductCardProps) {
   return (
-    <Card className="flex h-full flex-col gap-3 p-4">
+    <Card padding="sm" gap={3} fill>
       {/* The box is reserved before anything fills it, so a grid of nine
           products cannot reflow as they arrive. */}
-      <AspectRatio ratio={1} className="rounded-md bg-sunken">
-        <div
-          aria-hidden="true"
-          className="grid size-full place-content-center text-display-md text-fg-muted"
-        >
-          {product.name.charAt(0)}
-        </div>
+      <AspectRatio ratio={1} radius="md">
+        <Placeholder>{product.name.charAt(0)}</Placeholder>
       </AspectRatio>
 
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <Eyebrow>{product.brand}</Eyebrow>
-          {/* `h2`, because the only place this card is used is the grid
-              directly under the catalogue's `h1` — a bare `h3` skipped a level
-              there. `CardTitle` rather than a raw heading so the name keeps its
-              `data-slot="card-title"`, which is public API a consumer may
-              select on; the size is overridden because a product name in a grid
-              of nine is not display type. */}
-          <CardTitle as="h2" className="text-body-md font-semibold text-balance">
-            <Link href={`#/products/${product.id}`} variant="block">
-              {product.name}
-            </Link>
-          </CardTitle>
-        </div>
-        {product.condition === 'used' && <Badge status="warning">Used</Badge>}
-      </div>
+      {/* Takes any height the card is given beyond its content, which keeps
+          the price and the button at the card's bottom edge. */}
+      <CardContent grow>
+        <Inline justify="between" align="start" gap={2}>
+          <Stack gap={0}>
+            <Eyebrow>{product.brand}</Eyebrow>
+            {/* `h2`: the only place this card is used is the grid directly
+                under the catalogue's `h1`. */}
+            <CardTitle as="h2" size="body-md">
+              <Link href={`#/shop/products/${product.id}`} variant="block">
+                {product.name}
+              </Link>
+            </CardTitle>
+          </Stack>
+          {product.condition === 'used' && <Badge status="warning">Used</Badge>}
+        </Inline>
 
-      <p className="flex items-center gap-1 text-body-sm text-fg-secondary [--icon-size:var(--icon-sm)]">
-        <StarIcon aria-hidden="true" className="text-warning-solid" />
-        <span className="tabular-nums">{product.rating.toFixed(1)}</span>
-        <span className="text-fg-muted">({product.reviews})</span>
-      </p>
+        <Rating value={product.rating}>({product.reviews})</Rating>
+      </CardContent>
 
-      <p className="mt-auto flex flex-wrap items-baseline gap-2">
-        <span className="text-body-lg font-semibold text-fg tabular-nums">
-          {idr(product.price)}
-        </span>
-        {product.was !== undefined && (
-          <span className="text-body-sm text-fg-muted tabular-nums line-through">
-            {idr(product.was)}
-          </span>
-        )}
-      </p>
+      <Price
+        amount={idr(product.price)}
+        was={product.was === undefined ? undefined : idr(product.was)}
+      />
 
       <Button
         fullWidth

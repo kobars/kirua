@@ -1,12 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
-import { Badge } from '@/components';
+import { Badge, Button, Card, CardBody, CardTitle } from '@/components';
 
 /**
- * Colour and type had foundations pages. **Five other scales had none** —
- * spacing, radius, elevation, motion and breakpoints — and five foundation
- * cards each ended with a step that said "document it on the foundations page
- * beside type and colour". There was no such page for any of them.
+ * The scales beside colour and type: spacing, radius, elevation, motion,
+ * breakpoints, icon sizes and the stacking order.
  *
  * Every number below is **read out of the shipped tokens in the browser**, the
  * way the colour page recomputes its ratios. That is the property that matters:
@@ -39,13 +37,13 @@ interface Resolved {
  *
  * `getComputedStyle(el).getPropertyValue('--radius-md')` returns the *declared*
  * token stream — literally `calc(1.375rem * 8 / 11)` — because an unregistered
- * custom property has no computed value beyond its text. The first draft of
- * this page printed exactly that in the column labelled "px". Assigning the
- * token to a property the browser must resolve is what turns it into a number.
+ * custom property has no computed value beyond its text, which is not what a
+ * column labelled "px" should print. Assigning the token to a property the
+ * browser must resolve is what turns it into a number.
  *
  * The empty `declared` case is not defensive padding either. **Tailwind emits an
  * `@theme` variable only where something references it**, so a step no component
- * uses — the 2xl radius, today — is declared in the source and absent from the
+ * uses — the 2xl radius — is declared in the source and absent from the
  * shipped stylesheet. A page that assumed every declared token exists would
  * print a blank cell and look broken; this one says so.
  *
@@ -197,11 +195,13 @@ export const Spacing: Story = {
   },
 };
 
-const RADIUS_STEPS = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'] as const;
+const RADIUS_STEPS = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill', 'card', 'control'] as const;
 
 const RADIUS_NOTE: Partial<Record<(typeof RADIUS_STEPS)[number], string>> = {
   lg: '[FIGMA] — the nav pill and the reference’s white card',
   xl: '[FIGMA] — the hero panel',
+  card: '[FIGMA] — the reference’s black card, and every Clay card',
+  control: 'the Clay button corner — the md step under a name of its own',
 };
 
 export const Radius: Story = {
@@ -254,13 +254,63 @@ export const Radius: Story = {
             falsified itself. The step is named without its prefix above for that reason.
           </p>
           <p className="max-w-2xl font-text text-body-sm text-fg-muted">
-            The reference file contradicts itself here and{' '}
-            <strong>22 is the deliberate answer</strong>: its white card and nav pill are both
-            22, its black card is 24. Two nodes against one — and because every step is a ratio
-            of one knob, adopting 24 would push <code className="font-mono">--radius-md</code>{' '}
+            The reference file contradicts itself here: its white card and nav pill are both 22,
+            its black card is 24. <strong>The knob stays at 22</strong> — because every step is
+            a ratio of it, adopting 24 would push <code className="font-mono">--radius-md</code>{' '}
             off 16px and <code className="font-mono">--radius-xl</code> off the panel’s measured
-            32px.
+            32px — and the black card’s 24 is a step of its own,{' '}
+            <code className="font-mono">card</code>, which is the corner every Clay card takes.
           </p>
+        </Section>
+      </Page>
+    );
+  },
+};
+
+const CLAY = [
+  ['--clay-edge', 'the line around a card, a standing button and a black surface'],
+  ['--clay-offset-card', 'how far a light card’s shadow falls'],
+  ['--clay-offset-rest', 'a button at rest'],
+  ['--clay-offset-lift', 'a button under the pointer'],
+  ['--clay-offset-down', 'a button while it is pressed'],
+  ['--clay-lift', 'how far the button moves up, or down when pressed'],
+  ['--clay-strip-rest', 'the dark strip inside a button’s lower edge'],
+  ['--clay-strip-down', 'the same strip while pressed'],
+] as const;
+
+export const ClayShapes: Story = {
+  render: function Render() {
+    const tokens = useScale(CLAY.map(([name]) => name));
+
+    return (
+      <Page>
+        <Section
+          title="Clay shapes"
+          origin="invented"
+          lead="A bold line and a hard shadow, offset down and towards the end of the line, so a surface reads as a flat cut-out laid on the page rather than as a lit, raised tile. The shadow mirrors in a right-to-left page. Light and dark share every shape; only the shade changes — a brand tint on a light page, the night's shade in dark mode. A black or brand card keeps its line and casts nothing, and a button joined into a group keeps the plain shape, so the group reads as one control."
+        >
+          <div className="flex flex-wrap items-start gap-8 rounded-md bg-page p-8">
+            <Card className="w-72">
+              <CardTitle as="h3">A light card</CardTitle>
+              <CardBody>Line, 24px corner and a hard offset shadow.</CardBody>
+            </Card>
+            <Card variant="dark" className="w-72">
+              <CardTitle as="h3">A black card</CardTitle>
+              <CardBody>Line only.</CardBody>
+            </Card>
+            <div className="flex flex-wrap items-center gap-4">
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="danger">Danger</Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            {CLAY.map(([name, note]) => (
+              <Row key={name} name={name} value={tokens[name]?.computed ?? ''}>
+                <span className="font-text text-caption text-fg-muted">{note}</span>
+              </Row>
+            ))}
+          </div>
         </Section>
       </Page>
     );
@@ -278,7 +328,7 @@ export const Elevation: Story = {
         <Section
           title="Elevation"
           origin="invented"
-          lead="The one visual layer that is CONTEXT-DEPENDENT rather than absolute. A near-black shadow is invisible on a near-black surface, so a dark Card, a Dialog and a Tooltip would all cast nothing exactly where they most need to read as floating. Each context therefore re-points these to a ring of light plus a deeper shadow, instead of a shadow alone."
+          lead="The one visual layer that is CONTEXT-DEPENDENT rather than absolute. A near-black shadow is invisible on a black surface, so a dark Card and a Tooltip would cast nothing exactly where they most need to read as floating. The inverse and brand contexts therefore re-point these to a ring of light plus a deeper shadow. Dark mode needs no ring: a night page sits above a darker shade colour, and its shadows are cast in that shade."
         >
           {[
             ['on a page', 'bg-page'],
@@ -330,14 +380,14 @@ export const Motion: Story = {
       DURATIONS.map((step) => `--duration-${step}`),
       'transitionDuration',
     );
-    const curves = useLiterals(['--ease-out', '--ease-in-out']);
+    const curves = useLiterals(['--ease-out', '--ease-in-out', '--ease-spring']);
 
     return (
       <Page>
         <Section
           title="Motion"
           origin="invented"
-          lead="Three durations and two curves. --ease-out IS a Tailwind theme namespace, so declaring it replaces Tailwind's own ease-out rather than sitting beside it — every ease-out utility in the components is already on this curve."
+          lead="Three durations and three curves. --ease-out IS a Tailwind theme namespace, so declaring it replaces Tailwind's own ease-out rather than sitting beside it — every ease-out utility in the components is already on this curve. The spring overshoots and settles, and is only for a button's lift and press."
         >
           <div className="flex flex-col gap-1">
             {DURATIONS.map((step) => (
@@ -349,6 +399,7 @@ export const Motion: Story = {
             ))}
             <Row name="ease-out" value={curves['--ease-out'] ?? ''} />
             <Row name="ease-in-out" value={curves['--ease-in-out'] ?? ''} />
+            <Row name="ease-spring" value={curves['--ease-spring'] ?? ''} />
           </div>
 
           <h3 className="pt-2 font-text text-body-sm font-medium text-fg-muted">

@@ -31,6 +31,24 @@ export const sheetContentVariants = cva(
           'data-open:animate-slide-in-bottom data-closed:animate-slide-out-bottom',
         ],
       },
+      /** The rhythm between the sheet's direct children. Unset, they touch. */
+      gap: {
+        4: 'gap-4',
+        6: 'gap-6',
+      },
+      /** `none` for content that draws its own edges — a `Sidebar` run edge to edge. */
+      padding: {
+        md: '',
+        none: 'p-0',
+      },
+      /**
+       * Scroll inside the sheet when its content is taller than the screen,
+       * rather than running off the bottom of a fixed panel.
+       */
+      scroll: {
+        true: 'overflow-y-auto',
+        false: '',
+      },
     },
     defaultVariants: { side: 'end' },
   },

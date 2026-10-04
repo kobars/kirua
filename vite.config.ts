@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vite';
+import type { BrowserCommand } from 'vitest/node';
 
 const dirname = import.meta.dirname;
 const REM = 16;
@@ -14,8 +15,7 @@ const REM = 16;
  * The widths the suite runs at, **parsed out of the CSS that ships**. A width
  * restated as a number here is a second source of truth: it silently stops
  * straddling the breakpoint the moment the token moves, and the suite stays
- * green while the assertion stops meaning anything. Proved by retuning
- * `--breakpoint-md` and watching a hard-coded 767/768 pair still pass.
+ * green while the assertion stops meaning anything.
  *
  * Three widths, not five. Each one multiplies the whole suite, and these are
  * the three sides of the only two reflows the system has: just below `md`,
@@ -40,6 +40,15 @@ const WIDTHS = [
 ] as const;
 
 /**
+ * Playwright's ARIA snapshot of one element on the test page: the role, name,
+ * value and state Playwright reads from it, in whichever engine the project
+ * runs. A test reaches it through `commands` from `vitest/browser`.
+ */
+const ariaSnapshot: BrowserCommand<[selector: string]> = ({ iframe }, selector) =>
+  iframe.locator(selector).ariaSnapshot();
+const commands = { ariaSnapshot };
+
+/**
  * One instance, deliberately unnamed: Vitest names the nested project after the
  * instance when one is given, which then collides with the project's own name.
  * The width lives in the project name instead.
@@ -54,11 +63,12 @@ const browser = (
   enabled: true as const,
   headless: true as const,
   // A failing test would otherwise drop a PNG into `src/**/__screenshots__`,
-  // which is now a *tracked* directory holding the visual baselines. A picture
+  // which is a *tracked* directory holding the visual baselines. A picture
   // of a headless assertion is worth little and would arrive looking like an
   // approved baseline, which is worth less than nothing.
   screenshotFailures: false,
   provider: playwright({ contextOptions }),
+  commands,
   instances: [{ browser: 'chromium' as const, viewport: { width, height: 900 } }],
 });
 
@@ -80,9 +90,9 @@ const OTHER_PROJECTS_OWN = [
  * One project per width, not one project with three instances.
  * `@storybook/addon-vitest` resets the viewport before every story to its own
  * 1200x900 default unless a Storybook *global* says otherwise, so an instance
- * `viewport` never survives — verified by reading `window.innerWidth` inside a
- * `play` function and getting 1200 at all three. `initialGlobals` is per
- * project, which is what forces the shape below.
+ * `viewport` never survives: `window.innerWidth` inside a `play` function reads
+ * 1200 at all three. `initialGlobals` is per project, which is what forces the
+ * shape below.
  */
 const storyProjects = WIDTHS.map(({ key, name, width }) => ({
   extends: true as const,
@@ -108,7 +118,7 @@ const BUILD_TARGET = ['chrome120', 'edge120', 'safari16.4', 'firefox128'];
 
 /**
  * The second engine. WebKit differs most from Chromium, and the declared matrix
- * says Safari 16.4 — so a suite that only ever ran Chromium was asserting
+ * says Safari 16.4 — so a suite that only ran Chromium would be asserting
  * support it had never seen.
  *
  * One width, and the unit tests only. What an engine changes is how a computed
@@ -139,6 +149,7 @@ const webkitProjects = process.env['KIRUA_WEBKIT']
             headless: true as const,
             screenshotFailures: false,
             provider: playwright({}),
+            commands,
             instances: [
               {
                 browser: 'webkit' as const,
@@ -207,8 +218,8 @@ export default defineConfig({
        *
        * `!important` in a low layer beats `!important` in a high one, so the
        * rule sitting in `@layer base` is the strongest thing in the cascade.
-       * That is the opposite of the forced-colors rules, which had to leave
-       * `base` entirely — the difference is worth not re-deriving.
+       * That is the opposite of the forced-colors rules, which sit outside
+       * `base` entirely because they carry no `!important`.
        */
       {
         extends: true as const,
@@ -223,10 +234,9 @@ export default defineConfig({
        * Appearance, compared against a committed picture.
        *
        * **One project, one width, one engine — and that is the whole point.**
-       * A baseline is a baseline *for* a browser at a size. Left in the general
-       * `unit:*` set this file ran at three widths against a single filename,
-       * so the three runs overwrote each other and three of eleven comparisons
-       * failed. Measured, not predicted.
+       * A baseline is a baseline *for* a browser at a size. In the general
+       * `unit:*` set this file would run at three widths against a single
+       * filename, and the three runs would overwrite each other.
        *
        * `lg` is the width the reference file was drawn at, so a diff here is a
        * diff against the design rather than against a reflow.
@@ -301,7 +311,7 @@ export default defineConfig({
       // completeness, and `src/components/variants.test.tsx` enforces it by
       // rendering every story and failing on any variant none of them shows.
       include: ['src/lib/**'],
-      // What the suite actually reaches today, not an aspiration. `src/lib` is
+      // What the suite actually reaches, not an aspiration. `src/lib` is
       // three small pure modules, so full cover is the honest number; the one
       // uncovered branch is a guard for a colour string no browser produces.
       thresholds: { lines: 100, functions: 100, statements: 100, branches: 95 },

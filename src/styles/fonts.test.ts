@@ -3,17 +3,17 @@ import primitivesCss from '@/styles/tokens.primitives.css?raw';
 import { describe, expect, it } from 'vitest';
 
 /**
- * The font request used to live inside `src/index.css`. That cost three
- * sequential round trips before text was drawn in the intended face — download
- * index.css, parse it, discover a stylesheet on another origin, fetch that,
- * only then learn the font file URLs — and it made every consumer of kirua
- * inherit a runtime dependency on Google's CDN.
+ * The font request lives in the host document, not in `src/index.css`. Inside
+ * the stylesheet it costs three sequential round trips before text is drawn in
+ * the intended face — download index.css, parse it, discover a stylesheet on
+ * another origin, fetch that, only then learn the font file URLs — and it makes
+ * every consumer of kirua inherit a runtime dependency on Google's CDN.
  *
- * It now lives in the host document. Nothing about that is visible from inside
- * a component, so it is asserted here rather than remembered.
+ * Nothing about that is visible from inside a component, so it is asserted
+ * here rather than remembered.
  */
 /** Comments talk *about* `@import`, which is otherwise indistinguishable from
- *  using one — the first version of this test failed on its own prose. */
+ *  using one. */
 const withoutComments = indexCss.replace(/\/\*[\s\S]*?\*\//g, '');
 
 describe('the stylesheet fetches nothing from another origin', () => {

@@ -31,7 +31,7 @@ export const Playground: Story = {
       </PopoverTrigger>
       <PopoverContent aria-label="Filters">
         <Field controlId="pop-q" label="Keyword">
-          <Input id="pop-q" placeholder="kacamata" />
+          <Input id="pop-q" placeholder="glasses" />
         </Field>
       </PopoverContent>
     </Popover>

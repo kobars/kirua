@@ -1,8 +1,10 @@
 /* oxlint-disable jsx-a11y/control-has-associated-label --
  * Every day button has `aria-label={dayFormat.format(date)}`. The rule cannot
  * follow a computed value; the stories assert the real names. */
-import type { ComponentProps } from 'react';
+import type { ComponentProps, FocusEvent, KeyboardEvent } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { calendarVariants } from './Calendar.variants';
 import { IconButton } from './IconButton';
 import { ChevronEndIcon, ChevronStartIcon } from './icons';
 
@@ -28,11 +30,23 @@ export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
   today?: Date | undefined;
   previousLabel?: string | undefined;
   nextLabel?: string | undefined;
+  /** `plain` when the calendar sits inside a surface of its own, such as a `Card`. */
+  variant?: VariantProps<typeof calendarVariants>['variant'] | undefined;
 }
 
 /** Midnight local time, so two dates compare by day rather than by instant. */
 const day = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 const sameDay = (a: Date, b: Date) => day(a).getTime() === day(b).getTime();
+const addDays = (date: Date, days: number) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+/** The same day number in another month, clamped to that month's last day. */
+const addMonths = (date: Date, months: number) => {
+  const last = new Date(date.getFullYear(), date.getMonth() + months + 1, 0).getDate();
+  return new Date(date.getFullYear(), date.getMonth() + months, Math.min(date.getDate(), last));
+};
+/** From local parts: `toISOString()` would shift the day across UTC. */
+const isoDay = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
 /** `getWeekInfo` is newer than the ES2023 lib this project compiles against. */
 type LocaleWithWeekInfo = Intl.Locale & { getWeekInfo?: () => { firstDay: number } };
@@ -54,6 +68,21 @@ function firstWeekday(tag: string): number {
 /**
  * A month of days, as a table of buttons. Controlled: `month` and `selected`
  * are the consumer's.
+ *
+ * The grid is one tab stop. It starts on the selected day, else today, else
+ * the first day that can be chosen, and then follows focus, so Tab away and
+ * Shift+Tab back returns to the day last focused. Following focus rewrites
+ * `tabindex` in the focus handler, which runs only in the browser, so the
+ * server markup and hydration are unchanged.
+ *
+ * The arrow keys move a day or a week (mirrored in a right-to-left page), Home
+ * and End go to the ends of the week, Page Up and Page Down a month, and with
+ * Shift a year. A move out of the month calls `onMonthChange` and focuses the
+ * day once the consumer has rendered it. Every day carries
+ * `data-date="YYYY-MM-DD"`.
+ *
+ * A disabled date stays focusable and reads as unavailable, so moving through
+ * the grid never skips a day without saying why.
  *
  * **A `Date` here is a local calendar day, and `toISOString()` will misreport
  * it.** It converts to UTC, so `new Date(2026, 2, 17)` in UTC+7 serialises as
@@ -78,6 +107,7 @@ export function Calendar({
   today = new Date(),
   previousLabel = 'Previous month',
   nextLabel = 'Next month',
+  variant,
   ...props
 }: CalendarProps) {
   const year = month.getFullYear();
@@ -109,11 +139,70 @@ export function Calendar({
     cells.slice(i * 7, i * 7 + 7),
   );
   const isDisabled = (date: Date) => disabledDates.some((d) => sameDay(d, date));
+  const days = cells.filter((date): date is Date => date !== null);
+  const inMonth = (date: Date | undefined) =>
+    date !== undefined && date.getFullYear() === year && date.getMonth() === monthIndex;
+  const focusTarget =
+    [selected, today].find(inMonth) ?? days.find((date) => !isDisabled(date)) ?? days[0];
+
+  // React writes `tabIndex` only when its own value for a day changes, so the
+  // stop set here survives re-renders. A `selected` changed from outside while
+  // focus is elsewhere can leave a second stop until a day is next focused.
+  const onFocus = (event: FocusEvent<HTMLButtonElement>) => {
+    const focused = event.currentTarget;
+    for (const other of focused
+      .closest('table')
+      ?.querySelectorAll<HTMLElement>('[data-slot="calendar-day"]') ?? []) {
+      other.tabIndex = other === focused ? 0 : -1;
+    }
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const grid = event.currentTarget.closest('table');
+    const from = event.currentTarget.dataset['date'];
+    if (grid === null || from === undefined) return;
+    const [y = 0, m = 1, d = 1] = from.split('-').map(Number);
+    const current = new Date(y, m - 1, d);
+    const step = getComputedStyle(grid).direction === 'rtl' ? -1 : 1;
+    const column = (current.getDay() - start + 7) % 7;
+    const moves: Record<string, () => Date> = {
+      ArrowLeft: () => addDays(current, -step),
+      ArrowRight: () => addDays(current, step),
+      ArrowUp: () => addDays(current, -7),
+      ArrowDown: () => addDays(current, 7),
+      Home: () => addDays(current, -column),
+      End: () => addDays(current, 6 - column),
+      PageUp: () => addMonths(current, event.shiftKey ? -12 : -1),
+      PageDown: () => addMonths(current, event.shiftKey ? 12 : 1),
+    };
+    const move = moves[event.key];
+    if (move === undefined) return;
+    event.preventDefault();
+
+    const target = move();
+    const focus = () =>
+      grid.querySelector<HTMLElement>(`[data-date="${isoDay(target)}"]`)?.focus();
+    if (inMonth(target)) {
+      focus();
+      return;
+    }
+    // The month is the consumer's, so the target day exists only after the
+    // re-render this asks for.
+    onMonthChange?.(new Date(target.getFullYear(), target.getMonth(), 1));
+    requestAnimationFrame(focus);
+  };
 
   return (
     <div
       data-slot="calendar"
-      className={cn('w-max rounded-lg bg-raised p-3 font-text text-fg', className)}
+      className={cn(
+        'w-max rounded-lg bg-raised p-3 font-text text-fg',
+        // Seven 40px columns are wider than a 320px phone's content box, so the
+        // calendar scrolls inside itself instead of widening the page.
+        'max-w-full overflow-x-auto',
+        calendarVariants({ variant }),
+        className,
+      )}
       {...props}
     >
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -173,16 +262,23 @@ export function Calendar({
                     <button
                       type="button"
                       data-slot="calendar-day"
+                      data-date={isoDay(date)}
+                      tabIndex={
+                        focusTarget !== undefined && sameDay(focusTarget, date) ? 0 : -1
+                      }
                       aria-label={dayFormat.format(date)}
                       aria-pressed={selected !== undefined && sameDay(selected, date)}
-                      disabled={isDisabled(date)}
-                      onClick={() => onSelect?.(date)}
+                      aria-current={sameDay(today, date) ? 'date' : undefined}
+                      aria-disabled={isDisabled(date) || undefined}
+                      onClick={isDisabled(date) ? undefined : () => onSelect?.(date)}
+                      onFocus={onFocus}
+                      onKeyDown={onKeyDown}
                       className={cn(
-                        'size-10 rounded-md text-body-sm tabular-nums',
-                        'transition-colors duration-fast ease-out',
+                        'size-10 touch-manipulation rounded-md text-body-sm tabular-nums',
+                        'transition-[color,background-color,border-color] duration-fast ease-out',
                         'hover:bg-ghost-hover',
                         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                        'disabled:pointer-events-none disabled:text-on-disabled',
+                        'aria-disabled:pointer-events-none aria-disabled:text-on-disabled',
                         // Today is a ring, the selection a fill: a date can be both.
                         sameDay(today, date) && 'ring-1 ring-line-strong ring-inset',
                         selected !== undefined &&

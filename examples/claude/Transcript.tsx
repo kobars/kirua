@@ -10,12 +10,17 @@ import {
   CopyIcon,
   Heading,
   IconButton,
-  ScrollArea,
+  MessageBubble,
+  PaneBody,
+  Placeholder,
   Skeleton,
   SparkleIcon,
+  Stack,
+  Text,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  VisuallyHidden,
 } from 'kirua';
 import type { Conversation } from './data';
 
@@ -24,10 +29,7 @@ export interface TranscriptProps {
   pending: boolean;
 }
 
-/**
- * The scrolling half of the shell, and the only region with `overflow`. Needs
- * `min-h-0` on itself and every flex ancestor, or the page scrolls instead.
- */
+/** The part of the conversation pane that scrolls. */
 export function Transcript({ conversation, pending }: TranscriptProps) {
   const end = useRef<HTMLDivElement>(null);
   const [copyStatus, setCopyStatus] = useState('');
@@ -42,7 +44,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
     previous.current = { id: conversation.id, count: conversation.turns.length };
   }, [conversation.id, conversation.turns.length, pending]);
   return (
-    <ScrollArea className="min-h-0 flex-1">
+    <PaneBody>
       <Container width="3xl" gap="lg" pad="md">
         <Heading as="h1" size="heading-lg">
           {conversation.title}
@@ -59,34 +61,26 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                 /* A single disclosure, not an accordion: there is one panel, and
                    an accordion here would put a heading in the page outline
                    that means nothing. */
-                /* A rule down the leading edge, and no fill. It is an aside,
-                   not a container, and while it was a filled box it looked
-                   exactly like the CodeBlock below it and the question above
-                   it — three meanings wearing one appearance. */
-                <Collapsible className="border-s-2 border-line-subtle ps-3">
+                <Collapsible variant="rail" gap={2}>
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-between px-3"
+                      fullWidth
+                      justify="between"
                       trailingIcon={<ChevronDownIcon />}
                     >
                       How it got there
                     </Button>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="px-3 pb-2 text-body-sm text-fg-secondary">
-                    {turn.reasoning}
-                  </CollapsibleContent>
+                  <CollapsibleContent>{turn.reasoning}</CollapsibleContent>
                 </Collapsible>
               )}
 
               {turn.text.split('\n\n').map((paragraph) => (
-                <p
-                  key={paragraph.slice(0, 24)}
-                  className="text-body-md text-pretty wrap-anywhere text-fg"
-                >
+                <Text key={paragraph.slice(0, 24)} tone="primary" wrap="anywhere">
                   {paragraph}
-                </p>
+                </Text>
               ))}
 
               {turn.code && (
@@ -124,60 +118,44 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
           );
 
           return (
-            <article key={turn.id} className="grid grid-cols-[minmax(0,1fr)] gap-3">
-              {/* Off the screen, not out of the page. The two shapes tell a
-                  sighted reader who is speaking; a screen reader has only these
-                  two words, and they are also what gives the transcript an
-                  outline to jump through. */}
-              <Heading as="h2" size="body-sm" className="sr-only">
-                {you ? 'You' : 'Assistant'}
-              </Heading>
+            <Stack as="article" key={turn.id} gap={3}>
+              {/* The two shapes tell a sighted reader who is speaking; a screen
+                  reader has only these two words, and they are also what gives
+                  the transcript an outline to jump through. */}
+              <VisuallyHidden asChild>
+                <Heading as="h2" size="body-sm">
+                  {you ? 'You' : 'Assistant'}
+                </Heading>
+              </VisuallyHidden>
 
               {you ? (
-                /* `ms-auto`, never `ml-auto`: the box belongs at the *end* of
-                   the reading direction, so it moves to the left edge in a
-                   right-to-left language rather than staying put.
-
-                   The fill and the edge are the brand family, not the neutral
-                   one: `bg-sunken` is what a CodeBlock and a Sidebar are made
-                   of, so a question wearing it was claiming to be furniture.
-
-                   `rounded-ee-xs` squares the end-bottom corner, and it is the
-                   only cue here that survives Windows high contrast — that mode
-                   replaces every fill and drops every shadow, but keeps borders
-                   and geometry. A difference made only of colour disappears in
-                   the one mode this very conversation is about. */
-                <div className="ms-auto grid max-w-[85%] gap-4 rounded-lg rounded-ee-xs border border-line-accent bg-brand-subtle px-4 py-3">
-                  {body}
-                </div>
+                <MessageBubble from="self">{body}</MessageBubble>
               ) : (
-                <div className="grid gap-4">
-                  {/* The badge is the only visible marker left on this side,
-                      which is the asymmetry doing the work: a reply is the
-                      plain full-width text, a question is a box at the end. */}
-                  <span
-                    aria-hidden="true"
-                    className="flex size-6 items-center justify-center rounded-pill bg-brand-subtle text-fg-accent [--icon-size:var(--icon-sm)]"
-                  >
+                /* A reply is plain full-width text under a badge; a question is
+                   a box at the end. The asymmetry is the marker. */
+                <Stack gap={4}>
+                  <Placeholder size="xs" shape="circle" tone="brand">
                     <SparkleIcon />
-                  </span>
+                  </Placeholder>
                   {body}
-                </div>
+                </Stack>
               )}
-            </article>
+            </Stack>
           );
         })}
 
         {pending && (
-          <output aria-busy="true" aria-label="Assistant is replying" className="grid gap-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-11/12" />
-            <Skeleton className="h-4 w-2/3" />
-          </output>
+          <Stack as="output" gap={3} aria-busy="true" aria-label="Assistant is replying">
+            <Skeleton shape="text" width="full" />
+            <Skeleton shape="text" width="11/12" />
+            <Skeleton shape="text" width="2/3" />
+          </Stack>
         )}
-        <output className="sr-only">{copyStatus}</output>
+        <VisuallyHidden asChild>
+          <output>{copyStatus}</output>
+        </VisuallyHidden>
         <div ref={end} />
       </Container>
-    </ScrollArea>
+    </PaneBody>
   );
 }

@@ -1,8 +1,11 @@
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import type { ComponentProps } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { radioGroupVariants } from './RadioGroup.variants';
 
-export type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
+export type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root> &
+  VariantProps<typeof radioGroupVariants>;
 export type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 
 /**
@@ -10,18 +13,17 @@ export type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item
  * leaves it, and the arrow keys move between options, selecting as they go.
  *
  * @example
- * <RadioGroup defaultValue="standard">
- *   <div className="flex items-center gap-2">
- *     <RadioGroupItem value="standard" id="ship-standard" />
- *     <Label htmlFor="ship-standard">Standard</Label>
- *   </div>
+ * <RadioGroup defaultValue="standard" gap={2}>
+ *   <Field orientation="horizontal" controlId="ship-standard" label="Standard">
+ *     <RadioGroupItem value="standard" />
+ *   </Field>
  * </RadioGroup>
  */
-export function RadioGroup({ className, ...props }: RadioGroupProps) {
+export function RadioGroup({ className, gap, ...props }: RadioGroupProps) {
   return (
     <RadioGroupPrimitive.Root
       data-slot="radio-group"
-      className={cn('grid gap-3', className)}
+      className={cn(radioGroupVariants({ gap }), className)}
       {...props}
     />
   );
@@ -32,7 +34,7 @@ export function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        'inline-flex size-5 shrink-0 items-center justify-center rounded-pill',
+        'peer inline-flex size-5 shrink-0 items-center justify-center rounded-pill',
         'border border-field-line bg-field',
         'transition-[border-color] duration-fast ease-out',
         'hover:border-field-line-hover',

@@ -18,7 +18,9 @@ export function Input({ className, ...props }: InputProps) {
     <input
       data-slot="input"
       className={cn(
-        'flex h-11 w-full rounded-md border border-field-line bg-field px-3',
+        // `min-w-0`: an input's min-content is about twenty characters, which
+        // would push a flex row past its container.
+        'flex h-11 w-full min-w-0 rounded-md border border-field-line bg-field px-3',
         'font-text text-body-md text-on-field shadow-resting placeholder:text-placeholder',
         'transition-[border-color,box-shadow] duration-fast ease-out',
         'hover:border-field-line-hover focus-visible:border-ring',

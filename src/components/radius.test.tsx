@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
-import { CARD_RADIUS_PX, PANEL_RADIUS_PX } from '@/lib/radius';
+import { CARD_EDGE_PX, CARD_RADIUS_PX, PANEL_RADIUS_PX } from '@/lib/radius';
 import { Card } from './Card';
 import { SpotlightPanel } from './SpotlightPanel';
 
@@ -27,6 +27,13 @@ describe('the JavaScript radius mirrors the CSS scale', () => {
       expect(Number.parseFloat(getComputedStyle(card).borderTopLeftRadius)).toBe(expected);
     },
   );
+
+  it('the Clay edge the ornament sits inside is the one the card draws', () => {
+    const container = render(<Card />);
+    const card = container.querySelector('[data-slot="card"]') as HTMLElement;
+
+    expect(Number.parseFloat(getComputedStyle(card).borderTopWidth)).toBe(CARD_EDGE_PX);
+  });
 
   it('SpotlightPanel’s glint radius matches its own corner', () => {
     const container = render(<SpotlightPanel />);

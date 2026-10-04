@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
+import { Field } from './Field';
 import { Label } from './Label';
 import { RadioGroup, RadioGroupItem } from './RadioGroup';
 
@@ -95,5 +96,42 @@ export const ArrowKeysMoveWithinTheGroup: Story = {
     await userEvent.keyboard(' ');
     await expect(express).toBeChecked();
     await expect(standard).not.toBeChecked();
+  },
+};
+
+export const Gaps: Story = {
+  render: () => (
+    <div className="grid grid-cols-4 gap-6">
+      {([1, 2, 3, 4] as const).map((gap) => (
+        <RadioGroup
+          key={gap}
+          gap={gap}
+          defaultValue="a"
+          aria-label={`Gap ${gap}`}
+          data-testid={`gap-${gap}`}
+        >
+          {(['a', 'b'] as const).map((value) => (
+            <Field
+              key={value}
+              orientation="horizontal"
+              controlId={`gap-${gap}-${value}`}
+              label={`Option ${value.toUpperCase()}`}
+            >
+              <RadioGroupItem value={value} />
+            </Field>
+          ))}
+        </RadioGroup>
+      ))}
+    </div>
+  ),
+  /** A label row is a `Field`, so the group needs no hand-written row. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const gap of [1, 2, 3, 4]) {
+      await expect(getComputedStyle(canvas.getByTestId(`gap-${gap}`)).rowGap).toBe(
+        `${gap * 4}px`,
+      );
+    }
+    await expect(canvas.getAllByRole('radio', { name: 'Option B' })).toHaveLength(4);
   },
 };

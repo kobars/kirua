@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -19,11 +19,18 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
+  MessageBubble,
+  Pane,
+  PaneBody,
+  PaneFooter,
+  PaneHeader,
   ResizableGroup,
   ResizableHandle,
   ResizablePanel,
   SendIcon,
-  ScrollArea,
+  Stack,
+  Text,
+  Visible,
 } from 'kirua';
 import { initials, people, threads } from './data';
 
@@ -47,156 +54,162 @@ export function Messages() {
     if (open) setDrafts((all) => ({ ...all, [open.id]: value }));
   };
   useEffect(() => {
-    root.current?.querySelectorAll('[data-slot="scroll-area-viewport"]').forEach((viewport) => {
-      viewport.scrollTop = viewport.scrollHeight;
-    });
+    // Only a transcript follows the newest message; any other scroll area on
+    // the screen stays where the reader left it.
+    root.current
+      ?.querySelectorAll('[data-transcript] [data-slot="scroll-area-viewport"]')
+      .forEach((viewport) => {
+        viewport.scrollTop = viewport.scrollHeight;
+      });
   }, [openId, sent]);
 
   const list = (
-    <ItemGroup className="max-h-full overflow-y-auto">
-      {threads.map((thread, index) => {
-        const person = people[thread.handle];
-        const last = thread.messages[thread.messages.length - 1];
-        return (
-          <div key={thread.id}>
-            {index > 0 && <ItemSeparator />}
-            <Item
-              interactive
-              size="sm"
-              aria-current={thread.id === openId ? 'true' : undefined}
-              className={thread.id === openId ? 'bg-selected text-on-selected' : undefined}
-              onClick={() => setOpenId(thread.id)}
-            >
-              <ItemMedia>
-                <Avatar size="sm">
-                  <AvatarFallback>{initials(person?.name ?? thread.handle)}</AvatarFallback>
-                </Avatar>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>{person?.name ?? thread.handle}</ItemTitle>
-                <ItemDescription>{last?.text}</ItemDescription>
-              </ItemContent>
-              {thread.unread > 0 && (
-                <ItemActions>
-                  <Badge status="info">{thread.unread}</Badge>
-                </ItemActions>
-              )}
-            </Item>
-          </div>
-        );
-      })}
-    </ItemGroup>
+    <Pane height="fill">
+      <PaneBody>
+        <ItemGroup>
+          {threads.map((thread, index) => {
+            const person = people[thread.handle];
+            const last = thread.messages[thread.messages.length - 1];
+            return (
+              <Fragment key={thread.id}>
+                {index > 0 && <ItemSeparator />}
+                <Item
+                  interactive
+                  size="sm"
+                  aria-current={thread.id === openId ? 'true' : undefined}
+                  onClick={() => setOpenId(thread.id)}
+                >
+                  <ItemMedia>
+                    <Avatar size="sm">
+                      <AvatarFallback>{initials(person?.name ?? thread.handle)}</AvatarFallback>
+                    </Avatar>
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>{person?.name ?? thread.handle}</ItemTitle>
+                    <ItemDescription>{last?.text}</ItemDescription>
+                  </ItemContent>
+                  {thread.unread > 0 && (
+                    <ItemActions>
+                      <Badge status="info">{thread.unread}</Badge>
+                    </ItemActions>
+                  )}
+                </Item>
+              </Fragment>
+            );
+          })}
+        </ItemGroup>
+      </PaneBody>
+    </Pane>
   );
 
   const conversation = open && (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 border-b border-line-subtle p-3">
-        <IconButton
-          aria-label="Back to the list"
-          variant="ghost"
-          size="sm"
-          className="md:hidden"
-          onClick={() => setOpenId('')}
-        >
-          <ChevronStartIcon />
-        </IconButton>
+    <Pane height="fill">
+      <PaneHeader>
+        <Visible below="md">
+          <IconButton
+            aria-label="Back to the list"
+            variant="ghost"
+            size="sm"
+            onClick={() => setOpenId('')}
+          >
+            <ChevronStartIcon />
+          </IconButton>
+        </Visible>
         <Avatar size="sm">
           <AvatarFallback>{initials(people[open.handle]?.name ?? open.handle)}</AvatarFallback>
         </Avatar>
-        <span className="font-medium text-fg">{people[open.handle]?.name ?? open.handle}</span>
-      </div>
+        <Text inline weight="medium" tone="primary" truncate>
+          {people[open.handle]?.name ?? open.handle}
+        </Text>
+      </PaneHeader>
 
-      <ScrollArea className="min-h-0 flex-1">
-        <ul className="flex flex-col gap-2 p-3">
+      <PaneBody padding="sm" data-transcript="">
+        <Stack as="ul" gap={2}>
           {[
             ...open.messages,
             ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Now', text })),
           ].map((message, index) => (
-            <li
-              key={`${message.at}-${index}`}
-              className={message.from === 'me' ? 'flex justify-end' : 'flex justify-start'}
-            >
-              <span
-                className={[
-                  'max-w-[80%] rounded-lg px-3 py-2 text-body-sm wrap-anywhere',
-                  // `ctx-brand` is what makes the text legible on a brand fill, and
-                  // it is the recipe `Card`'s own brand variant uses. `text-on-primary`
-                  // belongs to the *action* family, not the surface family: under
-                  // `.dark` it inverts to near-black while `bg-brand` stays a dark
-                  // blue, so the pair reads only in light mode.
-                  message.from === 'me' ? 'ctx-brand bg-brand text-fg' : 'bg-sunken text-fg',
-                ].join(' ')}
-              >
-                {message.text}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </ScrollArea>
-
-      <form
-        className="border-t border-line-subtle p-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (draft.trim() === '') return;
-          setSent((all) => ({ ...all, [open.id]: [...(all[open.id] ?? []), draft.trim()] }));
-          setDraft('');
-        }}
-      >
-        <InputGroup>
-          <InputGroupInput
-            value={draft}
-            aria-label={`Reply to ${people[open.handle]?.name ?? open.handle}`}
-            placeholder="Write a reply"
-            onChange={(event) => setDraft(event.target.value)}
-          />
-          <InputGroupAddon>
-            <IconButton
-              aria-label="Send"
-              type="submit"
+            <MessageBubble
+              as="li"
               size="sm"
-              variant="ghost"
-              className="-me-1.5"
-              disabled={draft.trim() === ''}
+              key={`${message.at}-${index}`}
+              from={message.from === 'me' ? 'self' : 'other'}
             >
-              <SendIcon />
-            </IconButton>
-          </InputGroupAddon>
-        </InputGroup>
-      </form>
-    </div>
+              {message.text}
+            </MessageBubble>
+          ))}
+        </Stack>
+      </PaneBody>
+
+      <PaneFooter>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (draft.trim() === '') return;
+            setSent((all) => ({ ...all, [open.id]: [...(all[open.id] ?? []), draft.trim()] }));
+            setDraft('');
+          }}
+        >
+          <InputGroup>
+            <InputGroupInput
+              value={draft}
+              aria-label={`Reply to ${people[open.handle]?.name ?? open.handle}`}
+              placeholder="Write a reply"
+              onChange={(event) => setDraft(event.target.value)}
+            />
+            <InputGroupAddon>
+              <IconButton
+                aria-label="Send"
+                type="submit"
+                size="sm"
+                variant="ghost"
+                // Focusable while empty: the submit handler already ignores an
+                // empty draft, and a disabled button would drop focus after a send.
+                aria-disabled={draft.trim() === '' || undefined}
+              >
+                <SendIcon />
+              </IconButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </form>
+      </PaneFooter>
+    </Pane>
   );
 
   return (
-    <div ref={root} className="grid grid-cols-[minmax(0,1fr)] gap-4">
+    <Stack ref={root} gap={4}>
       <Heading as="h1" size="heading-sm">
         Messages
       </Heading>
 
       {/* Phone: one pane at a time, chosen by whether a thread is open. */}
-      <Card className="h-[calc(100dvh-14rem)] min-h-64 overflow-hidden md:hidden">
-        {openId === '' ? list : conversation}
-      </Card>
+      <Visible below="md">
+        <Card padding="none" clip>
+          <Pane height="md">{openId === '' ? list : conversation}</Pane>
+        </Card>
+      </Visible>
 
-      <Card className="hidden h-128 overflow-hidden md:block">
-        <ResizableGroup orientation="horizontal">
-          <ResizablePanel defaultSize="34" minSize="24" className="overflow-y-auto">
-            {list}
-          </ResizablePanel>
-          <ResizableHandle withGrip />
-          <ResizablePanel>{conversation}</ResizablePanel>
-        </ResizableGroup>
-      </Card>
+      <Visible from="md">
+        <Card padding="none" clip>
+          <Pane height="md">
+            <ResizableGroup orientation="horizontal">
+              <ResizablePanel defaultSize="34" minSize="24">
+                {list}
+              </ResizablePanel>
+              <ResizableHandle withGrip />
+              <ResizablePanel>{conversation}</ResizablePanel>
+            </ResizableGroup>
+          </Pane>
+        </Card>
+      </Visible>
 
       {openId === '' && (
-        <Button
-          variant="ghost"
-          className="md:hidden"
-          onClick={() => setOpenId(threads[0]?.id ?? '')}
-        >
-          Open the first conversation
-        </Button>
+        <Visible below="md">
+          <Button variant="ghost" onClick={() => setOpenId(threads[0]?.id ?? '')}>
+            Open the first conversation
+          </Button>
+        </Visible>
       )}
-    </div>
+    </Stack>
   );
 }

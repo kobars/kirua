@@ -52,23 +52,45 @@ export interface SidebarProps
  *   </SidebarContent>
  * </Sidebar>
  */
-export function Sidebar({ className, collapsible, open = true, ...props }: SidebarProps) {
+export function Sidebar({
+  className,
+  collapsible,
+  variant,
+  width,
+  open = true,
+  ...props
+}: SidebarProps) {
   return (
     <div
       data-slot="sidebar"
       data-open={open ? '' : undefined}
       data-closed={open ? undefined : ''}
-      className={cn(sidebarVariants({ collapsible }), className)}
+      className={cn(sidebarVariants({ collapsible, variant, width }), className)}
       {...props}
     />
   );
 }
 
-export function SidebarHeader({ className, ...props }: ComponentProps<'div'>) {
+const headerSizes = {
+  md: 'h-16',
+  sm: 'h-12',
+  auto: 'flex-col items-stretch gap-3 py-3',
+} as const;
+
+export interface SidebarHeaderProps extends ComponentProps<'div'> {
+  /**
+   * `sm` is 48px, for a single line of context — a unit and a shift. `auto`
+   * is a column of controls that stays put while the list below scrolls: a
+   * new-item button, a filter.
+   */
+  size?: keyof typeof headerSizes;
+}
+
+export function SidebarHeader({ className, size = 'md', ...props }: SidebarHeaderProps) {
   return (
     <div
       data-slot="sidebar-header"
-      className={cn('flex h-16 shrink-0 items-center gap-2 px-3', className)}
+      className={cn('flex shrink-0 items-center gap-2 px-3', headerSizes[size], className)}
       {...props}
     />
   );
@@ -85,11 +107,20 @@ export function SidebarContent({ className, ...props }: ComponentProps<'nav'>) {
   );
 }
 
-export function SidebarFooter({ className, ...props }: ComponentProps<'div'>) {
+export interface SidebarFooterProps extends ComponentProps<'div'> {
+  /** The line above the footer. Off for a `plain` rail, which has no panel to divide. */
+  divider?: boolean;
+}
+
+export function SidebarFooter({ className, divider = true, ...props }: SidebarFooterProps) {
   return (
     <div
       data-slot="sidebar-footer"
-      className={cn('flex shrink-0 flex-col gap-1 border-t border-line-subtle p-3', className)}
+      className={cn(
+        'flex shrink-0 flex-col gap-1 border-t border-line-subtle p-3',
+        !divider && 'border-t-0',
+        className,
+      )}
       {...props}
     />
   );
@@ -134,8 +165,18 @@ export function SidebarMenu({ className, ...props }: ComponentProps<'ul'>) {
   );
 }
 
+/**
+ * One row of the menu. Positioned, so a `SidebarMenuAction` can sit at its
+ * end beside the menu button rather than inside it.
+ */
 export function SidebarMenuItem({ className, ...props }: ComponentProps<'li'>) {
-  return <li data-slot="sidebar-menu-item" className={cn('list-none', className)} {...props} />;
+  return (
+    <li
+      data-slot="sidebar-menu-item"
+      className={cn('group/menu-item relative list-none', className)}
+      {...props}
+    />
+  );
 }
 
 export interface SidebarMenuButtonProps extends ComponentProps<'button'> {
@@ -161,12 +202,14 @@ export function SidebarMenuButton({
       aria-current={isActive ? 'page' : undefined}
       className={cn(
         'flex h-10 w-full cursor-pointer items-center gap-3 rounded-md px-3',
-        'font-text text-body-sm text-fg no-underline outline-none',
-        'transition-colors duration-fast ease-out hover:bg-ghost-hover',
+        'font-text text-body-sm text-fg no-underline',
+        'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'aria-[current="page"]:bg-selected aria-[current="page"]:font-medium',
         'aria-[current="page"]:text-on-selected',
         '[--icon-size:var(--icon-md)] [&_svg]:shrink-0',
+        // Room for the action button laid over the end of the row.
+        'group-has-data-[slot=sidebar-menu-action]/menu-item:pe-11',
         className,
       )}
       {...props}
@@ -188,6 +231,68 @@ export function SidebarLabel({ className, ...props }: ComponentProps<'span'>) {
     <span
       data-slot="sidebar-label"
       className={cn('truncate group-data-closed/sidebar:sr-only', className)}
+      {...props}
+    />
+  );
+}
+
+/**
+ * A control at the end of a menu row — a "more" menu for one conversation —
+ * placed beside the menu button, never inside it. A button inside the link
+ * would be one interactive element nested in another: a click on it follows
+ * the link too, and a screen reader announces one control where there are
+ * two.
+ *
+ * Put it after the `SidebarMenuButton` in the same `SidebarMenuItem`. It goes
+ * with the labels when the rail closes, because there is no room for it.
+ *
+ * @example
+ * <SidebarMenuItem>
+ *   <SidebarMenuButton asChild isActive><a href="#/c/12"><SidebarLabel>Trip plan</SidebarLabel></a></SidebarMenuButton>
+ *   <SidebarMenuAction>
+ *     <DropdownMenu>
+ *       <DropdownMenuTrigger asChild>
+ *         <IconButton aria-label="More for Trip plan" size="sm" variant="ghost"><MoreIcon /></IconButton>
+ *       </DropdownMenuTrigger>
+ *       <DropdownMenuContent>…</DropdownMenuContent>
+ *     </DropdownMenu>
+ *   </SidebarMenuAction>
+ * </SidebarMenuItem>
+ */
+export function SidebarMenuAction({ className, ...props }: ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="sidebar-menu-action"
+      className={cn(
+        'absolute inset-e-1 top-1/2 flex -translate-y-1/2 items-center',
+        'group-data-closed/sidebar:hidden',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+/**
+ * A count at the end of a menu button — unread messages. Inside the button,
+ * so it is part of the button's name. On a closed rail it leaves the screen
+ * but not the accessibility tree, like the label.
+ *
+ * @example
+ * <SidebarMenuButton asChild>
+ *   <a href="#/notifications"><BellIcon /><SidebarLabel>Notifications</SidebarLabel>
+ *     <SidebarMenuBadge><Badge status="info">3</Badge></SidebarMenuBadge>
+ *   </a>
+ * </SidebarMenuButton>
+ */
+export function SidebarMenuBadge({ className, ...props }: ComponentProps<'span'>) {
+  return (
+    <span
+      data-slot="sidebar-menu-badge"
+      className={cn(
+        'ms-auto flex shrink-0 items-center group-data-closed/sidebar:sr-only',
+        className,
+      )}
       {...props}
     />
   );

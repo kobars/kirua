@@ -6,8 +6,7 @@ import { cn } from '@/lib/cn';
  *
  * `CodeBlock` is the other half and cannot do this: it always draws a bordered
  * container, a language header and a `ScrollArea` around a `<pre>`, which is
- * right for a block and impossible for a word. Until this existed, a sentence
- * naming `--color-surface-brand` had nothing to reach for.
+ * right for a block and impossible for a word.
  *
  * `Kbd` is the adjacent case and deliberately looks different. A key cap says
  * *press this*; a token name says *this is code*. Drawing them the same way
@@ -24,8 +23,7 @@ import { cn } from '@/lib/cn';
  *
  * **It does not scroll and does not truncate.** A long name wraps at the
  * character like any other long word; `wrap-break-word` is what stops it pushing
- * its paragraph sideways, which is the failure mode a table has already taught
- * this repository twice.
+ * its paragraph sideways.
  *
  * **The surface is `bg-sunken`.** It is re-pointed in all four contexts, so a
  * token name lands legibly on a brand panel — which is exactly where token

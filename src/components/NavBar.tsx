@@ -41,8 +41,9 @@ export function NavBar({
       aria-label={ariaLabel}
       className={cn(
         // `bg-page` inside `ctx-inverse` resolves to pure black in BOTH light
-        // and dark mode. `bg-inverse` would flip to white under `.dark`.
-        'ctx-inverse bg-page',
+        // and dark mode. `bg-inverse` would flip to white under `.dark`. The
+        // Clay edge is drawn inside the box, so the 70px height holds.
+        'ctx-inverse bg-page inset-ring-(length:--clay-edge) inset-ring-line-inverse',
         // oxlint-disable-next-line better-tailwindcss/enforce-canonical-classes -- [FIGMA] 70px, must not track --spacing
         'flex h-[4.375rem] min-w-0 items-center gap-3 rounded-lg px-3 md:gap-6 md:px-8',
         className,

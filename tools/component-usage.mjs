@@ -5,15 +5,15 @@
  *
  * ## Why this is not the coverage gate
  *
- * `component-coverage` settled what *test* coverage means for a component, and
- * every component here has a story. This asks a different question: does any
- * application put it on a real screen.
+ * `stories.test.ts` and `variants.test.tsx` decide what *test* coverage means
+ * for a component, and every component here has a story. This asks a
+ * different question: does any application put it on a real screen.
  *
  * A story renders a component alone on a blank page. An application puts it on
  * a real surface, beside other components, at every width, inside an axe run
- * over a composed screen. Those find different defects — the example-app audit
- * is where seven accessibility violations turned up after 2713 green story
- * assertions — and the second kind only reaches what an application uses.
+ * over a composed screen. Those find different defects — landmarks, heading
+ * order and contrast against a real ancestor only exist on a composed screen —
+ * and the second kind only reaches what an application uses.
  *
  * ## How usage is decided
  *
@@ -23,9 +23,8 @@
  * reached this tool, so an import is evidence of a use rather than a claim of
  * one.
  *
- * Only exported **values** count. The throwaway scan that first produced "49
- * unused" also counted `Corner` and `NamedPanel`, which are types — a type has
- * no runtime and cannot be placed on a screen.
+ * Only exported **values** count. `Corner` and `NamedPanel` are types — a type
+ * has no runtime and cannot be placed on a screen.
  *
  * ## Exemptions
  *
@@ -38,7 +37,7 @@
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { APPS, REPO } from './example-apps.mjs';
+import { EXAMPLES, REPO, SECTIONS } from './example-apps.mjs';
 
 const BARREL = path.join(REPO, 'src/components/index.ts');
 
@@ -83,15 +82,32 @@ const EXEMPT = {
     'the two that are already there. It is exported only for a consumer who ' +
     'composes ScrollAreaPrimitive by hand and still wants the themed bar.',
   PANEL_GLINT_INSET_PX: 'Same as CARD_RADIUS_PX.',
+  ScrollArea:
+    'PaneBody is a ScrollArea, and every scrolling region in the app is the ' +
+    'body of a Pane — a transcript, a thread list, a cart. A bare ScrollArea ' +
+    'would be a region with no header or footer to stay put around it.',
+  CornerGlint:
+    'Card and SpotlightPanel draw it through their `glint` prop, which is ' +
+    'how every glint in the app is placed. Exported for a surface that is ' +
+    'neither.',
+  StarIcon:
+    'Rating renders it beside the value. A star of the app’s own would be a second rating.',
+  ChevronUpIcon:
+    'TableHead renders it for an ascending sort. The app sorts through `sort`, never by drawing the chevron.',
+  ButtonGroupSeparator:
+    'It divides a split action — a command beside the menu of its options — ' +
+    'and no screen in the app has one. The pager the app does join needs no ' +
+    'divider: its buttons’ own borders meet.',
 };
 
 /** Every `.ts`/`.tsx` under a directory, skipping build output. */
-function sources(dir, out = []) {
+function sources(dir, out = [], { recursive = true } = {}) {
   for (const entry of readdirSync(dir)) {
     if (entry === 'dist' || entry === 'node_modules') continue;
     const full = path.join(dir, entry);
-    if (statSync(full).isDirectory()) sources(full, out);
-    else if (/\.tsx?$/.test(full)) out.push(full);
+    if (statSync(full).isDirectory()) {
+      if (recursive) sources(full, out);
+    } else if (/\.tsx?$/.test(full)) out.push(full);
   }
   return out;
 }
@@ -131,47 +147,54 @@ function exportedValues() {
 }
 
 /**
- * Which bindings each application imports from `kirua`.
+ * Which bindings each section imports from `kirua`. The hub is the files at
+ * the root of `examples/` — the entry, the router and the page at `#/`.
  *
- * `examples/shared` counts for every app: `ThemeMenu` is one file that all five
- * render, and the first draft of this tool scanned only `examples/<slug>` and
- * reported `SunIcon`, `MoonIcon` and `MonitorIcon` as placed by nobody.
+ * `examples/shared` counts for every section: `ThemeMenu` is one file that all
+ * of them render, and scanning only `examples/<section>` would report
+ * `SunIcon`, `MoonIcon` and `MonitorIcon` as placed by nobody.
  *
  * The clause pattern is `[^}]*` and not `[\s\S]*?` for a reason worth keeping:
  * lazy matching still crosses an intervening import, so in a `main.tsx` that
- * imports React first, the match ran from `import {` on line one to
- * `} from 'kirua'` on line three and swallowed three modules into one clause.
- * `TooltipProvider` was reported unused while every app wrapped itself in it.
+ * imports React first, the match would run from `import {` on line one to
+ * `} from 'kirua'` on line three and swallow three modules into one clause,
+ * reporting `TooltipProvider` unused while the app wraps itself in it.
  */
-function usageByApp() {
-  const shared = sources(path.join(REPO, 'examples', 'shared'));
+function usageBySection() {
+  const shared = sources(path.join(EXAMPLES, 'shared'));
   const usage = new Map();
-  for (const { slug } of APPS) {
+  for (const { section, prefix } of SECTIONS) {
+    const own =
+      prefix === ''
+        ? sources(EXAMPLES, [], { recursive: false })
+        : sources(path.join(EXAMPLES, section));
     const used = new Set();
-    for (const file of [...sources(path.join(REPO, 'examples', slug)), ...shared]) {
+    for (const file of [...own, ...shared]) {
       const source = readFileSync(file, 'utf8');
       for (const match of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*'kirua'/g)) {
         for (const name of valueNames(match[1])) used.add(name);
       }
     }
-    usage.set(slug, used);
+    usage.set(section, used);
   }
   return usage;
 }
 
 const exports_ = exportedValues();
-const usage = usageByApp();
+const usage = usageBySection();
 
 const rows = exports_.map((name) => {
-  const apps = [...usage.entries()].filter(([, used]) => used.has(name)).map(([slug]) => slug);
-  return { name, apps };
+  const sections = [...usage.entries()]
+    .filter(([, used]) => used.has(name))
+    .map(([section]) => section);
+  return { name, sections };
 });
 
-const unused = rows.filter((row) => row.apps.length === 0 && !(row.name in EXEMPT));
-const exempted = rows.filter((row) => row.apps.length === 0 && row.name in EXEMPT);
+const unused = rows.filter((row) => row.sections.length === 0 && !(row.name in EXEMPT));
+const exempted = rows.filter((row) => row.sections.length === 0 && row.name in EXEMPT);
 const stale = Object.keys(EXEMPT).filter((name) => {
   const row = rows.find((candidate) => candidate.name === name);
-  return row === undefined || row.apps.length > 0;
+  return row === undefined || row.sections.length > 0;
 });
 
 console.log(

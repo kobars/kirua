@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,16 +9,13 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
-  ButtonGroup,
-  ButtonGroupSeparator,
-  ButtonGroupText,
   Card,
-  CardBody,
   CartIcon,
   ChevronEndIcon,
   Container,
   EmptyState,
   Heading,
+  Inline,
   Item,
   ItemActions,
   ItemContent,
@@ -27,7 +24,13 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
+  PageHeader,
+  Placeholder,
+  Stack,
   Text,
+  ToggleGroup,
+  ToggleGroupItem,
+  Visible,
 } from 'kirua';
 import { orderTone, orders, products, idr, type Order } from './data';
 
@@ -61,29 +64,32 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
 
   return (
     <Container>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <Heading as="h1" size="heading-md">
-          My orders
-        </Heading>
-        <ButtonGroup aria-label="Filter orders">
-          {/* A static label sharing the group's shape. Hidden below `sm`,
-              where three buttons already fill the row. */}
-          <ButtonGroupText className="hidden sm:inline-flex">Show</ButtonGroupText>
-          <ButtonGroupSeparator className="hidden sm:block" />
-          {(['all', 'open', 'closed'] as const).map((value) => (
-            <Button
-              key={value}
-              variant="secondary"
-              size="sm"
-              aria-pressed={filter === value}
-              onClick={() => setFilter(value)}
-              className={filter === value ? 'bg-selected text-on-selected' : undefined}
+      <PageHeader
+        title="My orders"
+        actions={
+          <>
+            {/* A static word before the filter. Hidden below `sm`, where three
+                options already fill the row. */}
+            <Visible from="sm">
+              <Text inline size="sm">
+                Show
+              </Text>
+            </Visible>
+            <ToggleGroup
+              type="single"
+              value={filter}
+              onValueChange={(next) => next !== '' && setFilter(next as Filter)}
+              aria-label="Filter orders"
             >
-              {value === 'all' ? 'All' : value === 'open' ? 'Open' : 'Closed'}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </div>
+              {(['all', 'open', 'closed'] as const).map((value) => (
+                <ToggleGroupItem key={value} value={value} variant="outline" size="sm">
+                  {value === 'all' ? 'All' : value === 'open' ? 'Open' : 'Closed'}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </>
+        }
+      />
 
       {shown.length === 0 ? (
         <EmptyState
@@ -97,80 +103,70 @@ export function OrdersPage({ onOpen }: OrdersPageProps) {
           }
         />
       ) : (
-        <ul className="grid grid-cols-[minmax(0,1fr)] gap-4">
+        <Stack as="ul" gap={4}>
           {shown.map((order) => {
             const status = statusOf(order);
             return (
               <li key={order.id}>
-                <Card>
-                  {/* `minmax(0,1fr)`, because an `Item` row cannot shrink on
-                      its own. `ItemContent` truncates, so its min-content is the
-                      whole untruncated title, and a flex row's min-content is
-                      the sum of its children's — 294 pixels against 246 of card.
-                      `min-w-0` lets the title shrink once the row has a width;
-                      it does not stop an `auto` grid column asking for the row's
-                      min-content in the first place. */}
-                  <CardBody className="grid grid-cols-[minmax(0,1fr)] gap-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <Heading as="h2" size="body-md">
-                          {order.id}
-                        </Heading>
-                        <Text size="sm" className="tabular-nums">
-                          Ordered {order.placed} · {idr(total(order))}
-                        </Text>
-                      </div>
-                      <Badge status={orderTone[status]}>{status}</Badge>
+                <Card gap={4}>
+                  <Inline wrap justify="between" align="start" gap={3}>
+                    <div>
+                      <Heading as="h2" size="body-md">
+                        {order.id}
+                      </Heading>
+                      <Text size="sm" numeric>
+                        Ordered {order.placed} · {idr(total(order))}
+                      </Text>
                     </div>
+                    <Badge status={orderTone[status]}>{status}</Badge>
+                  </Inline>
 
-                    <ItemGroup>
-                      {order.lines.map((line, index) => {
-                        const product = products.find((p) => p.id === line.productId);
-                        return (
-                          <div key={line.productId}>
-                            {index > 0 && <ItemSeparator />}
-                            <Item size="sm" className="px-0">
-                              <ItemMedia
-                                aria-hidden="true"
-                                className="size-10 rounded-md bg-sunken text-body-sm font-semibold"
-                              >
-                                {product?.name.charAt(0)}
-                              </ItemMedia>
-                              <ItemContent>
-                                <ItemTitle>{product?.name ?? line.productId}</ItemTitle>
-                                <ItemDescription>
-                                  {line.quantity} × {idr(line.price)}
-                                </ItemDescription>
-                              </ItemContent>
-                              <ItemActions className="tabular-nums">
+                  <ItemGroup>
+                    {order.lines.map((line, index) => {
+                      const product = products.find((p) => p.id === line.productId);
+                      return (
+                        <Fragment key={line.productId}>
+                          {index > 0 && <ItemSeparator />}
+                          <Item size="sm" inset="none">
+                            <ItemMedia>
+                              <Placeholder size="sm">{product?.name.charAt(0)}</Placeholder>
+                            </ItemMedia>
+                            <ItemContent>
+                              <ItemTitle>{product?.name ?? line.productId}</ItemTitle>
+                              <ItemDescription>
+                                {line.quantity} × {idr(line.price)}
+                              </ItemDescription>
+                            </ItemContent>
+                            <ItemActions>
+                              <Text inline size="sm" tone="primary" numeric>
                                 {idr(line.price * line.quantity)}
-                              </ItemActions>
-                            </Item>
-                          </div>
-                        );
-                      })}
-                    </ItemGroup>
+                              </Text>
+                            </ItemActions>
+                          </Item>
+                        </Fragment>
+                      );
+                    })}
+                  </ItemGroup>
 
-                    <div className="flex flex-wrap justify-end gap-3">
-                      {(status === 'processing' || status === 'shipped') && (
-                        <Button variant="ghost" onClick={() => setCancelling(order)}>
-                          Cancel
-                        </Button>
-                      )}
-                      <Button
-                        variant="secondary"
-                        trailingIcon={<ChevronEndIcon />}
-                        onClick={() => onOpen(order.id)}
-                      >
-                        View details
+                  <Inline wrap justify="end" gap={3}>
+                    {(status === 'processing' || status === 'shipped') && (
+                      <Button variant="ghost" onClick={() => setCancelling(order)}>
+                        Cancel
                       </Button>
-                    </div>
-                  </CardBody>
+                    )}
+                    <Button
+                      variant="secondary"
+                      trailingIcon={<ChevronEndIcon />}
+                      onClick={() => onOpen(order.id)}
+                    >
+                      View details
+                    </Button>
+                  </Inline>
                 </Card>
               </li>
             );
           })}
-        </ul>
+        </Stack>
       )}
 
       <AlertDialog

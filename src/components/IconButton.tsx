@@ -20,6 +20,9 @@ export interface IconButtonProps
  * Use only where the icon's meaning is unambiguous (search, close, menu).
  * Otherwise use `Button` with a visible label.
  *
+ * `data-variant` and `data-size` mirror the props, as on `Button`, and
+ * `aria-disabled="true"` takes the disabled look while staying focusable.
+ *
  * @example <IconButton aria-label="Search" variant="primary"><SearchIcon /></IconButton>
  */
 export function IconButton({
@@ -34,6 +37,8 @@ export function IconButton({
   return (
     <Comp
       data-slot="icon-button"
+      data-variant={variant ?? 'ghost'}
+      data-size={size ?? 'md'}
       className={cn(iconButtonVariants({ variant, size }), className)}
       {...props}
     >

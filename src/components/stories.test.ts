@@ -3,9 +3,8 @@ import { describe, expect, it } from 'vitest';
 /**
  * "Adding a story adds a test" is the whole testing model: `@storybook/addon-vitest`
  * turns every story export into a browser test with an axe assertion. So a
- * component with no story has no test and no accessibility check — and until
- * this file existed, that rule lived in prose, which is how three components
- * slipped past it.
+ * component with no story has no test and no accessibility check, and a rule
+ * that lives only in prose is one a component slips past.
  *
  * `import.meta.glob` is resolved by Vite at build time, so this reads the real
  * directory rather than a list somebody has to remember to update.

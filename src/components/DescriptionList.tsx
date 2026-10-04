@@ -12,8 +12,8 @@ export interface DescriptionListProps
  *
  * The terms and values are **direct children of the `<dl>`**, not wrapped in a
  * row element. That is what puts every value in the same grid column, which is
- * what makes the column line up — the five hand-written versions all wrapped
- * each pair in a `flex` row, so each row aligned itself and no two agreed.
+ * what makes the column line up. Wrap each pair in a `flex` row and each row
+ * aligns itself, and no two agree.
  *
  * @example
  * <DescriptionList>

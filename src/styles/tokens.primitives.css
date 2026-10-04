@@ -22,6 +22,10 @@
   --color-blue-700: #0b5eb1;
   --color-blue-800: #0c4d8d;
   --color-blue-900: #0c3d6e;
+  /* Between 900 and 950 at the same hue, for the selected fill on a night
+   * page: blue-950 measures 1.02:1 against the navy card and vanishes, and this
+   * step is 1.35:1 to 1.47:1 against every night's page. */
+  --color-blue-925: #09325d;
   --color-blue-950: #082445;
 
   /* Pure black and white are kept exact because the reference uses both unmixed.
@@ -63,6 +67,60 @@
   --color-violet-600: #6938ef;
   --color-violet-900: #4a1fb8;
 
+  /* NIGHTS. Five dark ramps, one per night palette, each ordered from its
+   * darkest step to its lightest: 1000 is the shade a shadow casts, then the
+   * sunken well, the page, the card, the hover fill, the hairline and the
+   * strong line. The steps are ordinal within one ramp and do not line up
+   * across ramps. Which role each step plays is decided in the semantic layer.
+   *
+   * A shadow reads as shade only when it is darker than the page, so every
+   * page here sits above a darker shade colour instead of at black. */
+
+  /* Navy, the default night. */
+  --color-navy-1000: #040a14;
+  --color-navy-975: #08111d;
+  --color-navy-950: #0e1a2b;
+  --color-navy-900: #16263b;
+  --color-navy-850: #1f3350;
+  --color-navy-800: #2a4262;
+  --color-navy-750: #355276;
+
+  /* Graphite: a nearly neutral cool grey over a pure black shade. */
+  --color-graphite-1000: #000000;
+  --color-graphite-975: #0b0e11;
+  --color-graphite-950: #15171b;
+  --color-graphite-900: #222528;
+  --color-graphite-850: #303336;
+  --color-graphite-800: #3e4348;
+  --color-graphite-750: #4a4f54;
+
+  /* Onyx: pure neutral grey, darker than graphite. */
+  --color-onyx-1000: #000000;
+  --color-onyx-975: #050505;
+  --color-onyx-950: #121212;
+  --color-onyx-900: #1f1f1f;
+  --color-onyx-850: #323232;
+  --color-onyx-800: #3f3f3f;
+  --color-onyx-750: #4d4d4d;
+
+  /* Ink: navy's hue at half its chroma, so not a second blue. */
+  --color-ink-1000: #010104;
+  --color-ink-975: #060a13;
+  --color-ink-950: #0d121b;
+  --color-ink-900: #1e232d;
+  --color-ink-850: #2c313c;
+  --color-ink-800: #38404e;
+  --color-ink-750: #454d5b;
+
+  /* Carbon: the darkest page, with a larger step up to the card. */
+  --color-carbon-1000: #000000;
+  --color-carbon-975: #07090a;
+  --color-carbon-950: #0f1012;
+  --color-carbon-900: #282a2c;
+  --color-carbon-850: #36383a;
+  --color-carbon-800: #44474a;
+  --color-carbon-750: #515457;
+
   /* Radius steps are ratios of the measured 22px base.
    * Keep src/lib/radius.ts in sync: SVG ornaments use numeric geometry. */
   --radius: 1.375rem; /* 22px [FIGMA] */
@@ -75,10 +133,17 @@
   --radius-2xl: calc(var(--radius) * 20 / 11); /* 40px */
   --radius-pill: 9999px;
 
-  /* Luckiest Guy is single-weight and display-only. Fredoka carries the 300-600
-   * range and does the actual work. */
-  --font-display: 'Luckiest Guy', 'Fredoka', system-ui, sans-serif;
-  --font-text: 'Fredoka', ui-rounded, system-ui, -apple-system, sans-serif;
+  /* The two Clay corners. A card is 24px, the corner of the reference's black
+   * card, which is the one card in the file drawn as a frame. A button is 16px,
+   * which is `--radius-md`: a rounded rectangle at 44px tall, not a pill.
+   * Keep `CARD_RADIUS_PX` in src/lib/radius.ts in sync. */
+  --radius-card: calc(var(--radius) * 12 / 11); /* 24px [FIGMA] black card */
+  --radius-control: var(--radius-md); /* 16px */
+
+  /* Luckiest Guy is single-weight and display-only. Nunito does the actual
+   * work, from body copy to headings. */
+  --font-display: 'Luckiest Guy', 'Nunito', system-ui, sans-serif;
+  --font-text: 'Nunito', ui-rounded, system-ui, -apple-system, sans-serif;
 
   /* The third face, and the only one that ships nothing at all — every entry is
    * already on the machine. A code block needs a monospace face, and downloading
@@ -119,10 +184,9 @@
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
 
-  /* LETTER SPACING. The system had exactly one declaration — 0.01em on
-   * `.font-display`, because Luckiest Guy has very tight sidebearings — and no
-   * scale, so an uppercase eyebrow had nothing to reach for and every one was
-   * set by eye or not at all.
+  /* LETTER SPACING. A scale, so an uppercase eyebrow is not set by eye. The
+   * display face's own 0.01em lives on `.font-display`, because Luckiest Guy
+   * has very tight sidebearings.
    *
    * Four steps, and the names are Tailwind's own on purpose: `tailwind-merge`
    * already models `tracking-tight | normal | wide | wider`, so two of them
@@ -137,10 +201,13 @@
   --tracking-wide: 0.04em;
   --tracking-wider: 0.08em;
 
-  --font-weight-light: 300;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
+  /* Nunito looks lighter than its number suggests, and a step of 100 between
+   * levels is too small to see in it. So the ramp skips: body 500, labels and
+   * buttons 700, titles 800. The names keep their roles, not their numbers. */
+  --font-weight-light: 400;
+  --font-weight-regular: 500;
+  --font-weight-medium: 700;
+  --font-weight-semibold: 800;
 
   /* Kept soft on purpose: the reference separates layers with flat colour and
    * overlap, never shadow. These exist only for lifted surfaces it never shows. */
@@ -151,6 +218,9 @@
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Overshoots and settles. Only for a button's lift and press, where a shadow
+   * and a two-pixel move have to read as springy rather than as sliding. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Tailwind's own default, restated so kirua owns it. Every `p-4`, `gap-6` and
    * `h-11` in the system compiles to `calc(var(--spacing) * n)`, and
@@ -162,9 +232,10 @@
   --spacing: 0.25rem;
 
   /* Also Tailwind's defaults, and also restated for ownership rather than
-   * changed. 58 responsive utilities in `src/` are written against these
-   * numbers — `md:` 40 of them — so they are load-bearing whether or not they
-   * are written down. `responsive-tests` asserts behaviour at these widths.
+   * changed. The responsive utilities in `src/` are written against these
+   * numbers, so they are load-bearing whether or not they are written down.
+   * The story suite and `tools/responsive-check.mjs` assert behaviour at these
+   * widths.
    *
    * The reference design is one 1440px desktop frame, so no breakpoint here is
    * [FIGMA]: each is chosen to make that single frame reflow. */
@@ -184,9 +255,7 @@
  * icon almost always sits next to a label:
  *   xs beside text-caption · sm beside text-body-sm · md beside text-body-md
  *   lg beside text-body-lg · xl and 2xl for an icon standing on its own.
- *
- * The four raw numbers these replace were 14, 15, 18 and 20. The 15 was a check
- * mark in a menu item and no reason for it survives; it is `sm` now. */
+ */
 :root {
   --icon-xs: 0.875rem; /* 14px */
   --icon-sm: 1rem; /* 16px */
@@ -194,6 +263,28 @@
   --icon-lg: 1.25rem; /* 20px */
   --icon-xl: 1.5rem; /* 24px */
   --icon-2xl: 1.75rem; /* 28px */
+}
+
+/* CLAY SHAPES. A bold line around a card and a standing button, and a hard
+ * shadow offset down and towards the end, so a surface reads as a flat cut-out
+ * laid on the page rather than as a lit, raised tile. Outside @theme, like the
+ * icon sizes: no utility namespace exists for any of them, and the shadow
+ * utilities in theme.css read them through `var()`.
+ *
+ * A button rests on a 4px offset, lifts to 6px while it moves up by 2px, and
+ * presses to 2px while it moves down by 2px, so the far edge of its shadow
+ * stays where it was. The inner strip along its lower edge is 3px at rest and
+ * 1px pressed. Keep `CARD_EDGE_PX` in src/lib/radius.ts in sync with the edge:
+ * the corner ornament sits inside it. */
+:root {
+  --clay-edge: 3px;
+  --clay-offset-card: 6px;
+  --clay-offset-rest: 4px;
+  --clay-offset-lift: 6px;
+  --clay-offset-down: 2px;
+  --clay-lift: 2px;
+  --clay-strip-rest: 3px;
+  --clay-strip-down: 1px;
 }
 
 /* Outside @theme, because Tailwind's `duration-*` utilities take bare numbers

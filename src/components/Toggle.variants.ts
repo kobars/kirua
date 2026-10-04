@@ -8,14 +8,17 @@ import { cva } from '@/lib/cva';
 export const toggleVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
-    'rounded-md font-text font-medium text-fg-secondary',
-    'transition-colors duration-fast ease-out',
+    'touch-manipulation rounded-md font-text font-medium text-fg-secondary',
+    'transition-[color,background-color,border-color] duration-fast ease-out',
     'hover:bg-ghost-hover hover:text-fg',
     'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
     // Fill as well as weight: colour is never the only signal.
     'data-on:bg-primary data-on:font-semibold data-on:text-on-primary',
     'data-on:hover:bg-primary-hover data-on:hover:text-on-primary',
-    'disabled:pointer-events-none disabled:text-on-disabled',
+    'disabled:pointer-events-none disabled:cursor-not-allowed disabled:text-on-disabled',
+    // A pressed toggle that cannot be changed must not read as the live choice.
+    'data-on:disabled:bg-disabled data-on:disabled:text-on-disabled',
+    '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-(--icon-size)',
   ],
   {
     variants: {
