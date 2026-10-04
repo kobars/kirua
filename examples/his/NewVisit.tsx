@@ -14,7 +14,9 @@ import {
   ComboboxList,
   DatePicker,
   Field,
+  Grid,
   Heading,
+  Inline,
   Input,
   Select,
   SelectContent,
@@ -25,10 +27,12 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Stack,
+  Text,
   Textarea,
 } from 'kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
-import { clinicGroups, diagnoses, doctors, patients } from './data';
+import { departmentGroups, diagnoses, formatDate, patients, providers } from './data';
 
 /**
  * The form that exercises real validation, a `Select`, a `DatePicker` and an
@@ -38,9 +42,9 @@ export function NewVisit() {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [dateOpen, setDateOpen] = useState(false);
-  const [clinic, setClinic] = useState('');
+  const [department, setDepartment] = useState('');
   const [patient, setPatient] = useState('');
-  const [doctor, setDoctor] = useState('');
+  const [provider, setProvider] = useState('');
   const [reason, setReason] = useState('');
   const [consent, setConsent] = useState(false);
   const [attempts, setAttempts] = useState(0);
@@ -50,15 +54,24 @@ export function NewVisit() {
   // message clears the moment its field is valid and the count follows.
   const validate = () => {
     const found: Record<string, string> = {};
-    if (patient === '') found['rm'] = 'Choose a patient first.';
-    if (clinic === '') found['clinic'] = 'A clinic is required.';
+    if (patient === '') found['patient'] = 'Choose a patient first.';
+    if (department === '') found['department'] = 'A department is required.';
     if (date === undefined) found['date'] = 'A visit date is required.';
     if (reason.trim().length < 5)
-      found['reason'] = 'Describe the reason in at least five characters.';
-    if (!consent) found['consent'] = 'Patient consent must be ticked.';
+      found['reason'] = 'Describe the reason for visit in at least five characters.';
+    if (!consent) found['consent'] = 'Confirm the consent to treat is signed.';
     return found;
   };
   const errors = attempts > 0 ? validate() : {};
+  // Registration reads the payer back once a patient is chosen, so a lapsed
+  // plan is noticed before the visit rather than at billing.
+  const coverage = patients.find((p) => p.mrn === patient)?.coverage;
+  const coverageNote =
+    patient === ''
+      ? undefined
+      : coverage === undefined
+        ? 'Self-pay — no coverage on file.'
+        : `${coverage.plan} · eligibility ${coverage.eligibility}, checked ${formatDate(coverage.verified)}.`;
 
   // Focus moves on a submit, not on every change to the messages.
   const result = useRef<HTMLElement>(null);
@@ -91,24 +104,25 @@ export function NewVisit() {
   };
 
   return (
-    <div className="grid content-start gap-5">
+    <Stack gap={5}>
       <Heading as="h1" size="heading-md">
         New visit
       </Heading>
 
       {saved && (
-        <output
-          ref={(node) => {
+        <Stack
+          as="output"
+          gap={0}
+          ref={(node: HTMLOutputElement | null) => {
             result.current = node;
           }}
           tabIndex={-1}
-          className="block"
         >
           <Alert status="success" icon={<CheckIcon />}>
-            <AlertTitle>Visit saved</AlertTitle>
+            <AlertTitle>Visit scheduled</AlertTitle>
             <AlertDescription>An example screen — nothing is really stored.</AlertDescription>
           </Alert>
-        </output>
+        </Stack>
       )}
 
       {Object.keys(errors).length > 0 && (
@@ -127,14 +141,16 @@ export function NewVisit() {
         </Alert>
       )}
 
-      <Card className="p-5">
-        <form
+      <Card padding="md">
+        <Stack
+          as="form"
+          gap={5}
           noValidate
           onSubmit={submit}
           onReset={() => {
             setPatient('');
-            setClinic('');
-            setDoctor('');
+            setDepartment('');
+            setProvider('');
             setDate(undefined);
             setMonth(new Date(2026, 2, 1));
             setDateOpen(false);
@@ -147,46 +163,56 @@ export function NewVisit() {
             setAttempts(0);
             setSaved(false);
           }}
-          className="grid gap-5"
         >
-          <Select name="rm" value={patient} onValueChange={setPatient}>
-            <Field controlId="rm" label="Patient" required error={errors['rm']}>
-              <SelectTrigger id="rm">
+          <Select name="patient" value={patient} onValueChange={setPatient}>
+            <Field
+              controlId="patient"
+              label="Patient"
+              required
+              description={coverageNote}
+              error={errors['patient']}
+            >
+              <SelectTrigger id="patient">
                 <SelectValue placeholder="Choose a patient" />
               </SelectTrigger>
             </Field>
             <SelectContent aria-label="Patient">
               {patients.map((patient) => (
-                <SelectItem key={patient.rm} value={patient.rm}>
-                  {patient.name} — {patient.rm}
+                <SelectItem key={patient.mrn} value={patient.mrn}>
+                  {patient.name} — MRN {patient.mrn}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <Grid md={2} gap={5}>
             <Select
-              value={clinic}
+              value={department}
               onValueChange={(next) => {
-                setClinic(next);
-                setDoctor('');
+                setDepartment(next);
+                setProvider('');
               }}
             >
-              <Field controlId="clinic" label="Clinic" required error={errors['clinic']}>
-                <SelectTrigger id="clinic">
-                  <SelectValue placeholder="Choose a clinic" />
+              <Field
+                controlId="department"
+                label="Department"
+                required
+                error={errors['department']}
+              >
+                <SelectTrigger id="department">
+                  <SelectValue placeholder="Choose a department" />
                 </SelectTrigger>
               </Field>
-              {/* Grouped by the department that runs the clinic, which is how
-                    the hospital lists them. `SelectLabel` names each group for a
-                    screen reader as well as on the screen. */}
-              <SelectContent aria-label="Clinic">
-                {clinicGroups.map((group, index) => (
+              {/* Grouped the way the hospital lists its departments.
+                    `SelectLabel` names each group for a screen reader as well
+                    as on the screen. */}
+              <SelectContent aria-label="Department">
+                {departmentGroups.map((group, index) => (
                   <Fragment key={group.label}>
                     {index > 0 && <SelectSeparator />}
                     <SelectGroup>
                       <SelectLabel>{group.label}</SelectLabel>
-                      {group.clinics.map((name) => (
+                      {group.departments.map((name) => (
                         <SelectItem key={name} value={name}>
                           {name}
                         </SelectItem>
@@ -198,35 +224,35 @@ export function NewVisit() {
             </Select>
 
             <Select
-              disabled={clinic === ''}
-              name="doctor"
-              value={doctor}
-              onValueChange={setDoctor}
+              disabled={department === ''}
+              name="provider"
+              value={provider}
+              onValueChange={setProvider}
             >
               <Field
-                controlId="doctor"
-                label="Doctor"
-                description={clinic === '' ? 'Choose a clinic first.' : undefined}
+                controlId="provider"
+                label="Provider"
+                description={department === '' ? 'Choose a department first.' : undefined}
               >
-                <SelectTrigger id="doctor">
-                  <SelectValue placeholder="Choose a doctor" />
+                <SelectTrigger id="provider">
+                  <SelectValue placeholder="Choose a provider" />
                 </SelectTrigger>
               </Field>
-              <SelectContent aria-label="Doctor">
-                {(doctors[clinic] ?? []).map((name) => (
+              <SelectContent aria-label="Provider">
+                {(providers[department] ?? []).map((name) => (
                   <SelectItem key={name} value={name}>
                     {name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Grid>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <Grid md={2} gap={5}>
             <Field controlId="date" label="Visit date" required error={errors['date']}>
               <DatePicker
                 id="date"
-                locale="en-GB"
+                locale="en-US"
                 placeholder="Choose a date"
                 panelLabel="Choose the visit date"
                 month={month}
@@ -245,16 +271,16 @@ export function NewVisit() {
             <Field controlId="time" label="Time">
               <Input id="time" name="time" type="time" defaultValue="08:00" />
             </Field>
-          </div>
+          </Grid>
 
-          {/* A combobox rather than a select: the real list is thousands of
-              codes long and a doctor knows the first letters. Focus never
+          {/* A combobox rather than a select: the real list is tens of
+              thousands of codes long and a clinician knows the first letters. Focus never
               leaves the input, so `aria-activedescendant` is what announces the
               highlighted row. */}
           <Combobox open={listOpen} onOpenChange={setListOpen}>
             <Field
               controlId="diagnosis"
-              label="Diagnosis (ICD-10)"
+              label="Diagnosis (ICD-10-CM)"
               description="Type the code or the name."
             >
               <ComboboxInput
@@ -312,7 +338,9 @@ export function NewVisit() {
                       }}
                     >
                       <span>
-                        <span className="font-medium tabular-nums">{entry.code}</span>{' '}
+                        <Text inline size="inherit" tone="inherit" weight="medium" numeric>
+                          {entry.code}
+                        </Text>{' '}
                         {entry.label}
                       </span>
                     </ComboboxItem>
@@ -325,17 +353,12 @@ export function NewVisit() {
               ))}
           </Combobox>
 
-          <Field
-            controlId="reason"
-            label="Reason for the visit"
-            required
-            error={errors['reason']}
-          >
+          <Field controlId="reason" label="Reason for visit" required error={errors['reason']}>
             <Textarea
               id="reason"
               name="reason"
               rows={3}
-              placeholder="A cough for two weeks, no fever…"
+              placeholder="Cough for 2 weeks, no fever…"
               value={reason}
               onChange={(event) => setReason(event.target.value)}
             />
@@ -346,7 +369,7 @@ export function NewVisit() {
           <Field
             orientation="horizontal"
             controlId="consent"
-            label="The patient consents to the examination"
+            label="Consent to treat is signed"
             error={errors['consent']}
           >
             <Checkbox
@@ -356,14 +379,14 @@ export function NewVisit() {
             />
           </Field>
 
-          <div className="flex flex-wrap justify-end gap-3">
+          <Inline wrap justify="end" gap={3}>
             <Button type="reset" variant="secondary">
               Clear
             </Button>
-            <Button type="submit">Save the visit</Button>
-          </div>
-        </form>
+            <Button type="submit">Schedule the visit</Button>
+          </Inline>
+        </Stack>
       </Card>
-    </div>
+    </Stack>
   );
 }
