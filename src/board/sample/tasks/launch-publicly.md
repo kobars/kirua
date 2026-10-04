@@ -10,7 +10,7 @@ epic: /epics/delivery.md
 priority: 30
 depends_on: [/tasks/custom-domain.md]
 generated:
-  by: claude-code/fable-5
+  by: lantern-cli/1.0
   at: 2026-08-23T23:30:00+07:00
 ---
 Held for a human decision. An announcement cannot be taken back, so it waits

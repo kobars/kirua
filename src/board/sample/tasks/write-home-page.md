@@ -9,7 +9,7 @@ state: done
 epic: /epics/content.md
 priority: 10
 generated:
-  by: claude-code/fable-5
+  by: lantern-cli/1.0
   at: 2026-08-23T23:30:00+07:00
 ---
 The first page a reader sees. It names the project, says who it is for, and
