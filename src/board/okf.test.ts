@@ -28,9 +28,9 @@ describe('parseYaml', () => {
 
   it('reads one level of nested map', () => {
     expect(
-      parseYaml('generated:\n  by: claude-code/fable-5\n  at: 2026-08-23T00:00:00+07:00'),
+      parseYaml('generated:\n  by: lantern-cli/1.0\n  at: 2026-08-23T00:00:00+07:00'),
     ).toEqual({
-      generated: { by: 'claude-code/fable-5', at: '2026-08-23T00:00:00+07:00' },
+      generated: { by: 'lantern-cli/1.0', at: '2026-08-23T00:00:00+07:00' },
     });
   });
 
