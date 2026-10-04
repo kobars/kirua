@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..600&family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
     />
 
     <!-- Dark mode applied before first paint, so the page never flashes light.
@@ -26,6 +26,28 @@
           stored === 'dark' ||
           (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark', dark);
+      })();
+
+      // TEMPORARY: the style experiment, applied before first paint too. See
+      // examples/shared/styleExperiment.ts.
+      (() => {
+        try {
+          const style =
+            new URLSearchParams(location.search).get('style') ??
+            localStorage.getItem('kirua-style-experiment');
+          if (style === 'clay' || style === 'hybrid' || style === 'hybrid-clay')
+            document.documentElement.dataset.styleExperiment = style;
+        } catch {}
+      })();
+
+      (() => {
+        try {
+          const night =
+            new URLSearchParams(location.search).get('night') ??
+            localStorage.getItem('kirua-night-palette');
+          if (['graphite', 'onyx', 'ink', 'carbon'].includes(night))
+            document.documentElement.dataset.nightPalette = night;
+        } catch {}
       })();
     </script>
   </head>
