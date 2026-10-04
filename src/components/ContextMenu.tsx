@@ -4,6 +4,7 @@ import { cn } from '@/lib/cn';
 import { CheckIcon } from './icons';
 import {
   menuContentStyles,
+  menuDangerItemStyles,
   menuIndicatorItemStyles,
   menuIndicatorStyles,
   menuItemStyles,
@@ -60,12 +61,17 @@ export function ContextMenuContent({
 
 export function ContextMenuItem({
   className,
+  variant = 'default',
   ...props
-}: ComponentProps<typeof ContextMenuPrimitive.Item>) {
+}: ComponentProps<typeof ContextMenuPrimitive.Item> & {
+  /** `danger` for a row that destroys something. Published as `data-variant`. */
+  variant?: 'default' | 'danger';
+}) {
   return (
     <ContextMenuPrimitive.Item
       data-slot="context-menu-item"
-      className={cn(menuItemStyles, className)}
+      data-variant={variant}
+      className={cn(menuItemStyles, variant === 'danger' && menuDangerItemStyles, className)}
       {...props}
     />
   );

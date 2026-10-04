@@ -1,13 +1,9 @@
 import { cva } from '@/lib/cva';
 
 /**
- * A prose list, which is the one thing every `<ul>` in this repository was not.
- *
- * All eight of them were layout containers that happened to be semantically a
- * list — a grid of product cards, a row of chips, a column of message bubbles.
- * Not one wanted a marker. The marketing app is the first page here with real
- * body copy, which is why this component waited for it rather than being
- * guessed at.
+ * A prose list: the list a reader reads. A grid of product cards, a row of
+ * chips and a column of message bubbles are semantically lists too, and none
+ * of them wants a marker; they are layout, and this is not.
  *
  * **The marker is a decision, not the browser's default.** A default disc is
  * `currentColor` at the text's own size, which puts a full-strength dot beside

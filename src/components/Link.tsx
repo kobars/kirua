@@ -6,14 +6,13 @@ import { linkVariants } from './Link.variants';
 export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof linkVariants> {}
 
 /**
- * An ordinary link — the one this system had no way to write.
+ * An ordinary link.
  *
- * There were three link components before this (`BreadcrumbLink`,
- * `PaginationLink`, `NavigationMenuLink`), each locked inside its own pattern,
- * so a plain anchor was written by hand six times with six different class
- * strings — and every one of them retyped the same four-class focus ring.
- * That is the failure this closes: a ring copied by hand at every call site is
- * a ring somebody eventually leaves off, and nothing catches it.
+ * The other link components (`BreadcrumbLink`, `PaginationLink`,
+ * `NavigationMenuLink`) each belong to their own pattern. This one is for any
+ * other anchor, and it carries the focus ring so no call site retypes it: a
+ * ring copied by hand at every call site is a ring somebody eventually leaves
+ * off, and nothing catches it.
  *
  * `Button` has `asChild` for the case where an action navigates. This is the
  * other direction: a link that reads as text rather than as a control. It has
@@ -34,7 +33,7 @@ export function Link({ className, variant, children, ...props }: LinkProps) {
     // `jsx-a11y/anchor-has-content` can see that this anchor has content. The
     // rule reads the JSX it is given; a bare spread tells it nothing, and a
     // suppression here would switch the rule off for every consumer's anchor
-    // that this component now stands in front of.
+    // that this component stands in front of.
     <a data-slot="link" className={cn(linkVariants({ variant }), className)} {...props}>
       {children}
     </a>

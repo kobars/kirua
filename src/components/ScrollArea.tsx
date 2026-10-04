@@ -26,6 +26,9 @@ export interface ScrollAreaProps extends ComponentProps<typeof ScrollAreaPrimiti
  * which only the consumer knows. Paint it on the element that owns the
  * surface.
  *
+ * In a region that scrolls only vertically, content is exactly as wide as the
+ * region, so a truncating `ItemTitle` inside it cuts with an ellipsis.
+ *
  * Reading direction reaches Radix through its `dir` prop, not the document:
  * pass `dir="rtl"` and the vertical scrollbar moves to the inline end.
  *
@@ -55,6 +58,13 @@ export function ScrollArea({
         className={cn(
           'size-full rounded-[inherit]',
           'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+          // Radix wraps the content in a `display: table` box so a horizontal
+          // scroller can grow to its content. A table is as wide as its
+          // min-content, so in a region that only scrolls vertically a
+          // truncating title would widen the box rather than cut, and an
+          // action at the row's end would be clipped off. A block is as wide
+          // as the region.
+          orientation === 'vertical' && '[&>div]:block!',
         )}
       >
         {children}

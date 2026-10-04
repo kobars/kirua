@@ -1,7 +1,10 @@
 import type { ComponentProps } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { textareaVariants } from './Textarea.variants';
 
-export type TextareaProps = ComponentProps<'textarea'>;
+export interface TextareaProps
+  extends ComponentProps<'textarea'>, VariantProps<typeof textareaVariants> {}
 
 /**
  * A native multi-line field with the same semantic states as `Input`. It is
@@ -12,8 +15,9 @@ export type TextareaProps = ComponentProps<'textarea'>;
  * it from the visible error message.
  *
  * @example <Textarea id="bio" name="bio" rows={5} placeholder="Tell us about yourself" />
+ * @example <Textarea variant="bare" grow aria-label="Message" placeholder="Ask anything" />
  */
-export function Textarea({ className, ...props }: TextareaProps) {
+export function Textarea({ className, variant, grow, ...props }: TextareaProps) {
   return (
     <textarea
       data-slot="textarea"
@@ -24,6 +28,7 @@ export function Textarea({ className, ...props }: TextareaProps) {
         'hover:border-field-line-hover focus-visible:border-ring',
         'aria-invalid:border-field-line-invalid aria-invalid:hover:border-field-line-invalid',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',
+        textareaVariants({ variant, grow }),
         className,
       )}
       {...props}

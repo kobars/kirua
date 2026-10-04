@@ -10,8 +10,9 @@ export const chipVariants = cva(
     variants: {
       variant: {
         /* `bg-page` inside `ctx-inverse` stays pure black in dark mode too;
-         * `bg-inverse` would flip to white. Same trick in Card and NavBar. */
-        dark: 'ctx-inverse bg-page text-fg',
+         * `bg-inverse` would flip to white. Same trick in Card and NavBar. The
+         * hairline inside keeps the chip's boundary on a night page. */
+        dark: 'ctx-inverse bg-page text-fg inset-ring inset-ring-line-inverse',
         light: 'border border-line-subtle bg-raised text-fg',
         /* bg-brand, not bg-brand-vivid: white chip text is 14px or smaller,
          * and white on blue-500 is only 3.64:1. The semantic border is what

@@ -8,6 +8,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from './NavigationMenu';
+import { MD, atLeast } from '@/test/viewport';
 
 const meta = {
   tags: ['autodocs'],
@@ -46,8 +47,8 @@ export const Default: Story = {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger>Catalogue</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <div className="grid w-md grid-cols-2 gap-1">
+            <NavigationMenuContent width="md">
+              <div className="grid grid-cols-2 gap-1">
                 <NavigationMenuLink href="#/bags">
                   <span className="font-medium">Bags</span>
                   <span className="text-caption text-fg-muted">Totes, slings, backpacks</span>
@@ -77,7 +78,7 @@ export const Default: Story = {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink href="#/stores" className="px-4">
+            <NavigationMenuLink variant="top" href="#/stores">
               Stores
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -87,6 +88,10 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    // A link in the row is the triggers' height, not a panel tile's.
+    await expect(
+      canvas.getByRole('link', { name: 'Stores' }).getBoundingClientRect().height,
+    ).toBe(canvas.getByRole('button', { name: 'Catalogue' }).getBoundingClientRect().height);
     canvas.getByRole('button', { name: 'Catalogue' }).focus();
 
     // A trigger and a plain link each draw the ring when reached from the
@@ -168,6 +173,41 @@ export const TheViewportTakesThePanelsHeight: Story = {
 
     await waitFor(async () => {
       await expect(viewport.getBoundingClientRect().height).toBeGreaterThan(40);
+    });
+  },
+};
+
+export const APanelOfAFixedWidth: Story = {
+  render: () => (
+    <div className="flex h-72 justify-center pt-2">
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Catalogue</NavigationMenuTrigger>
+            <NavigationMenuContent width="md">
+              <div className="grid grid-cols-2 gap-1">
+                <NavigationMenuLink href="#/bags">Bags</NavigationMenuLink>
+                <NavigationMenuLink href="#/shoes">Shoes</NavigationMenuLink>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
+  ),
+  /** 28rem from `md` up, whatever the menu's own width was before Radix measured it. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Catalogue' }));
+    // Measured once the panel has finished scaling in, not mid-animation.
+    const expected = atLeast(MD) ? 448 : null;
+    await waitFor(() => {
+      const content = canvasElement.querySelector<HTMLElement>(
+        '[data-slot="navigation-menu-content"]',
+      );
+      expect(content).not.toBeNull();
+      const width = Math.round(content!.getBoundingClientRect().width);
+      expect(expected === null || width === expected).toBe(true);
     });
   },
 };

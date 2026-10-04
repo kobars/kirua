@@ -227,3 +227,21 @@ export const TheTabStopFollowsFocus: Story = {
     await expect(stops()).toHaveLength(1);
   },
 };
+
+export const PlainAndScrollingInsideItself: Story = {
+  render: (args) => (
+    <div className="w-60 rounded-lg border border-line-subtle p-2" data-testid="frame">
+      <Calendar {...args} variant="plain" data-testid="calendar" />
+    </div>
+  ),
+  /** Seven 40px columns do not fit 240px: the calendar scrolls, not the page. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const calendar = canvas.getByTestId('calendar');
+    const frame = canvas.getByTestId('frame');
+
+    await expect(getComputedStyle(calendar).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    await expect(calendar.scrollWidth).toBeGreaterThan(calendar.clientWidth);
+    await expect(frame.scrollWidth).toBe(frame.clientWidth);
+  },
+};

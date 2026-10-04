@@ -78,3 +78,22 @@ export const OnEverySurface: Story = {
     </div>
   ),
 };
+
+export const InheritingTheSurroundingColour: Story = {
+  render: () => (
+    <Text tone="primary">
+      Fix the{' '}
+      <Link variant="inherit" href="#phone">
+        phone number
+      </Link>{' '}
+      before you continue.
+    </Text>
+  ),
+  /** Underlined, in the colour of the text it sits in rather than the accent. */
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'phone number' });
+    const text = link.parentElement!;
+    await expect(getComputedStyle(link).textDecorationLine).toBe('underline');
+    await expect(getComputedStyle(link).color).toBe(getComputedStyle(text).color);
+  },
+};

@@ -123,3 +123,54 @@ export const TheGroupTakesTheFocusRing: Story = {
     await expect(getComputedStyle(input).outlineStyle).toBe('none');
   },
 };
+
+export const SizeAndWidth: Story = {
+  render: () => (
+    <div className="grid gap-4">
+      <InputGroup size="sm" data-testid="small">
+        <InputGroupAddon>
+          <SearchIcon />
+        </InputGroupAddon>
+        <InputGroupInput aria-label="Search the shop" placeholder="Search" />
+      </InputGroup>
+      {(['xs', 'sm', 'md', 'lg'] as const).map((width) => (
+        <InputGroup key={width} width={width} data-testid={`width-${width}`}>
+          <InputGroupInput aria-label={`Width ${width}`} placeholder={`width="${width}"`} />
+        </InputGroup>
+      ))}
+    </div>
+  ),
+  /** `sm` is Button's small height; the widths cap the group from `sm` up. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(Math.round(canvas.getByTestId('small').getBoundingClientRect().height)).toBe(
+      36,
+    );
+    await expect(Math.round(canvas.getByTestId('width-md').getBoundingClientRect().width)).toBe(
+      288,
+    );
+  },
+};
+
+export const AnEdgeButtonSitsEvenly: Story = {
+  render: () => (
+    <div className="w-72">
+      <InputGroup data-testid="group">
+        <InputGroupInput aria-label="Reply" placeholder="Write a reply" />
+        <InputGroupAddon>
+          <IconButton aria-label="Clear" size="sm" variant="ghost">
+            <CloseIcon />
+          </IconButton>
+        </InputGroupAddon>
+      </InputGroup>
+    </div>
+  ),
+  /** The trailing button is pulled out by half the padding: 6px from the edge, not 12. */
+  play: async ({ canvasElement }) => {
+    const group = within(canvasElement).getByTestId('group');
+    const button = within(group).getByRole('button', { name: 'Clear' });
+    const gap = group.getBoundingClientRect().right - button.getBoundingClientRect().right;
+    // One pixel of border, then 6px.
+    await expect(Math.round(gap)).toBe(7);
+  },
+};

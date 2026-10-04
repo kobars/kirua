@@ -87,7 +87,7 @@ export const TextBesideSmallButtons: Story = {
       <Button variant="secondary" size="sm">
         Previous
       </Button>
-      <ButtonGroupText className="text-body-sm">Page 2</ButtonGroupText>
+      <ButtonGroupText size="sm">Page 2</ButtonGroupText>
       <Button variant="secondary" size="sm">
         Next
       </Button>
@@ -102,6 +102,7 @@ export const TextBesideSmallButtons: Story = {
       button.getBoundingClientRect().height,
     );
     await expect(text.getBoundingClientRect().top).toBe(button.getBoundingClientRect().top);
+    await expect(getComputedStyle(text).fontSize).toBe(getComputedStyle(button).fontSize);
   },
 };
 

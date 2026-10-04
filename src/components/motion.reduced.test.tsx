@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import { cleanup, render } from '@/test/render';
+import { Button } from './Button';
 import { Card } from './Card';
 import { Carousel } from './Carousel';
 
@@ -21,9 +23,9 @@ afterEach(cleanup);
  * had to leave `base` entirely for exactly the opposite reason — they carry no
  * `!important`, so a plain utility outranked them.
  *
- * Nothing asserted any of this. The rule could have been deleted, moved out of
- * the media query, or lost its `!important`, and every other test here would
- * still pass — a `Dialog` that animates for 200ms looks correct to axe, to a
+ * Without this file the rule could be deleted, moved out of the media query,
+ * or lose its `!important`, and every other test here would still pass — a
+ * `Dialog` that animates for 200ms looks correct to axe, to a
  * screenshot taken after it settles, and to a person who does not have the
  * preference set.
  */
@@ -53,9 +55,8 @@ describe('every declared animation is flattened, not merely shortened', () => {
    * The class strings are written out **literally**, and that is not style.
    * Tailwind finds classes by scanning source text, so a computed
    * `` `animate-${name}` `` is invisible to it and the utility is never
-   * generated — the first draft of this file did exactly that and every
-   * assertion read `animationName: none`, which looks identical to a rule that
-   * stopped working.
+   * generated — every assertion would then read `animationName: none`, which
+   * looks identical to a rule that stopped working.
    */
   const ANIMATIONS = [
     ['fade-in', 'animate-fade-in'],
@@ -109,4 +110,18 @@ it('the carousel does not animate scrolling when reduced motion is requested', (
     '[data-slot="carousel"]',
   )!;
   expect(getComputedStyle(carousel).scrollBehavior).toBe('auto');
+});
+
+/**
+ * A short transition is still movement. The Clay button's lift is a move, not
+ * a fade, so under reduced motion it must not happen at all: the button keeps
+ * its resting place and its resting shadow under the pointer.
+ */
+it('a hovered button keeps its place and its resting shadow', async () => {
+  const button = render(<Button>Pay</Button>).querySelector('[data-slot="button"]')!;
+  const resting = getComputedStyle(button).boxShadow;
+  await userEvent.hover(button);
+  expect(button.matches(':hover')).toBe(true);
+  expect(getComputedStyle(button).translate).toBe('none');
+  expect(getComputedStyle(button).boxShadow).toBe(resting);
 });

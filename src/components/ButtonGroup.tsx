@@ -6,8 +6,7 @@
  * practices guide specifies here.
  *
  * File-level, not next-line: oxlint 1.75 silently ignores an
- * `oxlint-disable-next-line` for a `jsx-a11y` rule. Verified by planting one
- * and watching the warning survive. */
+ * `oxlint-disable-next-line` for a `jsx-a11y` rule. */
 import type { ComponentProps } from 'react';
 import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
@@ -46,21 +45,39 @@ export function ButtonGroup({ className, orientation, ...props }: ButtonGroupPro
   );
 }
 
+const textSizes = {
+  sm: 'px-3 text-body-sm',
+  md: 'px-4 text-body-md',
+} as const;
+
+export interface ButtonGroupTextProps extends ComponentProps<'div'> {
+  /** Match the buttons beside it: `sm` beside `size="sm"` buttons. */
+  size?: keyof typeof textSizes;
+}
+
 /**
  * A static label sharing the group's shape — "of 12" between two pagers, a
  * unit after a stepper. Not focusable, so it carries no role.
  *
  * It takes its height from the buttons beside it, so it matches a group of
- * `sm` buttons as well as `md`. A group holding nothing but this text is only
- * as tall as its padding. The text size is the consumer's, through `className`.
+ * `sm` buttons as well as `md`; `size` sets the type and the inset to match.
+ * A group holding nothing but this text is only as tall as its padding.
+ *
+ * @example
+ * <ButtonGroup aria-label="Orders">
+ *   <IconButton aria-label="Newer order" variant="secondary" size="sm"><ChevronStartIcon /></IconButton>
+ *   <ButtonGroupText size="sm">2 of 4</ButtonGroupText>
+ *   <IconButton aria-label="Older order" variant="secondary" size="sm"><ChevronEndIcon /></IconButton>
+ * </ButtonGroup>
  */
-export function ButtonGroupText({ className, ...props }: ComponentProps<'div'>) {
+export function ButtonGroupText({ className, size = 'md', ...props }: ButtonGroupTextProps) {
   return (
     <div
       data-slot="button-group-text"
       className={cn(
-        'inline-flex items-center self-stretch rounded-pill border-2 border-secondary-line',
-        'bg-secondary px-4 font-text text-body-md font-medium text-on-secondary',
+        'inline-flex items-center self-stretch rounded-control border-2 border-secondary-line',
+        'bg-secondary font-text font-medium text-on-secondary',
+        textSizes[size],
         className,
       )}
       {...props}

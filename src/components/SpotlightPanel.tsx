@@ -46,6 +46,7 @@ export function SpotlightPanel({
   className,
   tone,
   padding,
+  minHeight,
   mediaWidth,
   glint = ['top-start', 'bottom-start'],
   style,
@@ -55,7 +56,7 @@ export function SpotlightPanel({
   return (
     <div
       data-slot="spotlight-panel"
-      className={cn(spotlightPanelVariants({ tone, padding }), className)}
+      className={cn(spotlightPanelVariants({ tone, padding, minHeight }), className)}
       style={{ '--spotlight-media-width': mediaWidth ?? '0px', ...style } as CSSProperties}
       {...props}
     >
@@ -87,7 +88,19 @@ export interface SpotlightMediaProps extends ComponentProps<'div'> {
    * the panel instead — only that reserves matching space for the content.
    */
   width?: string;
+  /**
+   * Push the artwork 6% of the panel past its side edge, so the figure is cut
+   * by the screen-side of the panel rather than standing inside it.
+   */
+  bleed?: boolean;
+  /**
+   * Size an `<img>` child to the media box: the whole figure, standing on the
+   * bottom edge. Without it the image keeps its intrinsic size.
+   */
+  fit?: boolean;
 }
+
+const bleedClasses = { start: 'inset-s-[-6%]', end: 'inset-e-[-6%]' } as const;
 
 const overhangClasses = {
   top: '-top-16 bottom-0',
@@ -102,6 +115,8 @@ export function SpotlightMedia({
   side = 'end',
   overhang = 'both',
   width = 'var(--spotlight-media-width)',
+  bleed = false,
+  fit = false,
   className,
   style,
   children,
@@ -116,6 +131,8 @@ export function SpotlightMedia({
         'pointer-events-none absolute z-base hidden items-end justify-center md:flex',
         side === 'end' ? 'inset-e-0' : 'inset-s-0',
         overhangClasses[overhang],
+        bleed && bleedClasses[side],
+        fit && '[&>img]:size-full [&>img]:object-contain [&>img]:object-bottom',
         className,
       )}
       style={{ width, ...style }}
@@ -126,15 +143,31 @@ export function SpotlightMedia({
   );
 }
 
+const contentGaps = { 4: 'gap-4', 6: 'gap-6' } as const;
+
+export interface SpotlightContentProps extends ComponentProps<'div'> {
+  /** The rhythm between the copy's blocks. Unset, they touch. */
+  gap?: keyof typeof contentGaps;
+  /** Cap the copy at 44rem, so a headline on a wide screen wraps at a readable length. */
+  measure?: boolean;
+}
+
 /** Right padding tracks the panel's `mediaWidth` plus a gutter, so text stops
  *  before the artwork begins however long it runs. */
-export function SpotlightContent({ className, ...props }: ComponentProps<'div'>) {
+export function SpotlightContent({
+  className,
+  gap,
+  measure = false,
+  ...props
+}: SpotlightContentProps) {
   return (
     <div
       data-slot="spotlight-content"
       className={cn(
         'relative z-raised flex flex-col items-start',
         'md:pe-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
+        gap !== undefined && contentGaps[gap],
+        measure && 'max-w-176',
         className,
       )}
       {...props}

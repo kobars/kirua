@@ -155,9 +155,9 @@ describe('no file declares a client boundary', () => {
    * ship their own, so a wrapper file stays a Server Component and a `Card` in
    * an RSC costs a consumer zero JavaScript.
    *
-   * A *directive*, not a mention. `grep` finds one hit today and it is a
-   * sentence inside a JSDoc comment, so the naive check reports a failure that
-   * is not one. A directive is only a directive at the top of the file, before
+   * A *directive*, not a mention. `grep` also finds the phrase in a sentence
+   * inside a JSDoc comment, so the naive check reports a failure that is not
+   * one. A directive is only a directive at the top of the file, before
    * any statement — so that is where this looks.
    */
   it.each(sourceFiles(COMPONENTS_DIR).map((f) => [path.relative(SRC_DIR, f), f]))(

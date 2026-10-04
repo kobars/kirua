@@ -13,15 +13,13 @@ afterEach(cleanup);
 
 /**
  * Fidelity to a reference design is this repository's whole premise — `[FIGMA]`
- * marks measured values precisely so they do not drift — and until now nothing
- * checked appearance at all. Behaviour and accessibility were asserted; a
- * padding that shifted by one step, a colour that resolved differently under a
- * surface context, an ornament drawn for the wrong radius: all invisible.
+ * marks measured values precisely so they do not drift. Behaviour and
+ * accessibility are asserted elsewhere; a padding that shifted by one step, a
+ * colour that resolved differently under a surface context, an ornament drawn
+ * for the wrong radius are invisible to those checks and visible here.
  *
- * **Local baselines, not a hosted service.** Continuous integration is already
- * deferred on cost, so a subscription would be paying for a gate nothing runs
- * automatically, and a PNG in the repository is reviewed in the same diff as
- * the change that moved it.
+ * **Local baselines, not a hosted service.** A PNG in the repository is
+ * reviewed in the same diff as the change that moved it.
  *
  * One fixed width, and every surface context. Context is the axis worth
  * spending baselines on, because it is the axis where this system is unusual:
@@ -74,6 +72,36 @@ describe('controls, in every surface context', () => {
     );
 
     await expect(element).toMatchScreenshot(`badges-${name}`);
+  });
+});
+
+/**
+ * Each night re-points the page, the card, the lines and the shade a Clay
+ * shadow casts, so one card holding a field and the three button variants is
+ * the smallest specimen that shows all of them.
+ */
+const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
+
+describe('dark mode, in every night palette', () => {
+  it.each(NIGHTS)('%s', async (night) => {
+    const element = render(
+      <div
+        className="dark inline-flex w-fit flex-col gap-4 bg-page p-8 text-fg"
+        data-night-palette={night === 'navy' ? undefined : night}
+      >
+        <Card padding="md" className="w-96">
+          <CardTitle>Night order</CardTitle>
+          <CardBody>Two live sessions a week.</CardBody>
+          <CardFooter>
+            <Button variant="primary">Enroll</Button>
+            <Button variant="secondary">Explore</Button>
+            <Button variant="danger">Cancel</Button>
+          </CardFooter>
+        </Card>
+      </div>,
+    ).firstElementChild as HTMLElement;
+
+    await expect(element).toMatchScreenshot(`night-${night}`);
   });
 });
 

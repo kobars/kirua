@@ -6,9 +6,9 @@ import { cva } from '@/lib/cva';
  * The grid is the point. A wrapping flex row leaves the last tile a different
  * width from the rest, and a row of tiles whose numbers do not line up is a row
  * of tiles that has stopped being a comparison. `auto-fit` rather than a fixed
- * column count because the two screens using it have three tiles and four, and
- * a named count would have been wrong for one of them; at 320px it collapses to
- * a single column on its own.
+ * column count because a row may hold three tiles or four, and a named count
+ * would be wrong for one of them; at 320px it collapses to a single column on
+ * its own.
  *
  * Its own file rather than a second export from `Stat.variants.ts`, because
  * `variants.test.tsx` checks every cva in a module against one `data-slot` —

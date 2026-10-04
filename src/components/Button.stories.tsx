@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Button } from './Button';
-import { ArrowRightIcon, SendIcon, SparkleIcon } from './icons';
+import { ButtonGroup } from './ButtonGroup';
+import { ArrowRightIcon, ChevronDownIcon, SendIcon, SparkleIcon } from './icons';
 
 const meta = {
   tags: ['autodocs'],
@@ -52,6 +53,36 @@ export const Variants: Story = {
       </Button>
     </div>
   ),
+};
+
+/**
+ * A button standing on its own carries the Clay edge and a hard press shadow,
+ * and lifts under a fine pointer. Joined into a `ButtonGroup` it keeps the
+ * plain shape, so the group reads as one control with one selected part.
+ */
+export const StandingAndJoined: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-6">
+      <Button {...args} variant="primary">
+        Standing
+      </Button>
+      <ButtonGroup aria-label="View">
+        <Button {...args} variant="secondary">
+          Grid
+        </Button>
+        <Button {...args} variant="secondary">
+          List
+        </Button>
+      </ButtonGroup>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const [standing, joined] = within(canvasElement).getAllByRole('button');
+    await expect(getComputedStyle(standing!).borderTopWidth).toBe('3px');
+    await expect(getComputedStyle(standing!).boxShadow).not.toBe('none');
+    await expect(getComputedStyle(joined!).borderTopWidth).toBe('2px');
+    await expect(getComputedStyle(joined!).boxShadow).toBe('none');
+  },
 };
 
 export const Sizes: Story = {
@@ -232,4 +263,19 @@ export const AsLink: Story = {
       <a href="#signup">Go to sign up</a>
     </Button>
   ),
+};
+
+export const JustifiedBetween: Story = {
+  render: () => (
+    <div className="w-72">
+      <Button variant="ghost" fullWidth justify="between" trailingIcon={<ChevronDownIcon />}>
+        How it got there
+      </Button>
+    </div>
+  ),
+  /** The chevron goes to the far end, where a disclosure's chevron belongs. */
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'How it got there' });
+    await expect(getComputedStyle(button).justifyContent).toBe('space-between');
+  },
 };

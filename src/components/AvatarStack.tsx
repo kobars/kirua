@@ -54,7 +54,7 @@ function swatchFor(name: string) {
  * a prop and not a constant.
  *
  * @example <AvatarStack items={[{ name: 'Rin' }, { name: 'Kai' }]} max={3} />
- * @example <AvatarStack items={people} label={(n) => `${n} personnes`} />
+ * @example <AvatarStack items={people} label={(n) => `${n} teammates`} />
  */
 export function AvatarStack({
   items,

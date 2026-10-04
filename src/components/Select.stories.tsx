@@ -203,3 +203,53 @@ export const TheListFitsTheRoomItHas: Story = {
     );
   },
 };
+
+export const AFieldInsideTheSelect: Story = {
+  render: () => (
+    <Select defaultValue="general">
+      <Field controlId="ward" label="Clinic">
+        <SelectTrigger width="xs" data-testid="trigger">
+          <SelectValue />
+        </SelectTrigger>
+      </Field>
+      <SelectContent aria-label="Clinic">
+        {clinics.map(([value, label]) => (
+          <SelectItem key={value} value={value}>
+            {label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  ),
+  /**
+   * `Select` renders no element, so the `Field` can sit inside it and hand its
+   * id to the trigger — the focusable control the label must name.
+   */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox', { name: 'Clinic' });
+    await expect(trigger).toHaveAttribute('id', 'ward');
+  },
+};
+
+export const TriggerWidths: Story = {
+  render: () => (
+    <div className="grid gap-3">
+      {(['xs', 'sm', 'md', 'lg'] as const).map((width) => (
+        <Select key={width}>
+          <SelectTrigger width={width} aria-label={`Width ${width}`} data-testid={width}>
+            <SelectValue placeholder={`width="${width}"`} />
+          </SelectTrigger>
+          <SelectContent aria-label={`Width ${width}`}>
+            <SelectItem value="one">One</SelectItem>
+          </SelectContent>
+        </Select>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(Math.round(canvas.getByTestId('xs').getBoundingClientRect().width)).toBe(192);
+    await expect(Math.round(canvas.getByTestId('lg').getBoundingClientRect().width)).toBe(320);
+  },
+};

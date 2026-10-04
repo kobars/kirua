@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Heading } from './Heading';
+import { VisuallyHidden } from './VisuallyHidden';
 
 const SIZES = [
+  'display-hero',
   'display-xl',
   'display-lg',
   'display-md',
@@ -71,7 +73,11 @@ export const LevelIsNotSize: Story = {
 };
 
 export const HiddenButStillNamed: Story = {
-  args: { as: 'h2', className: 'sr-only', children: 'Aozora in numbers' },
+  render: () => (
+    <VisuallyHidden asChild>
+      <Heading as="h2">Aozora in numbers</Heading>
+    </VisuallyHidden>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const heading = canvas.getByRole('heading', { level: 2, name: 'Aozora in numbers' });

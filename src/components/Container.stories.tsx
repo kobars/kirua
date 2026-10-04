@@ -5,7 +5,7 @@ import { Heading } from './Heading';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './Table';
 import { Text } from './Text';
 
-const WIDTHS = ['md', '3xl', '4xl', '6xl', '7xl'] as const;
+const WIDTHS = ['md', '3xl', '4xl', '6xl', '7xl', 'full'] as const;
 
 const meta = {
   tags: ['autodocs'],
@@ -15,7 +15,7 @@ const meta = {
   argTypes: {
     width: { control: 'inline-radio', options: WIDTHS },
     gap: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
-    pad: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
+    pad: { control: 'inline-radio', options: ['xs', 'sm', 'md', 'lg'] },
   },
   parameters: {
     docs: {
@@ -64,6 +64,27 @@ export const Rhythm: Story = {
       ))}
     </div>
   ),
+};
+
+export const Pads: Story = {
+  render: (args) => (
+    <div className="grid gap-4">
+      {(['xs', 'sm', 'md', 'lg'] as const).map((step) => (
+        <Container {...args} key={step} pad={step} className="bg-sunken" data-testid={step}>
+          <Text size="sm">pad: {step}</Text>
+        </Container>
+      ))}
+    </div>
+  ),
+  /** 16, 24, 32 and 40 pixels above and below, from the spacing scale. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pad = (step: string) => getComputedStyle(canvas.getByTestId(step)).paddingTop;
+    await expect(pad('xs')).toBe('16px');
+    await expect(pad('sm')).toBe('24px');
+    await expect(pad('md')).toBe('32px');
+    await expect(pad('lg')).toBe('40px');
+  },
 };
 
 export const AWideChildDoesNotStretchThePage: Story = {

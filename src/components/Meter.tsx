@@ -33,7 +33,8 @@ export interface MeterProps
    * *low* value is the problem — a stock level, a battery — has no threshold
    * here on purpose, because inverting the comparison would make the same two
    * numbers mean opposite things depending on a third prop. Carry that meaning
-   * beside the bar instead; `examples/simrs/Pharmacy.tsx` uses a `Badge`.
+   * beside the bar instead, as a `Badge` does in the hospital system's pharmacy
+   * inventory.
    */
   thresholds?: { warning: number; danger: number };
 }
@@ -53,10 +54,9 @@ export interface MeterProps
  *
  * ## Why this is not a native `<meter>` element
  *
- * The intention was a real `<meter>`, and the blocker is that its appearance
- * lives in UA shadow pseudo-elements — `::-webkit-meter-bar` and
- * `::-moz-meter-bar` — which `getComputedStyle` does not read back. Probed
- * before this was written: both the bar and the value pseudo-element report
+ * A native `<meter>` keeps its appearance in UA shadow pseudo-elements —
+ * `::-webkit-meter-bar` and `::-moz-meter-bar` — which `getComputedStyle` does
+ * not read back: both the bar and the value pseudo-element report
  * `rgba(0, 0, 0, 0)` whether or not a rule targets them, with and without
  * `appearance: none`. So no test in this repository could assert that the fill
  * is the colour it claims, and the vendor prefixes differ across the four

@@ -1,5 +1,5 @@
 import type { VariantProps } from '@/lib/cva';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { listVariants } from './List.variants';
 
@@ -10,8 +10,8 @@ export interface ListProps
  * A list a reader reads, as opposed to a list a layout happens to be.
  *
  * `variant="number"` renders an `<ol>`; the other two render a `<ul>`. That is
- * one prop rather than two because the element and the marker have never
- * disagreed on a real page — an ordered list without numbers is a list whose
+ * one prop rather than two because the element and the marker never disagree
+ * on a real page — an ordered list without numbers is a list whose
  * order nothing conveys, which is a bug rather than a style.
  *
  * Known limitation, same shape as `asChild`'s: with `variant="number"` the ref
@@ -26,7 +26,7 @@ export interface ListProps
  * @example
  * // Items carrying their own leading icon. Still a list; just not a bulleted one.
  * <List variant="plain">
- *   <ListItem className="flex gap-2"><CheckIcon /> Unlimited galleries</ListItem>
+ *   <ListItem icon={<CheckIcon tone="accent" />}>Unlimited galleries</ListItem>
  * </List>
  */
 export function List({ className, variant, size, ...props }: ListProps) {
@@ -45,11 +45,34 @@ export function List({ className, variant, size, ...props }: ListProps) {
   );
 }
 
+export interface ListItemProps extends ComponentProps<'li'> {
+  /**
+   * A leading mark in place of a bullet — a tick in a list of features. It is
+   * decorative, and it stays on the first line when the text wraps.
+   */
+  icon?: ReactNode;
+}
+
 /**
  * One item. It carries no classes of its own by default — the spacing and the
  * marker belong to the list, so that a nested list is spaced by *its* parent
  * rather than by whichever level happened to set a margin first.
  */
-export function ListItem({ className, ...props }: ComponentProps<'li'>) {
-  return <li data-slot="list-item" className={cn(className)} {...props} />;
+export function ListItem({ className, icon, children, ...props }: ListItemProps) {
+  if (icon === undefined || icon === null) {
+    return (
+      <li data-slot="list-item" className={cn(className)} {...props}>
+        {children}
+      </li>
+    );
+  }
+  return (
+    <li data-slot="list-item" className={cn('flex items-start gap-2', className)} {...props}>
+      {/* The first line's height, so the icon centres on it however many lines follow. */}
+      <span aria-hidden="true" className="flex h-lh shrink-0 items-center">
+        {icon}
+      </span>
+      <span className="min-w-0">{children}</span>
+    </li>
+  );
 }

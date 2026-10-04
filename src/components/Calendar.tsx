@@ -2,7 +2,9 @@
  * Every day button has `aria-label={dayFormat.format(date)}`. The rule cannot
  * follow a computed value; the stories assert the real names. */
 import type { ComponentProps, FocusEvent, KeyboardEvent } from 'react';
+import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { calendarVariants } from './Calendar.variants';
 import { IconButton } from './IconButton';
 import { ChevronEndIcon, ChevronStartIcon } from './icons';
 
@@ -28,6 +30,8 @@ export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
   today?: Date | undefined;
   previousLabel?: string | undefined;
   nextLabel?: string | undefined;
+  /** `plain` when the calendar sits inside a surface of its own, such as a `Card`. */
+  variant?: VariantProps<typeof calendarVariants>['variant'] | undefined;
 }
 
 /** Midnight local time, so two dates compare by day rather than by instant. */
@@ -103,6 +107,7 @@ export function Calendar({
   today = new Date(),
   previousLabel = 'Previous month',
   nextLabel = 'Next month',
+  variant,
   ...props
 }: CalendarProps) {
   const year = month.getFullYear();
@@ -190,7 +195,14 @@ export function Calendar({
   return (
     <div
       data-slot="calendar"
-      className={cn('w-max rounded-lg bg-raised p-3 font-text text-fg', className)}
+      className={cn(
+        'w-max rounded-lg bg-raised p-3 font-text text-fg',
+        // Seven 40px columns are wider than a 320px phone's content box, so the
+        // calendar scrolls inside itself instead of widening the page.
+        'max-w-full overflow-x-auto',
+        calendarVariants({ variant }),
+        className,
+      )}
       {...props}
     >
       <div className="mb-2 flex items-center justify-between gap-2">

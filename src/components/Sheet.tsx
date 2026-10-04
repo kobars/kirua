@@ -39,6 +39,9 @@ export function SheetContent({
   className,
   children,
   side,
+  gap,
+  padding,
+  scroll,
   showCloseButton = true,
   closeLabel = 'Close',
   container,
@@ -54,7 +57,12 @@ export function SheetContent({
       />
       <DialogPrimitive.Content
         data-slot="sheet-content"
-        className={cn(sheetContentVariants({ side }), className)}
+        data-close-button={showCloseButton ? '' : undefined}
+        className={cn(
+          'group/sheet',
+          sheetContentVariants({ side, gap, padding, scroll }),
+          className,
+        )}
         {...props}
       >
         {children}
@@ -70,6 +78,11 @@ export function SheetContent({
   );
 }
 
+/**
+ * The sheet's name. Beside the built-in close button it keeps clear of it, so
+ * a title that wraps on a phone runs onto a second line instead of under the
+ * button.
+ */
 export function SheetTitle({
   className,
   ...props
@@ -77,7 +90,11 @@ export function SheetTitle({
   return (
     <DialogPrimitive.Title
       data-slot="sheet-title"
-      className={cn('font-text text-heading-md font-semibold text-fg', className)}
+      className={cn(
+        'font-text text-heading-md font-semibold text-fg',
+        'group-data-close-button/sheet:pe-10',
+        className,
+      )}
       {...props}
     />
   );
@@ -96,11 +113,37 @@ export function SheetDescription({
   );
 }
 
-export function SheetFooter({ className, ...props }: ComponentProps<'div'>) {
+const footerOrientations = {
+  horizontal: 'flex-wrap justify-end',
+  vertical: 'flex-col items-stretch',
+} as const;
+
+export interface SheetFooterProps extends ComponentProps<'div'> {
+  /**
+   * `vertical` stacks full-width rows — a total above a checkout button —
+   * which is what a narrow sheet on a phone has room for.
+   */
+  orientation?: keyof typeof footerOrientations;
+}
+
+/**
+ * The sheet's last block, pushed to the bottom however short the content above.
+ *
+ * @example
+ * <SheetFooter orientation="vertical">
+ *   <DescriptionList>…</DescriptionList>
+ *   <Button fullWidth>Check out</Button>
+ * </SheetFooter>
+ */
+export function SheetFooter({
+  className,
+  orientation = 'horizontal',
+  ...props
+}: SheetFooterProps) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn('mt-auto flex flex-wrap justify-end gap-3 pt-6', className)}
+      className={cn('mt-auto flex gap-3 pt-6', footerOrientations[orientation], className)}
       {...props}
     />
   );

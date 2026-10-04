@@ -52,6 +52,7 @@ export function Button({
   variant,
   size,
   fullWidth,
+  justify,
   asChild = false,
   leadingIcon,
   trailingIcon,
@@ -62,7 +63,7 @@ export function Button({
   onClick,
   ...props
 }: ButtonProps) {
-  const classes = cn(buttonVariants({ variant, size, fullWidth }), className);
+  const classes = cn(buttonVariants({ variant, size, fullWidth, justify }), className);
   const shared = {
     'data-slot': 'button',
     'data-variant': variant ?? 'primary',

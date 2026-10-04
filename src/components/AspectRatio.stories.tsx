@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { AspectRatio } from './AspectRatio';
+import { Placeholder } from './Placeholder';
 
 const meta = {
   tags: ['autodocs'],
@@ -66,5 +67,23 @@ export const ReservesHeightBeforeContentLoads: Story = {
 
     await expect(height).toBeGreaterThan(0);
     await expect(Math.round(width / height)).toBe(2);
+  },
+};
+
+export const Radii: Story = {
+  render: () => (
+    <div className="grid grid-cols-4 gap-3">
+      {(['sm', 'md', 'lg', 'xl'] as const).map((radius) => (
+        <AspectRatio key={radius} ratio={1} radius={radius} data-testid={radius}>
+          <Placeholder>{radius}</Placeholder>
+        </AspectRatio>
+      ))}
+    </div>
+  ),
+  /** The box clips, so the placeholder inside takes the corner. */
+  play: async ({ canvasElement }) => {
+    const box = within(canvasElement).getByTestId('xl');
+    await expect(getComputedStyle(box).overflow).toBe('hidden');
+    await expect(parseFloat(getComputedStyle(box).borderTopLeftRadius)).toBeGreaterThan(0);
   },
 };

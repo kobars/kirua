@@ -95,3 +95,35 @@ export const TheTriggerAnnouncesItsState: Story = {
     await expect(trigger).toHaveAttribute('aria-controls');
   },
 };
+
+export const ARailWithAGap: Story = {
+  render: () => (
+    <div className="grid max-w-md gap-6">
+      {([1, 2, 3, 4] as const).map((gap) => (
+        <Collapsible key={gap} defaultOpen variant="rail" gap={gap} data-testid={`gap-${gap}`}>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth
+              justify="between"
+              trailingIcon={<ChevronDownIcon />}
+            >
+              How it got there (gap {gap})
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            The reasoning, set apart by a rule rather than a fill.
+          </CollapsibleContent>
+        </Collapsible>
+      ))}
+    </div>
+  ),
+  /** The disclosure owns the space under its trigger, and the rule is a border. */
+  play: async ({ canvasElement }) => {
+    const root = within(canvasElement).getByTestId('gap-3');
+    await expect(root).toHaveAttribute('data-slot', 'collapsible');
+    await expect(getComputedStyle(root).rowGap).toBe('12px');
+    await expect(getComputedStyle(root).borderInlineStartWidth).toBe('2px');
+  },
+};

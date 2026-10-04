@@ -20,11 +20,11 @@ export interface AvatarProps
  *   <AvatarFallback delayMs={300}>RK</AvatarFallback>
  * </Avatar>
  */
-export function Avatar({ className, size, ...props }: AvatarProps) {
+export function Avatar({ className, size, ring, ...props }: AvatarProps) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
-      className={cn(avatarVariants({ size }), className)}
+      className={cn(avatarVariants({ size, ring }), className)}
       {...props}
     />
   );

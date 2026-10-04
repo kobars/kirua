@@ -49,9 +49,13 @@ export function AlertTitle({ className, ...props }: ComponentProps<'p'>) {
   );
 }
 
-export function AlertDescription({ className, ...props }: ComponentProps<'p'>) {
+/**
+ * The alert's body. A `div`, so it may hold a list — the links of an error
+ * summary — as well as a sentence; a list inside a paragraph is invalid HTML.
+ */
+export function AlertDescription({ className, ...props }: ComponentProps<'div'>) {
   return (
-    <p
+    <div
       data-slot="alert-description"
       className={cn('mt-1 text-body-sm text-current', className)}
       {...props}

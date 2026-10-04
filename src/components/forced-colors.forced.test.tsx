@@ -22,8 +22,8 @@ afterEach(cleanup);
  * small user-chosen palette, for people who cannot read the colours a designer
  * picked, and it is the mode a token system fails hardest in.
  *
- * Two failures were **measured before anything was changed**, not predicted:
- * `bg-brand` computes to plain white, and `shadow-overlay` computes to `none`.
+ * Measured, not predicted: without the rules this file checks, `bg-brand`
+ * computes to plain white, and `shadow-overlay` computes to `none`.
  * So both of the ways this system separates one surface from another — fill and
  * elevation — stop working at the same time.
  */
@@ -105,6 +105,18 @@ describe('a scrollbar thumb still reads', () => {
     const canvas = getComputedStyle(document.body).backgroundColor;
     expect(getComputedStyle(thumb).backgroundColor).not.toBe(canvas);
     expect(getComputedStyle(thumb).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  });
+});
+
+describe('a filled button keeps a readable label', () => {
+  /**
+   * Forced colours replaces the background colour and the label colour, but a
+   * gradient is an image, and an image the mode left in place would sit under
+   * a system-coloured label it was never measured against.
+   */
+  it('drops the primary gradient', () => {
+    const style = styleOf(render(<Button>Pay</Button>), '[data-slot="button"]');
+    expect(style.backgroundImage).toBe('none');
   });
 });
 
