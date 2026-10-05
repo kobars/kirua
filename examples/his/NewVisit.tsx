@@ -49,7 +49,7 @@ export function NewVisit() {
   const [reason, setReason] = useState('');
   const [consent, setConsent] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [saved, setSaved] = useState(false);
+  const [savedAs, setSavedAs] = useState<string | null>(null);
 
   // Validated on submit, then live: once the form has been sent back, each
   // message clears the moment its field is valid and the count follows.
@@ -78,7 +78,7 @@ export function NewVisit() {
   const result = useRef<HTMLElement>(null);
   useEffect(() => {
     result.current?.focus();
-  }, [attempts, saved]);
+  }, [attempts]);
 
   // The combobox's own state. kirua supplies the parts and the ARIA; the query,
   // the filtered rows and the highlighted one are application state, which is
@@ -104,10 +104,23 @@ export function NewVisit() {
     enabled: listOpen,
   });
 
+  // The confirmation describes the form as it was sent. Any change after that
+  // withdraws it, so it can never stand beside messages about the new values.
+  const answers = JSON.stringify([
+    patient,
+    department,
+    provider,
+    date?.getTime(),
+    diagnosis,
+    reason,
+    consent,
+  ]);
+  const saved = savedAs === answers;
+
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAttempts((n) => n + 1);
-    setSaved(Object.keys(validate()).length === 0);
+    setSavedAs(Object.keys(validate()).length === 0 ? answers : null);
   };
 
   return (
@@ -168,7 +181,7 @@ export function NewVisit() {
             setReason('');
             setConsent(false);
             setAttempts(0);
-            setSaved(false);
+            setSavedAs(null);
           }}
         >
           <Select name="patient" value={patient} onValueChange={setPatient}>
