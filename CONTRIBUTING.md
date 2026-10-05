@@ -103,8 +103,11 @@ pnpm check:all
 
 That is every gate, and exactly what CI runs on each pull request and on
 `main`: `pnpm check`, then `pnpm build`, `pnpm check:examples` and
-`pnpm check:storybook`. CI runs on macOS because the committed visual baselines
-are macOS screenshots.
+`pnpm check:storybook`. CI runs on macOS, the platform the system is developed
+on. It leaves out one thing: the screenshot comparison, because a hosted runner
+draws without a GPU and cannot reproduce the committed baselines. Run
+`pnpm check` locally before opening a pull request that changes how something
+looks.
 
 `pnpm check` alone is the component gate: types, lint, formatting, every Vitest
 project with coverage, and the WebKit pass. It does not build the hero page or

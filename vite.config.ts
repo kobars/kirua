@@ -254,24 +254,33 @@ export default defineConfig({
        * tolerance produces a suite that fails for reasons nobody can act on —
        * which is how a visual gate gets switched off. 1% of pixels is far below
        * a one-step padding change and far above rasterisation noise.
+       *
+       * **Not on CI.** The baselines were drawn on a developer's Mac. A hosted
+       * macOS runner draws with no GPU and never produced two matching
+       * captures in a row, so every comparison failed before it compared
+       * anything. The project runs in every local `pnpm check`.
        */
-      {
-        extends: true as const,
-        test: {
-          name: 'visual',
-          include: ['src/**/*.visual.test.{ts,tsx}'],
-          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
-          browser: {
-            ...browser(breakpointPx('lg')),
-            expect: {
-              toMatchScreenshot: {
-                comparatorName: 'pixelmatch' as const,
-                comparatorOptions: { allowedMismatchedPixelRatio: 0.01 },
+      ...(process.env['CI']
+        ? []
+        : [
+            {
+              extends: true as const,
+              test: {
+                name: 'visual',
+                include: ['src/**/*.visual.test.{ts,tsx}'],
+                setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+                browser: {
+                  ...browser(breakpointPx('lg')),
+                  expect: {
+                    toMatchScreenshot: {
+                      comparatorName: 'pixelmatch' as const,
+                      comparatorOptions: { allowedMismatchedPixelRatio: 0.01 },
+                    },
+                  },
+                },
               },
             },
-          },
-        },
-      },
+          ]),
       /**
        * The only project here with **no browser at all**, and that absence is
        * the assertion.

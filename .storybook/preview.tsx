@@ -1,4 +1,5 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
+import { configure } from 'storybook/test';
 import { ThemedDocsContainer } from './ThemedDocsContainer';
 import { StorySurface } from './StorySurface';
 import { NIGHTS, colourMode, nightPalette } from './theme';
@@ -6,6 +7,11 @@ import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
 import './docs.css';
+
+// `waitFor` and `findBy*` return as soon as their check passes, so a longer
+// limit only delays a real failure. The default second is shorter than an
+// exit animation plus focus return on a hosted runner with no GPU.
+configure({ asyncUtilTimeout: 5000 });
 
 const withSurface: Decorator = (Story, context) => (
   <StorySurface
