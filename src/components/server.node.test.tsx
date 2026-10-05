@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -9,9 +9,9 @@ import * as kirua from './index';
  *
  * The system prerenders static, server-renders dynamic, and hydrates with a
  * clean console. Three properties keep that true: no component reads a browser
- * API during render, none holds state, and none carries a `"use client"`
- * directive. All three fail *silently* and land in a consumer's build rather
- * than in this one, so each is asserted here.
+ * API during render, none holds state, and only a named few carry a
+ * `"use client"` directive. All three fail *silently* and land in a consumer's
+ * build rather than in this one, so each is asserted here.
  *
  * This file runs in the `node` project, which is the only one with no browser.
  * That is not a limitation to work around — it is the assertion. `window` and
@@ -149,28 +149,53 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-describe('no file declares a client boundary', () => {
+/**
+ * The modules that are client components, by name, with the reason. Each
+ * creates functions of its own and hands them to an element or a Radix part,
+ * which React refuses to serialise from a Server Component even when the
+ * consumer passes no function at all. `renderToStaticMarkup` drops function
+ * props, so the render above cannot see that failure; the directive is the
+ * fix, and this list keeps it from spreading.
+ */
+const CLIENT_MODULES: Record<string, string> = {
+  'components/Calendar.tsx': 'focus, key and click handlers on every day and month button',
+  'components/DatePicker.tsx': 'an open-autofocus handler on its popover, and a Calendar',
+  'components/Combobox.tsx': 'focus and outside-press handlers on the popover and the list',
+};
+
+/**
+ * A *directive*, not a mention. `grep` also finds the phrase in a sentence
+ * inside a JSDoc comment, so the naive check reports a failure that is not
+ * one. A directive is only a directive at the top of the file, before any
+ * statement, so that is where this looks.
+ */
+function hasClientDirective(file: string): boolean {
+  const withoutComments = readFileSync(file, 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '');
+  const firstStatement = withoutComments.trim().split('\n')[0] ?? '';
+  return /^['"]use client['"]/.test(firstStatement);
+}
+
+describe('only the named client modules declare a client boundary', () => {
   /**
-   * `"use client"` must appear nowhere, and none is needed: the Radix packages
-   * ship their own, so a wrapper file stays a Server Component and a `Card` in
-   * an RSC costs a consumer zero JavaScript.
-   *
-   * A *directive*, not a mention. `grep` also finds the phrase in a sentence
-   * inside a JSDoc comment, so the naive check reports a failure that is not
-   * one. A directive is only a directive at the top of the file, before
-   * any statement — so that is where this looks.
+   * Every other file carries no `"use client"`, and needs none: the Radix
+   * packages ship their own, so a wrapper file stays a Server Component and a
+   * `Card` in an RSC costs a consumer zero JavaScript.
    */
   it.each(sourceFiles(COMPONENTS_DIR).map((f) => [path.relative(SRC_DIR, f), f]))(
     '%s',
-    (_label, file) => {
-      const source = readFileSync(file, 'utf8');
-      const withoutComments = source
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        .replace(/^\s*\/\/.*$/gm, '');
-      const firstStatement = withoutComments.trim().split('\n')[0] ?? '';
-      expect(firstStatement).not.toMatch(/^['"]use client['"]/);
+    (label, file) => {
+      expect(hasClientDirective(file)).toBe(label in CLIENT_MODULES);
     },
   );
+
+  /** A listed module that lost its directive, or no longer exists, is a stale entry. */
+  it.each(Object.keys(CLIENT_MODULES))('%s is still a client module', (label) => {
+    const file = path.join(SRC_DIR, label);
+    expect(existsSync(file), `${label} no longer exists`).toBe(true);
+    expect(hasClientDirective(file), `${label} has no "use client" directive`).toBe(true);
+  });
 });
 
 describe('component source has no hydration escape hatch', () => {

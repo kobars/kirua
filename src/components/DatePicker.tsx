@@ -1,3 +1,5 @@
+'use client';
+
 /* oxlint-disable jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
  * The trigger is a `<button role="combobox">`, as Radix's own `SelectTrigger`
  * is: a native `<select>` cannot open a calendar. `PopoverTrigger` adds
@@ -35,6 +37,10 @@ export interface DatePickerProps extends Omit<ComponentProps<'button'>, 'onSelec
  *
  * The panel opens with focus on the chosen date, else on today, so the arrow
  * keys work at once.
+ *
+ * **A client component**, as `Calendar` is: it passes the popover a focus
+ * handler of its own, and a Server Component cannot pass a function. A Server
+ * Component file may still import and place it; it renders on the client.
  *
  * @example
  * <DatePicker

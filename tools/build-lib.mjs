@@ -5,7 +5,9 @@
  * - **JavaScript**: Vite library mode from the barrel, one ES module per source
  *   module. Every bare import stays external, so a consumer's bundler
  *   tree-shakes per component and each Radix package keeps its own
- *   `"use client"` boundary; no file here gains one.
+ *   `"use client"` boundary. With preserved modules, Rolldown keeps a source
+ *   module's own directive at the top of its output file, so the few client
+ *   modules stay client modules; the package test reads each one back.
  * - **Declarations**: `tsc -p tsconfig.lib.json`. TypeScript leaves `paths`
  *   specifiers as written, so every `@/` and every relative specifier is then
  *   rewritten to a relative `.js` path, which resolves under both `bundler`

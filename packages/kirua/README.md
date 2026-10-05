@@ -110,8 +110,11 @@ export function CollectionCard() {
 `Card` is a flex column, so a direct child stretches to its width. `self-start`
 keeps the badge at its own size.
 
-The components render on a server and carry no `"use client"` directive. Attach
-event handlers from a client component of your own.
+The components render in a Server Component and carry no `"use client"`
+directive, with three exceptions: `Calendar`, `DatePicker` and the `Combobox`
+parts are client components, because they create event handlers of their own.
+A Server Component file can still import and place them; they render on the
+client. Attach event handlers from a client component of your own.
 
 - **Tooltips** need one `TooltipProvider` around the app, for example in the
   root layout.
