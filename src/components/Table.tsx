@@ -94,6 +94,19 @@ export function TableFooter({ className, ...props }: ComponentProps<'tfoot'>) {
   );
 }
 
+/**
+ * A row. Mark a selected row with `data-selected`: the row and any pinned
+ * cell take the selected fill. `data-selected={row.isSelected}` is safe —
+ * React writes `"false"` for an unselected row, and that does not match.
+ * Selection itself is the consumer's state, usually a `Checkbox` in the
+ * first cell.
+ *
+ * @example
+ * <TableRow data-selected={selected.has(id)}>
+ *   <TableCell><Checkbox aria-label={`Select ${name}`} checked={selected.has(id)} /></TableCell>
+ *   <TableCell>{name}</TableCell>
+ * </TableRow>
+ */
 export function TableRow({ className, ...props }: ComponentProps<'tr'>) {
   return (
     <tr
@@ -163,6 +176,7 @@ export function TableHead({
         children
       ) : (
         <Button
+          type="button"
           variant="ghost"
           size="sm"
           className="-mx-2"

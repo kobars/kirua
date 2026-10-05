@@ -316,8 +316,47 @@ export const SortableColumns: Story = {
       'aria-sort',
       'none',
     );
-    await userEvent.click(within(header).getByRole('button', { name: 'Stock' }));
+    const button = within(header).getByRole('button', { name: 'Stock' });
+    // Not the native `submit`, so a sortable table inside a form never sends it.
+    await expect(button).toHaveAttribute('type', 'button');
+    await userEvent.click(button);
     await expect(header).toHaveAttribute('aria-sort', 'descending');
     await expect(canvas.getAllByRole('row')[1]).toHaveTextContent('Amoxicillin');
+  },
+};
+
+export const SelectedRows: Story = {
+  render: () => (
+    <Table>
+      <TableCaption>Visits to review</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Patient</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {(
+          [
+            ['Maria Gonzalez', true],
+            ['Ahmed Khan', false],
+          ] as const
+        ).map(([name, selected]) => (
+          <TableRow key={name} data-selected={selected}>
+            <TableCell>{name}</TableCell>
+            <TableCell sticky="end">Open</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  ),
+  /** `data-selected={false}` renders `"false"`, which must not select the row. */
+  play: async ({ canvasElement }) => {
+    const [selected, unselected] = within(canvasElement).getAllByRole('row').slice(1);
+    const fill = (row: HTMLElement) => getComputedStyle(row).backgroundColor;
+
+    await expect(unselected).toHaveAttribute('data-selected', 'false');
+    await expect(fill(selected!)).not.toBe(fill(unselected!));
+    await expect(fill(unselected!)).toBe('rgba(0, 0, 0, 0)');
   },
 };
