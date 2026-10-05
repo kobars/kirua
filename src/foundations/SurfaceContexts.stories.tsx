@@ -19,9 +19,6 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
     surface: 'none',
-    // Token specimens, as on the other foundations pages: the automated rule
-    // flags the swatch captions rather than anything the system ships.
-    a11y: { test: 'off' },
   },
 } satisfies Meta;
 
@@ -222,6 +219,13 @@ function FieldRow({
 }
 
 export const FieldTokens: Story = {
+  parameters: {
+    // The border rows paint each border colour as the sample's text so it can
+    // be measured. A boundary needs 3:1, and the contrast rule holds that text
+    // to 4.5:1, so it flags the specimen rather than anything the system
+    // ships. Every other rule still runs.
+    a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
+  },
   render: () => (
     <div className="flex flex-col">
       {CONTEXTS.map((context) => (

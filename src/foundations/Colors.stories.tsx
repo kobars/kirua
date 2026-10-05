@@ -8,15 +8,12 @@ import {
   type Rgb,
   type WcagLevel,
 } from '@/lib/contrast';
-import { Badge, Button, Card, CardBody, CardTitle } from '@/components';
+import { Badge, Button, Card, CardBody, CardTitle, Table } from '@/components';
 
 const meta = {
   title: 'Foundations/Colour',
   parameters: {
     layout: 'fullscreen',
-    // These pages document colour rather than present interactive UI, so the
-    // automated contrast rule would flag the swatch labels themselves.
-    a11y: { test: 'off' },
   },
 } satisfies Meta;
 
@@ -178,46 +175,48 @@ function ContrastTable() {
   }, []);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-184 border-collapse font-text text-body-sm">
-        <thead>
-          <tr className="border-b border-line">
-            <th className="py-3 pr-4 text-left font-semibold text-fg">Sample</th>
-            <th className="py-3 pr-4 text-left font-semibold text-fg">Pairing</th>
-            <th className="py-3 pr-4 text-right font-semibold text-fg">Ratio</th>
-            <th className="py-3 text-left font-semibold text-fg">Grade</th>
+    <Table className="min-w-184">
+      <thead>
+        <tr className="border-b border-line">
+          <th className="py-3 pr-4 text-left font-semibold text-fg">Sample</th>
+          <th className="py-3 pr-4 text-left font-semibold text-fg">Pairing</th>
+          <th className="py-3 pr-4 text-right font-semibold text-fg">Ratio</th>
+          <th className="py-3 text-left font-semibold text-fg">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(({ pair, ratio }) => (
+          <tr key={pair.label} className="border-b border-line-subtle align-top">
+            <td className="py-3 pr-4">
+              <span
+                className="inline-flex h-11 items-center rounded-sm px-3 text-body-lg whitespace-nowrap"
+                style={{ backgroundColor: pair.bg, color: pair.fg }}
+              >
+                Sample text
+              </span>
+            </td>
+            <td className="py-3 pr-4 text-fg">
+              {pair.label}
+              {pair.note && <div className="mt-1 text-caption text-fg-muted">{pair.note}</div>}
+            </td>
+            <td className="py-3 pr-4 text-right font-mono text-fg">{formatRatio(ratio)}</td>
+            <td className="py-3">
+              <Badge status={badgeFor[grade(ratio)]}>{grade(ratio)}</Badge>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ pair, ratio }) => (
-            <tr key={pair.label} className="border-b border-line-subtle align-top">
-              <td className="py-3 pr-4">
-                <span
-                  className="inline-flex h-11 items-center rounded-sm px-3 text-body-lg whitespace-nowrap"
-                  style={{ backgroundColor: pair.bg, color: pair.fg }}
-                >
-                  Sample text
-                </span>
-              </td>
-              <td className="py-3 pr-4 text-fg">
-                {pair.label}
-                {pair.note && (
-                  <div className="mt-1 text-caption text-fg-muted">{pair.note}</div>
-                )}
-              </td>
-              <td className="py-3 pr-4 text-right font-mono text-fg">{formatRatio(ratio)}</td>
-              <td className="py-3">
-                <Badge status={badgeFor[grade(ratio)]}>{grade(ratio)}</Badge>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </Table>
   );
 }
 
 export const ContrastAudit: Story = {
+  parameters: {
+    // The audit shows the failing pairs on purpose, as specimens beside their
+    // ratios, so the contrast rule flags the specimens rather than anything
+    // the system ships. Every other rule still runs.
+    a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
+  },
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
