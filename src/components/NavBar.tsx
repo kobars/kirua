@@ -67,6 +67,7 @@ export function NavBar({
       {/* Scrolls rather than overflowing once the links stop fitting. The
           scrollbar is hidden because the pill is only 70px tall. */}
       <ul
+        data-slot="nav-bar-list"
         className={cn(
           'flex min-w-0 flex-1 items-center justify-start gap-1 md:justify-center md:gap-2',
           'scrollbar-none overflow-x-auto [&::-webkit-scrollbar]:hidden',
@@ -79,7 +80,11 @@ export function NavBar({
         ))}
         {children}
       </ul>
-      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+      {actions && (
+        <div data-slot="nav-bar-actions" className="flex shrink-0 items-center gap-2">
+          {actions}
+        </div>
+      )}
     </nav>
   );
 }

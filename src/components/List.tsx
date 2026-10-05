@@ -73,10 +73,16 @@ export function ListItem({ className, icon, children, ...props }: ListItemProps)
   return (
     <li data-slot="list-item" className={cn('flex items-start gap-2', className)} {...props}>
       {/* The first line's height, so the icon centres on it however many lines follow. */}
-      <span aria-hidden="true" className="flex h-lh shrink-0 items-center">
+      <span
+        data-slot="list-item-icon"
+        aria-hidden="true"
+        className="flex h-lh shrink-0 items-center"
+      >
         {icon}
       </span>
-      <span className="min-w-0">{children}</span>
+      <span data-slot="list-item-content" className="min-w-0">
+        {children}
+      </span>
     </li>
   );
 }

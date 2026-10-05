@@ -63,7 +63,13 @@ export interface PaneBodyProps extends ScrollAreaProps {
 export function PaneBody({ padding = 'none', className, children, ...props }: PaneBodyProps) {
   return (
     <ScrollArea data-slot="pane-body" className={cn('min-h-0 flex-1', className)} {...props}>
-      {padding === 'none' ? children : <div className={bodyPadding[padding]}>{children}</div>}
+      {padding === 'none' ? (
+        children
+      ) : (
+        <div data-slot="pane-body-content" className={bodyPadding[padding]}>
+          {children}
+        </div>
+      )}
     </ScrollArea>
   );
 }

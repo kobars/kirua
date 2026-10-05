@@ -51,7 +51,10 @@ export function Command({
 
 export function CommandInput({ className, ...props }: ComponentProps<'input'>) {
   return (
-    <div className="flex items-center gap-3 border-b border-line-subtle px-4 [--icon-size:var(--icon-md)]">
+    <div
+      data-slot="command-input-wrapper"
+      className="flex items-center gap-3 border-b border-line-subtle px-4 [--icon-size:var(--icon-md)]"
+    >
       <SearchIcon aria-hidden="true" className="shrink-0 text-fg-muted" />
       {/* `aria-controls` is the consumer's: only they know the list's id. */}
       <input
@@ -97,6 +100,7 @@ export function CommandGroup({
     // heading reads as an option.
     <li data-slot="command-group" role="presentation" className={cn(className)} {...props}>
       <p
+        data-slot="command-group-heading"
         className="px-3 pt-3 pb-1 font-text text-caption text-fg-muted uppercase"
         id={headingId}
       >
@@ -137,7 +141,9 @@ export function CommandItem({
       )}
       {...props}
     >
-      <span className="flex min-w-0 items-center gap-2 truncate">{children}</span>
+      <span data-slot="command-item-label" className="flex min-w-0 items-center gap-2 truncate">
+        {children}
+      </span>
       {shortcut}
     </li>
   );

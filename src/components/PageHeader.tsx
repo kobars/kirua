@@ -54,7 +54,7 @@ export function PageHeader({
       className={cn(pageHeaderVariants({ align }), className)}
       {...props}
     >
-      <div className="grid min-w-0 gap-1">
+      <div data-slot="page-header-content" className="grid min-w-0 gap-1">
         {eyebrow !== undefined && eyebrow !== null && <Eyebrow>{eyebrow}</Eyebrow>}
         <Heading as={level} size={size}>
           {title}
@@ -66,7 +66,10 @@ export function PageHeader({
       {actions !== undefined && actions !== null && (
         // A field among the actions is full width on a phone, as its own
         // `width` promises, so the block holding it spans the row there.
-        <div className="flex flex-wrap items-center gap-2 max-sm:has-data-[slot=input-group]:w-full">
+        <div
+          data-slot="page-header-actions"
+          className="flex flex-wrap items-center gap-2 max-sm:has-data-[slot=input-group]:w-full"
+        >
           {actions}
         </div>
       )}

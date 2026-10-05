@@ -43,6 +43,7 @@ export function Spinner({ className, label = 'Loading', size, ...props }: Spinne
       {...props}
     >
       <svg
+        data-slot="spinner-icon"
         viewBox="0 0 24 24"
         fill="none"
         aria-hidden="true"
@@ -57,7 +58,9 @@ export function Spinner({ className, label = 'Loading', size, ...props }: Spinne
           strokeLinecap="round"
         />
       </svg>
-      <span className="sr-only">{label}</span>
+      <span data-slot="spinner-label" className="sr-only">
+        {label}
+      </span>
     </output>
   );
 }

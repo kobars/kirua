@@ -97,10 +97,12 @@ export function ChartLegend({ className, items, ...props }: ChartLegendProps) {
     >
       {items.map((item, index) => (
         <li
+          data-slot="chart-legend-item"
           key={`${index}-${item.label}`}
           className="flex items-center gap-2 font-text text-caption text-fg-secondary"
         >
           <span
+            data-slot="chart-legend-swatch"
             aria-hidden="true"
             className={cn('size-2.5 rounded-xs bg-current', SERIES_COLOUR[item.series])}
           />
@@ -174,6 +176,7 @@ export function BarChart({
     >
       {data.map((point, index) => (
         <div
+          data-slot="bar-chart-column"
           key={`${index}-${point.label}`}
           className={cn(
             'grid min-w-0 flex-1 gap-1.5',
@@ -181,11 +184,14 @@ export function BarChart({
           )}
         >
           {showValues && (
-            <span className="text-center font-text text-caption text-fg-muted tabular-nums">
+            <span
+              data-slot="bar-chart-value"
+              className="text-center font-text text-caption text-fg-muted tabular-nums"
+            >
               {point.value}
             </span>
           )}
-          <div className="relative min-h-0">
+          <div data-slot="bar-chart-track" className="relative min-h-0">
             <div
               data-slot="bar-chart-bar"
               className={cn(
@@ -195,7 +201,10 @@ export function BarChart({
               style={{ height: `${Math.max(shareOf(point.value, ceiling) * 100, 1)}%` }}
             />
           </div>
-          <span className="truncate text-center font-text text-caption text-fg-muted">
+          <span
+            data-slot="bar-chart-label"
+            className="truncate text-center font-text text-caption text-fg-muted"
+          >
             {point.label}
           </span>
         </div>

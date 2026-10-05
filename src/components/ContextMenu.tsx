@@ -93,7 +93,10 @@ export function ContextMenuCheckboxItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <ContextMenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
+      <ContextMenuPrimitive.ItemIndicator
+        data-slot="context-menu-checkbox-item-indicator"
+        className={menuIndicatorStyles}
+      >
         <CheckIcon />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
@@ -112,8 +115,11 @@ export function ContextMenuRadioItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <ContextMenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
-        <span className="size-2 rounded-pill bg-fg" />
+      <ContextMenuPrimitive.ItemIndicator
+        data-slot="context-menu-radio-item-indicator"
+        className={menuIndicatorStyles}
+      >
+        <span data-slot="context-menu-radio-item-dot" className="size-2 rounded-pill bg-fg" />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
     </ContextMenuPrimitive.RadioItem>

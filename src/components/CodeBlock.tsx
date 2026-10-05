@@ -39,7 +39,10 @@ export function CodeBlock({ className, language, action, children, ...props }: C
         data-slot="code-block-header"
         className="flex items-center justify-between gap-2 border-b border-line-subtle px-3 py-1.5"
       >
-        <span className="font-text text-caption text-fg-muted lowercase">
+        <span
+          data-slot="code-block-language"
+          className="font-text text-caption text-fg-muted lowercase"
+        >
           {language ?? 'text'}
         </span>
         {action}

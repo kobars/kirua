@@ -33,11 +33,15 @@ export function Stat({ icon, value, label, variant, className, ...props }: StatP
       {icon}
       {key === 'tile' ? (
         <>
-          <span className={statValue[key]}>{value}</span>
-          <span className={statLabel[key]}>{label}</span>
+          <span data-slot="stat-value" className={statValue[key]}>
+            {value}
+          </span>
+          <span data-slot="stat-label" className={statLabel[key]}>
+            {label}
+          </span>
         </>
       ) : (
-        <span className={statValue[key]}>
+        <span data-slot="stat-value" className={statValue[key]}>
           {value} {label}
         </span>
       )}

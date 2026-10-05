@@ -111,11 +111,19 @@ export function SelectContent({
         )}
         {...props}
       >
-        <SelectPrimitive.ScrollUpButton className="flex h-6 items-center justify-center [--icon-size:var(--icon-sm)]">
+        <SelectPrimitive.ScrollUpButton
+          data-slot="select-scroll-up-button"
+          className="flex h-6 items-center justify-center [--icon-size:var(--icon-sm)]"
+        >
           <ChevronUpIcon />
         </SelectPrimitive.ScrollUpButton>
-        <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
-        <SelectPrimitive.ScrollDownButton className="flex h-6 items-center justify-center [--icon-size:var(--icon-sm)]">
+        <SelectPrimitive.Viewport data-slot="select-viewport" className="p-1">
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectPrimitive.ScrollDownButton
+          data-slot="select-scroll-down-button"
+          className="flex h-6 items-center justify-center [--icon-size:var(--icon-sm)]"
+        >
           <ChevronDownIcon />
         </SelectPrimitive.ScrollDownButton>
       </SelectPrimitive.Content>
@@ -142,7 +150,7 @@ export function SelectItem({
       )}
       {...props}
     >
-      <span className="absolute inset-s-2 flex items-center">
+      <span data-slot="select-item-indicator" className="absolute inset-s-2 flex items-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon />
         </SelectPrimitive.ItemIndicator>

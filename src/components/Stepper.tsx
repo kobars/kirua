@@ -67,18 +67,19 @@ export function StepperItem({
       className={cn(railItem, className)}
       {...props}
     >
-      <span className={railMarkerColumn}>
-        <span className={stepperMarker[state]}>
+      <span data-slot="stepper-item-rail" className={railMarkerColumn}>
+        <span data-slot="stepper-item-marker" className={stepperMarker[state]}>
           {state === 'done' ? (
             <CheckIcon size="xs" aria-hidden="true" />
           ) : (
             <span aria-hidden="true">{index}</span>
           )}
         </span>
-        <span className={railConnector} aria-hidden="true" />
+        <span data-slot="stepper-item-connector" className={railConnector} aria-hidden="true" />
       </span>
-      <div className={cn(railContent, 'pt-0.5')}>
+      <div data-slot="stepper-item-content" className={cn(railContent, 'pt-0.5')}>
         <span
+          data-slot="stepper-item-label"
           className={cn(
             'text-body-sm',
             state === 'upcoming' ? 'text-fg-muted' : 'font-medium text-fg',
@@ -86,7 +87,9 @@ export function StepperItem({
         >
           {children}
         </span>
-        <span className="sr-only">{labels[state]}</span>
+        <span data-slot="stepper-item-status" className="sr-only">
+          {labels[state]}
+        </span>
       </div>
     </li>
   );
