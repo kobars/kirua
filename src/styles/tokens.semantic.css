@@ -274,7 +274,15 @@
 
 /* Applied by SpotlightPanel. */
 .ctx-brand {
-  --color-surface-page: var(--color-blue-600);
+  /* The panel keeps the light palette for what the browser paints itself: its
+   * fields stay white in dark mode too, so a picker or clear icon drawn for a
+   * dark scheme would sit on a white field. */
+  color-scheme: light;
+
+  /* The page is whatever blue the panel is painted in — blue-600, or blue-700
+   * under `.dark`. A fixed blue-600 here would turn every `bg-page` marker
+   * and `ring-page` halo into a lighter patch on the dark mode panel. */
+  --color-surface-page: var(--color-surface-brand);
   --color-surface-raised: var(--color-blue-700);
   --color-surface-sunken: var(--color-blue-700);
 
@@ -311,7 +319,7 @@
    * *is* the panel, so a blue edge would vanish. 4.67:1 on blue-600. */
   --color-border-accent: var(--color-neutral-0);
   --color-focus-ring: var(--color-neutral-0);
-  --color-focus-ring-offset: var(--color-blue-600);
+  --color-focus-ring-offset: var(--color-surface-brand);
 
   /* 40% white over the reference's blue-500 composites to exactly #6CB5FF. */
   --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 40%, transparent);
@@ -386,6 +394,14 @@
   --color-action-secondary-raised-bg-open: transparent;
   --color-action-secondary-raised-border: var(--color-action-secondary-border);
   --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
+
+  /* A light card placed on the panel. A custom property resolves its `var()`
+   * where it is declared, so the :root line and shade would arrive already
+   * mixed for a white page. The brand tint of a blue fill is that fill, so the
+   * line is the translucent white the brand card keeps, and the card casts the
+   * panel's own shade, as a button does. */
+  --color-border-card: var(--color-border-subtle);
+  --color-shade-card: var(--color-shade-press);
 }
 
 /* Applied by NavBar, dark Card, dark Chip, Tooltip. */
@@ -477,6 +493,16 @@
   --color-action-secondary-raised-bg-open: transparent;
   --color-action-secondary-raised-border: var(--color-action-secondary-border);
   --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
+
+  /* A light card placed on this surface: the :root formula again, so it mixes
+   * the brand into this surface's raised fill rather than arriving already
+   * mixed for a white page. The shade is this surface's own, as a button's is. */
+  --color-border-card: color-mix(
+    in srgb,
+    var(--color-surface-brand) 18%,
+    var(--color-surface-raised)
+  );
+  --color-shade-card: var(--color-shade-press);
 }
 
 /* Invented — the reference has no dark mode. It is one block of re-pointed
