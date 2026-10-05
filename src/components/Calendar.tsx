@@ -203,7 +203,7 @@ export function Calendar({
       )}
       {...props}
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
+      <div data-slot="calendar-header" className="mb-2 flex items-center justify-between gap-2">
         <IconButton
           type="button"
           aria-label={previousLabel}
@@ -233,18 +233,23 @@ export function Calendar({
       </div>
 
       <table data-slot="calendar-grid" className="border-collapse">
-        <caption className="sr-only">{titleFormat.format(firstOfMonth)}</caption>
+        <caption data-slot="calendar-caption" className="sr-only">
+          {titleFormat.format(firstOfMonth)}
+        </caption>
         <thead>
           <tr>
             {weekdays.map((date) => (
               <th
+                data-slot="calendar-weekday"
                 key={date.getDay()}
                 scope="col"
                 className="size-10 text-caption font-medium text-fg-muted"
               >
                 {/* The short name is shown; the long one is read out. */}
                 <span aria-hidden="true">{weekdayShort.format(date)}</span>
-                <span className="sr-only">{weekdayLong.format(date)}</span>
+                <span data-slot="calendar-weekday-name" className="sr-only">
+                  {weekdayLong.format(date)}
+                </span>
               </th>
             ))}
           </tr>
@@ -254,9 +259,9 @@ export function Calendar({
             <tr key={week.find(Boolean)?.toISOString() ?? String(week.length)}>
               {week.map((date, index) =>
                 date === null ? (
-                  <td key={`pad-${index}`} className="size-10" />
+                  <td data-slot="calendar-pad" key={`pad-${index}`} className="size-10" />
                 ) : (
-                  <td key={date.toISOString()} className="p-0">
+                  <td data-slot="calendar-cell" key={date.toISOString()} className="p-0">
                     <button
                       type="button"
                       data-slot="calendar-day"

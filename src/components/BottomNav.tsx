@@ -34,7 +34,12 @@ export function BottomNav({ className, children, ...props }: BottomNavProps) {
       )}
       {...props}
     >
-      <ul className="mx-auto flex max-w-2xl items-center justify-around">{children}</ul>
+      <ul
+        data-slot="bottom-nav-list"
+        className="mx-auto flex max-w-2xl items-center justify-around"
+      >
+        {children}
+      </ul>
     </nav>
   );
 }
@@ -89,7 +94,7 @@ export function BottomNavLink({
         )}
         {...props}
       >
-        <span aria-hidden="true" className="flex">
+        <span data-slot="bottom-nav-link-icon" aria-hidden="true" className="flex">
           {icon}
         </span>
         <Slottable>{children}</Slottable>

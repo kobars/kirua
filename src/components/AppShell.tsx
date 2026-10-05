@@ -79,14 +79,22 @@ export function AppHeader({
       {...props}
     >
       <div
+        data-slot="app-header-row"
         className={cn(
           'mx-auto flex size-full items-center gap-2 px-4 md:px-8',
           shellWidthScale[width],
         )}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">{children}</div>
+        <div
+          data-slot="app-header-content"
+          className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3"
+        >
+          {children}
+        </div>
         {actions !== undefined && actions !== null && (
-          <div className="flex shrink-0 items-center gap-1">{actions}</div>
+          <div data-slot="app-header-actions" className="flex shrink-0 items-center gap-1">
+            {actions}
+          </div>
         )}
       </div>
     </header>

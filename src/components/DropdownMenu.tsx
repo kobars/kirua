@@ -111,7 +111,10 @@ export function DropdownMenuCheckboxItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
+      <MenuPrimitive.ItemIndicator
+        data-slot="dropdown-menu-checkbox-item-indicator"
+        className={menuIndicatorStyles}
+      >
         <CheckIcon />
       </MenuPrimitive.ItemIndicator>
       {children}
@@ -130,8 +133,11 @@ export function DropdownMenuRadioItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
-        <span className="size-2 rounded-pill bg-fg" />
+      <MenuPrimitive.ItemIndicator
+        data-slot="dropdown-menu-radio-item-indicator"
+        className={menuIndicatorStyles}
+      >
+        <span data-slot="dropdown-menu-radio-item-dot" className="size-2 rounded-pill bg-fg" />
       </MenuPrimitive.ItemIndicator>
       {children}
     </MenuPrimitive.RadioItem>

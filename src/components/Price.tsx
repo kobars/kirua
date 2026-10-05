@@ -48,9 +48,14 @@ export function Price({
       className={cn('relative flex flex-wrap items-baseline font-text', step.root, className)}
       {...props}
     >
-      <span className={cn('font-semibold text-fg tabular-nums', step.amount)}>{amount}</span>
+      <span
+        data-slot="price-amount"
+        className={cn('font-semibold text-fg tabular-nums', step.amount)}
+      >
+        {amount}
+      </span>
       {was !== undefined && was !== null && (
-        <s className={cn('text-fg-muted tabular-nums', step.was)}>
+        <s data-slot="price-was" className={cn('text-fg-muted tabular-nums', step.was)}>
           <VisuallyHidden>{wasLabel} </VisuallyHidden>
           {was}
         </s>

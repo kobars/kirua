@@ -122,6 +122,7 @@ export function ResizableHandle({
           )}
         >
           <span
+            data-slot="resizable-grip-line"
             className={cn(
               'bg-line-strong',
               'group-aria-[orientation=vertical]/handle:h-3 group-aria-[orientation=vertical]/handle:w-px',

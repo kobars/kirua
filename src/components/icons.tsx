@@ -55,6 +55,7 @@ function Icon({ size, tone, className, children, style, ...props }: IconProps) {
         : ICON_SIZES[size];
 
   return (
+    // data-slot-allow: a consumer places an icon and passes its className directly; inside a component, the owning slot reaches it
     <svg
       viewBox="0 0 24 24"
       fill="none"

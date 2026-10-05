@@ -131,7 +131,10 @@ export function MenubarCheckboxItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenubarPrimitive.ItemIndicator className={menuIndicatorStyles}>
+      <MenubarPrimitive.ItemIndicator
+        data-slot="menubar-checkbox-item-indicator"
+        className={menuIndicatorStyles}
+      >
         <CheckIcon />
       </MenubarPrimitive.ItemIndicator>
       {children}
@@ -150,8 +153,11 @@ export function MenubarRadioItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenubarPrimitive.ItemIndicator className={menuIndicatorStyles}>
-        <span className="size-2 rounded-pill bg-fg" />
+      <MenubarPrimitive.ItemIndicator
+        data-slot="menubar-radio-item-indicator"
+        className={menuIndicatorStyles}
+      >
+        <span data-slot="menubar-radio-item-dot" className="size-2 rounded-pill bg-fg" />
       </MenubarPrimitive.ItemIndicator>
       {children}
     </MenubarPrimitive.RadioItem>

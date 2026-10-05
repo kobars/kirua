@@ -81,6 +81,7 @@ export function AvatarStack({
     >
       {shown.map((item, index) => (
         <span
+          data-slot="avatar-stack-item"
           // Two people can share a name, and an item carries nothing else.
           key={`${index}-${item.name}`}
           className={cn(
@@ -91,7 +92,12 @@ export function AvatarStack({
           )}
         >
           {item.src ? (
-            <img src={item.src} alt="" className="size-full object-cover" />
+            <img
+              data-slot="avatar-stack-image"
+              src={item.src}
+              alt=""
+              className="size-full object-cover"
+            />
           ) : (
             item.name.charAt(0).toUpperCase()
           )}
@@ -99,6 +105,7 @@ export function AvatarStack({
       ))}
       {overflow > 0 && (
         <span
+          data-slot="avatar-stack-overflow"
           className={cn(
             'relative inline-flex items-center justify-center',
             // Inverted against whatever surface context this sits in, so the

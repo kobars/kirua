@@ -146,7 +146,11 @@ export function Field({
       >
         {label}
         {isRequired && (
-          <span aria-hidden="true" className="ms-1 text-invalid">
+          <span
+            data-slot="field-required-mark"
+            aria-hidden="true"
+            className="ms-1 text-invalid"
+          >
             *
           </span>
         )}

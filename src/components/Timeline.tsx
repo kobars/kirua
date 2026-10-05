@@ -52,16 +52,19 @@ export function TimelineItem({
     // ref, an id and a `data-*` all have to land on the same node. `children`
     // is therefore taken out of the spread and placed in the content column.
     <li data-slot="timeline-item" className={cn(railItem, className)} {...props}>
-      <span className={railMarkerColumn} aria-hidden="true">
+      <span data-slot="timeline-item-rail" className={railMarkerColumn} aria-hidden="true">
         <span
+          data-slot="timeline-item-marker"
           className={cn(
             'mt-1.5 size-2.5 shrink-0 rounded-pill',
             state === 'past' ? 'bg-line-strong' : 'border border-line-strong bg-page',
           )}
         />
-        <span className={railConnector} />
+        <span data-slot="timeline-item-connector" className={railConnector} />
       </span>
-      <div className={railContent}>{children}</div>
+      <div data-slot="timeline-item-content" className={railContent}>
+        {children}
+      </div>
     </li>
   );
 }

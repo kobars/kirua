@@ -52,7 +52,7 @@ export function Rating({
       {...props}
     >
       <StarIcon tone="warning" />
-      <span className="tabular-nums">
+      <span data-slot="rating-value" className="tabular-nums">
         {display ?? (Number.isFinite(value) ? value.toFixed(1) : '–')}
         <VisuallyHidden>
           {' '}
@@ -60,7 +60,9 @@ export function Rating({
         </VisuallyHidden>
       </span>
       {children !== undefined && children !== null && (
-        <span className="text-fg-muted">{children}</span>
+        <span data-slot="rating-detail" className="text-fg-muted">
+          {children}
+        </span>
       )}
     </p>
   );

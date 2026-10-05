@@ -62,11 +62,17 @@ export function Wordmark({
   const Comp: ElementType = asChild ? Slot : props.href === undefined ? 'span' : 'a';
   const name = (text: ReactNode) =>
     shortName === undefined ? (
-      <span className={cn('truncate', compact && 'max-sm:sr-only')}>{text}</span>
+      <span data-slot="wordmark-name" className={cn('truncate', compact && 'max-sm:sr-only')}>
+        {text}
+      </span>
     ) : (
       <>
-        <span className="truncate max-sm:hidden">{text}</span>
-        <span className="sm:hidden">{shortName}</span>
+        <span data-slot="wordmark-name" className="truncate max-sm:hidden">
+          {text}
+        </span>
+        <span data-slot="wordmark-short-name" className="sm:hidden">
+          {shortName}
+        </span>
       </>
     );
   return (
@@ -82,7 +88,7 @@ export function Wordmark({
       )}
       {...props}
     >
-      <span aria-hidden="true" className="flex text-fg-accent">
+      <span data-slot="wordmark-icon" aria-hidden="true" className="flex text-fg-accent">
         {icon}
       </span>
       {asChild ? <Slottable child={children}>{name}</Slottable> : name(children)}
