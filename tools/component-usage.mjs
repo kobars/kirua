@@ -112,18 +112,13 @@ function sources(dir, out = [], { recursive = true } = {}) {
   return out;
 }
 
-/** The names inside one `{ … }` clause, minus the type-only ones. */
+/** The exported names in one `{ … }` clause, minus the type-only ones: `a as b` places `a`. */
 function valueNames(clause) {
   return clause
     .split(',')
     .map((name) => name.trim())
     .filter((name) => name !== '' && !name.startsWith('type '))
-    .map((name) =>
-      name
-        .split(/\s+as\s+/)
-        .pop()
-        .trim(),
-    );
+    .map((name) => name.split(/\s+as\s+/)[0].trim());
 }
 
 /** Every value the barrel exports, following `export * from` one level. */
