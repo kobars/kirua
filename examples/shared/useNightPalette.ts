@@ -45,15 +45,17 @@ export function useNightPalette() {
     const root = document.documentElement;
     if (palette === 'navy') delete root.dataset.nightPalette;
     else root.dataset.nightPalette = palette;
+  }, [palette]);
+
+  // Only a choice made in the menu is stored. A night that arrived in a link
+  // shows for this visit and leaves the visitor's own choice as it was.
+  const choose = useCallback((next: NightPalette) => {
     try {
-      if (palette === 'navy') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, palette);
+      if (next === 'navy') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, next);
     } catch {
       // A private window refuses storage. The choice just does not survive a reload.
     }
-  }, [palette]);
-
-  const choose = useCallback((next: NightPalette) => {
     // A choice made in the menu replaces the one the link carried.
     const url = new URL(location.href);
     if (url.searchParams.has('night')) {
