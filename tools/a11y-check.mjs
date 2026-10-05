@@ -30,6 +30,12 @@
  * the lines. The default night runs at every width like light mode; the other
  * four run at desktop width, because a night changes colours and not the tree.
  *
+ * ## States a route does not open in
+ *
+ * Each route is checked as it first renders. A tree that only exists after an
+ * interaction — a rail collapsed to icons, a drawer opened — gets its own run
+ * after the sweep, listed in `STATES`.
+ *
  *     pnpm build:examples && node tools/a11y-check.mjs
  */
 import path from 'node:path';
@@ -37,7 +43,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 import { breakpointPx } from './breakpoints.mjs';
-import { SECTIONS, eachRoute, open } from './example-apps.mjs';
+import { SECTIONS, eachRoute, open, serve } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(
@@ -73,6 +79,41 @@ const THEMES = [
 ];
 
 /**
+ * Trees a route only shows after an interaction. Each opens its route, acts,
+ * waits for the state to settle, and is checked in light and dark mode.
+ *
+ * The collapsed rail is the one a `hidden` label breaks: its buttons keep only
+ * an icon, so a label that leaves the accessibility tree instead of the screen
+ * takes every name on the rail with it. The wait is on the rail's own state
+ * and not on a button's name, so a nameless rail reaches axe rather than
+ * timing out.
+ */
+const STATES = [
+  {
+    section: 'his',
+    label: '#/his/ with the rail collapsed',
+    hash: '#/his/',
+    width: 'desktop',
+    act: async (page) => {
+      await page.getByRole('button', { name: 'Collapse menu' }).click();
+      await page.locator('[data-slot="sidebar"][data-closed]').waitFor();
+    },
+  },
+  {
+    section: 'his',
+    label: '#/his/ with the drawer open',
+    hash: '#/his/',
+    width: 'phone',
+    act: async (page) => {
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+      await page.getByRole('dialog').waitFor();
+      // The drawer slides in; axe reads colours mid-animation otherwise.
+      await page.waitForTimeout(500);
+    },
+  },
+];
+
+/**
  * `color-contrast` needs real painted pixels, and axe skips it when it cannot
  * get them. Everything else runs headless without complaint.
  */
@@ -87,15 +128,40 @@ const browser = await chromium.launch();
 const violations = [];
 let runs = 0;
 
+const contextFor = (size, scheme) =>
+  browser.newContext({
+    viewport: { width: size.width, height: size.height },
+    deviceScaleFactor: 1,
+    colorScheme: scheme,
+    isMobile: size.touch,
+    hasTouch: size.touch,
+  });
+
+/** Runs axe on the page as it stands and records what it reports. */
+async function audit(page, { section, route, theme, width }) {
+  await page.addScriptTag({ content: AXE_SOURCE });
+  const result = await page.evaluate(
+    (options) => window.axe.run(document, options),
+    AXE_OPTIONS,
+  );
+  runs += 1;
+  for (const violation of result.violations) {
+    violations.push({
+      section,
+      route,
+      theme,
+      width,
+      rule: violation.id,
+      impact: violation.impact,
+      help: violation.help,
+      nodes: violation.nodes.map((node) => node.target.join(' ')),
+    });
+  }
+}
+
 for (const { name: theme, scheme, night, widths } of THEMES) {
   for (const size of widths) {
-    const context = await browser.newContext({
-      viewport: { width: size.width, height: size.height },
-      deviceScaleFactor: 1,
-      colorScheme: scheme,
-      isMobile: size.touch,
-      hasTouch: size.touch,
-    });
+    const context = await contextFor(size, scheme);
     // The host document's blocking script reads the stored night before paint.
     if (night)
       await context.addInitScript((value) => {
@@ -117,30 +183,35 @@ for (const { name: theme, scheme, night, widths } of THEMES) {
         (await page.evaluate(() => document.documentElement.dataset.nightPalette)) !== night
       )
         throw new Error(`${section} ${label}: the ${night} night was not applied`);
-      await page.addScriptTag({ content: AXE_SOURCE });
-
-      const result = await page.evaluate(
-        (options) => window.axe.run(document, options),
-        AXE_OPTIONS,
-      );
-      runs += 1;
-
-      for (const violation of result.violations) {
-        violations.push({
-          section,
-          route: label,
-          theme,
-          width: size.name,
-          rule: violation.id,
-          impact: violation.impact,
-          help: violation.help,
-          nodes: violation.nodes.map((node) => node.target.join(' ')),
-        });
-      }
+      await audit(page, { section, route: label, theme, width: size.name });
     });
 
     await context.close();
   }
+}
+
+const server = await serve();
+try {
+  const { port } = server.address();
+  for (const state of STATES) {
+    const size = WIDTHS.find((candidate) => candidate.name === state.width);
+    for (const scheme of ['light', 'dark']) {
+      const context = await contextFor(size, scheme);
+      const page = await context.newPage();
+      await open(page, `http://127.0.0.1:${port}/${state.hash}`);
+      await page.waitForTimeout(250);
+      await state.act(page);
+      await audit(page, {
+        section: state.section,
+        route: state.label,
+        theme: scheme,
+        width: size.name,
+      });
+      await context.close();
+    }
+  }
+} finally {
+  server.close();
 }
 
 await browser.close();
@@ -149,7 +220,8 @@ const IMPACT_ORDER = ['critical', 'serious', 'moderate', 'minor'];
 
 console.log(
   `\naxe-core on ${SECTIONS.length} sections, ${runs} route views ` +
-    `(${THEMES.map((theme) => `${theme.name} x ${theme.widths.map((w) => w.name).join(' + ')}`).join(', ')}):\n`,
+    `(${THEMES.map((theme) => `${theme.name} x ${theme.widths.map((w) => w.name).join(' + ')}`).join(', ')}, ` +
+    `${STATES.length} interaction states x light + dark):\n`,
 );
 
 if (violations.length === 0) {
