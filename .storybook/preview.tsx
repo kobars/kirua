@@ -1,7 +1,7 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { ThemedDocsContainer } from './ThemedDocsContainer';
 import { StorySurface } from './StorySurface';
-import { colourMode, nightPalette } from './theme';
+import { NIGHTS, colourMode, nightPalette } from './theme';
 import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
@@ -25,7 +25,7 @@ const preview: Preview = {
   initialGlobals: {
     mode: 'light',
     surface: 'page',
-    nightPalette: 'navy',
+    nightPalette: NIGHTS[0],
   },
   globalTypes: {
     mode: {
@@ -59,13 +59,10 @@ const preview: Preview = {
       toolbar: {
         title: 'Night',
         icon: 'moon',
-        items: [
-          { value: 'navy', title: 'Navy night' },
-          { value: 'graphite', title: 'Graphite' },
-          { value: 'onyx', title: 'Onyx' },
-          { value: 'ink', title: 'Ink' },
-          { value: 'carbon', title: 'Carbon' },
-        ],
+        items: NIGHTS.map((night, index) => {
+          const name = night.charAt(0).toUpperCase() + night.slice(1);
+          return { value: night, title: index === 0 ? `${name} night` : name };
+        }),
         dynamicTitle: true,
       },
     },

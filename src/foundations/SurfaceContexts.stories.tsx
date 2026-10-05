@@ -11,6 +11,7 @@ import {
   SearchIcon,
 } from '@/components';
 import { contrastRatio, formatRatio, grade, resolveColor, type Rgb } from '@/lib/contrast';
+import NIGHTS from '@/styles/nights.json';
 
 const meta = {
   title: 'Foundations/Surface contexts',
@@ -56,7 +57,7 @@ const CONTEXTS: Context[] = [
     className: 'dark bg-page',
     note: 'Dark mode changes the document palette. The same components use the resulting colour roles. Navy is the default night.',
   },
-  ...['graphite', 'onyx', 'ink', 'carbon'].map((night) => ({
+  ...NIGHTS.slice(1).map((night) => ({
     name: `dark[data-night-palette="${night}"]`,
     className: 'dark bg-page',
     night,

@@ -26,9 +26,10 @@
  * that can pass in one mode and fail in the other. Running light only would
  * check half of the shipped design.
  *
- * Dark mode is five night palettes, each re-pointing the page, the card and
- * the lines. The default night runs at every width like light mode; the other
- * four run at desktop width, because a night changes colours and not the tree.
+ * Dark mode is a set of night palettes, each re-pointing the page, the card
+ * and the lines. The default night runs at every width like light mode; the
+ * others run at desktop width, because a night changes colours and not the
+ * tree.
  *
  * ## States a route does not open in
  *
@@ -67,10 +68,15 @@ const WIDTHS = [
   { name: 'desktop', width: 1280, height: 900, touch: false },
 ];
 
+/** The night palette names; the first is the default, which sets no attribute. */
+const NIGHTS = JSON.parse(
+  await readFile(path.join(import.meta.dirname, '../src/styles/nights.json'), 'utf8'),
+);
+
 const THEMES = [
   { name: 'light', scheme: 'light', widths: WIDTHS },
   { name: 'dark', scheme: 'dark', widths: WIDTHS },
-  ...['graphite', 'onyx', 'ink', 'carbon'].map((night) => ({
+  ...NIGHTS.slice(1).map((night) => ({
     name: `dark/${night}`,
     scheme: 'dark',
     night,

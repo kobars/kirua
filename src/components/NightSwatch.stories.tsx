@@ -1,9 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import NIGHT_NAMES from '@/styles/nights.json';
 import { NightSwatch, type NightPalette } from './NightSwatch';
 import { Text } from './Text';
 
-const NIGHTS: NightPalette[] = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
+// `nights.node.test.ts` holds the type and the list to the same names.
+const NIGHTS = NIGHT_NAMES as NightPalette[];
 
 const meta = {
   tags: ['autodocs'],
