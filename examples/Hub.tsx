@@ -28,7 +28,7 @@ export function Hub() {
         </Wordmark>
       </AppHeader>
       <AppBody width="6xl">
-        <AppMain>
+        <AppMain data-route="">
           <Container width="6xl" gap="lg" pad="lg">
             <PageHeader
               eyebrow="Examples"

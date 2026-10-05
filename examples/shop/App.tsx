@@ -64,6 +64,7 @@ import { OrderPage } from './OrderPage';
 import { OrdersPage } from './OrdersPage';
 import { SignInPage } from './SignInPage';
 import { Filters } from './Filters';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { emptyFilters, isEmptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
@@ -150,6 +151,10 @@ export function App() {
   const order = route.startsWith('orders/')
     ? orders.find((o) => o.id === route.slice('orders/'.length))
     : undefined;
+  const known =
+    detail !== undefined ||
+    order !== undefined ||
+    ['', 'orders', 'sign-in', 'checkout'].includes(route);
 
   const filterPanel = (heading: boolean) => (
     <Filters
@@ -335,8 +340,12 @@ export function App() {
       </AppHeader>
 
       <AppBody width="full">
-        <AppMain>
-          {detail ? (
+        <AppMain data-route={`shop/${route}`}>
+          {!known ? (
+            <Container width="6xl">
+              <NotFound name="Dusk" home="#/shop/" />
+            </Container>
+          ) : detail ? (
             <ProductPage key={detail.id} product={detail} onAdd={add} />
           ) : order ? (
             <OrderPage order={order} />

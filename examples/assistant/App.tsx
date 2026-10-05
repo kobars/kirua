@@ -13,6 +13,7 @@ import {
   AppRail,
   AppShell,
   Button,
+  Container,
   IconButton,
   Pane,
   Sheet,
@@ -31,6 +32,7 @@ import {
   SparkleIcon,
 } from 'kirua';
 import { Composer } from './Composer';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useCommandShortcut } from '../shared/useCommandShortcut';
 import { useTheme } from '../shared/useTheme';
@@ -48,7 +50,7 @@ import { useHashRoute } from '../shared/useHashRoute';
  * and a composer that stays.
  */
 export function App() {
-  const [route, navigate] = useHashRoute('assistant', allConversations[0]!.id);
+  const [route, navigate] = useHashRoute('assistant', '');
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -58,8 +60,12 @@ export function App() {
   const { preference, choose } = useTheme();
 
   const visible = allConversations.filter((c) => !hidden.includes(c.id));
+  // The home route opens the first conversation left; so does a deleted one's
+  // address. An id no conversation ever had is not found.
   const conversation =
     visible.find((c) => c.id === route) ?? visible[0] ?? allConversations[0]!;
+  const known =
+    route === '' || route === 'usage' || allConversations.some((c) => c.id === route);
 
   useEffect(() => {
     if (pendingId === null) return;
@@ -171,8 +177,12 @@ export function App() {
           />
         </AppRail>
 
-        <AppMain>
-          {route === 'usage' ? (
+        <AppMain data-route={`assistant/${route}`}>
+          {!known ? (
+            <Container pad="lg">
+              <NotFound name="Lumen" home="#/assistant/" />
+            </Container>
+          ) : route === 'usage' ? (
             <Usage />
           ) : (
             <Pane height="screen">

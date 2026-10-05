@@ -53,6 +53,7 @@ import { PatientList } from './PatientList';
 import { PatientRecord } from './PatientRecord';
 import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { APPEARANCE } from '../shared/themeLabels';
 import { HOSPITAL, patients } from './data';
@@ -126,6 +127,7 @@ export function App() {
   const record = route.startsWith('patients/')
     ? patients.find((p) => p.mrn === route.slice('patients/'.length))
     : undefined;
+  const known = record !== undefined || nav.some((item) => item.route === route);
 
   /**
    * One list of destinations, rendered twice: as the rail on a wide screen and
@@ -229,10 +231,12 @@ export function App() {
           </Sidebar>
         </AppRail>
 
-        <AppMain>
+        <AppMain data-route={`his/${route}`}>
           <Container width="full" pad="sm">
-            {record ? (
-              <PatientRecord patient={record} />
+            {!known ? (
+              <NotFound name="Larkspur" home="#/his/" />
+            ) : record ? (
+              <PatientRecord key={record.mrn} patient={record} />
             ) : route === 'schedule' ? (
               <Appointments onOpen={(mrn) => navigate(`patients/${mrn}`)} />
             ) : route === 'new-visit' ? (
