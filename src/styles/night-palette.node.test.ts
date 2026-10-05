@@ -83,12 +83,15 @@ describe('the blocking script follows the night palette hook', () => {
     expect(hosts.length).toBeGreaterThan(0);
   });
 
-  it('lists the same nights as the hook', () => {
-    const [hookFile] = files('useNightPalette.ts');
-    const hook = readFileSync(hookFile!, 'utf8');
-    const ids = [...hook.matchAll(/\{ id: '([a-z]+)'/g)].map((match) => match[1]);
-    expect(ids).toEqual(NIGHTS);
-  });
+  // The hook reads the system's own list; an inline script cannot import, so
+  // each host document's copy is held to it here.
+  it.each(hosts.map((file) => [path.relative(EXAMPLES, file), file]))(
+    '%s lists the same nights as the system',
+    (_, file) => {
+      const listed = readFileSync(file, 'utf8').match(/const nights = (\[[^\]]*\])/)?.[1];
+      expect(listed && JSON.parse(listed.replaceAll("'", '"'))).toEqual(NIGHTS);
+    },
+  );
 
   describe.each(hosts.map((file) => [path.relative(EXAMPLES, file), file]))('%s', (_, file) => {
     const scripts = inlineScripts(file);
