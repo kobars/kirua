@@ -31,7 +31,8 @@
   "exports": {
     ".": {
       "types": "./dist/components/index.d.ts",
-      "import": "./dist/components/index.js"
+      "import": "./dist/components/index.js",
+      "default": "./dist/components/index.js"
     },
     "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
@@ -46,9 +47,6 @@
     "LICENSE",
     "NOTICE"
   ],
-  "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
-  },
   "peerDependencies": {
     "react": "^19",
     "react-dom": "^19",

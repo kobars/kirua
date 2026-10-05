@@ -1,3 +1,5 @@
+'use client';
+
 /* oxlint-disable jsx-a11y/no-noninteractive-element-to-interactive-role, jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
  * `<ul role="listbox">` with `<li role="option">` is the ARIA 1.2 combobox
  * pattern. The native tags these rules suggest cannot be filtered by typing.
@@ -57,6 +59,11 @@ export type ComboboxProps = ComponentProps<'div'> & ComboboxOpenState;
  * Leave both out only for a list that never needs to come back once
  * dismissed: `aria-expanded` has to follow the list, and only a consumer that
  * holds the open state can write it.
+ *
+ * **Every `Combobox` part is a client component.** `ComboboxList` and
+ * `ComboboxEmpty` give the popover focus and outside-press handlers of their
+ * own, and a Server Component cannot pass a function. A Server Component file
+ * may still import and place them; they render on the client.
  *
  * @example
  * <Combobox open={open} onOpenChange={setOpen}>

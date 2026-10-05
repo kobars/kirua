@@ -1,3 +1,5 @@
+'use client';
+
 /* oxlint-disable jsx-a11y/control-has-associated-label --
  * Every day button has `aria-label={dayFormat.format(date)}`. The rule cannot
  * follow a computed value; the stories assert the real names. */
@@ -83,6 +85,11 @@ function firstWeekday(tag: string): number {
  *
  * A disabled date stays focusable and reads as unavailable, so moving through
  * the grid never skips a day without saying why.
+ *
+ * **A client component.** The month buttons and every day carry handlers the
+ * calendar creates itself, even when no prop is a function, and a Server
+ * Component cannot pass a function. A Server Component file may still import
+ * and place it; it renders on the client.
  *
  * **A `Date` here is a local calendar day, and `toISOString()` will misreport
  * it.** It converts to UTC, so `new Date(2026, 2, 17)` in UTC+7 serialises as

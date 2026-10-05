@@ -59,6 +59,11 @@ The stylesheet acts on the whole app, not only on kirua's components:
   app's own utilities of those names change with them: `rounded-lg` becomes
   22px instead of 8px, `font-medium` becomes 700 and `bg-red-500` becomes
   kirua's red.
+- **It shares the spacing scale and the breakpoints with the app.** kirua
+  declares Tailwind's default `--spacing` and `--breakpoint-*` values without
+  changing them, and its components are sized and laid out against them.
+  Retuning either in your own `@theme` resizes or reflows kirua's components
+  as well, while their few fixed measurements stay as they are.
 - **`dark:` follows the `dark` class**, not the `prefers-color-scheme` media
   query.
 - **`body` takes kirua's page colour, text colour and font**, every
@@ -110,8 +115,11 @@ export function CollectionCard() {
 `Card` is a flex column, so a direct child stretches to its width. `self-start`
 keeps the badge at its own size.
 
-The components render on a server and carry no `"use client"` directive. Attach
-event handlers from a client component of your own.
+The components render in a Server Component and carry no `"use client"`
+directive, with three exceptions: `Calendar`, `DatePicker` and the `Combobox`
+parts are client components, because they create event handlers of their own.
+A Server Component file can still import and place them; they render on the
+client. Attach event handlers from a client component of your own.
 
 - **Tooltips** need one `TooltipProvider` around the app, for example in the
   root layout.
