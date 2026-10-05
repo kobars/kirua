@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, spyOn, within } from 'storybook/test';
 import { Progress } from './Progress';
 
 const meta = {
@@ -56,5 +56,36 @@ export const IndeterminateReportsNoValue: Story = {
 
     await expect(canvas.getByLabelText('Determinate')).toHaveAttribute('aria-valuenow', '40');
     await expect(canvas.getByLabelText('Indeterminate')).not.toHaveAttribute('aria-valuenow');
+  },
+};
+
+/**
+ * Out of range, Radix announces the bar as indeterminate, so it must also
+ * look indeterminate rather than draw a full, still bar.
+ */
+export const OutOfRangeIsIndeterminate: Story = {
+  render: (args) => (
+    <div className="grid w-80 gap-4">
+      <Progress {...args} value={105} aria-label="Overshot" />
+      <Progress {...args} value={40} max={0} aria-label="No total" />
+    </div>
+  ),
+  // Radix reports both props with console.error; that is the point here.
+  beforeEach: () => {
+    const quiet = spyOn(console, 'error').mockImplementation(() => undefined);
+    return () => quiet.mockRestore();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const indicator = (name: string) =>
+      canvas.getByLabelText(name).querySelector('[data-slot="progress-indicator"]')!;
+
+    await expect(canvas.getByLabelText('Overshot')).not.toHaveAttribute('aria-valuenow');
+    await expect(indicator('Overshot')).toHaveAttribute('data-state', 'indeterminate');
+    await expect(getComputedStyle(indicator('Overshot')).animationName).not.toBe('none');
+
+    // An unusable max is 100, as Radix reads it: 40 of 100, not NaN of 0.
+    await expect(canvas.getByLabelText('No total')).toHaveAttribute('aria-valuenow', '40');
+    await expect((indicator('No total') as HTMLElement).style.width).toBe('40%');
   },
 };
