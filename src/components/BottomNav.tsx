@@ -1,3 +1,4 @@
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
@@ -38,28 +39,44 @@ export function BottomNav({ className, children, ...props }: BottomNavProps) {
   );
 }
 
-export interface BottomNavLinkProps extends ComponentProps<'a'> {
-  href: string;
+interface BottomNavLinkBaseProps extends Omit<ComponentProps<'a'>, 'href'> {
   icon: ReactNode;
   /** This destination is the one on screen. Rendered as `aria-current="page"`. */
   current?: boolean;
 }
 
 /**
+ * `href` is required on the anchor this renders. With `asChild` the child is
+ * the anchor — a router's link component — and carries it instead.
+ */
+export type BottomNavLinkProps = BottomNavLinkBaseProps &
+  ({ asChild?: false; href: string } | { asChild: true; href?: undefined });
+
+/**
  * One destination: an icon over a short label, at least 44px square. Extra
  * words for a screen reader — an unread count — go in a `VisuallyHidden`
  * after the label; the link is positioned so that text stays inside it.
+ *
+ * `asChild` renders onto a router's link component, so a tab change is a
+ * client transition; the icon is placed inside it, before the label.
+ *
+ * @example
+ * <BottomNavLink asChild icon={<SendIcon />} current={pathname === '/messages'}>
+ *   <NextLink href="/messages">Messages</NextLink>
+ * </BottomNavLink>
  */
 export function BottomNavLink({
   icon,
   current = false,
+  asChild = false,
   className,
   children,
   ...props
 }: BottomNavLinkProps) {
+  const Comp = asChild ? Slot : 'a';
   return (
     <li>
-      <a
+      <Comp
         data-slot="bottom-nav-link"
         aria-current={current ? 'page' : undefined}
         className={cn(
@@ -75,8 +92,8 @@ export function BottomNavLink({
         <span aria-hidden="true" className="flex">
           {icon}
         </span>
-        {children}
-      </a>
+        <Slottable>{children}</Slottable>
+      </Comp>
     </li>
   );
 }

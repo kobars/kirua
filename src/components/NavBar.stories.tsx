@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { RouterLink } from '@/test/RouterLink';
 import { MD, atLeast } from '@/test/viewport';
 import { IconButton } from './IconButton';
-import { NavBar } from './NavBar';
+import { NavBar, NavBarLink } from './NavBar';
 import { GridIcon, SearchIcon } from './icons';
 
 const meta = {
@@ -76,5 +77,34 @@ export const MarksTheCurrentPage: Story = {
         'aria-current',
       );
     }
+  },
+};
+
+/**
+ * Composed from `NavBarLink`s, each rendered onto the router's link, so a
+ * change of page never reloads the document.
+ */
+export const OnRouterLinks: Story = {
+  render: (args) => (
+    <NavBar aria-label={args['aria-label'] ?? 'Main'}>
+      <NavBarLink asChild current>
+        <RouterLink href="#/">Home</RouterLink>
+      </NavBarLink>
+      <NavBarLink asChild>
+        <RouterLink href="#/about">About</RouterLink>
+      </NavBarLink>
+    </NavBar>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const home = canvas.getByRole('link', { name: 'Home' });
+
+    await expect(canvas.getAllByRole('listitem')).toHaveLength(2);
+    await expect(home).toHaveAttribute('data-router-link');
+    await expect(home).toHaveAttribute('data-slot', 'nav-bar-link');
+    await expect(home).toHaveAttribute('aria-current', 'page');
+    await expect(canvas.getByRole('link', { name: 'About' })).not.toHaveAttribute(
+      'aria-current',
+    );
   },
 };
