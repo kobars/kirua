@@ -45,6 +45,32 @@ describe('dark mode is a class on the document, and nothing else', () => {
 
     root.classList.add('dark');
     expect(getComputedStyle(root).colorScheme).toBe('dark');
+
+    // The brand panel keeps white fields in dark mode, so it keeps the light
+    // scheme for the widgets drawn on them.
+    const brand = document.createElement('div');
+    brand.className = 'ctx-brand';
+    document.body.appendChild(brand);
+    expect(getComputedStyle(brand).colorScheme).toBe('light');
+    brand.remove();
+  });
+
+  it('paints the brand panel and the page inside it the same blue, in either mode', () => {
+    const root = document.documentElement;
+    const panel = document.createElement('div');
+    panel.className = 'ctx-brand bg-brand';
+    const marker = document.createElement('div');
+    marker.className = 'bg-page';
+    panel.appendChild(marker);
+    document.body.appendChild(panel);
+
+    for (const dark of [false, true]) {
+      root.classList.toggle('dark', dark);
+      expect(getComputedStyle(marker).backgroundColor).toBe(
+        getComputedStyle(panel).backgroundColor,
+      );
+    }
+    panel.remove();
   });
 
   it('does not re-point tokens from a media query', () => {

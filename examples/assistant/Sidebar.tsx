@@ -14,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
   IconButton,
   Inline,
@@ -198,6 +199,11 @@ export function ConversationSidebar({
                               {command.destructive && index > 0 && <DropdownMenuSeparator />}
                               <DropdownMenuItem onSelect={command.run}>
                                 {command.label}
+                                {command.shortcut && (
+                                  <DropdownMenuShortcut>
+                                    {command.shortcut}
+                                  </DropdownMenuShortcut>
+                                )}
                               </DropdownMenuItem>
                             </Fragment>
                           ))}

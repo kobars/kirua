@@ -46,7 +46,11 @@ const twMerge = extendTailwindMerge({
         'press-lifted',
         'press-down',
       ],
-      ease: ['spring'],
+      ease: ['out-soft', 'spring'],
+      'font-weight': ['regular'],
+      // On the theme scale rather than in a class group, so every per-side and
+      // per-corner group (`rounded-t-*`, `rounded-ee-*`) learns them as well.
+      radius: ['pill', 'card', 'control'],
     },
     classGroups: {
       'font-size': [
@@ -66,7 +70,6 @@ const twMerge = extendTailwindMerge({
           ],
         },
       ],
-      rounded: [{ rounded: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill', 'card', 'control'] }],
       'font-family': [{ font: ['display', 'text', 'mono'] }],
       duration: [{ duration: ['fast', 'base', 'slow'] }],
       transition: [{ transition: ['press'] }],

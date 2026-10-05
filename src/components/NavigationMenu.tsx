@@ -151,7 +151,12 @@ function NavigationMenuViewport({
   ...props
 }: ComponentProps<typeof NavigationMenuPrimitive.Viewport>) {
   return (
-    <div className="absolute top-full flex w-full justify-center">
+    // Not portalled, so it names its layer: positioned content later in the
+    // page would otherwise paint over the open panel.
+    <div
+      data-slot="navigation-menu-viewport-wrapper"
+      className="absolute top-full z-popover flex w-full justify-center"
+    >
       <NavigationMenuPrimitive.Viewport
         data-slot="navigation-menu-viewport"
         className={cn(

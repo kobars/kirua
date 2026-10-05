@@ -10,6 +10,7 @@ import {
   menuItemStyles,
   menuLabelStyles,
   menuSeparatorStyles,
+  menuShortcutStyles,
 } from './menu.styles';
 
 /**
@@ -52,7 +53,11 @@ export function ContextMenuContent({
     <ContextMenuPrimitive.Portal container={container}>
       <ContextMenuPrimitive.Content
         data-slot="context-menu-content"
-        className={cn(menuContentStyles, className)}
+        className={cn(
+          menuContentStyles,
+          'origin-(--radix-context-menu-content-transform-origin)',
+          className,
+        )}
         {...props}
       />
     </ContextMenuPrimitive.Portal>
@@ -149,7 +154,7 @@ export function ContextMenuShortcut({ className, ...props }: ComponentProps<'spa
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn('ms-auto ps-4 font-text text-caption text-fg-muted', className)}
+      className={cn(menuShortcutStyles, className)}
       {...props}
     />
   );

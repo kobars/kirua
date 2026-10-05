@@ -8,6 +8,7 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
+import type { NamedPanel } from './aria';
 import { CheckIcon } from './icons';
 
 /**
@@ -68,6 +69,7 @@ export type ComboboxProps = ComponentProps<'div'> & ComboboxOpenState;
  * @example
  * <Combobox open={open} onOpenChange={setOpen}>
  *   <ComboboxInput
+ *     aria-label="City"
  *     aria-expanded={open}
  *     aria-controls="city-list"
  *     aria-activedescendant={active ? `city-${active}` : undefined}
@@ -149,6 +151,9 @@ const panelClasses = [
 /**
  * The options. A press anywhere in the list keeps focus in the input, so an
  * option needs no `onMouseDown` of its own to stop the input blurring.
+ *
+ * The name is required: a listbox cannot be named by a `<label>`. The input
+ * can, which is why `ComboboxInput` leaves its own name optional.
  */
 export function ComboboxList({
   className,
@@ -157,7 +162,7 @@ export function ComboboxList({
   container,
   onMouseDown,
   ...props
-}: ComponentProps<'ul'> & PanelProps) {
+}: ComponentProps<'ul'> & PanelProps & NamedPanel) {
   return (
     <PopoverPrimitive.Portal container={container}>
       <PopoverPrimitive.Content asChild side={side} align={align} {...panelBehaviour}>

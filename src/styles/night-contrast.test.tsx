@@ -18,7 +18,8 @@ afterEach(cleanup);
  *
  * The field family has its own audit in `field-contrast.test.tsx`; this file
  * measures what a field audit does not reach: copy on the page and the card,
- * the button labels, the chart marks and the order of the night's own steps.
+ * the button labels, the chart marks, the avatar initials and the order of the
+ * night's own steps.
  * Light mode is measured beside them, because the button fills are shared.
  */
 const TEXT = 4.5;
@@ -99,6 +100,12 @@ const PAIRS: Pair[] = [
     foreground: '--color-action-secondary-raised-border',
     background,
     minimum: BOUNDARY,
+  })),
+  // An avatar's initial is text on its own swatch.
+  ...[1, 2, 3, 4, 5].map((swatch) => ({
+    foreground: `--color-avatar-swatch-${swatch}-fg`,
+    background: `--color-avatar-swatch-${swatch}-bg`,
+    minimum: TEXT,
   })),
   // A chart mark is a non-text graphic on the page or a card.
   ...[1, 2, 3, 4, 5].flatMap((series) =>

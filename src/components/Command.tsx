@@ -1,7 +1,8 @@
 /* oxlint-disable jsx-a11y/no-noninteractive-element-to-interactive-role, jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
  * The ARIA 1.2 listbox pattern; see the header in `Combobox.tsx`. */
-import type { ComponentProps } from 'react';
+import { useId, type ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
+import type { NamedPanel } from './aria';
 import { Dialog, DialogContent } from './Dialog';
 import { SearchIcon } from './icons';
 
@@ -17,10 +18,11 @@ import { SearchIcon } from './icons';
  *   <CommandInput
  *     value={query}
  *     onChange={(e) => setQuery(e.target.value)}
+ *     aria-label="Search commands"
  *     aria-controls="cmd-list"
  *     aria-activedescendant={`cmd-${active}`}
  *   />
- *   <CommandList id="cmd-list">
+ *   <CommandList id="cmd-list" aria-label="Commands">
  *     <CommandGroup heading="Patients">
  *       <CommandItem id="cmd-0" isActive>Find a patient</CommandItem>
  *     </CommandGroup>
@@ -69,7 +71,8 @@ export function CommandInput({ className, ...props }: ComponentProps<'input'>) {
   );
 }
 
-export function CommandList({ className, ...props }: ComponentProps<'ul'>) {
+/** A listbox cannot be named by a `<label>`, so its name is required here. */
+export function CommandList({ className, ...props }: ComponentProps<'ul'> & NamedPanel) {
   return (
     <ul
       data-slot="command-list"
@@ -86,17 +89,20 @@ export function CommandGroup({
   children,
   ...props
 }: ComponentProps<'li'> & { heading: string }) {
+  // Generated rather than built from the heading: an id is one token, and a
+  // heading is free text that may hold a space or repeat in another palette.
+  const headingId = useId();
   return (
     // A group inside a listbox needs `role="group"` and a label, or each
     // heading reads as an option.
     <li data-slot="command-group" role="presentation" className={cn(className)} {...props}>
       <p
         className="px-3 pt-3 pb-1 font-text text-caption text-fg-muted uppercase"
-        id={`group-${heading}`}
+        id={headingId}
       >
         {heading}
       </p>
-      <ul role="group" aria-labelledby={`group-${heading}`}>
+      <ul role="group" aria-labelledby={headingId}>
         {children}
       </ul>
     </li>
@@ -142,7 +148,11 @@ export function CommandItem({
  * `role="listbox"` must contain options.
  *
  * @example
- * {matches.length > 0 ? <CommandList>…</CommandList> : <CommandEmpty>No matches.</CommandEmpty>}
+ * {matches.length > 0 ? (
+ *   <CommandList aria-label="Commands">…</CommandList>
+ * ) : (
+ *   <CommandEmpty>No matches.</CommandEmpty>
+ * )}
  */
 export function CommandEmpty({ className, ...props }: ComponentProps<'div'>) {
   return (

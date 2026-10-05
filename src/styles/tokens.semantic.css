@@ -144,6 +144,29 @@
   --color-chart-grid-line: var(--color-neutral-200);
   --color-chart-track-fill: var(--color-neutral-100);
 
+  /* AVATAR SWATCHES — the fill behind a person's initial when there is no
+   * photo, chosen from the name so one person keeps one colour.
+   *
+   * Identity, like the chart series, and each a pair: the initial is text,
+   * set as small as 8px, so every fill is measured against its own
+   * foreground at 4.5:1 rather than against the page. The tints share their
+   * primitives with the status family but are a separate role, so either can
+   * be retuned alone. Five, for the reason the chart stops at five.
+   *
+   * Re-pointed under `.dark` and measured on every night by
+   * `src/styles/night-contrast.test.tsx`. A pair carries its own contrast, so
+   * the surface contexts leave it alone. */
+  --color-avatar-swatch-1-bg: var(--color-blue-100);
+  --color-avatar-swatch-1-fg: var(--color-blue-900);
+  --color-avatar-swatch-2-bg: var(--color-violet-100);
+  --color-avatar-swatch-2-fg: var(--color-violet-900);
+  --color-avatar-swatch-3-bg: var(--color-green-100);
+  --color-avatar-swatch-3-fg: var(--color-green-900);
+  --color-avatar-swatch-4-bg: var(--color-amber-100);
+  --color-avatar-swatch-4-fg: var(--color-amber-900);
+  --color-avatar-swatch-5-bg: var(--color-red-100);
+  --color-avatar-swatch-5-fg: var(--color-red-900);
+
   /* FIELD — the family every form control reads: the invalid border, the
    * placeholder colour, the selected-row surface. Inventing them per component
    * is how a token system stops being one.
@@ -274,7 +297,15 @@
 
 /* Applied by SpotlightPanel. */
 .ctx-brand {
-  --color-surface-page: var(--color-blue-600);
+  /* The panel keeps the light palette for what the browser paints itself: its
+   * fields stay white in dark mode too, so a picker or clear icon drawn for a
+   * dark scheme would sit on a white field. */
+  color-scheme: light;
+
+  /* The page is whatever blue the panel is painted in — blue-600, or blue-700
+   * under `.dark`. A fixed blue-600 here would turn every `bg-page` marker
+   * and `ring-page` halo into a lighter patch on the dark mode panel. */
+  --color-surface-page: var(--color-surface-brand);
   --color-surface-raised: var(--color-blue-700);
   --color-surface-sunken: var(--color-blue-700);
 
@@ -311,7 +342,7 @@
    * *is* the panel, so a blue edge would vanish. 4.67:1 on blue-600. */
   --color-border-accent: var(--color-neutral-0);
   --color-focus-ring: var(--color-neutral-0);
-  --color-focus-ring-offset: var(--color-blue-600);
+  --color-focus-ring-offset: var(--color-surface-brand);
 
   /* 40% white over the reference's blue-500 composites to exactly #6CB5FF. */
   --color-surface-glint: color-mix(in srgb, var(--color-neutral-0) 40%, transparent);
@@ -386,6 +417,14 @@
   --color-action-secondary-raised-bg-open: transparent;
   --color-action-secondary-raised-border: var(--color-action-secondary-border);
   --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
+
+  /* A light card placed on the panel. A custom property resolves its `var()`
+   * where it is declared, so the :root line and shade would arrive already
+   * mixed for a white page. The brand tint of a blue fill is that fill, so the
+   * line is the translucent white the brand card keeps, and the card casts the
+   * panel's own shade, as a button does. */
+  --color-border-card: var(--color-border-subtle);
+  --color-shade-card: var(--color-shade-press);
 }
 
 /* Applied by NavBar, dark Card, dark Chip, Tooltip. */
@@ -477,6 +516,16 @@
   --color-action-secondary-raised-bg-open: transparent;
   --color-action-secondary-raised-border: var(--color-action-secondary-border);
   --color-action-secondary-raised-fg: var(--color-action-secondary-fg);
+
+  /* A light card placed on this surface: the :root formula again, so it mixes
+   * the brand into this surface's raised fill rather than arriving already
+   * mixed for a white page. The shade is this surface's own, as a button's is. */
+  --color-border-card: color-mix(
+    in srgb,
+    var(--color-surface-brand) 18%,
+    var(--color-surface-raised)
+  );
+  --color-shade-card: var(--color-shade-press);
 }
 
 /* Invented — the reference has no dark mode. It is one block of re-pointed
@@ -585,6 +634,19 @@
 
   --color-chart-grid-line: var(--color-night-line);
   --color-chart-track-fill: var(--color-night-sunken);
+
+  /* AVATAR SWATCHES, the light pairs turned over: a pale disc on a night page
+   * is the brightest thing on it, so the fill goes dark and the initial light. */
+  --color-avatar-swatch-1-bg: var(--color-blue-900);
+  --color-avatar-swatch-1-fg: var(--color-blue-100);
+  --color-avatar-swatch-2-bg: var(--color-violet-900);
+  --color-avatar-swatch-2-fg: var(--color-violet-100);
+  --color-avatar-swatch-3-bg: var(--color-green-900);
+  --color-avatar-swatch-3-fg: var(--color-green-100);
+  --color-avatar-swatch-4-bg: var(--color-amber-900);
+  --color-avatar-swatch-4-fg: var(--color-amber-100);
+  --color-avatar-swatch-5-bg: var(--color-red-900);
+  --color-avatar-swatch-5-fg: var(--color-red-100);
 
   /* FIELD. The field takes the card's colour, one step up from the page, so
    * it reads as a well. `--color-field-border` is neutral-500 rather than the

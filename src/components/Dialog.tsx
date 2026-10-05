@@ -68,7 +68,9 @@ export function DialogContent({
       />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        data-close-button={showCloseButton ? '' : undefined}
         className={cn(
+          'group/dialog',
           // `inset-0 m-auto` centres on both axes without naming a side, so the
           // panel is centred in a right-to-left document too. `left-1/2` with a
           // translate is not: it resolves to `right: 50%` and lands off-centre.
@@ -94,6 +96,11 @@ export function DialogContent({
   );
 }
 
+/**
+ * The dialog's name. Beside the built-in close button it keeps clear of it, so
+ * a title that wraps on a phone runs onto a second line instead of under the
+ * button.
+ */
 export function DialogTitle({
   className,
   ...props
@@ -101,7 +108,11 @@ export function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn('font-text text-heading-lg font-semibold text-fg', className)}
+      className={cn(
+        'font-text text-heading-lg font-semibold text-fg',
+        'group-data-close-button/dialog:pe-8',
+        className,
+      )}
       {...props}
     />
   );

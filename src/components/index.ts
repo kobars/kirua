@@ -126,6 +126,7 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
 } from './DropdownMenu';
 export { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './Tooltip';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';

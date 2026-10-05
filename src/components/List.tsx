@@ -39,6 +39,10 @@ export function List({ className, variant, size, ...props }: ListProps) {
   return (
     <Comp
       data-slot="list"
+      // WebKit drops the list role from a list styled `list-style: none`, so
+      // VoiceOver reads the plain variant as loose lines; the explicit role
+      // keeps it announced as a list.
+      role={variant === 'plain' ? 'list' : undefined}
       className={cn(listVariants({ variant, size }), className)}
       {...props}
     />
