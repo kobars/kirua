@@ -129,6 +129,34 @@ export const HidesItsArtworkBelowMd: Story = {
   },
 };
 
+/** The gutter follows the artwork: against the start edge, the copy moves off it. */
+export const MediaOnTheStartSide: Story = {
+  render: (args) => (
+    <div className="py-16">
+      <SpotlightPanel {...args} className="min-h-[420px]">
+        <SpotlightMedia side="start" overhang="both" fit>
+          <img src={CHARACTERS.yoyo.src} alt="" />
+        </SpotlightMedia>
+        <SpotlightContent gap={6}>
+          <h2 className="font-display text-display-lg text-fg">
+            Bring your anime worlds to life, however long the headline runs
+          </h2>
+        </SpotlightContent>
+      </SpotlightPanel>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const media = canvasElement.querySelector('[data-slot="spotlight-media"]')!;
+    const heading = canvasElement.querySelector('h2')!;
+    await expect(media).toHaveAttribute('data-side', 'start');
+    if (!atLeast(MD)) return;
+
+    // The headline begins where the artwork ends, not underneath it.
+    const artwork = media.getBoundingClientRect();
+    await expect(heading.getBoundingClientRect().left).toBeGreaterThanOrEqual(artwork.right);
+  },
+};
+
 export const MinimumHeights: Story = {
   render: () => (
     <div className="grid gap-6">

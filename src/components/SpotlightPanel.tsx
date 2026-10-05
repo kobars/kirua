@@ -80,6 +80,8 @@ export function SpotlightPanel({
 }
 
 export interface SpotlightMediaProps extends ComponentProps<'div'> {
+  /** The panel edge the artwork stands against. `SpotlightContent` reserves
+   *  its gutter on the same side. */
   side?: 'start' | 'end';
   /** Which panel edges the artwork is allowed to cross. */
   overhang?: 'top' | 'bottom' | 'both' | 'none';
@@ -125,6 +127,7 @@ export function SpotlightMedia({
   return (
     <div
       data-slot="spotlight-media"
+      data-side={side}
       aria-hidden="true"
       className={cn(
         // Decorative, and there is no room for it beside the text on a phone.
@@ -152,8 +155,12 @@ export interface SpotlightContentProps extends ComponentProps<'div'> {
   measure?: boolean;
 }
 
-/** Right padding tracks the panel's `mediaWidth` plus a gutter, so text stops
- *  before the artwork begins however long it runs. */
+/**
+ * Padding on the media's side tracks the panel's `mediaWidth` plus a gutter,
+ * so text stops before the artwork begins however long it runs. The side is
+ * read from the `SpotlightMedia` in the same panel with `:has()`, so the two
+ * cannot disagree and nothing holds state.
+ */
 export function SpotlightContent({
   className,
   gap,
@@ -166,6 +173,8 @@ export function SpotlightContent({
       className={cn(
         'relative z-raised flex flex-col items-start',
         'md:pe-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
+        'md:group-has-[[data-slot=spotlight-media][data-side=start]]/spotlight:pe-0',
+        'md:group-has-[[data-slot=spotlight-media][data-side=start]]/spotlight:ps-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
         gap !== undefined && contentGaps[gap],
         measure && 'max-w-176',
         className,
