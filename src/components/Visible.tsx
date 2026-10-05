@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import type { ComponentProps } from 'react';
+import { isValidElement, type ComponentProps } from 'react';
 import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
 import { visibleVariants } from './Visible.variants';
@@ -13,9 +13,10 @@ export interface VisibleProps
  * **It renders no element of its own.** The classes land on the child, through
  * Radix `Slot`, because a wrapper would break the places this is most needed:
  * `ButtonGroup` styles its *direct* children, and a `BreadcrumbList` is an `ol`
- * that may only hold `li`s. Give it exactly one element child. A bare string
- * is the exception — it is wrapped in a `span`, which is the only case that
- * carries `data-slot="visible"`.
+ * that may only hold `li`s. Give it exactly one element child. Anything else —
+ * a bare string, or text with a value in it such as `Show {count}` — is
+ * wrapped in a `span`, which is the only case that carries
+ * `data-slot="visible"`.
  *
  * For the same reason the child's own `data-slot` is never touched: Slot lets
  * the child's props win, and a slot name of ours would replace the
@@ -40,7 +41,7 @@ export interface VisibleProps
  */
 export function Visible({ from, below, print, className, children, ...props }: VisibleProps) {
   const classes = cn(visibleVariants({ from, below, print }), className);
-  if (typeof children === 'string' || typeof children === 'number') {
+  if (!isValidElement(children)) {
     return (
       <span data-slot="visible" className={classes} {...props}>
         {children}
