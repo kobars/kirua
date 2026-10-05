@@ -32,6 +32,7 @@ import {
 } from 'kirua';
 import { Composer } from './Composer';
 import { ThemeMenu } from '../shared/ThemeMenu';
+import { useCommandShortcut } from '../shared/useCommandShortcut';
 import { useTheme } from '../shared/useTheme';
 import { SearchPalette } from './SearchPalette';
 import { SettingsDialog } from './SettingsDialog';
@@ -79,16 +80,7 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [pendingId]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  useCommandShortcut(setSearchOpen);
 
   const pick = (id: string) => {
     navigate(id);

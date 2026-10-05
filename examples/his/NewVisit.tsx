@@ -32,6 +32,7 @@ import {
   Textarea,
 } from 'kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
+import { useActiveDescendant } from '../shared/useActiveDescendant';
 import { departmentGroups, diagnoses, formatDate, patients, providers } from './data';
 
 /**
@@ -85,17 +86,23 @@ export function NewVisit() {
   const [query, setQuery] = useState('');
   const [diagnosis, setDiagnosis] = useState<string | null>(null);
   const [listOpen, setListOpen] = useState(false);
-  const [active, setActive] = useState(0);
 
   const matches = diagnoses.filter((entry) =>
     `${entry.code} ${entry.label}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const activeId =
-    listOpen && matches[active] ? `diagnosis-${matches[active].code}` : undefined;
-  // The arrows can move the highlight past the bottom of a scrolled list.
-  useEffect(() => {
-    if (activeId) document.getElementById(activeId)?.scrollIntoView({ block: 'nearest' });
-  }, [activeId]);
+  const pick = (index: number) => {
+    const entry = matches[index];
+    if (!entry) return;
+    setDiagnosis(entry.code);
+    setQuery(`${entry.code} — ${entry.label}`);
+    setListOpen(false);
+  };
+  const { active, activeId, setActive, onKeyDown } = useActiveDescendant({
+    count: matches.length,
+    idOf: (index) => `diagnosis-${matches[index]?.code}`,
+    onPick: pick,
+    enabled: listOpen,
+  });
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -303,21 +310,13 @@ export function NewVisit() {
                   setActive(0);
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === 'ArrowDown') {
+                  if (event.key === 'Escape') setListOpen(false);
+                  else if (!listOpen && event.key === 'ArrowDown') {
                     // A closed list opens on its first row; an open one steps.
-                    setActive((n) =>
-                      listOpen ? Math.max(0, Math.min(matches.length - 1, n + 1)) : 0,
-                    );
-                    setListOpen(true);
-                  } else if (event.key === 'ArrowUp') setActive((n) => Math.max(0, n - 1));
-                  else if (event.key === 'Enter' && listOpen && matches[active]) {
                     event.preventDefault();
-                    setDiagnosis(matches[active].code);
-                    setQuery(`${matches[active].code} — ${matches[active].label}`);
-                    setListOpen(false);
-                  } else if (event.key === 'Escape') setListOpen(false);
-                  else return;
-                  if (event.key.startsWith('Arrow')) event.preventDefault();
+                    setActive(0);
+                    setListOpen(true);
+                  } else onKeyDown(event);
                 }}
               />
             </Field>
@@ -332,9 +331,7 @@ export function NewVisit() {
                       aria-selected={entry.code === diagnosis}
                       onMouseDown={(event) => {
                         event.preventDefault();
-                        setDiagnosis(entry.code);
-                        setQuery(`${entry.code} — ${entry.label}`);
-                        setListOpen(false);
+                        pick(index);
                       }}
                     >
                       <span>
