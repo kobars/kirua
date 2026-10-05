@@ -18,7 +18,7 @@ import {
   Section,
   Separator,
   Text,
-} from 'kirua';
+} from '@kobars/kirua';
 import { PUBLISH_STEPS } from './data';
 
 const MANIFEST = `{

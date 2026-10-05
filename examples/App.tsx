@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType } from 'react';
-import { AppMain, Container, Spinner } from 'kirua';
+import { AppMain, Container, Spinner } from '@kobars/kirua';
 import { Hub } from './Hub';
 import { HUB_TITLE, SECTIONS, type SectionId } from './sections';
 import { SectionErrorBoundary } from './shared/SectionErrorBoundary';

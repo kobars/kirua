@@ -30,7 +30,7 @@ import {
   ToastDescription,
   ToastTitle,
   ToastViewport,
-} from 'kirua';
+} from '@kobars/kirua';
 import { STUDIO, TOPICS } from './data';
 
 /**

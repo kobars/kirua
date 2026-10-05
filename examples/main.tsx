@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { TooltipProvider } from 'kirua';
+import { TooltipProvider } from '@kobars/kirua';
 import { App } from './App';
-import 'kirua/styles.css';
+import '@kobars/kirua/styles.css';
 
 const RELOADED = 'kirua-preload-reload';
 

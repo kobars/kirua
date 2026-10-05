@@ -57,7 +57,7 @@ import {
   UserIcon,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { CartSheet, type CartLine } from './CartSheet';
 import { CheckoutPage } from './CheckoutPage';
 import { OrderPage } from './OrderPage';

@@ -42,7 +42,7 @@ import {
   UserIcon,
   VisuallyHidden,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { Composer } from './Composer';
 import { Explore } from './Explore';
 import { Messages } from './Messages';

@@ -30,7 +30,7 @@ import {
   MenuIcon,
   MoreIcon,
   SparkleIcon,
-} from 'kirua';
+} from '@kobars/kirua';
 import { Composer } from './Composer';
 import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';

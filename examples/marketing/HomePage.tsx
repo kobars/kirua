@@ -26,7 +26,7 @@ import {
   Text,
   Visible,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import { CHARACTERS } from './characters';
 import { PRINCIPLES } from './data';
 

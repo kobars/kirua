@@ -20,7 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from 'kirua';
+} from '@kobars/kirua';
 import { allConversations, usageByMonth, usageByTopic } from './data';
 
 /**

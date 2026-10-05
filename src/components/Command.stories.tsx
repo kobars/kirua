@@ -36,7 +36,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       source: {
-        code: CommunityCommandsSource.replace("from '@/components'", "from 'kirua'"),
+        code: CommunityCommandsSource.replace("from '@/components'", "from '@kobars/kirua'"),
         language: 'tsx',
       },
     },

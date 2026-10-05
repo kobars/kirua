@@ -14,7 +14,7 @@ import {
   PageHeader,
   SparkleIcon,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ThemeMenu } from './shared/ThemeMenu';
 import { SECTIONS } from './sections';
 

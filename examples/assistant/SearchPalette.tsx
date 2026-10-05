@@ -7,7 +7,7 @@ import {
   CommandItem,
   CommandList,
   Kbd,
-} from 'kirua';
+} from '@kobars/kirua';
 import { useActiveDescendant } from '../shared/useActiveDescendant';
 import { allConversations as conversations } from './data';
 

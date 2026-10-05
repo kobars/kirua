@@ -157,7 +157,7 @@ function exportedValues() {
  * The clause pattern is `[^}]*` and not `[\s\S]*?` for a reason worth keeping:
  * lazy matching still crosses an intervening import, so in a `main.tsx` that
  * imports React first, the match would run from `import {` on line one to
- * `} from 'kirua'` on line three and swallow three modules into one clause,
+ * `} from '@kobars/kirua'` on line three and swallow three modules into one clause,
  * reporting `TooltipProvider` unused while the app wraps itself in it.
  */
 function usageBySection() {
@@ -171,7 +171,7 @@ function usageBySection() {
     const used = new Set();
     for (const file of [...own, ...shared]) {
       const source = readFileSync(file, 'utf8');
-      for (const match of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*'kirua'/g)) {
+      for (const match of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*'@kobars\/kirua'/g)) {
         for (const name of valueNames(match[1])) used.add(name);
       }
     }

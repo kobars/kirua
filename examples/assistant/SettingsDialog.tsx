@@ -28,7 +28,7 @@ import {
   Separator,
   Stack,
   Switch,
-} from 'kirua';
+} from '@kobars/kirua';
 import { shortcuts } from './data';
 import type { ThemePreference } from '../shared/useTheme';
 

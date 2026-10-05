@@ -1,4 +1,4 @@
-import { Link, List, ListItem } from 'kirua';
+import { Link, List, ListItem } from '@kobars/kirua';
 
 export interface ErrorLinksProps {
   /** Message by the id of the control it is about. */

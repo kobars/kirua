@@ -20,7 +20,7 @@ import {
   Stack,
   Stepper,
   StepperItem,
-} from 'kirua';
+} from '@kobars/kirua';
 
 /** The words the stepper announces for each state. */
 const STEP_LABELS = { done: 'Done', current: 'Current step', upcoming: 'Not started' };

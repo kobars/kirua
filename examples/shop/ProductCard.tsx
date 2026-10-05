@@ -13,7 +13,7 @@ import {
   Price,
   Rating,
   Stack,
-} from 'kirua';
+} from '@kobars/kirua';
 import { idr, type Product } from './data';
 
 export interface ProductCardProps {

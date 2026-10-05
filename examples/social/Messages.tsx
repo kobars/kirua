@@ -31,7 +31,7 @@ import {
   Stack,
   Text,
   Visible,
-} from 'kirua';
+} from '@kobars/kirua';
 import { initials, people, threads } from './data';
 
 /**

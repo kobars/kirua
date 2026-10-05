@@ -23,7 +23,7 @@ import {
   Stack,
   Text,
   Visible,
-} from 'kirua';
+} from '@kobars/kirua';
 import { brands, categories, colours, idr, sizes, type Category } from './data';
 import { emptyFilters, PRICE_MAX, PRICE_STEP, type FilterState } from './filterState';
 

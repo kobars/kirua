@@ -1,4 +1,4 @@
-import { Button, EmptyState, SearchIcon } from 'kirua';
+import { Button, EmptyState, SearchIcon } from '@kobars/kirua';
 
 export interface NotFoundProps {
   /** The product the section pretends to be, for the way back. */

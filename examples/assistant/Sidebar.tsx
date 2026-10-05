@@ -39,7 +39,7 @@ import {
   SidebarMenuItem,
   Text,
   type SidebarProps,
-} from 'kirua';
+} from '@kobars/kirua';
 import { allConversations, type Conversation } from './data';
 
 export interface ConversationSidebarProps {

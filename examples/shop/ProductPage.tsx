@@ -33,7 +33,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   Visible,
-} from 'kirua';
+} from '@kobars/kirua';
 import { idr, type Product } from './data';
 
 export interface ProductPageProps {

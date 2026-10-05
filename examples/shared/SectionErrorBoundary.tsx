@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react';
-import { AppMain, Button, Container, EmptyState } from 'kirua';
+import { AppMain, Button, Container, EmptyState } from '@kobars/kirua';
 
 export interface SectionErrorBoundaryProps {
   /** The product the section pretends to be. */

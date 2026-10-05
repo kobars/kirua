@@ -13,7 +13,7 @@ import {
   Timeline,
   TimelineItem,
   TimelineTime,
-} from 'kirua';
+} from '@kobars/kirua';
 import { MILESTONES, PRINCIPLES } from './data';
 
 /**

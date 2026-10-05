@@ -30,7 +30,7 @@ import {
   Stack,
   Text,
   Textarea,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
 import { useActiveDescendant } from '../shared/useActiveDescendant';
 import { departmentGroups, diagnoses, formatDate, patients, providers } from './data';

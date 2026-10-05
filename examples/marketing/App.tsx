@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ContactPage } from './ContactPage';
 import { GuidePage } from './GuidePage';
 import { HomePage } from './HomePage';

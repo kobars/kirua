@@ -27,7 +27,7 @@ import {
   Separator,
   Split,
   Stack,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
 import { idr } from './data';
 import type { CartLine } from './CartSheet';

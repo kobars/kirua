@@ -12,7 +12,7 @@ import {
   NightSwatch,
   SunIcon,
   type NightPalette,
-} from 'kirua';
+} from '@kobars/kirua';
 import { NIGHT_PALETTES, useNightPalette } from './useNightPalette';
 import { useTheme, type ThemePreference } from './useTheme';
 import { DEFAULT, type ThemeMenuLabels } from './themeLabels';

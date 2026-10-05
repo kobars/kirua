@@ -45,7 +45,7 @@ import {
   UserIcon,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { Appointments } from './Appointments';
 import { Lab } from './Lab';
 import { NewVisit } from './NewVisit';

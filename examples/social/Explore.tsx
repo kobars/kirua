@@ -23,7 +23,7 @@ import {
   SearchIcon,
   Stack,
   Text,
-} from 'kirua';
+} from '@kobars/kirua';
 import { compactCount, initials, people, posts, topics } from './data';
 
 export interface ExploreProps {

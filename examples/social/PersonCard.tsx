@@ -12,7 +12,7 @@ import {
   Split,
   Stack,
   Text,
-} from 'kirua';
+} from '@kobars/kirua';
 import { compactCount, initials, people, type Person } from './data';
 
 export interface FollowCountsProps {

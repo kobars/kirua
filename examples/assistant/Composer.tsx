@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 
 export interface ComposerProps {
   onSend: (text: string) => void;
