@@ -4,11 +4,13 @@ import { cn } from '@/lib/cn';
 import { CheckIcon } from './icons';
 import {
   menuContentStyles,
+  menuDangerItemStyles,
   menuIndicatorItemStyles,
   menuIndicatorStyles,
   menuItemStyles,
   menuLabelStyles,
   menuSeparatorStyles,
+  menuShortcutStyles,
 } from './menu.styles';
 
 /**
@@ -89,7 +91,11 @@ export function MenubarContent({
         data-slot="menubar-content"
         align={align}
         sideOffset={sideOffset}
-        className={cn(menuContentStyles, className)}
+        className={cn(
+          menuContentStyles,
+          'origin-(--radix-menubar-content-transform-origin)',
+          className,
+        )}
         {...props}
       />
     </MenubarPrimitive.Portal>
@@ -98,12 +104,17 @@ export function MenubarContent({
 
 export function MenubarItem({
   className,
+  variant = 'default',
   ...props
-}: ComponentProps<typeof MenubarPrimitive.Item>) {
+}: ComponentProps<typeof MenubarPrimitive.Item> & {
+  /** `danger` for a row that destroys something. Published as `data-variant`. */
+  variant?: 'default' | 'danger';
+}) {
   return (
     <MenubarPrimitive.Item
       data-slot="menubar-item"
-      className={cn(menuItemStyles, className)}
+      data-variant={variant}
+      className={cn(menuItemStyles, variant === 'danger' && menuDangerItemStyles, className)}
       {...props}
     />
   );
@@ -178,7 +189,7 @@ export function MenubarShortcut({ className, ...props }: ComponentProps<'span'>)
   return (
     <span
       data-slot="menubar-shortcut"
-      className={cn('ms-auto ps-4 font-text text-caption text-fg-muted', className)}
+      className={cn(menuShortcutStyles, className)}
       {...props}
     />
   );

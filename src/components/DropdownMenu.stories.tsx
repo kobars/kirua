@@ -11,6 +11,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from './DropdownMenu';
 import { IconButton } from './IconButton';
@@ -123,5 +124,40 @@ export const KeyboardNavigation: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('menu')).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(trigger));
+  },
+};
+
+/**
+ * A shortcut sits at the end of its row in the same muted caption the context
+ * menu and the menubar use, so one command shows one hint wherever it opens.
+ */
+export const WithShortcuts: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary" trailingIcon={<ChevronDownIcon />}>
+          Conversation
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>
+          Rename<DropdownMenuShortcut>F2</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          Duplicate<DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: /Conversation/ }));
+    const row = await screen.findByRole('menuitem', { name: /Rename/ });
+    const hint = within(row).getByText('F2');
+
+    await expect(hint).toHaveAttribute('data-slot', 'dropdown-menu-shortcut');
+    // Pushed to the end of the row, past the label.
+    await expect(hint.getBoundingClientRect().left).toBeGreaterThan(
+      row.getBoundingClientRect().left + row.getBoundingClientRect().width / 2,
+    );
   },
 };
