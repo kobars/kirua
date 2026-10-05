@@ -201,19 +201,19 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
                   <Input id="address" name="address" autoComplete="street-address" />
                 </Field>
 
-                <Field controlId="city" label="City">
-                  <Select defaultValue="bandung" name="city">
-                    <SelectTrigger id="city">
+                <Select defaultValue="bandung" name="city">
+                  <Field controlId="city" label="City">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent aria-label="City">
-                      <SelectItem value="bandung">Bandung</SelectItem>
-                      <SelectItem value="jakarta">Jakarta</SelectItem>
-                      <SelectItem value="surabaya">Surabaya</SelectItem>
-                      <SelectItem value="makassar">Makassar</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
+                  </Field>
+                  <SelectContent aria-label="City">
+                    <SelectItem value="bandung">Bandung</SelectItem>
+                    <SelectItem value="jakarta">Jakarta</SelectItem>
+                    <SelectItem value="surabaya">Surabaya</SelectItem>
+                    <SelectItem value="makassar">Makassar</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 <FieldSet>
                   <FieldLegend>Delivery</FieldLegend>

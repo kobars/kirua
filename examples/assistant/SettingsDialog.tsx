@@ -88,18 +88,18 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
             <Switch id="sounds" />
           </Inline>
 
-          <Field controlId="model" label="Model" description="Longer answers cost more.">
-            <Select defaultValue="balanced">
-              <SelectTrigger id="model">
+          <Select defaultValue="balanced">
+            <Field controlId="model" label="Model" description="Longer answers cost more.">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent aria-label="Model">
-                <SelectItem value="fast">Fast</SelectItem>
-                <SelectItem value="balanced">Balanced</SelectItem>
-                <SelectItem value="thorough">Thorough</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
+            </Field>
+            <SelectContent aria-label="Model">
+              <SelectItem value="fast">Fast</SelectItem>
+              <SelectItem value="balanced">Balanced</SelectItem>
+              <SelectItem value="thorough">Thorough</SelectItem>
+            </SelectContent>
+          </Select>
 
           <Separator />
 

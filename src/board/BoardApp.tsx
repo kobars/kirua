@@ -135,21 +135,21 @@ export function BoardApp({ source }: BoardAppProps) {
             />
           </Field>
 
-          <Field controlId="board-epic" label="Epic" className="max-w-64">
-            <Select value={epic} onValueChange={setEpic}>
-              <SelectTrigger id="board-epic">
+          <Select value={epic} onValueChange={setEpic}>
+            <Field controlId="board-epic" label="Epic" className="max-w-64">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent aria-label="Epic">
-                <SelectItem value={ALL_EPICS}>All epics</SelectItem>
-                {board.epics.map((item) => (
-                  <SelectItem key={item.resource} value={item.resource}>
-                    {item.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+            </Field>
+            <SelectContent aria-label="Epic">
+              <SelectItem value={ALL_EPICS}>All epics</SelectItem>
+              {board.epics.map((item) => (
+                <SelectItem key={item.resource} value={item.resource}>
+                  {item.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {/* At zero results the `EmptyState` carries the way out instead, so
               the two are never on screen under one name. */}
