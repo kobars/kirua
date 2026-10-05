@@ -25,7 +25,7 @@ import {
   Visible,
 } from 'kirua';
 import { brands, categories, colours, idr, sizes, type Category } from './data';
-import { emptyFilters, type FilterState } from './filterState';
+import { emptyFilters, PRICE_MAX, PRICE_STEP, type FilterState } from './filterState';
 
 export interface FiltersProps {
   value: FilterState;
@@ -148,11 +148,11 @@ export function Filters({
               <Slider
                 value={value.price}
                 min={0}
-                max={800000}
-                step={10000}
+                max={PRICE_MAX}
+                step={PRICE_STEP}
                 thumbLabels={['Lowest price', 'Highest price']}
                 onValueChange={([low, high]) =>
-                  onChange({ ...value, price: [low ?? 0, high ?? 800000] })
+                  onChange({ ...value, price: [low ?? 0, high ?? PRICE_MAX] })
                 }
               />
               <Text size="sm" numeric>

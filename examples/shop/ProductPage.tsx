@@ -38,7 +38,7 @@ import { idr, type Product } from './data';
 
 export interface ProductPageProps {
   product: Product;
-  onAdd: (product: Product, quantity: number) => void;
+  onAdd: (product: Product, size: string, quantity: number) => void;
 }
 
 export function ProductPage({ product, onAdd }: ProductPageProps) {
@@ -138,7 +138,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              onAdd(product, quantity);
+              onAdd(product, size, quantity);
             }}
           >
             <Split layout="fit-start" from="base" align="center" gap={3}>
