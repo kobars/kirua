@@ -144,6 +144,29 @@
   --color-chart-grid-line: var(--color-neutral-200);
   --color-chart-track-fill: var(--color-neutral-100);
 
+  /* AVATAR SWATCHES — the fill behind a person's initial when there is no
+   * photo, chosen from the name so one person keeps one colour.
+   *
+   * Identity, like the chart series, and each a pair: the initial is text,
+   * set as small as 8px, so every fill is measured against its own
+   * foreground at 4.5:1 rather than against the page. The tints share their
+   * primitives with the status family but are a separate role, so either can
+   * be retuned alone. Five, for the reason the chart stops at five.
+   *
+   * Re-pointed under `.dark` and measured on every night by
+   * `src/styles/night-contrast.test.tsx`. A pair carries its own contrast, so
+   * the surface contexts leave it alone. */
+  --color-avatar-swatch-1-bg: var(--color-blue-100);
+  --color-avatar-swatch-1-fg: var(--color-blue-900);
+  --color-avatar-swatch-2-bg: var(--color-violet-100);
+  --color-avatar-swatch-2-fg: var(--color-violet-900);
+  --color-avatar-swatch-3-bg: var(--color-green-100);
+  --color-avatar-swatch-3-fg: var(--color-green-900);
+  --color-avatar-swatch-4-bg: var(--color-amber-100);
+  --color-avatar-swatch-4-fg: var(--color-amber-900);
+  --color-avatar-swatch-5-bg: var(--color-red-100);
+  --color-avatar-swatch-5-fg: var(--color-red-900);
+
   /* FIELD — the family every form control reads: the invalid border, the
    * placeholder colour, the selected-row surface. Inventing them per component
    * is how a token system stops being one.
@@ -611,6 +634,19 @@
 
   --color-chart-grid-line: var(--color-night-line);
   --color-chart-track-fill: var(--color-night-sunken);
+
+  /* AVATAR SWATCHES, the light pairs turned over: a pale disc on a night page
+   * is the brightest thing on it, so the fill goes dark and the initial light. */
+  --color-avatar-swatch-1-bg: var(--color-blue-900);
+  --color-avatar-swatch-1-fg: var(--color-blue-100);
+  --color-avatar-swatch-2-bg: var(--color-violet-900);
+  --color-avatar-swatch-2-fg: var(--color-violet-100);
+  --color-avatar-swatch-3-bg: var(--color-green-900);
+  --color-avatar-swatch-3-fg: var(--color-green-100);
+  --color-avatar-swatch-4-bg: var(--color-amber-900);
+  --color-avatar-swatch-4-fg: var(--color-amber-100);
+  --color-avatar-swatch-5-bg: var(--color-red-900);
+  --color-avatar-swatch-5-fg: var(--color-red-100);
 
   /* FIELD. The field takes the card's colour, one step up from the page, so
    * it reads as a well. `--color-field-border` is neutral-500 rather than the

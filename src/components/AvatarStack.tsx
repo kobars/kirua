@@ -26,14 +26,17 @@ const sizes = {
   lg: 'size-8 text-caption',
 } as const;
 
-/** Deterministic swatch per name, so the same person keeps the same colour. */
+/**
+ * Deterministic swatch per name, so the same person keeps the same colour.
+ * Each fill comes with its own measured foreground, so the initial is legible
+ * on every one of them, in light mode and on every night.
+ */
 const swatches = [
-  'bg-blue-500',
-  'bg-violet-500',
-  'bg-green-500',
-  'bg-amber-500',
-  'bg-red-500',
-  'bg-blue-300',
+  'bg-avatar-1 text-on-avatar-1',
+  'bg-avatar-2 text-on-avatar-2',
+  'bg-avatar-3 text-on-avatar-3',
+  'bg-avatar-4 text-on-avatar-4',
+  'bg-avatar-5 text-on-avatar-5',
 ];
 
 const defaultLabel = (count: number) => `${count} ${count === 1 ? 'person' : 'people'}`;
@@ -76,12 +79,13 @@ export function AvatarStack({
       aria-label={label(items.length)}
       {...props}
     >
-      {shown.map((item) => (
+      {shown.map((item, index) => (
         <span
-          key={item.name}
+          // Two people can share a name, and an item carries nothing else.
+          key={`${index}-${item.name}`}
           className={cn(
             'relative -me-2 inline-flex items-center justify-center overflow-hidden',
-            'rounded-pill font-semibold text-white ring-2 ring-page last:me-0',
+            'rounded-pill font-semibold ring-2 ring-page last:me-0',
             sizes[size],
             !item.src && swatchFor(item.name),
           )}
