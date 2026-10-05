@@ -55,7 +55,10 @@ export const CheckoutDetails: Story = {
   parameters: {
     docs: {
       source: {
-        code: CheckoutDetailsExampleSource.replace("from '@/components'", "from '@kobars/kirua'"),
+        code: CheckoutDetailsExampleSource.replace(
+          "from '@/components'",
+          "from '@kobars/kirua'",
+        ),
         language: 'tsx',
       },
       description: {
