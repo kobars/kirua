@@ -151,6 +151,7 @@ export function Filters({
                 max={800000}
                 step={10000}
                 thumbLabels={['Lowest price', 'Highest price']}
+                getValueText={idr}
                 onValueChange={([low, high]) =>
                   onChange({ ...value, price: [low ?? 0, high ?? 800000] })
                 }
