@@ -186,6 +186,9 @@ export default defineConfig({
     },
   },
   test: {
+    // Vitest allows `.only` unless `CI` is set, so a focused test committed
+    // while debugging would skip the rest of its file on every local run.
+    allowOnly: false,
     projects: [
       ...webkitProjects,
       ...storyProjects,
