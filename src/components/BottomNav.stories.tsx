@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { RouterLink } from '@/test/RouterLink';
 import { MD, atLeast } from '@/test/viewport';
 import { BottomNav, BottomNavLink } from './BottomNav';
 import { GridIcon, SearchIcon, SendIcon, UserIcon } from './icons';
@@ -57,5 +58,30 @@ export const Playground: Story = {
       await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
       await expect(link.getBoundingClientRect().width).toBeGreaterThanOrEqual(44);
     }
+  },
+};
+
+/** Each tab renders onto the router's link, with the icon inside it. */
+export const OnRouterLinks: Story = {
+  render: (args) => (
+    <BottomNav {...args}>
+      <BottomNavLink asChild icon={<GridIcon />} current>
+        <RouterLink href="#/">Home</RouterLink>
+      </BottomNavLink>
+      <BottomNavLink asChild icon={<SendIcon />}>
+        <RouterLink href="#/messages">Messages</RouterLink>
+      </BottomNavLink>
+    </BottomNav>
+  ),
+  play: async ({ canvasElement }) => {
+    const anchors = canvasElement.querySelectorAll('[data-slot="bottom-nav-link"]');
+    await expect(anchors).toHaveLength(2);
+    for (const anchor of anchors) {
+      await expect(anchor).toHaveAttribute('data-router-link');
+      await expect(anchor.querySelector('[aria-hidden="true"] svg')).not.toBeNull();
+    }
+    await expect(anchors[0]).toHaveAttribute('aria-current', 'page');
+    await expect(anchors[0]).toHaveTextContent('Home');
+    await expect(anchors[1]).toHaveAttribute('href', '#/messages');
   },
 };

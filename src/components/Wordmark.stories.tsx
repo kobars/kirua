@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { RouterLink } from '@/test/RouterLink';
 import { SM, atLeast } from '@/test/viewport';
 import { SparkleIcon, StethoscopeIcon } from './icons';
 import { Wordmark } from './Wordmark';
@@ -55,5 +56,23 @@ export const CompactKeepsTheName: Story = {
     const mark = canvasElement.querySelector('[data-slot="wordmark"]')!;
     await expect(mark.tagName).toBe('SPAN');
     await expect(mark).toHaveTextContent('Assistant');
+  },
+};
+
+/** The mark and the name go inside the router's link, which is the anchor. */
+export const OnARouterLink: Story = {
+  render: () => (
+    <Wordmark asChild icon={<SparkleIcon />} shortName="Commons">
+      <RouterLink href="#/">Commons · Neighbourhood</RouterLink>
+    </Wordmark>
+  ),
+  play: async ({ canvasElement }) => {
+    const mark = canvasElement.querySelector('[data-slot="wordmark"]')!;
+    const name = atLeast(SM) ? 'Commons · Neighbourhood' : 'Commons';
+
+    await expect(mark).toHaveAttribute('data-router-link');
+    await expect(mark).toHaveAttribute('href', '#/');
+    await expect(mark.querySelector('svg')?.closest('[aria-hidden="true"]')).not.toBeNull();
+    await expect(within(canvasElement).getByRole('link', { name })).toBe(mark);
   },
 };

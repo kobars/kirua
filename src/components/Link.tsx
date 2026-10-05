@@ -1,9 +1,17 @@
+import { Slot } from '@radix-ui/react-slot';
 import type { VariantProps } from '@/lib/cva';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 import { linkVariants } from './Link.variants';
 
-export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof linkVariants> {}
+export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof linkVariants> {
+  /**
+   * Render the styles onto the child, which must itself render an anchor —
+   * a router's link component, such as `next/link`, so navigation stays a
+   * client transition.
+   */
+  asChild?: boolean;
+}
 
 /**
  * An ordinary link.
@@ -15,9 +23,10 @@ export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof link
  * off, and nothing catches it.
  *
  * `Button` has `asChild` for the case where an action navigates. This is the
- * other direction: a link that reads as text rather than as a control. It has
- * no `asChild` of its own, because an anchor's semantics never legitimately
- * become something else — a link that is not a link is a bug.
+ * other direction: a link that reads as text rather than as a control. Its own
+ * `asChild` is not for changing what the element is — a link that is not a
+ * link is a bug — but for changing what renders it: a router's link component
+ * still renders an `<a>`, and needs these styles on it.
  *
  * @example
  * // In a sentence. Underlined always, never only on hover.
@@ -26,8 +35,19 @@ export interface LinkProps extends ComponentProps<'a'>, VariantProps<typeof link
  * @example
  * // The link is the whole thing you click, so it keeps the text colour it is in.
  * <CardTitle as="h2"><Link variant="block" href="#/product/1">Round Glasses</Link></CardTitle>
+ *
+ * @example
+ * // A client-side transition, from a router's own link component.
+ * <Link asChild><NextLink href="/guide">publishing guide</NextLink></Link>
  */
-export function Link({ className, variant, children, ...props }: LinkProps) {
+export function Link({ className, variant, asChild = false, children, ...props }: LinkProps) {
+  if (asChild) {
+    return (
+      <Slot data-slot="link" className={cn(linkVariants({ variant }), className)} {...props}>
+        {children}
+      </Slot>
+    );
+  }
   return (
     // `children` is written out rather than left inside the spread, so
     // `jsx-a11y/anchor-has-content` can see that this anchor has content. The

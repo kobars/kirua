@@ -20,8 +20,18 @@ export interface FieldProps
   description?: ReactNode;
   error?: ReactNode;
   required?: boolean;
-  /** Exactly one native control or component that forwards native control props. */
+  /**
+   * Exactly one element that renders the focusable control and forwards
+   * native control props to it: an `Input`, a `SelectTrigger`, a `Checkbox`.
+   * Not a Radix root such as `Select`, which renders no element of its own.
+   */
   children: ReactElement<FieldControlProps>;
+}
+
+/** `false` and `''` are what `touched && message` and an empty validator
+ *  result produce; neither is something to show or announce. */
+function isPresent(node: ReactNode) {
+  return node !== undefined && node !== null && node !== false && node !== '';
 }
 
 /** Text beside a control dims with it. `data-disabled` on the root is read
@@ -39,6 +49,13 @@ const dimmed = 'group-data-disabled/field:text-on-field-disabled';
  * Field is not a supported pairing, because a slider cannot be required.
  *
  * A disabled control dims its label, description and error.
+ *
+ * The child receives the id, `aria-describedby` and `aria-invalid` by
+ * `cloneElement`, so it must be the element that renders the focusable
+ * control. A Radix root renders nothing to receive them: put the Field
+ * **inside** `Select`, around `SelectTrigger`, never around `Select`. A
+ * `Slider` would give them to its track rather than its thumb, so it is
+ * labelled by `aria-label` instead.
  *
  * `orientation="horizontal"` renders the control **before** the label, in a
  * first column: the row a checkbox or switch belongs in. The label is not
@@ -60,6 +77,14 @@ const dimmed = 'group-data-disabled/field:text-on-field-disabled';
  * <Field orientation="horizontal" controlId="terms" label="I accept the terms" error={error}>
  *   <Checkbox />
  * </Field>
+ *
+ * @example
+ * <Select defaultValue="balanced">
+ *   <Field controlId="model" label="Model" description="Longer answers cost more.">
+ *     <SelectTrigger><SelectValue /></SelectTrigger>
+ *   </Field>
+ *   <SelectContent>…</SelectContent>
+ * </Select>
  */
 export function Field({
   controlId,
@@ -72,8 +97,8 @@ export function Field({
   children,
   ...props
 }: FieldProps) {
-  const hasDescription = description !== undefined && description !== null;
-  const hasError = error !== undefined && error !== null;
+  const hasDescription = isPresent(description);
+  const hasError = isPresent(error);
   const horizontal = orientation === 'horizontal';
   const childInvalid = children.props['aria-invalid'];
   const invalid =

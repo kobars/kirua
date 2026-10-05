@@ -36,6 +36,7 @@ export function Checkbox({ className, ...props }: CheckboxProps) {
         'aria-invalid:data-checked:border-primary aria-invalid:data-indeterminate:border-primary',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled',
         'disabled:data-checked:bg-disabled disabled:data-checked:text-on-disabled',
+        'disabled:data-indeterminate:bg-disabled disabled:data-indeterminate:text-on-disabled',
         className,
       )}
       {...props}

@@ -95,9 +95,9 @@ export function ChartLegend({ className, items, ...props }: ChartLegendProps) {
       className={cn('flex flex-wrap items-center gap-x-4 gap-y-1.5', className)}
       {...props}
     >
-      {items.map((item) => (
+      {items.map((item, index) => (
         <li
-          key={item.label}
+          key={`${index}-${item.label}`}
           className="flex items-center gap-2 font-text text-caption text-fg-secondary"
         >
           <span
@@ -111,12 +111,30 @@ export function ChartLegend({ className, items, ...props }: ChartLegendProps) {
   );
 }
 
+/**
+ * The value a full-height mark stands for: `max` when it is usable, else the
+ * largest value present. Falls back to 1 only when nothing is above zero, so
+ * a series of fractions still fills the plot.
+ */
+function ceilingOf(data: ChartPoint[], max: number | undefined) {
+  if (max !== undefined && max > 0) return max;
+  const peak = Math.max(0, ...data.map((point) => point.value));
+  return peak > 0 ? peak : 1;
+}
+
+/** A value's share of the plot height, clamped so no mark leaves the plot. */
+function shareOf(value: number, ceiling: number) {
+  const share = value / ceiling;
+  return Number.isFinite(share) ? Math.min(Math.max(share, 0), 1) : 0;
+}
+
 export interface BarChartProps extends ComponentProps<'div'> {
   data: ChartPoint[];
   /**
    * The value the tallest bar represents. Defaults to the largest value
    * present, which makes two charts side by side incomparable — pass the same
-   * `max` to both when that matters.
+   * `max` to both when that matters. A value above it is drawn at full
+   * height, and one below zero as the empty stub.
    */
   max?: number;
   series?: ChartSeries;
@@ -146,7 +164,7 @@ export function BarChart({
   showValues = false,
   ...props
 }: BarChartProps) {
-  const ceiling = max ?? Math.max(...data.map((point) => point.value), 1);
+  const ceiling = ceilingOf(data, max);
 
   return (
     <div
@@ -154,9 +172,9 @@ export function BarChart({
       className={cn('flex h-48 w-full items-stretch gap-2', className)}
       {...props}
     >
-      {data.map((point) => (
+      {data.map((point, index) => (
         <div
-          key={point.label}
+          key={`${index}-${point.label}`}
           className={cn(
             'grid min-w-0 flex-1 gap-1.5',
             showValues ? 'grid-rows-[auto_1fr_auto]' : 'grid-rows-[1fr_auto]',
@@ -174,7 +192,7 @@ export function BarChart({
                 'absolute bottom-0 w-full rounded-xs bg-current',
                 SERIES_COLOUR[series],
               )}
-              style={{ height: `${Math.max((point.value / ceiling) * 100, 1)}%` }}
+              style={{ height: `${Math.max(shareOf(point.value, ceiling) * 100, 1)}%` }}
             />
           </div>
           <span className="truncate text-center font-text text-caption text-fg-muted">
@@ -188,6 +206,7 @@ export function BarChart({
 
 export interface LineChartProps extends ComponentProps<'svg'> {
   data: ChartPoint[];
+  /** The value at the top of the plot. Defaults to the largest value present. */
   max?: number;
   series?: ChartSeries;
   /** Fill the area under the line. Reads as a volume rather than a rate. */
@@ -202,8 +221,7 @@ function toPoints(data: ChartPoint[], ceiling: number) {
   const step = data.length > 1 ? VIEW_W / (data.length - 1) : 0;
   return data
     .map((point, index) => {
-      const y = VIEW_H - (point.value / ceiling) * VIEW_H;
-      return `${index * step},${Number.isFinite(y) ? y : VIEW_H}`;
+      return `${index * step},${VIEW_H - shareOf(point.value, ceiling) * VIEW_H}`;
     })
     .join(' ');
 }
@@ -228,7 +246,7 @@ export function LineChart({
   filled = false,
   ...props
 }: LineChartProps) {
-  const ceiling = max ?? Math.max(...data.map((point) => point.value), 1);
+  const ceiling = ceilingOf(data, max);
   const points = toPoints(data, ceiling);
 
   return (

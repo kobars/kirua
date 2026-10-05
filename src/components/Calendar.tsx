@@ -6,6 +6,7 @@
 import type { ComponentProps, FocusEvent, KeyboardEvent } from 'react';
 import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
+import { firstWeekday } from '@/lib/week';
 import { calendarVariants } from './Calendar.variants';
 import { IconButton } from './IconButton';
 import { ChevronEndIcon, ChevronStartIcon } from './icons';
@@ -25,10 +26,16 @@ export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
   disabledDates?: Date[] | undefined;
   /**
    * A BCP 47 tag. Month names, weekday names and the first day of the week all
-   * come from it — Sunday in `en-US`, Monday in `id-ID` and `en-GB`.
+   * come from it — Sunday in `en-US` and `id-ID`, Monday in `en-GB`.
    */
   locale?: string | undefined;
-  /** Injectable so tests and screenshots are not time-dependent. */
+  /**
+   * Marks today with a ring and `aria-current="date"`, and is where focus
+   * starts when nothing in the month is selected. There is no default: a
+   * clock read during render gives a server and a browser in different time
+   * zones different days, and the grid mismatches on hydration. Pass it from
+   * a client effect or from a value the request already carries.
+   */
   today?: Date | undefined;
   previousLabel?: string | undefined;
   nextLabel?: string | undefined;
@@ -50,29 +57,12 @@ const addMonths = (date: Date, months: number) => {
 const isoDay = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-/** `getWeekInfo` is newer than the ES2023 lib this project compiles against. */
-type LocaleWithWeekInfo = Intl.Locale & { getWeekInfo?: () => { firstDay: number } };
-
-/**
- * `getWeekInfo` returns 1 for Monday through 7 for Sunday; `Date.getDay`
- * returns 0 for Sunday, so the modulo converts between them. The catch covers
- * engines in the support matrix that do not have `getWeekInfo` yet.
- */
-function firstWeekday(tag: string): number {
-  try {
-    const info = (new Intl.Locale(tag) as LocaleWithWeekInfo).getWeekInfo?.();
-    return (info?.firstDay ?? 1) % 7;
-  } catch {
-    return 1;
-  }
-}
-
 /**
  * A month of days, as a table of buttons. Controlled: `month` and `selected`
  * are the consumer's.
  *
- * The grid is one tab stop. It starts on the selected day, else today, else
- * the first day that can be chosen, and then follows focus, so Tab away and
+ * The grid is one tab stop. It starts on the selected day, else `today` when
+ * it is given, else the first day that can be chosen, and then follows focus, so Tab away and
  * Shift+Tab back returns to the day last focused. Following focus rewrites
  * `tabindex` in the focus handler, which runs only in the browser, so the
  * server markup and hydration are unchanged.
@@ -111,7 +101,7 @@ export function Calendar({
   onSelect,
   disabledDates = [],
   locale = 'en-US',
-  today = new Date(),
+  today,
   previousLabel = 'Previous month',
   nextLabel = 'Next month',
   variant,
@@ -147,6 +137,7 @@ export function Calendar({
   );
   const isDisabled = (date: Date) => disabledDates.some((d) => sameDay(d, date));
   const days = cells.filter((date): date is Date => date !== null);
+  const isToday = (date: Date) => today !== undefined && sameDay(today, date);
   const inMonth = (date: Date | undefined) =>
     date !== undefined && date.getFullYear() === year && date.getMonth() === monthIndex;
   const focusTarget =
@@ -275,7 +266,7 @@ export function Calendar({
                       }
                       aria-label={dayFormat.format(date)}
                       aria-pressed={selected !== undefined && sameDay(selected, date)}
-                      aria-current={sameDay(today, date) ? 'date' : undefined}
+                      aria-current={isToday(date) ? 'date' : undefined}
                       aria-disabled={isDisabled(date) || undefined}
                       onClick={isDisabled(date) ? undefined : () => onSelect?.(date)}
                       onFocus={onFocus}
@@ -287,7 +278,7 @@ export function Calendar({
                         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                         'aria-disabled:pointer-events-none aria-disabled:text-on-disabled',
                         // Today is a ring, the selection a fill: a date can be both.
-                        sameDay(today, date) && 'ring-1 ring-line-strong ring-inset',
+                        isToday(date) && 'ring-1 ring-line-strong ring-inset',
                         selected !== undefined &&
                           sameDay(selected, date) &&
                           'bg-primary font-semibold text-on-primary hover:bg-primary-hover',

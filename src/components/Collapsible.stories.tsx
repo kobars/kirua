@@ -23,13 +23,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Collapsible className="w-96">
+    <Collapsible gap={3} className="w-96">
       <CollapsibleTrigger asChild>
         <Button variant="ghost" trailingIcon={<ChevronDownIcon />}>
           Delivery details
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="pt-3">
+      <CollapsibleContent>
         Sent from Bandung by overnight courier. Two to four working days to Java, four to seven
         elsewhere.
       </CollapsibleContent>
@@ -71,15 +71,13 @@ export const TheChevronTurnsOverWhileOpen: Story = {
 
 export const OpenByDefault: Story = {
   render: () => (
-    <Collapsible defaultOpen className="w-96">
+    <Collapsible defaultOpen gap={3} className="w-96">
       <CollapsibleTrigger asChild>
         <Button variant="ghost" trailingIcon={<ChevronDownIcon />}>
           Returns
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="pt-3">
-        Thirty days, unworn, with the tag attached.
-      </CollapsibleContent>
+      <CollapsibleContent>Thirty days, unworn, with the tag attached.</CollapsibleContent>
     </Collapsible>
   ),
 };

@@ -71,6 +71,14 @@
   }
 }
 
+/* A selected table row. The consumer writes `data-selected` directly, and
+ * `data-selected={isSelected}` renders `"false"` on every unselected row. */
+@custom-variant data-selected {
+  &:where([data-selected]:not([data-selected='false'])) {
+    @slot;
+  }
+}
+
 /* Radix marks a disabled item inside an overlay with a bare `data-disabled`
  * rather than the `disabled` attribute, because the item is a div and a div
  * cannot be disabled. `:disabled` therefore never matches it, which is a

@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, Ref } from 'react';
 import { Group, Panel, Separator } from 'react-resizable-panels';
 import { cn } from '@/lib/cn';
 
@@ -20,6 +20,10 @@ import { cn } from '@/lib/cn';
  * therefore twenty pixels and almost never what was meant — write `minSize="20"`.
  * A group whose panels give no size splits evenly.
  *
+ * The library takes its element ref as `elementRef`, and `ref` on its
+ * components reaches nothing. Each part here takes `ref` like every other
+ * component and hands it on as `elementRef`.
+ *
  * @example
  * <ResizableGroup orientation="horizontal">
  *   <ResizablePanel defaultSize="32" minSize="20">Patients</ResizablePanel>
@@ -27,23 +31,45 @@ import { cn } from '@/lib/cn';
  *   <ResizablePanel>Record</ResizablePanel>
  * </ResizableGroup>
  */
-export function ResizableGroup({ className, ...props }: ComponentProps<typeof Group>) {
+export interface ResizableGroupProps extends ComponentProps<typeof Group> {
+  ref?: Ref<HTMLDivElement>;
+}
+
+export function ResizableGroup({ className, ref, elementRef, ...props }: ResizableGroupProps) {
   return (
-    <Group data-slot="resizable-group" className={cn('flex size-full', className)} {...props} />
+    <Group
+      data-slot="resizable-group"
+      className={cn('flex size-full', className)}
+      elementRef={ref ?? elementRef}
+      {...props}
+    />
   );
 }
 
-export function ResizablePanel({ className, ...props }: ComponentProps<typeof Panel>) {
+export interface ResizablePanelProps extends ComponentProps<typeof Panel> {
+  ref?: Ref<HTMLDivElement>;
+}
+
+/**
+ * One panel. The ref, the id and `data-slot` are on the panel itself, but the
+ * library puts `className` on a div inside it, so a consumer class cannot
+ * disturb the flex sizing it writes on the panel.
+ *
+ * @example <ResizablePanel defaultSize="32" minSize="20">Patients</ResizablePanel>
+ */
+export function ResizablePanel({ className, ref, elementRef, ...props }: ResizablePanelProps) {
   return (
     <Panel
       data-slot="resizable-panel"
       className={cn('min-h-0 min-w-0 overflow-hidden', className)}
+      elementRef={ref ?? elementRef}
       {...props}
     />
   );
 }
 
 export interface ResizableHandleProps extends ComponentProps<typeof Separator> {
+  ref?: Ref<HTMLDivElement>;
   /**
    * Draw a grip in the middle of the bar. A hairline is a one-pixel drag
    * target that nobody finds, and the grip is what says the bar moves at all.
@@ -64,11 +90,14 @@ export function ResizableHandle({
   className,
   withGrip,
   children,
+  ref,
+  elementRef,
   ...props
 }: ResizableHandleProps) {
   return (
     <Separator
       data-slot="resizable-handle"
+      elementRef={ref ?? elementRef}
       className={cn(
         'group/handle relative flex shrink-0 items-center justify-center',
         'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',

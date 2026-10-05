@@ -84,7 +84,13 @@ export { textVariants } from './Text.variants';
 export { Stat, StatRow, type StatProps, type StatRowProps } from './Stat';
 export { statVariants } from './Stat.variants';
 export { statRowVariants } from './StatRow.variants';
-export { NavBar, type NavBarProps, type NavItem } from './NavBar';
+export {
+  NavBar,
+  NavBarLink,
+  type NavBarProps,
+  type NavBarLinkProps,
+  type NavItem,
+} from './NavBar';
 export {
   Card,
   CardEyebrow,
@@ -356,6 +362,8 @@ export {
   ResizableGroup,
   ResizablePanel,
   ResizableHandle,
+  type ResizableGroupProps,
+  type ResizablePanelProps,
   type ResizableHandleProps,
 } from './Resizable';
 

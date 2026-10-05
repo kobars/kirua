@@ -67,6 +67,25 @@ export const Invalid: Story = {
 };
 
 /**
+ * `error={touched && message}` passes `false` before the field is touched, and
+ * a validator may return `''` for a valid value. Neither is an error.
+ */
+export const AFalsyErrorIsNoError: Story = {
+  args: { controlId: 'untouched-email', error: false, description: '' },
+  play: async ({ canvasElement }) => {
+    const control = within(canvasElement).getByRole('textbox', { name: 'Email address' });
+
+    await expect(control).not.toHaveAttribute('aria-invalid');
+    await expect(control).not.toHaveAttribute('aria-describedby');
+    await expect(canvasElement.querySelector('[data-slot="field"]')).not.toHaveAttribute(
+      'data-invalid',
+    );
+    await expect(canvasElement.querySelector('[data-slot="field-error"]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-slot="field-description"]')).toBeNull();
+  },
+};
+
+/**
  * `required` means nothing on a `<button>`, which is what a select trigger and
  * a date picker render, and the asterisk is hidden from assistive technology.
  * `aria-required` is what announces it on every kind of control.

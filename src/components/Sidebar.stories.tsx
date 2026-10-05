@@ -207,6 +207,46 @@ export const TheApplicationOwnsTheOpenState: Story = {
   },
 };
 
+export const AClosedOffCanvasRailLeavesTheTabOrder: Story = {
+  render: function Render(args) {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <div className="flex h-104 gap-4 bg-page">
+        <Button variant="secondary" onClick={() => setOpen(!open)}>
+          {open ? 'Close the rail' : 'Open the rail'}
+        </Button>
+        <Sidebar {...args} open={open} collapsible="offcanvas">
+          <SidebarContent aria-label="Off-canvas">
+            <Destinations />
+          </SidebarContent>
+        </Sidebar>
+        <Button variant="secondary">After the rail</Button>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole('button', { name: 'Open the rail' });
+
+    // A 0px box would still hold every link; closed must mean gone.
+    await expect(canvas.queryByRole('navigation', { name: 'Off-canvas' })).toBeNull();
+    toggle.focus();
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'After the rail' })).toHaveFocus();
+
+    await userEvent.click(toggle);
+    await expect(await canvas.findByRole('navigation', { name: 'Off-canvas' })).toBeVisible();
+    await userEvent.tab();
+    await expect(document.activeElement).toHaveAttribute('data-slot', 'sidebar-menu-button');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Close the rail' }));
+    await waitFor(async () => {
+      await expect(canvas.queryByRole('navigation', { name: 'Off-canvas' })).toBeNull();
+    });
+  },
+};
+
 export const TheCurrentPageIsAnnounced: Story = {
   render: (args) => (
     <div className="h-64 bg-page">
