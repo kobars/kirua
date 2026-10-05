@@ -190,7 +190,6 @@ for (const { section, prefix, routes } of SECTIONS) {
 
   for (const route of routes) {
     await open(page, `http://127.0.0.1:${port}/#/${prefix}${route}`);
-    await page.waitForTimeout(200);
     const measured = await page.evaluate(() => ({
       nodes: document.getElementsByTagName('*').length,
       // First Contentful Paint: when the browser put the first text or image on

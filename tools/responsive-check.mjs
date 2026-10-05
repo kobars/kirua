@@ -70,9 +70,6 @@ for (const size of WIDTHS) {
 
   await eachRoute(async ({ section, label, url }) => {
     await open(page, url);
-    // A hash change does not reload the document, so give React a frame to
-    // render the new route before measuring.
-    await page.waitForTimeout(200);
 
     const result = await page.evaluate(
       ({ minTarget, checkTargets }) => {
