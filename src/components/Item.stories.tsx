@@ -183,6 +183,37 @@ export const AnUnreadRowInAGroup: Story = {
   },
 };
 
+export const ASelectedRowInAFlushList: Story = {
+  render: (args) => (
+    <div className="w-80 overflow-hidden rounded-card border border-line-subtle">
+      <ItemGroup variant="flush">
+        <Item {...args} interactive size="sm" aria-current="true" data-testid="selected">
+          <ItemContent>
+            <ItemTitle>Maya Kusuma</ItemTitle>
+            <ItemDescription>That is the bit I meant.</ItemDescription>
+          </ItemContent>
+        </Item>
+        <ItemSeparator />
+        <Item {...args} interactive size="sm">
+          <ItemContent>
+            <ItemTitle>Sari Melati</ItemTitle>
+            <ItemDescription>Thursday works.</ItemDescription>
+          </ItemContent>
+        </Item>
+      </ItemGroup>
+    </div>
+  ),
+  /**
+   * A conversation list in a pane: the open row is filled from edge to edge,
+   * so it must not carry corners of its own.
+   */
+  play: async ({ canvasElement }) => {
+    const row = within(canvasElement).getByTestId('selected');
+    await expect(getComputedStyle(row).borderBottomRightRadius).toBe('0px');
+    await expect(getComputedStyle(row).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+  },
+};
+
 export const AsChildMakesTheWholeRowALink: Story = {
   render: (args) => (
     <Item {...args} asChild interactive variant="outline" className="w-96">
