@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, type ComponentType } from 'react';
 import { AppMain, Container, Spinner } from 'kirua';
 import { Hub } from './Hub';
 import { HUB_TITLE, SECTIONS, type SectionId } from './sections';
+import { SectionErrorBoundary } from './shared/SectionErrorBoundary';
 import { sectionOf, useHashPath } from './shared/useHashRoute';
 
 /**
@@ -32,16 +33,18 @@ export function App() {
 
   const Page = PAGES[section.id];
   return (
-    <Suspense
-      fallback={
-        <AppMain>
-          <Container pad="lg">
-            <Spinner label={`Loading ${section.name}`} data-section-loading="" />
-          </Container>
-        </AppMain>
-      }
-    >
-      <Page />
-    </Suspense>
+    <SectionErrorBoundary key={section.id} name={section.name}>
+      <Suspense
+        fallback={
+          <AppMain>
+            <Container pad="lg">
+              <Spinner label={`Loading ${section.name}`} data-section-loading="" />
+            </Container>
+          </AppMain>
+        }
+      >
+        <Page />
+      </Suspense>
+    </SectionErrorBoundary>
   );
 }
