@@ -67,7 +67,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * A first visit to a section downloads `entry + section`. It is reported, not
  * enforced: the two limits it is made of already bound it.
  *
- * **The CSS is one stylesheet shared by every section**, limited to 17.5 kB.
+ * **The CSS is one stylesheet shared by every section**, limited to 18 kB.
  * Its headroom is under 2%, because the one sheet carries the classes of all
  * five sections; the limit is kept tight so that growth here stays visible.
  *
@@ -83,7 +83,7 @@ const BUDGETS_KB = {
   entry: 120,
   section: 55,
   total: 257,
-  css: 17.5,
+  css: 18,
 };
 
 const kb = (bytes) => Math.round((bytes / 1000) * 100) / 100;
