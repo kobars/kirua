@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { Button, ButtonGroup, Card } from '@/components';
 import { CARD_EDGE_PX } from '@/lib/radius';
+import NIGHTS from '@/styles/nights.json';
 import { cleanup, render } from '@/test/render';
 
 /**
@@ -12,7 +13,6 @@ import { cleanup, render } from '@/test/render';
  * colour that sticks after a tap on a touch screen.
  */
 
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
 const root = document.documentElement;
 
 afterEach(() => {
@@ -56,7 +56,7 @@ function shadows(dir: 'ltr' | 'rtl') {
 const inEveryNight = (check: (night: string) => void) => {
   root.classList.add('dark');
   for (const night of NIGHTS) {
-    if (night === 'navy') delete root.dataset['nightPalette'];
+    if (night === NIGHTS[0]) delete root.dataset['nightPalette'];
     else root.dataset['nightPalette'] = night;
     check(night);
   }

@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
+import NIGHTS from './nights.json';
 
 /**
  * The example app's `index.html` applies the stored night before first paint, and
@@ -66,8 +67,6 @@ function boot(scripts: string[], { search, stored, storageThrows = false }: Boot
   }
   return dataset['nightPalette'];
 }
-
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
 
 /** The hook's rule, written out independently of either implementation. */
 function expected(fromUrl: string | null, stored: string | undefined) {

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import NIGHTS from '@/styles/nights.json';
 import { cleanup, render } from '@/test/render';
 import { Badge } from './Badge';
 import { Button } from './Button';
@@ -80,14 +81,12 @@ describe('controls, in every surface context', () => {
  * shadow casts, so one card holding a field and the three button variants is
  * the smallest specimen that shows all of them.
  */
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
-
 describe('dark mode, in every night palette', () => {
   it.each(NIGHTS)('%s', async (night) => {
     const element = render(
       <div
         className="dark inline-flex w-fit flex-col gap-4 bg-page p-8 text-fg"
-        data-night-palette={night === 'navy' ? undefined : night}
+        data-night-palette={night === NIGHTS[0] ? undefined : night}
       >
         <Card padding="md" className="w-96">
           <CardTitle>Night order</CardTitle>

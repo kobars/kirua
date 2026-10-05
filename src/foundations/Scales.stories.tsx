@@ -15,9 +15,6 @@ const meta = {
   title: 'Foundations/Scales',
   parameters: {
     layout: 'fullscreen',
-    // Same reason as the colour page: these are token specimens, so the
-    // automated contrast rule flags the swatch labels rather than the system.
-    a11y: { test: 'off' },
   },
 } satisfies Meta;
 

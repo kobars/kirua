@@ -72,9 +72,10 @@ export const Playground: Story = {
 export const Tones: Story = {
   parameters: {
     // The `vivid` panel deliberately shows body copy on blue-500 so the failure
-    // is visible and documented. The automated check would flag it, correctly —
-    // which is exactly the point of the story, so it is turned off here only.
-    a11y: { test: 'off' },
+    // is visible and documented. The contrast rule would flag it, correctly —
+    // which is exactly the point of the story, so that one rule is turned off
+    // here only.
+    a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
   },
   render: () => (
     <div className="flex flex-col gap-6">
