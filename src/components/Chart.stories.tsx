@@ -134,6 +134,57 @@ export const BarHeightsAreProportional: Story = {
   },
 };
 
+/**
+ * Fractions fill the plot rather than sitting under a ceiling of 1, a value
+ * past a shared `max` stops at the top, and a repeated label is still its own
+ * column.
+ */
+export const BarsStayInsideThePlot: Story = {
+  render: () => (
+    <div className="grid w-96 gap-6">
+      <Chart label="Conversion rate by month">
+        <BarChart
+          data={[
+            { label: 'Oct', value: 0.12 },
+            { label: 'Nov', value: 0.34 },
+            { label: 'Oct', value: 0.2 },
+          ]}
+        />
+      </Chart>
+      <Chart label="Visits against a shared scale of 100">
+        <BarChart
+          max={100}
+          data={[
+            { label: 'In range', value: 50 },
+            { label: 'Over', value: 140 },
+            { label: 'Below zero', value: -20 },
+          ]}
+        />
+      </Chart>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const [fractions, shared] = [...canvasElement.querySelectorAll('[data-slot="bar-chart"]')];
+    const heights = (chart: Element | undefined) =>
+      [...chart!.querySelectorAll('[data-slot="bar-chart-bar"]')].map(
+        (bar) => bar.getBoundingClientRect().height,
+      );
+    const plot = (chart: Element | undefined) =>
+      chart!
+        .querySelector('[data-slot="bar-chart-bar"]')!
+        .parentElement!.getBoundingClientRect().height;
+
+    const [, tallest] = heights(fractions);
+    await expect(heights(fractions)).toHaveLength(3);
+    await expect(Math.abs((tallest ?? 0) - plot(fractions))).toBeLessThan(1);
+
+    const [half, over, negative] = heights(shared);
+    await expect(Math.abs((over ?? 0) - plot(shared))).toBeLessThan(1);
+    await expect(Math.abs((half ?? 0) * 2 - plot(shared))).toBeLessThan(1);
+    await expect(negative).toBeLessThan(plot(shared) * 0.02);
+  },
+};
+
 export const ThePictureIsNamedOnce: Story = {
   render: () => (
     <Chart label="Clinic visits per month" className="w-96">
