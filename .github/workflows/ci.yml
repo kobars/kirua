@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request makes the older run moot.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: Every gate
+    # The committed visual baselines are `*-chromium-darwin.png`; on any other
+    # platform every screenshot assertion fails for a missing baseline.
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      # The version comes from `packageManager` in package.json.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install chromium webkit
+
+      # The same four commands as `pnpm check:all`, one step each so a failure
+      # names its gate.
+      - name: Component gate (types, lint, format, every Vitest project, WebKit)
+        run: pnpm check
+
+      - name: Hero page build and size budget
+        run: pnpm build
+
+      - name: Example app checks
+        run: pnpm check:examples
+
+      - name: Storybook build and browser checks
+        run: pnpm check:storybook

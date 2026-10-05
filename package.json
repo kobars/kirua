@@ -46,6 +46,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\" \"packages/kirua/*.{json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\" \"packages/kirua/*.{json,md}\"",
     "check": "tsc -b && node --test tools/dogfood-appearance.test.mjs && node tools/dead-classes.mjs && oxlint --deny-warnings && prettier --check \"src/**/*.{ts,tsx,css}\" \"examples/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\" \"tools/*.mjs\" \".storybook/**/*.{ts,tsx,css}\" \"src/**/*.mdx\" \"README.md\" \"CONTRIBUTING.md\" \"packages/kirua/*.{json,md}\" && vitest --run --coverage && KIRUA_WEBKIT=1 vitest --run --project webkit",
+    "check:all": "pnpm check && pnpm build && pnpm check:examples && pnpm check:storybook",
     "dead-classes": "node tools/dead-classes.mjs",
     "check:storybook": "pnpm build-storybook && node tools/storybook-theme-check.mjs",
     "check:journeys": "pnpm build:examples && node tools/example-journeys.mjs",
