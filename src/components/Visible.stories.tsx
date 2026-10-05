@@ -58,6 +58,24 @@ export const FromAndBelow: Story = {
   },
 };
 
+/** `Show {count}` is two children, a string and a number, not one element. */
+export const TextWithAValueInIt: Story = {
+  render: function Render() {
+    const count = 3;
+    return (
+      <Visible from="sm" data-testid="interpolated">
+        Show {count}
+      </Visible>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const span = within(canvasElement).getByTestId('interpolated');
+    await expect(span).toHaveAttribute('data-slot', 'visible');
+    await expect(span).toHaveTextContent('Show 3');
+    await expect(shown(span)).toBe(atLeast(SM));
+  },
+};
+
 export const OnAComponentItKeepsTheComponentsSlot: Story = {
   render: () => (
     <Visible from="sm">

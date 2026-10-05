@@ -39,7 +39,7 @@ import {
   Stack,
   Text,
   Toggle,
-} from 'kirua';
+} from '@kobars/kirua';
 import { PersonLink } from './PersonCard';
 import { compactCount, initials, people, type Post } from './data';
 

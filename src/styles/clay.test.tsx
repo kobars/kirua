@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { Button, ButtonGroup, Card } from '@/components';
 import { CARD_EDGE_PX } from '@/lib/radius';
+import NIGHTS from '@/styles/nights.json';
 import { cleanup, render } from '@/test/render';
 
 /**
@@ -12,7 +13,6 @@ import { cleanup, render } from '@/test/render';
  * colour that sticks after a tap on a touch screen.
  */
 
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
 const root = document.documentElement;
 
 afterEach(() => {
@@ -56,7 +56,7 @@ function shadows(dir: 'ltr' | 'rtl') {
 const inEveryNight = (check: (night: string) => void) => {
   root.classList.add('dark');
   for (const night of NIGHTS) {
-    if (night === 'navy') delete root.dataset['nightPalette'];
+    if (night === NIGHTS[0]) delete root.dataset['nightPalette'];
     else root.dataset['nightPalette'] = night;
     check(night);
   }
@@ -97,6 +97,36 @@ describe('the offset shadow', () => {
     expect(brand!.borderTopWidth).toBe(`${CARD_EDGE_PX}px`);
     expect(ghost!.borderTopWidth).toBe('0px');
   });
+
+  /**
+   * The card's line and shade are mixed from the surface they sit on, and a
+   * custom property is mixed where it is declared: a context that does not
+   * declare them again hands its cards the white page's pale line.
+   */
+  it.each(['ctx-brand bg-brand', 'ctx-inverse bg-page'])(
+    'gives a light card inside %s that surface’s line and shade, in light mode and dark',
+    (contextClass) => {
+      const check = (mode: string) => {
+        const container = render(
+          <>
+            <Card>Page</Card>
+            <div className={contextClass}>
+              <Card>Context</Card>
+            </div>
+          </>,
+        );
+        const [page, inside] = [...container.querySelectorAll('[data-slot="card"]')].map(
+          (card) => getComputedStyle(card),
+        );
+        expect(inside!.borderTopColor, mode).not.toBe(page!.borderTopColor);
+        expect(inside!.borderTopColor, mode).not.toBe(inside!.backgroundColor);
+        expect(inside!.boxShadow, mode).not.toBe(page!.boxShadow);
+        cleanup();
+      };
+      check('light');
+      inEveryNight(check);
+    },
+  );
 });
 
 describe('the Clay button', () => {

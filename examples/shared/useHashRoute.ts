@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 /**
  * The whole router. `location.hash` needs no dependency and no server
@@ -11,17 +11,20 @@ import { useCallback, useEffect, useState } from 'react';
  */
 const readPath = () => window.location.hash.replace(/^#\/?/, '');
 
-/** The whole path after `#/`, section included, kept current across hash changes. */
+function subscribe(onChange: () => void) {
+  window.addEventListener('hashchange', onChange);
+  return () => window.removeEventListener('hashchange', onChange);
+}
+
+/**
+ * The whole path after `#/`, section included, kept current across hash changes.
+ *
+ * One external store rather than state per caller, so the app and the section
+ * it renders read the same path in the same render and never disagree about
+ * which screen is showing.
+ */
 export function useHashPath() {
-  const [path, setPath] = useState(readPath);
-
-  useEffect(() => {
-    const onChange = () => setPath(readPath());
-    window.addEventListener('hashchange', onChange);
-    return () => window.removeEventListener('hashchange', onChange);
-  }, []);
-
-  return path;
+  return useSyncExternalStore(subscribe, readPath);
 }
 
 /** The section a path belongs to: its first segment. */

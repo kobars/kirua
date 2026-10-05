@@ -40,6 +40,11 @@ export function Collapsible({
 
 export const CollapsibleTrigger = CollapsiblePrimitive.Trigger;
 
+/**
+ * The panel. `className` lands on the animated root with the ref, as on every
+ * component; the gap is padding on an inner wrapper, inside the clip, so it
+ * opens and closes with the height.
+ */
 export function CollapsibleContent({
   className,
   children,
@@ -48,15 +53,14 @@ export function CollapsibleContent({
   return (
     <CollapsiblePrimitive.Content
       data-slot="collapsible-content"
-      className="overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up"
+      className={cn(
+        'overflow-hidden font-text text-body-sm text-fg-secondary',
+        'data-open:animate-collapsible-down data-closed:animate-collapsible-up',
+        className,
+      )}
       {...props}
     >
-      <div
-        className={cn(
-          'pt-(--collapsible-gap) font-text text-body-sm text-fg-secondary',
-          className,
-        )}
-      >
+      <div data-slot="collapsible-content-inner" className="pt-(--collapsible-gap)">
         {children}
       </div>
     </CollapsiblePrimitive.Content>

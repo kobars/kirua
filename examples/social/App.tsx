@@ -42,12 +42,13 @@ import {
   UserIcon,
   VisuallyHidden,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { Composer } from './Composer';
 import { Explore } from './Explore';
 import { Messages } from './Messages';
 import { Notifications } from './Notifications';
 import { PostCard } from './PostCard';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { Profile } from './Profile';
 import { notices, people, posts, type Post } from './data';
@@ -83,9 +84,13 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [loadingMore]);
 
-  const profile = route.startsWith('profile/')
-    ? people[route.slice('profile/'.length)]
-    : undefined;
+  // `hasOwn`, because a handle comes from the address bar and `people` is a
+  // plain object: `profile/constructor` must not find `Object.prototype`.
+  const handle = route.startsWith('profile/') ? route.slice('profile/'.length) : undefined;
+  const profile =
+    handle !== undefined && Object.hasOwn(people, handle) ? people[handle] : undefined;
+  const known =
+    profile !== undefined || ['', 'explore', 'notifications', 'messages'].includes(route);
   const feed = [...published, ...posts].filter((post) => !deleted.includes(post.id));
   const unread = notices.filter((notice) => notice.unread).length;
 
@@ -158,10 +163,12 @@ export function App() {
           </Sidebar>
         </AppRail>
 
-        <AppMain>
+        <AppMain data-route={`social/${route}`}>
           <Container width="full" gap="sm">
-            {profile ? (
-              <Profile person={profile} />
+            {!known ? (
+              <NotFound name="Commons" home="#/social/" />
+            ) : profile ? (
+              <Profile key={profile.handle} person={profile} />
             ) : route === 'explore' ? (
               <Explore onOpen={(handle) => navigate(`profile/${handle}`)} />
             ) : route === 'notifications' ? (

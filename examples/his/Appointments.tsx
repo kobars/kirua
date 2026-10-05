@@ -33,7 +33,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import {
   departments,
   encounters,

@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
+import NIGHTS from './nights.json';
 
 /**
  * The example app's `index.html` applies the stored night before first paint, and
@@ -67,8 +68,6 @@ function boot(scripts: string[], { search, stored, storageThrows = false }: Boot
   return dataset['nightPalette'];
 }
 
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
-
 /** The hook's rule, written out independently of either implementation. */
 function expected(fromUrl: string | null, stored: string | undefined) {
   if (fromUrl !== null && NIGHTS.includes(fromUrl)) return fromUrl;
@@ -84,12 +83,15 @@ describe('the blocking script follows the night palette hook', () => {
     expect(hosts.length).toBeGreaterThan(0);
   });
 
-  it('lists the same nights as the hook', () => {
-    const [hookFile] = files('useNightPalette.ts');
-    const hook = readFileSync(hookFile!, 'utf8');
-    const ids = [...hook.matchAll(/\{ id: '([a-z]+)'/g)].map((match) => match[1]);
-    expect(ids).toEqual(NIGHTS);
-  });
+  // The hook reads the system's own list; an inline script cannot import, so
+  // each host document's copy is held to it here.
+  it.each(hosts.map((file) => [path.relative(EXAMPLES, file), file]))(
+    '%s lists the same nights as the system',
+    (_, file) => {
+      const listed = readFileSync(file, 'utf8').match(/const nights = (\[[^\]]*\])/)?.[1];
+      expect(listed && JSON.parse(listed.replaceAll("'", '"'))).toEqual(NIGHTS);
+    },
+  );
 
   describe.each(hosts.map((file) => [path.relative(EXAMPLES, file), file]))('%s', (_, file) => {
     const scripts = inlineScripts(file);

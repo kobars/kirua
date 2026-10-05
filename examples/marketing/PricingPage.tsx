@@ -36,7 +36,7 @@ import {
   TableRow,
   Text,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import { COMPARISON, FAQ, PLANS } from './data';
 
 /**

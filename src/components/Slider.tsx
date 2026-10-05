@@ -2,13 +2,30 @@ import * as SliderPrimitive from '@radix-ui/react-slider';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
 
-export interface SliderProps extends ComponentProps<typeof SliderPrimitive.Root> {
-  /**
-   * One accessible name per thumb, in order — each thumb is its own control.
-   * With a single thumb, leave this out and use `aria-label`.
-   */
-  thumbLabels?: string[];
-}
+/**
+ * `getValueText` reads the value this component is given, so it needs a
+ * controlled `value`: from `defaultValue` it would announce the starting value
+ * for ever while the thumb moved.
+ */
+type ValueText =
+  | {
+      value: number[];
+      /**
+       * What a screen reader announces for a thumb, when the bare number is
+       * not what the screen shows — a price with its currency, a time of day.
+       */
+      getValueText?: (value: number, index: number) => string;
+    }
+  | { value?: undefined; getValueText?: never };
+
+export type SliderProps = ComponentProps<typeof SliderPrimitive.Root> &
+  ValueText & {
+    /**
+     * One accessible name per thumb, in order — each thumb is its own control.
+     * With a single thumb, leave this out and use `aria-label`.
+     */
+    thumbLabels?: string[];
+  };
 
 /**
  * A value chosen by position. One thumb per entry in the value array, so
@@ -26,10 +43,19 @@ export interface SliderProps extends ComponentProps<typeof SliderPrimitive.Root>
  *   max={200}
  *   thumbLabels={['Minimum price', 'Maximum price']}
  * />
+ * @example
+ * <Slider
+ *   value={price}
+ *   onValueChange={setPrice}
+ *   max={800000}
+ *   thumbLabels={['Lowest price', 'Highest price']}
+ *   getValueText={(value) => idr(value)}
+ * />
  */
 export function Slider({
   className,
   thumbLabels,
+  getValueText,
   orientation = 'horizontal',
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
@@ -68,7 +94,7 @@ export function Slider({
           )}
         />
       </SliderPrimitive.Track>
-      {thumbs.map((_, index) => (
+      {thumbs.map((thumb, index) => (
         <SliderPrimitive.Thumb
           // Thumbs have no identity beyond their position.
           // oxlint-disable-next-line no-array-index-key
@@ -76,6 +102,7 @@ export function Slider({
           data-slot="slider-thumb"
           aria-label={thumbLabels?.[index] ?? ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          aria-valuetext={getValueText?.(thumb, index)}
           className={cn(
             'relative block size-5 rounded-pill border-2 border-primary bg-field shadow-resting',
             // The circle is 20px; the touch target must be 44.

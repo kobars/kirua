@@ -186,6 +186,14 @@ export default defineConfig({
     },
   },
   test: {
+    // Vitest allows `.only` unless `CI` is set, so a focused test committed
+    // while debugging would skip the rest of its file on every local run.
+    allowOnly: false,
+    // A hosted macOS runner has three cores and no GPU. Every project opening
+    // browsers at once there starves the renderer: a story with no play
+    // function timed out at 15s, and screenshots never settled. Fewer workers
+    // and a longer budget on CI; local runs keep the defaults.
+    ...(process.env['CI'] ? { maxWorkers: 2, testTimeout: 60_000 } : {}),
     projects: [
       ...webkitProjects,
       ...storyProjects,
@@ -246,24 +254,33 @@ export default defineConfig({
        * tolerance produces a suite that fails for reasons nobody can act on —
        * which is how a visual gate gets switched off. 1% of pixels is far below
        * a one-step padding change and far above rasterisation noise.
+       *
+       * **Not on CI.** The baselines were drawn on a developer's Mac. A hosted
+       * macOS runner draws with no GPU and never produced two matching
+       * captures in a row, so every comparison failed before it compared
+       * anything. The project runs in every local `pnpm check`.
        */
-      {
-        extends: true as const,
-        test: {
-          name: 'visual',
-          include: ['src/**/*.visual.test.{ts,tsx}'],
-          setupFiles: [path.join(dirname, 'src/test/setup.ts')],
-          browser: {
-            ...browser(breakpointPx('lg')),
-            expect: {
-              toMatchScreenshot: {
-                comparatorName: 'pixelmatch' as const,
-                comparatorOptions: { allowedMismatchedPixelRatio: 0.01 },
+      ...(process.env['CI']
+        ? []
+        : [
+            {
+              extends: true as const,
+              test: {
+                name: 'visual',
+                include: ['src/**/*.visual.test.{ts,tsx}'],
+                setupFiles: [path.join(dirname, 'src/test/setup.ts')],
+                browser: {
+                  ...browser(breakpointPx('lg')),
+                  expect: {
+                    toMatchScreenshot: {
+                      comparatorName: 'pixelmatch' as const,
+                      comparatorOptions: { allowedMismatchedPixelRatio: 0.01 },
+                    },
+                  },
+                },
               },
             },
-          },
-        },
-      },
+          ]),
       /**
        * The only project here with **no browser at all**, and that absence is
        * the assertion.

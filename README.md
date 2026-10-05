@@ -61,7 +61,10 @@ components and their props.
   logical and tested right-to-left, and the example app is checked for WCAG
   2.5.8 target size.
 - **Server rendering.** No component reads a browser API during render or holds
-  state, and none carries a `"use client"` directive. The whole barrel renders
+  state, and every component renders in a Server Component except three:
+  `Calendar`, `DatePicker` and the `Combobox` parts create event handlers of
+  their own, so they carry a `"use client"` directive. A Server Component file
+  can still import them; they render on the client. The whole barrel renders
   in Node with no browser present, and server markup hydrates cleanly in
   Chromium and WebKit.
 - **An example app with zero `className`.** Five small applications — a shop, a

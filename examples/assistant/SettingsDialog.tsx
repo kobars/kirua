@@ -28,7 +28,7 @@ import {
   Separator,
   Stack,
   Switch,
-} from 'kirua';
+} from '@kobars/kirua';
 import { shortcuts } from './data';
 import type { ThemePreference } from '../shared/useTheme';
 
@@ -56,8 +56,8 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
           </Stack>
 
           {/* Three states, not a switch: "system" is a real choice and a
-              two-position control cannot say it. The same value backs the
-              header menu — one owner, one key. */}
+              two-position control cannot say it. The value comes from the
+              same store as the header menu's, so the two always agree. */}
           <FieldSet>
             <FieldLegend>Appearance</FieldLegend>
             <RadioGroup
@@ -88,18 +88,18 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
             <Switch id="sounds" />
           </Inline>
 
-          <Field controlId="model" label="Model" description="Longer answers cost more.">
-            <Select defaultValue="balanced">
-              <SelectTrigger id="model">
+          <Select defaultValue="balanced">
+            <Field controlId="model" label="Model" description="Longer answers cost more.">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent aria-label="Model">
-                <SelectItem value="fast">Fast</SelectItem>
-                <SelectItem value="balanced">Balanced</SelectItem>
-                <SelectItem value="thorough">Thorough</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
+            </Field>
+            <SelectContent aria-label="Model">
+              <SelectItem value="fast">Fast</SelectItem>
+              <SelectItem value="balanced">Balanced</SelectItem>
+              <SelectItem value="thorough">Thorough</SelectItem>
+            </SelectContent>
+          </Select>
 
           <Separator />
 

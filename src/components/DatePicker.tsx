@@ -1,3 +1,5 @@
+'use client';
+
 /* oxlint-disable jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
  * The trigger is a `<button role="combobox">`, as Radix's own `SelectTrigger`
  * is: a native `<select>` cannot open a calendar. `PopoverTrigger` adds
@@ -24,6 +26,7 @@ export interface DatePickerProps extends Omit<ComponentProps<'button'>, 'onSelec
   /** Names the calendar panel, which is a dialog and must have one. */
   panelLabel?: string | undefined;
   disabledDates?: CalendarProps['disabledDates'];
+  /** Marks today in the calendar. No default; see `Calendar`. */
   today?: Date | undefined;
 }
 
@@ -33,8 +36,13 @@ export interface DatePickerProps extends Omit<ComponentProps<'button'>, 'onSelec
  * `month` and `value` are separate props: a reader may page through March
  * without choosing a date in it.
  *
- * The panel opens with focus on the chosen date, else on today, so the arrow
- * keys work at once.
+ * The panel opens with focus on the chosen date, else on `today` when it is
+ * given, else on the first day that can be chosen, so the arrow keys work at
+ * once. `today` has no default, for the reason `Calendar` gives.
+ *
+ * **A client component**, as `Calendar` is: it passes the popover a focus
+ * handler of its own, and a Server Component cannot pass a function. A Server
+ * Component file may still import and place it; it renders on the client.
  *
  * @example
  * <DatePicker
@@ -107,8 +115,8 @@ export function DatePicker({
       <PopoverContent
         aria-label={panelLabel}
         className="w-auto p-0"
-        // Open on the day the grid would take focus on (the chosen date, else
-        // today), not on "Previous month", the first button in the panel.
+        // Open on the day the grid would take focus on, not on "Previous
+        // month", the first button in the panel.
         onOpenAutoFocus={(event) => {
           const day = (event.currentTarget as HTMLElement | null)?.querySelector<HTMLElement>(
             '[data-slot="calendar-day"][tabindex="0"]',

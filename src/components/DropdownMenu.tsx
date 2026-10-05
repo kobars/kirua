@@ -11,6 +11,7 @@ import {
   menuItemStyles,
   menuLabelStyles,
   menuSeparatorStyles,
+  menuShortcutStyles,
 } from './menu.styles';
 
 /**
@@ -69,7 +70,12 @@ export function DropdownMenuContent({
       <MenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
-        className={cn(menuContentStyles, width && menuContentWidths[width], className)}
+        className={cn(
+          menuContentStyles,
+          'origin-(--radix-dropdown-menu-content-transform-origin)',
+          width && menuContentWidths[width],
+          className,
+        )}
         {...props}
       />
     </MenuPrimitive.Portal>
@@ -105,7 +111,10 @@ export function DropdownMenuCheckboxItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
+      <MenuPrimitive.ItemIndicator
+        data-slot="dropdown-menu-checkbox-item-indicator"
+        className={menuIndicatorStyles}
+      >
         <CheckIcon />
       </MenuPrimitive.ItemIndicator>
       {children}
@@ -124,8 +133,11 @@ export function DropdownMenuRadioItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <MenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
-        <span className="size-2 rounded-pill bg-fg" />
+      <MenuPrimitive.ItemIndicator
+        data-slot="dropdown-menu-radio-item-indicator"
+        className={menuIndicatorStyles}
+      >
+        <span data-slot="dropdown-menu-radio-item-dot" className="size-2 rounded-pill bg-fg" />
       </MenuPrimitive.ItemIndicator>
       {children}
     </MenuPrimitive.RadioItem>
@@ -153,6 +165,22 @@ export function DropdownMenuSeparator({
     <MenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
       className={cn(menuSeparatorStyles, className)}
+      {...props}
+    />
+  );
+}
+
+/**
+ * The keyboard equivalent of a row, set at its end. The same hint as
+ * `ContextMenuShortcut`, so one command shows one shortcut in either menu.
+ *
+ * @example <DropdownMenuItem>Rename<DropdownMenuShortcut>F2</DropdownMenuShortcut></DropdownMenuItem>
+ */
+export function DropdownMenuShortcut({ className, ...props }: ComponentProps<'span'>) {
+  return (
+    <span
+      data-slot="dropdown-menu-shortcut"
+      className={cn(menuShortcutStyles, className)}
       {...props}
     />
   );

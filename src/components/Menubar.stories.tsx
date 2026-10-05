@@ -150,3 +150,33 @@ export const OpensAndPassesItsAccessibilityRun: Story = {
     });
   },
 };
+
+/**
+ * A destructive command takes the same `variant` as the dropdown and context
+ * menus, so it reads the shared danger colour instead of a hand-set one.
+ */
+export const ADestructiveCommandIsMarked: Story = {
+  render: () => (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>Visit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Print summary<MenubarShortcut>⌘P</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem variant="danger">Cancel visit</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('menuitem', { name: 'Visit' }));
+    const danger = await screen.findByRole('menuitem', { name: 'Cancel visit' });
+    const plain = screen.getByRole('menuitem', { name: /Print summary/ });
+
+    await expect(danger).toHaveAttribute('data-variant', 'danger');
+    await expect(plain).toHaveAttribute('data-variant', 'default');
+    await expect(getComputedStyle(danger).color).not.toBe(getComputedStyle(plain).color);
+  },
+};

@@ -39,7 +39,7 @@ import {
   Timeline,
   TimelineItem,
   TimelineTime,
-} from 'kirua';
+} from '@kobars/kirua';
 import { orderTone, orders, products, idr, type Order } from './data';
 
 export interface OrderPageProps {

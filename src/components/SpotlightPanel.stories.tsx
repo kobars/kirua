@@ -72,9 +72,10 @@ export const Playground: Story = {
 export const Tones: Story = {
   parameters: {
     // The `vivid` panel deliberately shows body copy on blue-500 so the failure
-    // is visible and documented. The automated check would flag it, correctly —
-    // which is exactly the point of the story, so it is turned off here only.
-    a11y: { test: 'off' },
+    // is visible and documented. The contrast rule would flag it, correctly —
+    // which is exactly the point of the story, so that one rule is turned off
+    // here only.
+    a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
   },
   render: () => (
     <div className="flex flex-col gap-6">
@@ -126,6 +127,34 @@ export const HidesItsArtworkBelowMd: Story = {
 
     const display = getComputedStyle(media as Element).display;
     await expect(display).toBe(atLeast(MD) ? 'flex' : 'none');
+  },
+};
+
+/** The gutter follows the artwork: against the start edge, the copy moves off it. */
+export const MediaOnTheStartSide: Story = {
+  render: (args) => (
+    <div className="py-16">
+      <SpotlightPanel {...args} className="min-h-[420px]">
+        <SpotlightMedia side="start" overhang="both" fit>
+          <img src={CHARACTERS.yoyo.src} alt="" />
+        </SpotlightMedia>
+        <SpotlightContent gap={6}>
+          <h2 className="font-display text-display-lg text-fg">
+            Bring your anime worlds to life, however long the headline runs
+          </h2>
+        </SpotlightContent>
+      </SpotlightPanel>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const media = canvasElement.querySelector('[data-slot="spotlight-media"]')!;
+    const heading = canvasElement.querySelector('h2')!;
+    await expect(media).toHaveAttribute('data-side', 'start');
+    if (!atLeast(MD)) return;
+
+    // The headline begins where the artwork ends, not underneath it.
+    const artwork = media.getBoundingClientRect();
+    await expect(heading.getBoundingClientRect().left).toBeGreaterThanOrEqual(artwork.right);
   },
 };
 

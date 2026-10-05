@@ -18,6 +18,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import {
+  existsSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
@@ -28,7 +29,24 @@ import {
 import path from 'node:path';
 
 const REPO = path.join(import.meta.dirname, '..');
-const ROOTS = ['src/components', 'src/patterns', 'examples'];
+const ROOTS = ['src/components', 'src/patterns', 'src/board', 'examples'];
+
+/**
+ * The CLI brings its own compiler as an exact dependency, so it decides which
+ * utilities exist. It is a pinned devDependency, run from this install rather
+ * than fetched, and it must match the `tailwindcss` the build compiles with:
+ * a newer one would pass a utility the build never generates.
+ */
+const version = (name) =>
+  JSON.parse(readFileSync(path.join(REPO, 'node_modules', name, 'package.json'), 'utf8'))
+    .version;
+const CLI = path.join(REPO, 'node_modules/.bin/tailwindcss');
+if (version('@tailwindcss/cli') !== version('tailwindcss')) {
+  console.error(
+    `dead-classes: @tailwindcss/cli ${version('@tailwindcss/cli')} does not match tailwindcss ${version('tailwindcss')}. Pin both to the same version.`,
+  );
+  process.exit(1);
+}
 
 /** Every `.ts`/`.tsx` under the roots, minus tests and stories. */
 function sources(dir, out = []) {
@@ -127,10 +145,10 @@ function classTokens(source) {
 const used = new Map();
 for (const root of ROOTS) {
   const dir = path.join(REPO, root);
-  try {
-    statSync(dir);
-  } catch {
-    continue;
+  // A root that moved would otherwise be checked as empty and pass.
+  if (!existsSync(dir)) {
+    console.error(`dead-classes: ${root} does not exist. Update ROOTS.`);
+    process.exit(1);
   }
   for (const file of sources(dir)) {
     for (const token of classTokens(readFileSync(file, 'utf8'))) {
@@ -155,11 +173,10 @@ try {
     path.join(probe, 'in.css'),
     `@import 'tailwindcss';\n@source '${probe}/probe.html';\n@import '${path.join(REPO, 'src/styles/kirua.css')}';\n`,
   );
-  execFileSync(
-    'npx',
-    ['@tailwindcss/cli', '-i', path.join(probe, 'in.css'), '-o', path.join(probe, 'out.css')],
-    { cwd: REPO, stdio: 'pipe' },
-  );
+  execFileSync(CLI, ['-i', path.join(probe, 'in.css'), '-o', path.join(probe, 'out.css')], {
+    cwd: REPO,
+    stdio: 'pipe',
+  });
 
   const css = readFileSync(path.join(probe, 'out.css'), 'utf8');
   const defined = new Set(

@@ -1,9 +1,7 @@
-import { createRef, type ReactElement } from 'react';
+import { createRef } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
-import { AppBody, AppHeader, AppMain, AppRail, AppShell } from './AppShell';
-import { BottomNav, BottomNavLink } from './BottomNav';
-import { Card, CardContent } from './Card';
+import { Card } from './Card';
 import { Carousel, CarouselItem } from './Carousel';
 import {
   ContextMenu,
@@ -20,15 +18,9 @@ import {
 } from './DropdownMenu';
 import { Grid } from './Grid';
 import { Inline } from './Inline';
-import { CheckIcon, SparkleIcon, StarIcon } from './icons';
+import { CheckIcon, StarIcon } from './icons';
 import { List, ListItem } from './List';
 import { MessageBubble } from './MessageBubble';
-import { NightSwatch } from './NightSwatch';
-import { PageHeader } from './PageHeader';
-import { Pane, PaneBody, PaneFooter, PaneHeader } from './Pane';
-import { Placeholder } from './Placeholder';
-import { Price } from './Price';
-import { Rating } from './Rating';
 import { Sidebar, SidebarFooter, SidebarHeader } from './Sidebar';
 import { Spinner } from './Spinner';
 import { Split } from './Split';
@@ -37,79 +29,12 @@ import { Stack } from './Stack';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './Table';
 import { Visible } from './Visible';
 import { VisuallyHidden } from './VisuallyHidden';
-import { Wordmark } from './Wordmark';
 
 afterEach(cleanup);
 
-type Extra = Record<string, unknown>;
-type Case = [name: string, render: (extra: Extra) => ReactElement, tag: string];
-
-/**
- * The prop contract, for every layout component: the ref
- * reaches the element carrying `data-slot`, a consumer's `className` lands on
- * that same element, and so does any other attribute.
- */
-const cases: Case[] = [
-  ['Stack', (p) => <Stack {...p} />, 'DIV'],
-  ['Inline', (p) => <Inline {...p} />, 'DIV'],
-  ['Grid', (p) => <Grid {...p} />, 'DIV'],
-  ['Split', (p) => <Split {...p} />, 'DIV'],
-  ['VisuallyHidden', (p) => <VisuallyHidden {...p}>Hidden</VisuallyHidden>, 'SPAN'],
-  ['AppShell', (p) => <AppShell {...p} />, 'DIV'],
-  ['AppHeader', (p) => <AppHeader {...p} />, 'HEADER'],
-  ['AppBody', (p) => <AppBody {...p} />, 'DIV'],
-  ['AppRail', (p) => <AppRail aria-label="Sections" {...p} />, 'ASIDE'],
-  ['AppMain', (p) => <AppMain {...p} />, 'MAIN'],
-  ['Pane', (p) => <Pane {...p} />, 'DIV'],
-  ['PaneHeader', (p) => <PaneHeader {...p} />, 'DIV'],
-  ['PaneBody', (p) => <PaneBody {...p} />, 'DIV'],
-  ['PaneFooter', (p) => <PaneFooter {...p} />, 'DIV'],
-  ['PageHeader', (p) => <PageHeader title="Orders" {...p} />, 'DIV'],
-  ['Placeholder', (p) => <Placeholder {...p} />, 'DIV'],
-  ['Price', (p) => <Price amount="Rp 10.000" {...p} />, 'P'],
-  ['Rating', (p) => <Rating value={4.5} {...p} />, 'P'],
-  ['MessageBubble', (p) => <MessageBubble {...p}>Hi</MessageBubble>, 'DIV'],
-  ['BottomNav', (p) => <BottomNav aria-label="Main" {...p} />, 'NAV'],
-  [
-    'BottomNavLink',
-    (p) => (
-      <ul>
-        <BottomNavLink href="#/" icon={<SparkleIcon />} {...p}>
-          Home
-        </BottomNavLink>
-      </ul>
-    ),
-    'A',
-  ],
-  [
-    'Wordmark',
-    (p) => (
-      <Wordmark href="#/" icon={<SparkleIcon />} {...p}>
-        Kirua
-      </Wordmark>
-    ),
-    'A',
-  ],
-  ['CardContent', (p) => <CardContent {...p} />, 'DIV'],
-  ['NightSwatch', (p) => <NightSwatch palette="ink" {...p} />, 'SPAN'],
-];
-
-describe('the prop contract, for the layout layer', () => {
-  it.each(cases)(
-    '%s: ref, className and attributes reach the data-slot root',
-    (_, make, tag) => {
-      const ref = createRef<HTMLElement>();
-      const container = render(make({ ref, className: 'consumer-class', id: 'consumer-id' }));
-      const root = ref.current!;
-
-      expect(root.tagName).toBe(tag);
-      expect(root).toHaveAttribute('data-slot');
-      expect(root).toHaveClass('consumer-class');
-      expect(root.id).toBe('consumer-id');
-      expect(container.contains(root)).toBe(true);
-    },
-  );
-});
+// The prop contract for these components — ref, className and attributes on
+// the data-slot root — is asserted with every other component's in
+// `contract.test.tsx`.
 
 describe('`as` changes the element and nothing else', () => {
   it('Stack renders the element it is given, and the ref is that element', () => {

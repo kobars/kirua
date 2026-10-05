@@ -33,7 +33,7 @@ import {
   TableRow,
   Text,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import { age, formatDob, patients, payerTone } from './data';
 
 export interface PatientListProps {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, screen, userEvent, waitFor } from 'storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from './Button';
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from './Dialog';
 import { IconButton } from './IconButton';
@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './DropdownMenu';
+import { Toast, ToastClose, ToastTitle, ToastViewport } from './Toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from './Tooltip';
 import { GridIcon, SearchIcon } from './icons';
 
@@ -143,6 +144,57 @@ export const ADialogIsAboveItsOwnScrim: Story = {
     await seen(dialog);
     await expect(layerOf(dialog)).toBeGreaterThan(layerOf(scrim as Element));
     await expect(canvasElement).toBeTruthy();
+  },
+};
+
+function ToastOverAnOpenDialog() {
+  const [shown, setShown] = useState(true);
+
+  return (
+    <div className="p-8">
+      <Dialog defaultOpen>
+        <DialogTrigger asChild>
+          <Button>Open</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Edit the visit</DialogTitle>
+        </DialogContent>
+      </Dialog>
+      <ToastViewport>
+        {shown && (
+          <Toast status="danger" close={<ToastClose onClick={() => setShown(false)} />}>
+            <ToastTitle>Could not save</ToastTitle>
+          </Toast>
+        )}
+      </ToastViewport>
+    </div>
+  );
+}
+
+/**
+ * A toast reports on what was just done, often in a dialog that is still
+ * open. The modal hides the rest of the page from assistive technology and
+ * closes on any pointer press outside it, and the toast is outside it.
+ */
+export const AToastStaysUsableOverAnOpenDialog: Story = {
+  render: () => <ToastOverAnOpenDialog />,
+  play: async () => {
+    const dialog = await screen.findByRole('dialog');
+    await seen(dialog);
+    const toast = screen.getByRole('alert');
+
+    // Still in the accessibility tree while the modal is open.
+    await expect(toast.closest('[aria-hidden="true"]')).toBeNull();
+    await expect(layerOf(toast.closest('[data-slot="toast-viewport"]')!)).toBeGreaterThan(
+      layerOf(dialog),
+    );
+
+    // Dismissing the toast is not a press outside the dialog.
+    await userEvent.click(within(toast).getByRole('button', { name: 'Dismiss' }));
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+    // `data-state`, not presence: a closing dialog stays mounted for its exit
+    // animation.
+    await expect(dialog).toHaveAttribute('data-state', 'open');
   },
 };
 

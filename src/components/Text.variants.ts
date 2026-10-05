@@ -38,7 +38,7 @@ export const textVariants = cva('font-text', {
     },
     /** Unset inherits, which is what a run of body copy wants. */
     weight: {
-      normal: 'font-normal',
+      normal: 'font-regular',
       medium: 'font-medium',
       semibold: 'font-semibold',
     },

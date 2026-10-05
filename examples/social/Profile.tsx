@@ -30,7 +30,7 @@ import {
   TabsList,
   TabsTrigger,
   Text,
-} from 'kirua';
+} from '@kobars/kirua';
 import { FollowCounts } from './PersonCard';
 import { PostCard } from './PostCard';
 import { initials, people, posts, postsPerMonth, type Person } from './data';

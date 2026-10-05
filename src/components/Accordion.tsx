@@ -81,13 +81,17 @@ export function AccordionContent({
       className={cn(
         'overflow-hidden font-text text-body-sm text-fg-secondary',
         'data-open:animate-accordion-down data-closed:animate-accordion-up',
+        className,
       )}
       {...props}
     >
-      {/* `pt-1` keeps a small control in the first row — a checkbox, a
+      {/* Padding inside the clip, so it opens and closes with the height.
+          `pt-1` keeps a small control in the first row — a checkbox, a
           slider thumb — far enough below the trigger that the two do not
           share a 24px target area (WCAG 2.5.8). */}
-      <div className={cn('pt-1 pb-4', className)}>{children}</div>
+      <div data-slot="accordion-content-inner" className="pt-1 pb-4">
+        {children}
+      </div>
     </AccordionPrimitive.Content>
   );
 }

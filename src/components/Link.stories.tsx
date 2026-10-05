@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { RouterLink } from '@/test/RouterLink';
 import { Link } from './Link';
 import { Text } from './Text';
 
@@ -142,5 +143,26 @@ export const InheritingTheSurroundingColour: Story = {
     const text = link.parentElement!;
     await expect(getComputedStyle(link).textDecorationLine).toBe('underline');
     await expect(getComputedStyle(link).color).toBe(getComputedStyle(text).color);
+  },
+};
+
+/** A router's link renders the anchor, so a click is a client transition. */
+export const OnARouterLink: Story = {
+  render: () => (
+    <Text tone="primary">
+      Read{' '}
+      <Link asChild>
+        <RouterLink href="#/guide">the publishing guide</RouterLink>
+      </Link>{' '}
+      first.
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'the publishing guide' });
+
+    await expect(link).toHaveAttribute('data-router-link');
+    await expect(link).toHaveAttribute('data-slot', 'link');
+    await expect(link).toHaveAttribute('href', '#/guide');
+    await expect(getComputedStyle(link).textDecorationLine).toBe('underline');
   },
 };

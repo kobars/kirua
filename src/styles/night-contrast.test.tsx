@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import NIGHTS from '@/styles/nights.json';
 import { cleanup, render } from '@/test/render';
 import {
   contrastRatio,
@@ -11,23 +12,22 @@ import {
 afterEach(cleanup);
 
 /**
- * Dark mode is five palettes, not one, and every one of them has to carry the
+ * Dark mode is several palettes, not one, and every one of them has to carry the
  * same pairs. A night is chosen by a person for comfort, so a pair that passes
  * on navy and fails on carbon is a defect that only some people ever see.
  *
  * The field family has its own audit in `field-contrast.test.tsx`; this file
  * measures what a field audit does not reach: copy on the page and the card,
- * the button labels, the chart marks and the order of the night's own steps.
+ * the button labels, the chart marks, the avatar initials and the order of the
+ * night's own steps.
  * Light mode is measured beside them, because the button fills are shared.
  */
 const TEXT = 4.5;
 const BOUNDARY = 3;
 
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
-
 const MODES = [
   ['light', '', undefined],
-  ...NIGHTS.map((night) => [night, 'dark', night === 'navy' ? undefined : night] as const),
+  ...NIGHTS.map((night) => [night, 'dark', night === NIGHTS[0] ? undefined : night] as const),
 ] as const;
 
 function inMode(contextClass: string, night?: string) {
@@ -101,6 +101,12 @@ const PAIRS: Pair[] = [
     background,
     minimum: BOUNDARY,
   })),
+  // An avatar's initial is text on its own swatch.
+  ...[1, 2, 3, 4, 5].map((swatch) => ({
+    foreground: `--color-avatar-swatch-${swatch}-fg`,
+    background: `--color-avatar-swatch-${swatch}-bg`,
+    minimum: TEXT,
+  })),
   // A chart mark is a non-text graphic on the page or a card.
   ...[1, 2, 3, 4, 5].flatMap((series) =>
     ['--color-surface-page', '--color-surface-raised'].map((background) => ({
@@ -129,7 +135,7 @@ describe.each(MODES)('%s', (name, contextClass, night) => {
 
 describe.each(NIGHTS)('the %s night', (night) => {
   const steps = () => {
-    const { read } = inMode('dark', night === 'navy' ? undefined : night);
+    const { read } = inMode('dark', night === NIGHTS[0] ? undefined : night);
     return ['shade', 'sunken', 'page', 'raised', 'hover', 'line', 'line-strong'].map(
       (role) => [role, relativeLuminance(read(`--color-night-${role}`))] as const,
     );
@@ -150,7 +156,7 @@ describe.each(NIGHTS)('the %s night', (night) => {
   });
 
   it('casts every Clay shadow darker than its page', () => {
-    const { read, page } = inMode('dark', night === 'navy' ? undefined : night);
+    const { read, page } = inMode('dark', night === NIGHTS[0] ? undefined : night);
     for (const token of [
       '--color-shade-card',
       '--color-shade-press',
@@ -160,7 +166,7 @@ describe.each(NIGHTS)('the %s night', (night) => {
   });
 
   it('shows a selected fill against the page and the card', () => {
-    const { read, page } = inMode('dark', night === 'navy' ? undefined : night);
+    const { read, page } = inMode('dark', night === NIGHTS[0] ? undefined : night);
     const selected = read('--color-field-selected-bg');
     for (const surface of [page, read('--color-surface-raised')])
       expect(contrastRatio(selected, surface)).toBeGreaterThan(1.05);

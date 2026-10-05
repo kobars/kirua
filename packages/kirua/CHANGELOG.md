@@ -1,5 +1,77 @@
 # Changelog
 
+## 0.2.0
+
+A minor version, because some of these changes can alter an existing screen.
+Those are listed first.
+
+### Changed
+
+- `Calendar` and `DatePicker` no longer default `today` to the current date,
+  which differed between the server and the browser across time zones and at
+  midnight. Pass `today` to mark the day; without it no day is marked, and
+  focus starts on the selection or the first day that can be chosen.
+- `className` on `CollapsibleContent` and `AccordionContent` now lands on the
+  root, beside the ref and the other props. The inner padding element has its
+  own slots, `collapsible-content-inner` and `accordion-content-inner`.
+- `BottomNavLinkProps` is a union: `href` is required unless `asChild` is set.
+- `Calendar`, `DatePicker` and `Combobox` are client modules (`"use client"`).
+  A Server Component file can still import them; they render on the client.
+  Every other component still renders in a Server Component.
+- `ToastViewport` is the live region (`aria-live="polite"`). Only a danger
+  toast keeps a role, `alert`. Clicking a toast no longer dismisses an open
+  dialog.
+- `Text weight="normal"` uses the system's regular weight instead of
+  Tailwind's 400.
+- `CommandList` and `ComboboxList` require an accessible name in their types.
+
+### Added
+
+- `asChild` on `Link`, `BottomNavLink` and `Wordmark`, and a `NavBarLink` part
+  with `asChild`, so a client router's link component can be used. `NavBar`
+  accepts `NavBarLink` children; `items` is optional.
+- `NIGHT_PALETTES`, the night palettes of dark mode with the default first.
+- `DropdownMenuShortcut`, and a `variant` on `MenubarItem`.
+- `getValueText` on `Slider`, for a thumb that announces formatted text.
+- `display` on `Rating`, for a value formatted by the caller.
+- Avatar swatch tokens, used by `AvatarStack`, measured at 4.5:1 in light mode
+  and on every night.
+- `ref` on `ResizableGroup`, `ResizablePanel` and `ResizableHandle`, and their
+  props types.
+- The `default` export condition, so `require` and Jest can resolve the package.
+- A `data-slot` on every inner element that carries classes, 70 new names, so
+  each part has a stable selector: for example `app-header-actions`,
+  `nav-bar-list`, `page-header-actions`, `pane-body-content`, `dialog-overlay`,
+  `select-viewport`, `stepper-item-marker` and `tooltip-arrow`. Each name is
+  the owning component's slot followed by the part.
+
+### Fixed
+
+- A closed off-canvas `Sidebar` left its links in the tab order while invisible.
+- `Field` treated `error={false}` and `error=""` as an error.
+- A sortable `TableHead` submitted a surrounding form; `data-selected="false"`
+  selected a `TableRow`.
+- A disabled indeterminate `Checkbox` hid its dash.
+- Charts: values below 1 now fill the plot, marks stay inside it, and repeated
+  labels no longer share a key.
+- `Progress` out of range now reads as indeterminate, matching its ARIA state.
+- `Calendar` fell back to a Monday week start where the browser has no week
+  information; it now follows the region.
+- `SpotlightMedia side="start"` covered the headline.
+- `Visible` threw on text with a value in it.
+- A default `Card` inside a brand or inverse surface used the page's line and
+  shadow; a brand surface now keeps its own page colour and focus-ring offset.
+- `AlertDialog` had no edge or backdrop in forced-colors mode.
+- `AvatarStack` initials failed contrast, and the brand `Chip` paired a surface
+  colour with an action colour.
+- `CommandGroup` headings with a space no longer break the group's name.
+- `NavigationMenu`'s panel opened beneath a positioned block below it.
+- `DialogTitle` ran under the close button.
+- `List variant="plain"` keeps its list semantics in Safari.
+- `cn()` now merges `font-regular`, `ease-out-soft` and the custom radius steps
+  on every side and corner.
+- The package no longer declares a Node engine range.
+
 ## 0.1.0
 
 The first published version.

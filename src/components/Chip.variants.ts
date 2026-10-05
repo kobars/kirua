@@ -15,10 +15,12 @@ export const chipVariants = cva(
         dark: 'ctx-inverse bg-page text-fg inset-ring inset-ring-line-inverse',
         light: 'border border-line-subtle bg-raised text-fg',
         /* bg-brand, not bg-brand-vivid: white chip text is 14px or smaller,
-         * and white on blue-500 is only 3.64:1. The semantic border is what
-         * keeps this variant visible on a brand surface; re-pointing bg-brand
-         * there would also recolour the surface that declares the context. */
-        brand: 'border border-line bg-brand text-white',
+         * and white on blue-500 is only 3.64:1. The chip declares the brand
+         * context for its own subtree, as the brand card does, so its label
+         * and anything in its leading slot read the panel's tokens; the
+         * context's translucent white border is what keeps it visible on a
+         * brand surface. */
+        brand: 'ctx-brand border border-line bg-brand text-fg',
         outline: 'border-2 border-line bg-transparent text-fg',
       },
       size: {

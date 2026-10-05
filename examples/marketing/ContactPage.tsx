@@ -30,7 +30,7 @@ import {
   ToastDescription,
   ToastTitle,
   ToastViewport,
-} from 'kirua';
+} from '@kobars/kirua';
 import { STUDIO, TOPICS } from './data';
 
 /**
@@ -49,13 +49,14 @@ export function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const nameError = submitted && name.trim() === '' ? 'Enter your name.' : undefined;
-  const emailError =
-    submitted && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
-      ? 'Enter an address we can reply to.'
-      : undefined;
-  const messageError =
-    submitted && message.trim().length < 10 ? 'Tell us a little more than that.' : undefined;
+  // One set of rules, by the id of the field each is about, in the order the
+  // fields appear: the messages and the focus on submit both read it.
+  const found: Record<string, string> = {};
+  if (name.trim() === '') found['contact-name'] = 'Enter your name.';
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    found['contact-email'] = 'Enter an address we can reply to.';
+  if (message.trim().length < 10) found['contact-message'] = 'Tell us a little more than that.';
+  const errors = submitted ? found : {};
 
   return (
     <Container pad="md">
@@ -81,20 +82,20 @@ export function ContactPage() {
             onSubmit={(event) => {
               event.preventDefault();
               setSubmitted(true);
-              const validEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
               // Focus goes to the first field to fix, which also reads out its
               // message, rather than staying on the button.
-              const firstInvalid = [
-                name.trim() === '' && 'contact-name',
-                !validEmail && 'contact-email',
-                message.trim().length < 10 && 'contact-message',
-              ].find(Boolean);
+              const firstInvalid = Object.keys(found)[0];
               if (firstInvalid) document.getElementById(firstInvalid)?.focus();
               else setSent(true);
             }}
             noValidate
           >
-            <Field controlId="contact-name" label="Your name" required error={nameError}>
+            <Field
+              controlId="contact-name"
+              label="Your name"
+              required
+              error={errors['contact-name']}
+            >
               <Input
                 value={name}
                 autoComplete="name"
@@ -102,7 +103,12 @@ export function ContactPage() {
               />
             </Field>
 
-            <Field controlId="contact-email" label="Email" required error={emailError}>
+            <Field
+              controlId="contact-email"
+              label="Email"
+              required
+              error={errors['contact-email']}
+            >
               <Input
                 type="email"
                 value={email}
@@ -131,7 +137,7 @@ export function ContactPage() {
               label="Message"
               description="Ten words is plenty to start."
               required
-              error={messageError}
+              error={errors['contact-message']}
             >
               <Textarea
                 rows={5}

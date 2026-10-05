@@ -50,6 +50,7 @@ export function SheetContent({
   return (
     <DialogPrimitive.Portal container={container}>
       <DialogPrimitive.Overlay
+        data-slot="sheet-overlay"
         className={cn(
           'fixed inset-0 z-scrim bg-scrim backdrop-blur-sm',
           'data-open:animate-fade-in data-closed:animate-fade-out',

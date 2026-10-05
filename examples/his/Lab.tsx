@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
   Text,
-} from 'kirua';
+} from '@kobars/kirua';
 import { flagLabel, flagTone, formatDateTime, labResults, patients } from './data';
 
 /**

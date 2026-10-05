@@ -12,17 +12,14 @@
  * stylesheet, and `NightSwatch` shows them.
  */
 import { useCallback, useEffect, useState } from 'react';
-import type { NightPalette } from 'kirua';
+import { NIGHT_PALETTES as NIGHTS, type NightPalette } from '@kobars/kirua';
 
 const KEY = 'kirua-night-palette';
 
-export const NIGHT_PALETTES: { id: NightPalette; label: string }[] = [
-  { id: 'navy', label: 'Navy' },
-  { id: 'graphite', label: 'Graphite' },
-  { id: 'onyx', label: 'Onyx' },
-  { id: 'ink', label: 'Ink' },
-  { id: 'carbon', label: 'Carbon' },
-];
+export const NIGHT_PALETTES: { id: NightPalette; label: string }[] = NIGHTS.map((id) => ({
+  id,
+  label: id[0]!.toUpperCase() + id.slice(1),
+}));
 
 const isNightPalette = (value: unknown): value is NightPalette =>
   NIGHT_PALETTES.some((option) => option.id === value);
@@ -45,15 +42,17 @@ export function useNightPalette() {
     const root = document.documentElement;
     if (palette === 'navy') delete root.dataset.nightPalette;
     else root.dataset.nightPalette = palette;
+  }, [palette]);
+
+  // Only a choice made in the menu is stored. A night that arrived in a link
+  // shows for this visit and leaves the visitor's own choice as it was.
+  const choose = useCallback((next: NightPalette) => {
     try {
-      if (palette === 'navy') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, palette);
+      if (next === 'navy') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, next);
     } catch {
       // A private window refuses storage. The choice just does not survive a reload.
     }
-  }, [palette]);
-
-  const choose = useCallback((next: NightPalette) => {
     // A choice made in the menu replaces the one the link carried.
     const url = new URL(location.href);
     if (url.searchParams.has('night')) {

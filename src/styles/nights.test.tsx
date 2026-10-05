@@ -3,6 +3,7 @@ import primitivesCss from './tokens.primitives.css?raw';
 import semanticCss from './tokens.semantic.css?raw';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
+import NIGHTS from './nights.json';
 
 afterEach(cleanup);
 
@@ -12,7 +13,6 @@ afterEach(cleanup);
  * its colours, the attribute on `.dark` really re-points the page, and a
  * swatch can show a night while the page around it is light.
  */
-const NIGHTS = ['navy', 'graphite', 'onyx', 'ink', 'carbon'] as const;
 
 /** Every TypeScript source a colour could be copied into, application code included. */
 const SOURCES = import.meta.glob<string>(
@@ -68,7 +68,7 @@ describe('the attribute chooses the night', () => {
 
   it.each(NIGHTS)('%s re-points the page and the card', (night) => {
     const host = render(
-      <div className="dark" data-night-palette={night === 'navy' ? undefined : night} />,
+      <div className="dark" data-night-palette={night === NIGHTS[0] ? undefined : night} />,
     ).firstElementChild as HTMLElement;
 
     expect(colourOf(host, '--color-surface-page')).toBe(hexToRgb(ramp(night).get('950')!));

@@ -141,6 +141,53 @@ export const ThePanelHoldsLinks: Story = {
   },
 };
 
+/**
+ * The panel is not portalled, so it names its layer. Without one, a
+ * positioned block later in the page — a hero panel, a card lifted by
+ * `z-raised` — paints over the open panel and takes the clicks meant for it.
+ */
+export const ThePanelOpensAbovePositionedContent: Story = {
+  render: () => (
+    <div className="h-72 pt-2">
+      {/* As wide as a site header, so the panel is not cut to the trigger's
+          width at any viewport. */}
+      <div className="flex justify-center">
+        <NavigationMenu className="w-full">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Catalogue</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="flex flex-col gap-1">
+                  <NavigationMenuLink href="#/bags">Bags</NavigationMenuLink>
+                  <NavigationMenuLink href="#/shoes">Shoes</NavigationMenuLink>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+      <div data-testid="hero" className="relative z-raised h-48 w-full bg-sunken" />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Catalogue' }));
+
+    const link = await screen.findByRole('link', { name: 'Shoes' });
+    // Awaited: the viewport grows to the panel's measured height, and until
+    // it has, its overflow clips the link whatever the layer.
+    await waitFor(async () => {
+      const box = link.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      await expect(link.contains(hit)).toBe(true);
+    });
+    // The link really sits over the block, so the check above is not vacuous.
+    await expect(link.getBoundingClientRect().top).toBeGreaterThan(
+      canvas.getByTestId('hero').getBoundingClientRect().top,
+    );
+  },
+};
+
 export const TheViewportTakesThePanelsHeight: Story = {
   render: () => (
     <div className="flex h-72 justify-center pt-2">

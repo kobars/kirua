@@ -45,7 +45,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import { formatDate, medications, usd, type Medication } from './data';
 
 type StockFilter = 'all' | 'out' | 'low';

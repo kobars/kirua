@@ -59,7 +59,7 @@ import {
   Text,
   Visible,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import {
   age,
   celsius,

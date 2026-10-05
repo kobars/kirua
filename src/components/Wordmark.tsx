@@ -1,3 +1,4 @@
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
@@ -20,6 +21,12 @@ export interface WordmarkProps extends ComponentProps<'a'> {
    */
   compact?: boolean;
   size?: keyof typeof sizes;
+  /**
+   * Render onto the child — a router's link component — instead of an `<a>`.
+   * The mark and the name are placed inside it; the child's own text is the
+   * name.
+   */
+  asChild?: boolean;
 }
 
 /**
@@ -34,6 +41,10 @@ export interface WordmarkProps extends ComponentProps<'a'> {
  *
  * @example <Wordmark href="#/" icon={<SparkleIcon />}>Kirua</Wordmark>
  * @example
+ * <Wordmark asChild icon={<SparkleIcon />}>
+ *   <NextLink href="/">Kirua</NextLink>
+ * </Wordmark>
+ * @example
  * <Wordmark href="#/" icon={<StethoscopeIcon />} shortName="Larkspur">
  *   Larkspur · Juniper Valley
  * </Wordmark>
@@ -43,35 +54,44 @@ export function Wordmark({
   shortName,
   compact = false,
   size = 'md',
+  asChild = false,
   className,
   children,
   ...props
 }: WordmarkProps) {
-  const Comp: ElementType = props.href === undefined ? 'span' : 'a';
+  const Comp: ElementType = asChild ? Slot : props.href === undefined ? 'span' : 'a';
+  const name = (text: ReactNode) =>
+    shortName === undefined ? (
+      <span data-slot="wordmark-name" className={cn('truncate', compact && 'max-sm:sr-only')}>
+        {text}
+      </span>
+    ) : (
+      <>
+        <span data-slot="wordmark-name" className="truncate max-sm:hidden">
+          {text}
+        </span>
+        <span data-slot="wordmark-short-name" className="sm:hidden">
+          {shortName}
+        </span>
+      </>
+    );
   return (
     <Comp
       data-slot="wordmark"
       className={cn(
         'relative inline-flex min-w-0 items-center gap-2 rounded-xs font-text font-semibold text-fg',
         'underline-offset-4',
-        Comp === 'a' && 'hover:underline',
+        Comp !== 'span' && 'hover:underline',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         sizes[size],
         className,
       )}
       {...props}
     >
-      <span aria-hidden="true" className="flex text-fg-accent">
+      <span data-slot="wordmark-icon" aria-hidden="true" className="flex text-fg-accent">
         {icon}
       </span>
-      {shortName === undefined ? (
-        <span className={cn('truncate', compact && 'max-sm:sr-only')}>{children}</span>
-      ) : (
-        <>
-          <span className="truncate max-sm:hidden">{children}</span>
-          <span className="sm:hidden">{shortName}</span>
-        </>
-      )}
+      {asChild ? <Slottable child={children}>{name}</Slottable> : name(children)}
     </Comp>
   );
 }

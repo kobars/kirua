@@ -106,6 +106,19 @@
   --color-chart-grid: var(--color-chart-grid-line);
   --color-chart-track: var(--color-chart-track-fill);
 
+  /* Short names again, after the `action` family: `bg-avatar-1` with
+   * `text-on-avatar-1`. */
+  --color-avatar-1: var(--color-avatar-swatch-1-bg);
+  --color-on-avatar-1: var(--color-avatar-swatch-1-fg);
+  --color-avatar-2: var(--color-avatar-swatch-2-bg);
+  --color-on-avatar-2: var(--color-avatar-swatch-2-fg);
+  --color-avatar-3: var(--color-avatar-swatch-3-bg);
+  --color-on-avatar-3: var(--color-avatar-swatch-3-fg);
+  --color-avatar-4: var(--color-avatar-swatch-4-bg);
+  --color-on-avatar-4: var(--color-avatar-swatch-4-fg);
+  --color-avatar-5: var(--color-avatar-swatch-5-bg);
+  --color-on-avatar-5: var(--color-avatar-swatch-5-fg);
+
   /* Elevation IS context-dependent, unlike type, radius and easing — see the
    * reasoning beside the tokens. These must be `@theme inline` for the same
    * reason the colours are: without `inline` a utility freezes the value it had

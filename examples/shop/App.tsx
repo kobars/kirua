@@ -57,15 +57,16 @@ import {
   UserIcon,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { CartSheet, type CartLine } from './CartSheet';
 import { CheckoutPage } from './CheckoutPage';
 import { OrderPage } from './OrderPage';
 import { OrdersPage } from './OrdersPage';
 import { SignInPage } from './SignInPage';
 import { Filters } from './Filters';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
-import { emptyFilters, type FilterState } from './filterState';
+import { emptyFilters, isEmptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
 import { ProductPage } from './ProductPage';
 import { categories, orders, products, type Category, type Product } from './data';
@@ -110,26 +111,38 @@ export function App() {
   const current = Math.min(page, pages);
   const shown = matches.slice((current - 1) * PER_PAGE, current * PER_PAGE);
 
-  const add = (product: Product, quantity = 1) => {
-    setLines((all) => {
-      const existing = all.find((l) => l.product.id === product.id);
-      return existing
+  // One line per product and size: an M and an XL of the same jacket are two
+  // things to pack. Adding from a card takes the first size the product has.
+  const add = (product: Product, size = product.size[0] ?? 'M', quantity = 1) => {
+    const same = (l: CartLine) => l.product.id === product.id && l.size === size;
+    setLines((all) =>
+      all.some(same)
         ? all.map((l) =>
-            l.product.id === product.id
-              ? { ...l, quantity: Math.min(product.stock, l.quantity + quantity) }
-              : l,
+            same(l) ? { ...l, quantity: Math.min(product.stock, l.quantity + quantity) } : l,
           )
-        : [...all, { product, quantity: Math.min(product.stock, quantity) }];
-    });
-    setToast(product.name);
+        : [...all, { product, size, quantity: Math.min(product.stock, quantity) }],
+    );
+    setToast(`${product.name}, size ${size}`);
   };
 
-  const changeQuantity = (id: string, delta: number) =>
+  const changeQuantity = (id: string, size: string, delta: number) =>
     setLines((all) =>
       all
-        .map((l) => (l.product.id === id ? { ...l, quantity: l.quantity + delta } : l))
+        .map((l) =>
+          l.product.id === id && l.size === size ? { ...l, quantity: l.quantity + delta } : l,
+        )
         .filter((l) => l.quantity > 0),
     );
+
+  // Both ways out of an empty result clear everything that narrows it: the
+  // sidebar's filters, the search and the category alike.
+  const filtered = !isEmptyFilters(filters) || category !== 'all' || query !== '';
+  const resetAll = () => {
+    setFilters(emptyFilters);
+    setCategory('all');
+    setQuery('');
+    setPage(1);
+  };
 
   const count = lines.reduce((n, l) => n + l.quantity, 0);
   const detail = route.startsWith('products/')
@@ -138,6 +151,10 @@ export function App() {
   const order = route.startsWith('orders/')
     ? orders.find((o) => o.id === route.slice('orders/'.length))
     : undefined;
+  const known =
+    detail !== undefined ||
+    order !== undefined ||
+    ['', 'orders', 'sign-in', 'checkout'].includes(route);
 
   const filterPanel = (heading: boolean) => (
     <Filters
@@ -323,9 +340,13 @@ export function App() {
       </AppHeader>
 
       <AppBody width="full">
-        <AppMain>
-          {detail ? (
-            <ProductPage product={detail} onAdd={add} />
+        <AppMain data-route={`shop/${route}`}>
+          {!known ? (
+            <Container width="6xl">
+              <NotFound name="Dusk" home="#/shop/" />
+            </Container>
+          ) : detail ? (
+            <ProductPage key={detail.id} product={detail} onAdd={add} />
           ) : order ? (
             <OrderPage order={order} />
           ) : route === 'orders' ? (
@@ -359,16 +380,8 @@ export function App() {
                     align="center"
                     actions={
                       <>
-                        {(category !== 'all' || query !== '') && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setCategory('all');
-                              setQuery('');
-                              setPage(1);
-                            }}
-                          >
+                        {filtered && (
+                          <Button variant="ghost" size="sm" onClick={resetAll}>
                             Clear filters
                           </Button>
                         )}
@@ -393,8 +406,8 @@ export function App() {
                       title="Nothing matches"
                       description="Try widening the price range, or clearing one of the filters."
                       action={
-                        <Button variant="secondary" onClick={() => setFilters(emptyFilters)}>
-                          Reset filter
+                        <Button variant="secondary" onClick={resetAll}>
+                          Reset filters
                         </Button>
                       }
                     />

@@ -36,6 +36,10 @@ export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
    * menu items all do — so the icon follows the control it sits in.
    *
    * A raw number is accepted as an escape hatch for a one-off ornament.
+   *
+   * This prop, `--icon-size` on an ancestor, or `style` are the ways to size
+   * an icon. A size class in `className` (`size-4`) has no effect: the size is
+   * an inline style, which outranks any class.
    */
   size?: IconSize | number;
   /** A colour other than the surrounding text's. */
@@ -51,6 +55,7 @@ function Icon({ size, tone, className, children, style, ...props }: IconProps) {
         : ICON_SIZES[size];
 
   return (
+    // data-slot-allow: a consumer places an icon and passes its className directly; inside a component, the owning slot reaches it
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -60,8 +65,8 @@ function Icon({ size, tone, className, children, style, ...props }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      // Width and height rather than the SVG attributes, so a token can be a
-      // `var()` and a consumer's `className` can still win.
+      // Inline width and height rather than the SVG attributes, so a token
+      // can be a `var()`. Inline also means a size class never applies.
       style={{ width: resolved, height: resolved, ...style } as CSSProperties}
       className={cn(tone && ICON_TONES[tone], className) || undefined}
       {...props}

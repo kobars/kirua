@@ -22,11 +22,13 @@ import {
   SheetFooter,
   SheetTitle,
   Stack,
-} from 'kirua';
+} from '@kobars/kirua';
 import { idr, type Product } from './data';
 
 export interface CartLine {
   product: Product;
+  /** The size chosen on the product page. */
+  size: string;
   quantity: number;
 }
 
@@ -34,7 +36,7 @@ export interface CartSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lines: CartLine[];
-  onQuantity: (id: string, delta: number) => void;
+  onQuantity: (id: string, size: string, delta: number) => void;
   onCheckout: () => void;
 }
 
@@ -71,8 +73,8 @@ export function CartSheet({
             />
           ) : (
             <Stack as="ul" gap={0}>
-              {lines.map(({ product, quantity }, index) => (
-                <Stack as="li" gap={0} key={product.id}>
+              {lines.map(({ product, size, quantity }, index) => (
+                <Stack as="li" gap={0} key={`${product.id}-${size}`}>
                   {index > 0 && <ItemSeparator />}
                   <Item inset="none" align="start">
                     <ItemMedia>
@@ -82,18 +84,20 @@ export function CartSheet({
                       <Stack gap={2}>
                         <Stack gap={0.5}>
                           <ItemTitle>{product.name}</ItemTitle>
-                          <ItemDescription>{idr(product.price)}</ItemDescription>
+                          <ItemDescription>
+                            Size {size} · {idr(product.price)}
+                          </ItemDescription>
                         </Stack>
                         <Stack align="start">
                           <QuantityStepper
-                            label={`Quantity, ${product.name}`}
-                            decrementLabel={`One fewer ${product.name}`}
-                            incrementLabel={`One more ${product.name}`}
+                            label={`Quantity, ${product.name}, size ${size}`}
+                            decrementLabel={`One fewer ${product.name}, size ${size}`}
+                            incrementLabel={`One more ${product.name}, size ${size}`}
                             value={quantity}
                             min={0}
                             max={product.stock}
-                            onDecrement={() => onQuantity(product.id, -1)}
-                            onIncrement={() => onQuantity(product.id, 1)}
+                            onDecrement={() => onQuantity(product.id, size, -1)}
+                            onIncrement={() => onQuantity(product.id, size, 1)}
                           />
                         </Stack>
                       </Stack>

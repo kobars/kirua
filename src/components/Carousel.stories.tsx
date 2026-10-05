@@ -79,7 +79,7 @@ export const WithControls: Story = {
   parameters: {
     docs: {
       source: {
-        code: ProductCarouselSource.replace("from '@/components'", "from 'kirua'"),
+        code: ProductCarouselSource.replace("from '@/components'", "from '@kobars/kirua'"),
         language: 'tsx',
       },
       description: {

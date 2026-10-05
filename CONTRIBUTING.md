@@ -14,7 +14,8 @@ pnpm storybook
 ```
 
 The test suite and the example-app checks run in real browsers, so the
-Playwright browsers are needed before `pnpm check` or `pnpm check:examples`.
+Playwright browsers are needed before `pnpm check`, `pnpm check:examples` or
+`pnpm check:all`.
 
 ## Components
 
@@ -97,10 +98,22 @@ that fits no section is better exempted with a reason than forced into one.
 ## Verification
 
 ```bash
-pnpm check
-pnpm check:storybook
-pnpm build
+pnpm check:all
 ```
+
+That is every gate, and exactly what CI runs on each pull request and on
+`main`: `pnpm check`, then `pnpm build`, `pnpm check:examples` and
+`pnpm check:storybook`. CI runs on macOS, the platform the system is developed
+on. It leaves out one thing: the screenshot comparison, because a hosted runner
+draws without a GPU and cannot reproduce the committed baselines. Run
+`pnpm check` locally before opening a pull request that changes how something
+looks.
+
+`pnpm check` alone is the component gate: types, lint, formatting, every Vitest
+project with coverage, and the WebKit pass. It does not build the hero page or
+its size budget, the example app or Storybook, so a green `pnpm check` is not a
+green CI run. A focused test (`.only`) fails the run rather than skipping the
+rest of its file.
 
 To iterate on a story:
 

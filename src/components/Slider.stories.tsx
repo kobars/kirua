@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
+import { useState } from 'react';
 import { Slider } from './Slider';
 
 const meta = {
@@ -129,5 +130,37 @@ export const Vertical: Story = {
     const track = canvasElement.querySelector('[data-slot="slider-track"]')!;
     await expect(track.getBoundingClientRect().height).toBeGreaterThan(100);
     await expect(track.getBoundingClientRect().width).toBeLessThan(10);
+  },
+};
+
+const rupiah = (value: number) => `Rp ${value.toLocaleString('en-GB')}`;
+
+/**
+ * The screen shows a formatted price, so the thumb announces the same text
+ * rather than a bare number with no unit.
+ */
+export const AnnouncesWhatTheScreenShows: Story = {
+  render: function Render() {
+    const [price, setPrice] = useState([200000, 600000]);
+    return (
+      <div className="w-80">
+        <Slider
+          value={price}
+          onValueChange={setPrice}
+          max={800000}
+          step={10000}
+          thumbLabels={['Lowest price', 'Highest price']}
+          getValueText={rupiah}
+        />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const low = within(canvasElement).getByRole('slider', { name: 'Lowest price' });
+    await expect(low).toHaveAttribute('aria-valuetext', 'Rp 200,000');
+
+    low.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(low).toHaveAttribute('aria-valuetext', 'Rp 210,000');
   },
 };

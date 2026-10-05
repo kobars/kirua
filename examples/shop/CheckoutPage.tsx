@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -27,7 +27,7 @@ import {
   Separator,
   Split,
   Stack,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
 import { idr } from './data';
 import type { CartLine } from './CartSheet';
@@ -201,19 +201,19 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
                   <Input id="address" name="address" autoComplete="street-address" />
                 </Field>
 
-                <Field controlId="city" label="City">
-                  <Select defaultValue="bandung" name="city">
-                    <SelectTrigger id="city">
+                <Select defaultValue="bandung" name="city">
+                  <Field controlId="city" label="City">
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent aria-label="City">
-                      <SelectItem value="bandung">Bandung</SelectItem>
-                      <SelectItem value="jakarta">Jakarta</SelectItem>
-                      <SelectItem value="surabaya">Surabaya</SelectItem>
-                      <SelectItem value="makassar">Makassar</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
+                  </Field>
+                  <SelectContent aria-label="City">
+                    <SelectItem value="bandung">Bandung</SelectItem>
+                    <SelectItem value="jakarta">Jakarta</SelectItem>
+                    <SelectItem value="surabaya">Surabaya</SelectItem>
+                    <SelectItem value="makassar">Makassar</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 <FieldSet>
                   <FieldLegend>Delivery</FieldLegend>
@@ -257,6 +257,19 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
                 <Heading as="h2" size="body-md">
                   Summary
                 </Heading>
+                <Separator />
+                <DescriptionList>
+                  {lines.map(({ product, size, quantity }) => (
+                    <Fragment key={`${product.id}-${size}`}>
+                      <DescriptionTerm>
+                        {product.name} ({size}) × {quantity}
+                      </DescriptionTerm>
+                      <DescriptionDetails numeric>
+                        {idr(product.price * quantity)}
+                      </DescriptionDetails>
+                    </Fragment>
+                  ))}
+                </DescriptionList>
                 <Separator />
                 <DescriptionList>
                   <DescriptionTerm>Subtotal</DescriptionTerm>

@@ -31,7 +31,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   Visible,
-} from 'kirua';
+} from '@kobars/kirua';
 import { orderTone, orders, products, idr, type Order } from './data';
 
 type Filter = 'all' | 'open' | 'closed';

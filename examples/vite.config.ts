@@ -37,9 +37,9 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      // Longest first: `kirua/styles.css` must not be swallowed by `kirua`.
-      { find: 'kirua/styles.css', replacement: path.join(ROOT, 'styles.css') },
-      { find: 'kirua', replacement: path.join(REPO, 'src/components/index.ts') },
+      // Longest first: the stylesheet must not be swallowed by the package entry.
+      { find: '@kobars/kirua/styles.css', replacement: path.join(ROOT, 'styles.css') },
+      { find: '@kobars/kirua', replacement: path.join(REPO, 'src/components/index.ts') },
       // The components import each other through `@/`, as in the root config.
       { find: '@', replacement: path.join(REPO, 'src') },
     ],

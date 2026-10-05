@@ -56,6 +56,37 @@ export const Default: Story = {
   ),
 };
 
+/**
+ * A title long enough to fill its first line stops short of the close button
+ * and wraps, rather than running underneath it.
+ */
+export const ALongTitleKeepsClearOfTheCloseButton: Story = {
+  render: () => (
+    <Dialog defaultOpen>
+      <DialogTrigger asChild>
+        <Button>Remove</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Remove this item from your cart and every saved list?</DialogTitle>
+        <DialogDescription>It stays in the shop.</DialogDescription>
+      </DialogContent>
+    </Dialog>
+  ),
+  play: async () => {
+    const dialog = await screen.findByRole('dialog');
+    // The pop-in animation starts transparent and can outlast the default wait.
+    await waitFor(() => expect(dialog).toBeVisible(), { timeout: 5000 });
+    const title = within(dialog).getByRole('heading');
+    const close = within(dialog).getByRole('button', { name: 'Close' });
+
+    // The end of the title's text box against the start of the button, in
+    // this left-to-right story.
+    const box = title.getBoundingClientRect();
+    const end = box.right - Number.parseFloat(getComputedStyle(title).paddingRight);
+    await expect(end).toBeLessThanOrEqual(close.getBoundingClientRect().left);
+  },
+};
+
 export const CustomCloseLabel: Story = {
   render: () => (
     <Dialog>

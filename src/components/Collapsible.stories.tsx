@@ -23,13 +23,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Collapsible className="w-96">
+    <Collapsible gap={3} className="w-96">
       <CollapsibleTrigger asChild>
         <Button variant="ghost" trailingIcon={<ChevronDownIcon />}>
           Delivery details
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="pt-3">
+      <CollapsibleContent>
         Sent from Bandung by overnight courier. Two to four working days to Java, four to seven
         elsewhere.
       </CollapsibleContent>
@@ -56,30 +56,28 @@ export const TheChevronTurnsOverWhileOpen: Story = {
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', { name: 'Delivery details' });
     const chevron = trigger.querySelector('[data-icon="chevron-down"]') as SVGElement;
-    const settled = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      return getComputedStyle(chevron).rotate;
-    };
+    // Polled rather than read after a fixed wait: the turn is a transition,
+    // and a slow machine is still mid-turn when a fixed wait ends.
+    const turnsTo = (rotate: string) =>
+      waitFor(() => expect(getComputedStyle(chevron).rotate).toBe(rotate), { timeout: 5000 });
 
-    await expect(await settled()).toBe('none');
+    await turnsTo('none');
     await userEvent.click(trigger);
-    await expect(await settled()).toBe('180deg');
+    await turnsTo('180deg');
     await userEvent.click(trigger);
-    await expect(await settled()).toBe('none');
+    await turnsTo('none');
   },
 };
 
 export const OpenByDefault: Story = {
   render: () => (
-    <Collapsible defaultOpen className="w-96">
+    <Collapsible defaultOpen gap={3} className="w-96">
       <CollapsibleTrigger asChild>
         <Button variant="ghost" trailingIcon={<ChevronDownIcon />}>
           Returns
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="pt-3">
-        Thirty days, unworn, with the tag attached.
-      </CollapsibleContent>
+      <CollapsibleContent>Thirty days, unworn, with the tag attached.</CollapsibleContent>
     </Collapsible>
   ),
 };

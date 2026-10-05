@@ -1,3 +1,5 @@
+'use client';
+
 /* oxlint-disable jsx-a11y/no-noninteractive-element-to-interactive-role, jsx-a11y/prefer-tag-over-role, jsx-a11y/role-has-required-aria-props --
  * `<ul role="listbox">` with `<li role="option">` is the ARIA 1.2 combobox
  * pattern. The native tags these rules suggest cannot be filtered by typing.
@@ -6,6 +8,7 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import type { ComponentProps } from 'react';
 import { cn } from '@/lib/cn';
+import type { NamedPanel } from './aria';
 import { CheckIcon } from './icons';
 
 /**
@@ -58,9 +61,15 @@ export type ComboboxProps = ComponentProps<'div'> & ComboboxOpenState;
  * dismissed: `aria-expanded` has to follow the list, and only a consumer that
  * holds the open state can write it.
  *
+ * **Every `Combobox` part is a client component.** `ComboboxList` and
+ * `ComboboxEmpty` give the popover focus and outside-press handlers of their
+ * own, and a Server Component cannot pass a function. A Server Component file
+ * may still import and place them; they render on the client.
+ *
  * @example
  * <Combobox open={open} onOpenChange={setOpen}>
  *   <ComboboxInput
+ *     aria-label="City"
  *     aria-expanded={open}
  *     aria-controls="city-list"
  *     aria-activedescendant={active ? `city-${active}` : undefined}
@@ -142,6 +151,9 @@ const panelClasses = [
 /**
  * The options. A press anywhere in the list keeps focus in the input, so an
  * option needs no `onMouseDown` of its own to stop the input blurring.
+ *
+ * The name is required: a listbox cannot be named by a `<label>`. The input
+ * can, which is why `ComboboxInput` leaves its own name optional.
  */
 export function ComboboxList({
   className,
@@ -150,7 +162,7 @@ export function ComboboxList({
   container,
   onMouseDown,
   ...props
-}: ComponentProps<'ul'> & PanelProps) {
+}: ComponentProps<'ul'> & PanelProps & NamedPanel) {
   return (
     <PopoverPrimitive.Portal container={container}>
       <PopoverPrimitive.Content asChild side={side} align={align} {...panelBehaviour}>

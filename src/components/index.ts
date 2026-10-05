@@ -16,6 +16,7 @@ export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
 export { CARD_RADIUS_PX, PANEL_RADIUS_PX, PANEL_GLINT_INSET_PX } from '@/lib/radius';
+export { NIGHT_PALETTES } from '@/lib/nights';
 export {
   DescriptionList,
   DescriptionTerm,
@@ -84,7 +85,13 @@ export { textVariants } from './Text.variants';
 export { Stat, StatRow, type StatProps, type StatRowProps } from './Stat';
 export { statVariants } from './Stat.variants';
 export { statRowVariants } from './StatRow.variants';
-export { NavBar, type NavBarProps, type NavItem } from './NavBar';
+export {
+  NavBar,
+  NavBarLink,
+  type NavBarProps,
+  type NavBarLinkProps,
+  type NavItem,
+} from './NavBar';
 export {
   Card,
   CardEyebrow,
@@ -126,6 +133,7 @@ export {
   DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
 } from './DropdownMenu';
 export { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './Tooltip';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
@@ -355,6 +363,8 @@ export {
   ResizableGroup,
   ResizablePanel,
   ResizableHandle,
+  type ResizableGroupProps,
+  type ResizablePanelProps,
   type ResizableHandleProps,
 } from './Resizable';
 

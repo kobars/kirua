@@ -39,6 +39,10 @@ export function List({ className, variant, size, ...props }: ListProps) {
   return (
     <Comp
       data-slot="list"
+      // WebKit drops the list role from a list styled `list-style: none`, so
+      // VoiceOver reads the plain variant as loose lines; the explicit role
+      // keeps it announced as a list.
+      role={variant === 'plain' ? 'list' : undefined}
       className={cn(listVariants({ variant, size }), className)}
       {...props}
     />
@@ -69,10 +73,16 @@ export function ListItem({ className, icon, children, ...props }: ListItemProps)
   return (
     <li data-slot="list-item" className={cn('flex items-start gap-2', className)} {...props}>
       {/* The first line's height, so the icon centres on it however many lines follow. */}
-      <span aria-hidden="true" className="flex h-lh shrink-0 items-center">
+      <span
+        data-slot="list-item-icon"
+        aria-hidden="true"
+        className="flex h-lh shrink-0 items-center"
+      >
         {icon}
       </span>
-      <span className="min-w-0">{children}</span>
+      <span data-slot="list-item-content" className="min-w-0">
+        {children}
+      </span>
     </li>
   );
 }

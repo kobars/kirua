@@ -16,7 +16,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 
 const LIMIT = 280;
 

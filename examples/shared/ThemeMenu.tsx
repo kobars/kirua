@@ -12,7 +12,7 @@ import {
   NightSwatch,
   SunIcon,
   type NightPalette,
-} from 'kirua';
+} from '@kobars/kirua';
 import { NIGHT_PALETTES, useNightPalette } from './useNightPalette';
 import { useTheme, type ThemePreference } from './useTheme';
 import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
@@ -29,15 +29,8 @@ import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
  * is a sun or a moon depending on what the operating system currently says.
  */
 export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
-  const { preference, choose } = useTheme();
+  const { preference, resolved, choose } = useTheme();
   const { palette, choose: choosePalette } = useNightPalette();
-
-  const resolved =
-    preference === 'system'
-      ? matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-      : preference;
 
   return (
     <DropdownMenu>

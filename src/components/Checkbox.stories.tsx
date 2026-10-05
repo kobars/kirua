@@ -40,15 +40,30 @@ export const States: Story = {
           ['indeterminate', 'indeterminate', false],
           ['disabled', false, true],
           ['disabled and checked', true, true],
+          ['disabled and indeterminate', 'indeterminate', true],
         ] as const
       ).map(([label, checked, disabled]) => (
         <div className="flex items-center gap-2" key={label}>
-          <Checkbox {...args} id={`state-${label}`} checked={checked} disabled={disabled} />
-          <Label htmlFor={`state-${label}`}>{label}</Label>
+          <Checkbox
+            {...args}
+            id={`state-${label.replaceAll(' ', '-')}`}
+            checked={checked}
+            disabled={disabled}
+          />
+          <Label htmlFor={`state-${label.replaceAll(' ', '-')}`}>{label}</Label>
         </div>
       ))}
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    // A disabled dash must read like a disabled tick, not vanish into the
+    // disabled field fill.
+    const box = (id: string) => getComputedStyle(canvasElement.querySelector(`#${id}`)!);
+    const checked = box('state-disabled-and-checked');
+    const mixed = box('state-disabled-and-indeterminate');
+    await expect(mixed.backgroundColor).toBe(checked.backgroundColor);
+    await expect(mixed.color).toBe(checked.color);
+  },
 };
 
 export const IndeterminateIsAnnouncedAsMixed: Story = {

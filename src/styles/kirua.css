@@ -71,6 +71,14 @@
   }
 }
 
+/* A selected table row. The consumer writes `data-selected` directly, and
+ * `data-selected={isSelected}` renders `"false"` on every unselected row. */
+@custom-variant data-selected {
+  &:where([data-selected]:not([data-selected='false'])) {
+    @slot;
+  }
+}
+
 /* Radix marks a disabled item inside an overlay with a bare `data-disabled`
  * rather than the `disabled` attribute, because the item is a div and a div
  * cannot be disabled. `:disabled` therefore never matches it, which is a
@@ -222,6 +230,7 @@
   [data-slot='nav-bar'],
   [data-slot='spotlight-panel'],
   [data-slot='dialog-content'],
+  [data-slot='alert-dialog-content'],
   [data-slot='dropdown-menu-content'],
   [data-slot='tooltip-content'] {
     outline: 1px solid CanvasText;
@@ -237,7 +246,8 @@
 
   /* The scrim is a translucent fill, so it is dropped, and the dialog would
      otherwise float over a fully legible page with nothing marking it modal. */
-  [data-slot='dialog-content'] {
+  [data-slot='dialog-content'],
+  [data-slot='alert-dialog-content'] {
     background-color: Canvas;
   }
 

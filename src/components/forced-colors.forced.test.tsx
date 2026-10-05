@@ -2,6 +2,7 @@ import { act } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
 import { Alert } from './Alert';
+import { AlertDialog, AlertDialogContent, AlertDialogTitle } from './AlertDialog';
 import { Badge } from './Badge';
 import { Button } from './Button';
 import { Card } from './Card';
@@ -66,21 +67,40 @@ describe('a surface that reads by fill still reads by edge', () => {
 });
 
 describe('a dialog still reads as modal', () => {
-  it('has its own opaque ground, because the scrim is dropped', () => {
-    const style = styleOf(
-      render(
+  const cases: Array<[string, () => React.ReactElement, string]> = [
+    [
+      'Dialog',
+      () => (
         <Dialog open>
           <DialogContent>
             <DialogTitle>Title</DialogTitle>
           </DialogContent>
-        </Dialog>,
+        </Dialog>
       ),
       '[data-slot="dialog-content"]',
-    );
+    ],
+    [
+      'AlertDialog',
+      () => (
+        <AlertDialog open>
+          <AlertDialogContent>
+            <AlertDialogTitle>Title</AlertDialogTitle>
+          </AlertDialogContent>
+        </AlertDialog>
+      ),
+      '[data-slot="alert-dialog-content"]',
+    ],
+  ];
 
-    expect(hasBoundary(style)).toBe(true);
-    expect(style.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
-  });
+  it.each(cases)(
+    '%s has its own opaque ground, because the scrim is dropped',
+    (_name, element, selector) => {
+      const style = styleOf(render(element()), selector);
+
+      expect(hasBoundary(style)).toBe(true);
+      expect(style.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    },
+  );
 });
 
 describe('a scrollbar thumb still reads', () => {

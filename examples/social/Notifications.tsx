@@ -22,7 +22,7 @@ import {
   ToggleGroupItem,
   UserIcon,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import { initials, notices, people, type Notice } from './data';
 
 const ICON = {

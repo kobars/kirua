@@ -24,7 +24,11 @@
          Blocking on purpose. -->
     <script>
       (() => {
-        const stored = localStorage.getItem('kirua-theme');
+        // Refused storage means no stored choice, so the system decides.
+        let stored = null;
+        try {
+          stored = localStorage.getItem('kirua-theme');
+        } catch {}
         const dark =
           stored === 'dark' ||
           (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
@@ -35,8 +39,8 @@
       // The night palette of dark mode, applied before first paint too, by the
       // rule examples/shared/useNightPalette.ts follows: a valid value in the
       // link wins, else a valid stored one, else navy, which sets no
-      // attribute. A script of its own, so the theme script above throwing on
-      // refused storage cannot stop it.
+      // attribute. A script of its own, so nothing the theme script above does
+      // can stop it.
       (() => {
         const nights = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
         const pick = () => {

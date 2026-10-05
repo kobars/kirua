@@ -36,7 +36,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       source: {
-        code: CommunityCommandsSource.replace("from '@/components'", "from 'kirua'"),
+        code: CommunityCommandsSource.replace("from '@/components'", "from '@kobars/kirua'"),
         language: 'tsx',
       },
     },
@@ -60,7 +60,8 @@ export const Playground: Story = {
     });
     await userEvent.click(trigger);
     await userEvent.type(await body.findByRole('combobox', { name: 'Search commands' }), 'zzz');
-    await expect(body.getByText('No actions match your search.')).toBeVisible();
+    // The palette's dialog is still fading in when the search settles.
+    await waitFor(() => expect(body.getByText('No actions match your search.')).toBeVisible());
     await userEvent.keyboard('{Escape}');
     await waitFor(async () => {
       await expect(trigger).toHaveFocus();
@@ -86,7 +87,7 @@ export const GroupedActions: Story = {
             <UserIcon aria-hidden="true" /> Register a new patient
           </CommandItem>
         </CommandGroup>
-        <CommandGroup heading="Visits">
+        <CommandGroup heading="Upcoming visits">
           <CommandItem id="cmd-visit" shortcut={<Kbd>K</Kbd>}>
             <CalendarIcon aria-hidden="true" /> Book a visit
           </CommandItem>
@@ -97,6 +98,15 @@ export const GroupedActions: Story = {
       </CommandList>
     </Command>
   ),
+  play: async () => {
+    // A heading of two words still names its group: the id behind
+    // `aria-labelledby` is one generated token, not the heading's text.
+    const body = within(document.body);
+    await expect(
+      await body.findByRole('group', { name: 'Upcoming visits' }),
+    ).toBeInTheDocument();
+    await expect(body.getByRole('group', { name: 'Patients' })).toBeInTheDocument();
+  },
 };
 
 export const NoMatches: Story = {

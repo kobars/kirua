@@ -34,3 +34,28 @@ export const Playground: Story = {
 export const OnAProductPage: Story = {
   args: { value: 4.2, children: '· 86 reviews' },
 };
+
+/**
+ * The caller formats the value, as it does for `Price`: a page whose decimal
+ * is a comma passes its own `Intl.NumberFormat` output here.
+ */
+export const FormattedByTheCaller: Story = {
+  args: {
+    value: 4.567,
+    display: new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(4.567),
+    children: '(128)',
+  },
+  play: async ({ canvasElement }) => {
+    const rating = canvasElement.querySelector('[data-slot="rating"]')!;
+    await expect(rating).toHaveTextContent('4.57 out of 5(128)');
+  },
+};
+
+export const NoReviewsYet: Story = {
+  args: { value: Number.NaN, children: '(0)' },
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('[data-slot="rating"]')).not.toHaveTextContent(
+      'NaN',
+    );
+  },
+};

@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   VisuallyHidden,
-} from 'kirua';
+} from '@kobars/kirua';
 import type { Conversation } from './data';
 
 export interface TranscriptProps {

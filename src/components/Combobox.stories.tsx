@@ -37,7 +37,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       source: {
-        code: CityComboboxSource.replace("from '@/components'", "from 'kirua'"),
+        code: CityComboboxSource.replace("from '@/components'", "from '@kobars/kirua'"),
         language: 'tsx',
       },
       description: {

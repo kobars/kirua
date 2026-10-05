@@ -1,11 +1,17 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
+import { configure } from 'storybook/test';
 import { ThemedDocsContainer } from './ThemedDocsContainer';
 import { StorySurface } from './StorySurface';
-import { colourMode, nightPalette } from './theme';
+import { NIGHTS, colourMode, nightPalette } from './theme';
 import { DocsPage } from './DocsPage';
 import { KIRUA_VIEWPORTS } from './viewports';
 import '../src/index.css';
 import './docs.css';
+
+// `waitFor` and `findBy*` return as soon as their check passes, so a longer
+// limit only delays a real failure. The default second is shorter than an
+// exit animation plus focus return on a hosted runner with no GPU.
+configure({ asyncUtilTimeout: 5000 });
 
 const withSurface: Decorator = (Story, context) => (
   <StorySurface
@@ -25,7 +31,7 @@ const preview: Preview = {
   initialGlobals: {
     mode: 'light',
     surface: 'page',
-    nightPalette: 'navy',
+    nightPalette: NIGHTS[0],
   },
   globalTypes: {
     mode: {
@@ -59,13 +65,10 @@ const preview: Preview = {
       toolbar: {
         title: 'Night',
         icon: 'moon',
-        items: [
-          { value: 'navy', title: 'Navy night' },
-          { value: 'graphite', title: 'Graphite' },
-          { value: 'onyx', title: 'Onyx' },
-          { value: 'ink', title: 'Ink' },
-          { value: 'carbon', title: 'Carbon' },
-        ],
+        items: NIGHTS.map((night, index) => {
+          const name = night.charAt(0).toUpperCase() + night.slice(1);
+          return { value: night, title: index === 0 ? `${name} night` : name };
+        }),
         dynamicTitle: true,
       },
     },

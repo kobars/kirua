@@ -14,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
   IconButton,
   Inline,
@@ -38,7 +39,7 @@ import {
   SidebarMenuItem,
   Text,
   type SidebarProps,
-} from 'kirua';
+} from '@kobars/kirua';
 import { allConversations, type Conversation } from './data';
 
 export interface ConversationSidebarProps {
@@ -198,6 +199,11 @@ export function ConversationSidebar({
                               {command.destructive && index > 0 && <DropdownMenuSeparator />}
                               <DropdownMenuItem onSelect={command.run}>
                                 {command.label}
+                                {command.shortcut && (
+                                  <DropdownMenuShortcut>
+                                    {command.shortcut}
+                                  </DropdownMenuShortcut>
+                                )}
                               </DropdownMenuItem>
                             </Fragment>
                           ))}

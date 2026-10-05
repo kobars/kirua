@@ -7,6 +7,7 @@ import {
   IconButton,
   Inline,
   NavBar,
+  NavBarLink,
   SearchIcon,
   Separator,
   SparkleIcon,
@@ -18,16 +19,17 @@ import {
   TooltipTrigger,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { ContactPage } from './ContactPage';
 import { GuidePage } from './GuidePage';
 import { HomePage } from './HomePage';
 import { PricingPage } from './PricingPage';
 import { StoryPage } from './StoryPage';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useHashRoute } from '../shared/useHashRoute';
 
-/** The one route table. `NavBar` takes `href`, so these are written as hashes. */
+/** The one route table. Each `NavBarLink` takes `href`, so these are written as hashes. */
 const ROUTES = [
   { route: '', label: 'Home' },
   { route: 'pricing', label: 'Pricing' },
@@ -47,12 +49,6 @@ const ROUTES = [
 export function App() {
   const [route] = useHashRoute('marketing', '');
 
-  const items = ROUTES.map((item) => ({
-    label: item.label,
-    href: `#/marketing/${item.route}`,
-    current: item.route === route,
-  }));
-
   return (
     <AppShell>
       <Stack as="header" gap={0}>
@@ -62,7 +58,6 @@ export function App() {
               for them, so the primary button renders as the white pill. */}
             <NavBar
               aria-label="Main"
-              items={items}
               actions={
                 <>
                   <Tooltip>
@@ -83,7 +78,17 @@ export function App() {
                   </Visible>
                 </>
               }
-            />
+            >
+              {ROUTES.map((item) => (
+                <NavBarLink
+                  key={item.route}
+                  href={`#/marketing/${item.route}`}
+                  current={item.route === route}
+                >
+                  {item.label}
+                </NavBarLink>
+              ))}
+            </NavBar>
             <Visible from="xl">
               <DotGrid rows={5} cols={5} tone="brand" />
             </Visible>
@@ -91,8 +96,12 @@ export function App() {
         </Container>
       </Stack>
 
-      <AppMain>
-        {route === 'pricing' ? (
+      <AppMain data-route={`marketing/${route}`}>
+        {!ROUTES.some((item) => item.route === route) ? (
+          <Container pad="md">
+            <NotFound name="Aozora" home="#/marketing/" />
+          </Container>
+        ) : route === 'pricing' ? (
           <PricingPage />
         ) : route === 'story' ? (
           <StoryPage />

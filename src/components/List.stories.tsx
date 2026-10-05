@@ -113,6 +113,8 @@ export const PlainIsStillAList: Story = {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('list')).toBeInTheDocument();
+    // Explicit, because WebKit drops the implicit role once the markers go.
+    await expect(canvas.getByRole('list')).toHaveAttribute('role', 'list');
     await expect(canvas.getAllByRole('listitem')).toHaveLength(3);
     await expect(getComputedStyle(canvas.getByRole('list')).listStyleType).toBe('none');
   },

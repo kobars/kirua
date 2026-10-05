@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import {
   AppBody,
   AppHeader,
@@ -45,7 +45,7 @@ import {
   UserIcon,
   Visible,
   Wordmark,
-} from 'kirua';
+} from '@kobars/kirua';
 import { Appointments } from './Appointments';
 import { Lab } from './Lab';
 import { NewVisit } from './NewVisit';
@@ -53,9 +53,12 @@ import { PatientList } from './PatientList';
 import { PatientRecord } from './PatientRecord';
 import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { APPEARANCE } from '../shared/themeLabels';
 import { HOSPITAL, patients } from './data';
+import { useActiveDescendant } from '../shared/useActiveDescendant';
+import { useCommandShortcut } from '../shared/useCommandShortcut';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /** The destinations, grouped the way the hospital is. */
@@ -84,20 +87,10 @@ export function App() {
   const [route, navigate] = useHashRoute('his', '');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [active, setActive] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [railOpen, setRailOpen] = useState(true);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        setPaletteOpen(true);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  useCommandShortcut(setPaletteOpen);
 
   const actions = useMemo(() => {
     const all = [
@@ -116,6 +109,12 @@ export function App() {
     return q === '' ? all : all.filter((a) => a.label.toLowerCase().includes(q));
   }, [query]);
 
+  const { active, activeId, setActive, onKeyDown } = useActiveDescendant({
+    count: actions.length,
+    idOf: (index) => `action-${actions[index]?.id}`,
+    onPick: (index) => run(index),
+  });
+
   const run = (index: number) => {
     const action = actions[index];
     if (!action) return;
@@ -128,6 +127,7 @@ export function App() {
   const record = route.startsWith('patients/')
     ? patients.find((p) => p.mrn === route.slice('patients/'.length))
     : undefined;
+  const known = record !== undefined || nav.some((item) => item.route === route);
 
   /**
    * One list of destinations, rendered twice: as the rail on a wide screen and
@@ -231,10 +231,12 @@ export function App() {
           </Sidebar>
         </AppRail>
 
-        <AppMain>
+        <AppMain data-route={`his/${route}`}>
           <Container width="full" pad="sm">
-            {record ? (
-              <PatientRecord patient={record} />
+            {!known ? (
+              <NotFound name="Larkspur" home="#/his/" />
+            ) : record ? (
+              <PatientRecord key={record.mrn} patient={record} />
             ) : route === 'schedule' ? (
               <Appointments onOpen={(mrn) => navigate(`patients/${mrn}`)} />
             ) : route === 'new-visit' ? (
@@ -261,23 +263,12 @@ export function App() {
           placeholder="Search patients, MRNs or sections…"
           aria-label="Search patients, MRNs or sections"
           aria-controls="his-results"
-          aria-activedescendant={actions[active] ? `action-${actions[active].id}` : undefined}
+          aria-activedescendant={activeId}
           onChange={(event) => {
             setQuery(event.target.value);
             setActive(0);
           }}
-          onKeyDown={(event) => {
-            if (event.key === 'ArrowDown') {
-              event.preventDefault();
-              setActive((i) => Math.min(i + 1, actions.length - 1));
-            } else if (event.key === 'ArrowUp') {
-              event.preventDefault();
-              setActive((i) => Math.max(i - 1, 0));
-            } else if (event.key === 'Enter') {
-              event.preventDefault();
-              run(active);
-            }
-          }}
+          onKeyDown={onKeyDown}
         />
         {actions.length > 0 ? (
           <CommandList id="his-results" aria-label="Results">

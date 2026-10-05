@@ -10,6 +10,7 @@ import {
   menuItemStyles,
   menuLabelStyles,
   menuSeparatorStyles,
+  menuShortcutStyles,
 } from './menu.styles';
 
 /**
@@ -52,7 +53,11 @@ export function ContextMenuContent({
     <ContextMenuPrimitive.Portal container={container}>
       <ContextMenuPrimitive.Content
         data-slot="context-menu-content"
-        className={cn(menuContentStyles, className)}
+        className={cn(
+          menuContentStyles,
+          'origin-(--radix-context-menu-content-transform-origin)',
+          className,
+        )}
         {...props}
       />
     </ContextMenuPrimitive.Portal>
@@ -88,7 +93,10 @@ export function ContextMenuCheckboxItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <ContextMenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
+      <ContextMenuPrimitive.ItemIndicator
+        data-slot="context-menu-checkbox-item-indicator"
+        className={menuIndicatorStyles}
+      >
         <CheckIcon />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
@@ -107,8 +115,11 @@ export function ContextMenuRadioItem({
       className={cn(menuIndicatorItemStyles, className)}
       {...props}
     >
-      <ContextMenuPrimitive.ItemIndicator className={menuIndicatorStyles}>
-        <span className="size-2 rounded-pill bg-fg" />
+      <ContextMenuPrimitive.ItemIndicator
+        data-slot="context-menu-radio-item-indicator"
+        className={menuIndicatorStyles}
+      >
+        <span data-slot="context-menu-radio-item-dot" className="size-2 rounded-pill bg-fg" />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
     </ContextMenuPrimitive.RadioItem>
@@ -149,7 +160,7 @@ export function ContextMenuShortcut({ className, ...props }: ComponentProps<'spa
   return (
     <span
       data-slot="context-menu-shortcut"
-      className={cn('ms-auto ps-4 font-text text-caption text-fg-muted', className)}
+      className={cn(menuShortcutStyles, className)}
       {...props}
     />
   );

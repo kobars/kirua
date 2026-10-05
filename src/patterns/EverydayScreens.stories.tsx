@@ -28,7 +28,7 @@ export const CreatorClub: Story = {
   parameters: {
     docs: {
       source: {
-        code: CreatorClubExampleSource.replace("from '@/components'", "from 'kirua'"),
+        code: CreatorClubExampleSource.replace("from '@/components'", "from '@kobars/kirua'"),
         language: 'tsx',
       },
       description: {
@@ -55,7 +55,10 @@ export const CheckoutDetails: Story = {
   parameters: {
     docs: {
       source: {
-        code: CheckoutDetailsExampleSource.replace("from '@/components'", "from 'kirua'"),
+        code: CheckoutDetailsExampleSource.replace(
+          "from '@/components'",
+          "from '@kobars/kirua'",
+        ),
         language: 'tsx',
       },
       description: {

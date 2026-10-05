@@ -114,4 +114,38 @@ describe('the public composition hydrates', () => {
       container?.querySelectorAll('[data-slot="calendar-day"][tabindex="0"]'),
     ).toHaveLength(1);
   });
+
+  it('hydrates a calendar with no `today` on a different day than the server rendered', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const recoverableErrors: unknown[] = [];
+    const month = <kirua.Calendar month={new Date(2026, 2, 1)} />;
+    vi.useFakeTimers({ toFake: ['Date'] });
+
+    try {
+      // A server one side of midnight, a browser the other.
+      vi.setSystemTime(new Date(2026, 2, 12, 23, 30));
+      container = document.createElement('div');
+      container.innerHTML = renderToString(month);
+      document.body.appendChild(container);
+
+      vi.setSystemTime(new Date(2026, 2, 13, 0, 30));
+      await act(async () => {
+        root = hydrateRoot(container as HTMLDivElement, month, {
+          onRecoverableError: (error) => recoverableErrors.push(error),
+        });
+        await Promise.resolve();
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(recoverableErrors).toEqual([]);
+    expect(consoleError).not.toHaveBeenCalled();
+    expect(container.querySelector('[aria-current]')).toBeNull();
+    // Nothing selected and no today: the stop is the first day of the month.
+    expect(container.querySelector('[data-slot="calendar-day"][tabindex="0"]')).toHaveAttribute(
+      'data-date',
+      '2026-03-01',
+    );
+  });
 });

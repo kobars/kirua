@@ -59,31 +59,38 @@ export const Playground: Story = {
 export const InAField: Story = {
   render: (args) => (
     <div className="w-72">
-      <Field controlId="clinic" label="Clinic" description="Where the visit is booked.">
-        <Select {...args}>
-          <SelectTrigger id="clinic">
+      <Select {...args}>
+        <Field controlId="clinic" label="Clinic" description="Where the visit is booked.">
+          <SelectTrigger>
             <SelectValue placeholder="Choose a clinic" />
           </SelectTrigger>
-          <SelectContent aria-label="Clinic">
-            <SelectGroup>
-              <SelectLabel>General</SelectLabel>
-              <SelectItem value="general">General practice</SelectItem>
-              <SelectItem value="paediatrics">Paediatrics</SelectItem>
-            </SelectGroup>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>Specialist</SelectLabel>
-              <SelectItem value="dental">Dental</SelectItem>
-              <SelectItem value="ophthalmology">Ophthalmology</SelectItem>
-              <SelectItem value="cardiology" disabled>
-                Cardiology — full today
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </Field>
+        </Field>
+        <SelectContent aria-label="Clinic">
+          <SelectGroup>
+            <SelectLabel>General</SelectLabel>
+            <SelectItem value="general">General practice</SelectItem>
+            <SelectItem value="paediatrics">Paediatrics</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Specialist</SelectLabel>
+            <SelectItem value="dental">Dental</SelectItem>
+            <SelectItem value="ophthalmology">Ophthalmology</SelectItem>
+            <SelectItem value="cardiology" disabled>
+              Cardiology — full today
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    // The Field sits inside the Select: around it, the id and the description
+    // would land on a root that renders no element and be dropped.
+    const trigger = within(canvasElement).getByRole('combobox', { name: 'Clinic' });
+    await expect(trigger).toHaveAttribute('id', 'clinic');
+    await expect(trigger).toHaveAccessibleDescription('Where the visit is booked.');
+  },
 };
 
 export const ChooseWithTheKeyboard: Story = {
