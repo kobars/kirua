@@ -25,6 +25,14 @@ export const itemGroupVariants = cva('flex flex-col', {
        */
       outlined:
         'overflow-hidden rounded-lg border border-line-subtle **:data-[slot=item]:rounded-none',
+      /**
+       * A list whose rows run to the edges of the surface it sits in — a
+       * pane, a card with no padding — with no edge of its own. Its rows are
+       * square for the reason given above: a selected or hovered row is a
+       * band from edge to edge, and rounded ends would leave notches against
+       * the surface's edge and the separators.
+       */
+      flush: '**:data-[slot=item]:rounded-none',
     },
   },
   defaultVariants: { variant: 'plain' },

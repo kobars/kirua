@@ -66,7 +66,7 @@ export function Messages() {
   const list = (
     <Pane height="fill">
       <PaneBody>
-        <ItemGroup>
+        <ItemGroup variant="flush">
           {threads.map((thread, index) => {
             const person = people[thread.handle];
             const last = thread.messages[thread.messages.length - 1];
