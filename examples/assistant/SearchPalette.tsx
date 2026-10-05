@@ -8,6 +8,7 @@ import {
   CommandList,
   Kbd,
 } from 'kirua';
+import { useActiveDescendant } from '../shared/useActiveDescendant';
 import { allConversations as conversations } from './data';
 
 export interface SearchPaletteProps {
@@ -19,7 +20,6 @@ export interface SearchPaletteProps {
 /** kirua supplies the parts and the ARIA; the filtering lives here. */
 export function SearchPalette({ open, onOpenChange, onPick }: SearchPaletteProps) {
   const [query, setQuery] = useState('');
-  const [active, setActive] = useState(0);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -27,6 +27,12 @@ export function SearchPalette({ open, onOpenChange, onPick }: SearchPaletteProps
       ? conversations
       : conversations.filter((c) => c.title.toLowerCase().includes(q));
   }, [query]);
+
+  const { active, activeId, setActive, onKeyDown } = useActiveDescendant({
+    count: matches.length,
+    idOf: (index) => `result-${matches[index]?.id}`,
+    onPick: (index) => choose(index),
+  });
 
   const choose = (index: number) => {
     const match = matches[index];
@@ -44,23 +50,12 @@ export function SearchPalette({ open, onOpenChange, onPick }: SearchPaletteProps
         placeholder="Search conversations…"
         aria-label="Search conversations"
         aria-controls="search-results"
-        aria-activedescendant={matches[active] ? `result-${matches[active].id}` : undefined}
+        aria-activedescendant={activeId}
         onChange={(event) => {
           setQuery(event.target.value);
           setActive(0);
         }}
-        onKeyDown={(event) => {
-          if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            setActive((i) => Math.min(i + 1, matches.length - 1));
-          } else if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            setActive((i) => Math.max(i - 1, 0));
-          } else if (event.key === 'Enter') {
-            event.preventDefault();
-            choose(active);
-          }
-        }}
+        onKeyDown={onKeyDown}
       />
 
       {matches.length > 0 ? (

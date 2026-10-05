@@ -24,6 +24,7 @@ import { GuidePage } from './GuidePage';
 import { HomePage } from './HomePage';
 import { PricingPage } from './PricingPage';
 import { StoryPage } from './StoryPage';
+import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useHashRoute } from '../shared/useHashRoute';
 
@@ -91,8 +92,12 @@ export function App() {
         </Container>
       </Stack>
 
-      <AppMain>
-        {route === 'pricing' ? (
+      <AppMain data-route={`marketing/${route}`}>
+        {!ROUTES.some((item) => item.route === route) ? (
+          <Container pad="md">
+            <NotFound name="Aozora" home="#/marketing/" />
+          </Container>
+        ) : route === 'pricing' ? (
           <PricingPage />
         ) : route === 'story' ? (
           <StoryPage />

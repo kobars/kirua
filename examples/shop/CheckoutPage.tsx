@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AlertDescription,
@@ -257,6 +257,19 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
                 <Heading as="h2" size="body-md">
                   Summary
                 </Heading>
+                <Separator />
+                <DescriptionList>
+                  {lines.map(({ product, size, quantity }) => (
+                    <Fragment key={`${product.id}-${size}`}>
+                      <DescriptionTerm>
+                        {product.name} ({size}) × {quantity}
+                      </DescriptionTerm>
+                      <DescriptionDetails numeric>
+                        {idr(product.price * quantity)}
+                      </DescriptionDetails>
+                    </Fragment>
+                  ))}
+                </DescriptionList>
                 <Separator />
                 <DescriptionList>
                   <DescriptionTerm>Subtotal</DescriptionTerm>

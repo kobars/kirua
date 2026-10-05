@@ -15,6 +15,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
+import ts from 'typescript';
 
 export const REPO = path.join(import.meta.dirname, '..');
 
@@ -25,17 +26,32 @@ export const EXAMPLES = path.join(REPO, 'examples');
 export const DIST = path.join(EXAMPLES, 'dist');
 
 /**
- * Every route each section can show, without the section's prefix. `hub` is
- * the page at `#/`, which belongs to no section and has no prefix.
- *
- * Adding a route here adds it to every tool.
+ * The app's own list of sections, `examples/sections.ts`, read rather than
+ * restated: the ids, names and titles the tools use are the ones the app
+ * renders. It imports nothing, so its compiled text is a complete module.
  */
-export const SECTIONS = [
-  { section: 'hub', prefix: '', routes: [''] },
-  {
-    section: 'shop',
-    prefix: 'shop/',
-    routes: [
+const sectionsSource = await readFile(path.join(EXAMPLES, 'sections.ts'), 'utf8');
+const { SECTIONS: APP_SECTIONS, HUB_TITLE } = await import(
+  `data:text/javascript,${encodeURIComponent(
+    ts.transpileModule(sectionsSource, {
+      compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+    }).outputText,
+  )}`
+);
+
+/** Each section as the app declares it: `id`, `name`, `kind`, `title`, `summary`. */
+export { APP_SECTIONS, HUB_TITLE };
+
+/**
+ * Every route each section can show, without the section's prefix: one of each
+ * screen, and more than one where a screen's layout depends on its record.
+ * Routes that name a record by id fail the walk once the id stops existing,
+ * because the section then shows its not-found screen.
+ */
+const ROUTES = new Map([
+  [
+    'shop',
+    [
       '',
       'products/round-glasses',
       'products/denim-jacket',
@@ -45,11 +61,10 @@ export const SECTIONS = [
       'sign-in',
       'checkout',
     ],
-  },
-  {
-    section: 'his',
-    prefix: 'his/',
-    routes: [
+  ],
+  [
+    'his',
+    [
       '',
       'patients',
       'schedule',
@@ -59,39 +74,39 @@ export const SECTIONS = [
       'patients/20418801',
       'patients/20418803',
     ],
-  },
-  {
-    section: 'social',
-    prefix: 'social/',
-    routes: [
-      '',
-      'explore',
-      'notifications',
-      'messages',
-      'profile/rin',
-      'profile/maya',
-      'profile/eko',
-    ],
-  },
-  {
-    section: 'assistant',
-    prefix: 'assistant/',
-    routes: [
-      '',
-      'tokens',
-      'contrast',
-      'rtl',
-      'forced-colors',
-      'dead-classes',
-      'overlays',
-      'usage',
-    ],
-  },
-  {
-    section: 'marketing',
-    prefix: 'marketing/',
-    routes: ['', 'pricing', 'story', 'guide', 'contact'],
-  },
+  ],
+  [
+    'social',
+    ['', 'explore', 'notifications', 'messages', 'profile/rin', 'profile/maya', 'profile/eko'],
+  ],
+  [
+    'assistant',
+    ['', 'tokens', 'contrast', 'rtl', 'forced-colors', 'dead-classes', 'overlays', 'usage'],
+  ],
+  ['marketing', ['', 'pricing', 'story', 'guide', 'contact']],
+]);
+
+// A section the app has and this table does not would go unvisited by every
+// tool while each of them reported success, so the mismatch is fatal.
+const appIds = APP_SECTIONS.map((section) => section.id);
+const unvisited = appIds.filter((id) => !ROUTES.has(id));
+const unknown = [...ROUTES.keys()].filter((id) => !appIds.includes(id));
+if (unvisited.length > 0 || unknown.length > 0) {
+  throw new Error(
+    `tools/example-apps.mjs: the route table and examples/sections.ts disagree. ` +
+      `No routes for: ${unvisited.join(', ') || 'none'}. No such section: ${unknown.join(', ') || 'none'}.`,
+  );
+}
+
+/**
+ * Every section's routes, in the order the hub lists the sections. `hub` is
+ * the page at `#/`, which belongs to no section and has no prefix.
+ *
+ * Adding a route here adds it to every tool.
+ */
+export const SECTIONS = [
+  { section: 'hub', prefix: '', routes: [''] },
+  ...appIds.map((id) => ({ section: id, prefix: `${id}/`, routes: ROUTES.get(id) })),
 ];
 
 /** How many route views the whole sweep covers, for a tool's summary line. */
@@ -131,25 +146,65 @@ export function serve(root = DIST, { compress = false } = {}) {
 }
 
 /**
- * Opens a route and waits until its section has rendered.
+ * Opens a route and waits until the screen for that route has rendered, and
+ * throws if it does not.
  *
- * A section is a lazily loaded chunk, so `load` can fire before it arrives;
- * the loading state carries `data-section-loading` until it does. Entering a
- * different section starts from a blank page, so each section is measured in
- * a fresh document, as a visitor arriving by its link would see it, rather
- * than in whatever the previous section left behind.
+ * Every screen marks its `main` with `data-route`, the path after `#/`, so the
+ * wait is for this route's screen and not for whatever is already on the page:
+ * within a section a hash change keeps the previous screen until React renders
+ * the next. A section is a lazily loaded chunk, so the mark also waits out the
+ * download. A stale route — a record id that no longer exists — lands on the
+ * section's not-found screen, and a section that fails to load lands on its
+ * error screen; both are failures, not screens to sweep.
+ *
+ * Entering a different section starts from a blank page, so each section is
+ * measured in a fresh document, as a visitor arriving by its link would see
+ * it, rather than in whatever the previous section left behind.
  */
-export async function open(page, url) {
-  const section = (href) => new URL(href).hash.replace(/^#\/?/, '').split('/')[0];
+export async function open(page, url, { timeout = 10_000 } = {}) {
+  const pathOf = (href) => new URL(href).hash.replace(/^#\/?/, '');
+  const section = (href) => pathOf(href).split('/')[0];
   if (page.url() === 'about:blank' || section(page.url()) !== section(url)) {
     await page.goto('about:blank');
   }
   await page.goto(url, { waitUntil: 'load' });
-  await page.waitForFunction(
-    () =>
-      document.querySelector('[data-section-loading]') === null &&
-      document.querySelector('#root > *') !== null,
+  const route = pathOf(url);
+  const screen = `[data-route="${route}"]`;
+  try {
+    await page.waitForFunction(
+      (selector) =>
+        document.querySelector(selector) !== null ||
+        document.querySelector('[data-section-error]') !== null,
+      screen,
+      { timeout },
+    );
+  } catch {
+    throw new Error(`#/${route}: no screen marked data-route="${route}" rendered`);
+  }
+  const state = await page.evaluate(
+    (selector) =>
+      document.querySelector('[data-section-error]')
+        ? 'error'
+        : document.querySelector(`${selector} [data-not-found]`)
+          ? 'not-found'
+          : 'ok',
+    screen,
   );
+  if (state === 'error') throw new Error(`#/${route}: the section failed to load`);
+  if (state === 'not-found')
+    throw new Error(`#/${route}: the section has no screen for this route (stale id?)`);
+  // The screen is in the document; let its effects run and any entrance
+  // animation finish, so nothing is measured mid-fade. Endless animations — a
+  // spinner, a skeleton's pulse — are not waited for.
+  await page.evaluate(async () => {
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => {})),
+    );
+  });
 }
 
 /**

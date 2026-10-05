@@ -3,6 +3,10 @@
  *
  * Each `id` is the first segment of the section's routes — `#/shop/orders` —
  * and `title` is the document title while the section is open.
+ *
+ * `tools/example-apps.mjs` reads this file too, so every check walks exactly
+ * these sections. It compiles the file on its own, which is why it imports
+ * nothing.
  */
 export type SectionId = 'shop' | 'his' | 'social' | 'assistant' | 'marketing';
 

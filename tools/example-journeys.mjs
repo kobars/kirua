@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
-import { SECTIONS, open, serve } from './example-apps.mjs';
+import { APP_SECTIONS, HUB_TITLE, SECTIONS, open, serve } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const axe = await readFile(require.resolve('axe-core/axe.min.js'), 'utf8');
@@ -46,14 +46,13 @@ async function audit(page, label) {
     `${label}: overflow`,
   );
 }
-/** The hub's cards, and the document title each section sets. */
-const HUB_LINKS = [
-  { section: 'shop', title: 'Dusk — a kirua example' },
-  { section: 'his', title: 'Larkspur — a kirua example' },
-  { section: 'social', title: 'Commons — a kirua example' },
-  { section: 'assistant', title: 'Lumen — a kirua example' },
-  { section: 'marketing', title: 'Aozora — a kirua example' },
-];
+/** Where focus is, as the tag and text of the focused element. */
+async function focused(page) {
+  return page.evaluate(() => ({
+    tag: document.activeElement?.tagName,
+    text: document.activeElement?.textContent?.trim(),
+  }));
+}
 const server = await serve();
 try {
   for (const { section: slug, prefix } of SECTIONS) {
@@ -69,17 +68,16 @@ try {
         const errors = [];
         page.on('pageerror', (error) => errors.push(error.message));
         const base = `http://127.0.0.1:${server.address().port}/#/${prefix}`;
-        const go = async (route = '') => {
-          await open(page, base + route);
-          await page.waitForTimeout(150);
-        };
+        const go = (route = '') => open(page, base + route);
         if (slug === 'hub') {
           // Each card opens its section, which loads its own chunk, names
           // the document, and starts at the top of the page.
-          for (const { section, title } of HUB_LINKS) {
+          for (const { id: section, name, title } of APP_SECTIONS) {
             await go();
-            await page.mouse.wheel(0, 2000);
-            await page.getByRole('link', { name: `Open ${title.split(' — ')[0]}` }).click();
+            // Scrolled at once rather than by the wheel, whose smooth scroll
+            // can still be moving the page after the section has opened.
+            await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+            await page.getByRole('link', { name: `Open ${name}` }).click();
             await eventually(async () => assert.equal(await page.title(), title));
             await page.waitForFunction(
               () => document.querySelector('[data-section-loading]') === null,
@@ -89,7 +87,7 @@ try {
             await visible(page.getByRole('main'));
           }
           await go();
-          assert.equal(await page.title(), 'Kirua examples');
+          assert.equal(await page.title(), HUB_TITLE);
         } else if (slug === 'marketing') {
           await go('contact');
           await page.getByRole('button', { name: 'Send message' }).click();
@@ -107,9 +105,20 @@ try {
           await page.getByRole('button', { name: 'Send message' }).click();
           await visible(page.getByText('Demo message received'));
         } else if (slug === 'shop') {
+          // An address with no screen says so, rather than showing the
+          // catalogue in its place.
+          await page.goto(`${base}products/no-such-product`);
+          await visible(page.getByRole('heading', { level: 1, name: 'Page not found' }));
+          await eventually(async () =>
+            assert.equal(await page.title(), 'Page not found · Dusk — a kirua example'),
+          );
           await go('checkout');
           await visible(page.getByText('Your cart is empty', { exact: true }));
           await go('products/round-glasses');
+          // A route change inside a section behaves like a page load: the
+          // title names the new screen and focus is on its heading.
+          assert.equal(await page.title(), 'Round Glasses · Dusk — a kirua example');
+          assert.deepEqual(await focused(page), { tag: 'H1', text: 'Round Glasses' });
           await page.getByRole('button', { name: 'Increase quantity', exact: true }).click();
           assert.equal(await page.getByText('Added to cart', { exact: true }).count(), 0);
           await page.getByRole('button', { name: 'Decrease quantity', exact: true }).click();
@@ -132,9 +141,12 @@ try {
             .locator('[data-slot="carousel"]')
             .evaluate((el) => getComputedStyle(el).scrollBehavior);
           assert.equal(scrollBehavior, width === 700 ? 'auto' : 'smooth');
+          // The size chosen is the size in the cart.
+          await page.getByRole('radio', { name: 'M', exact: true }).click();
           await page.getByRole('button', { name: /Add to cart/i }).click();
           await page.getByRole('button', { name: 'Cart', exact: true }).click();
           await visible(page.getByRole('dialog'));
+          await visible(page.getByRole('dialog').getByText(/^Size M · /));
           const animation = await page.getByRole('dialog').evaluate((el) => ({
             name: getComputedStyle(el).animationName,
             duration: getComputedStyle(el).animationDuration,
@@ -173,6 +185,20 @@ try {
           await page.getByRole('button', { name: 'Pay', exact: true }).click();
           await visible(page.getByText('Order received', { exact: true }));
           assert.equal(await page.getByRole('button', { name: 'Pay', exact: true }).count(), 0);
+          if (width === 1280) {
+            // The empty result's way out clears what emptied it, here the
+            // header search, and the whole catalogue is back — every product,
+            // the dearest included.
+            await go();
+            await page.getByRole('textbox', { name: 'Search products' }).fill('zzz');
+            await visible(page.getByText('Nothing matches', { exact: true }));
+            await page.getByRole('button', { name: 'Reset filters', exact: true }).click();
+            await visible(page.getByRole('heading', { level: 1, name: 'Catalogue (24)' }));
+            assert.equal(
+              await page.getByRole('textbox', { name: 'Search products' }).inputValue(),
+              '',
+            );
+          }
           await go('sign-in');
           const phone = page.getByLabel('Phone number');
           await phone.fill('812 3456 7890');

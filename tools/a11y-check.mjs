@@ -181,9 +181,6 @@ for (const { name: theme, scheme, night, widths } of THEMES) {
 
     await eachRoute(async ({ section, label, url }) => {
       await open(page, url);
-      // A hash change does not reload the document, so React needs a frame to
-      // render the new route before axe walks the tree.
-      await page.waitForTimeout(250);
       if (
         night &&
         (await page.evaluate(() => document.documentElement.dataset.nightPalette)) !== night
