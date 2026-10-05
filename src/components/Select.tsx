@@ -17,7 +17,7 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from './icons';
  * @example
  * <Select defaultValue="general">
  *   <SelectTrigger aria-label="Clinic"><SelectValue /></SelectTrigger>
- *   <SelectContent>
+ *   <SelectContent aria-label="Clinics">
  *     <SelectItem value="general">General practice</SelectItem>
  *     <SelectItem value="dental">Dental</SelectItem>
  *   </SelectContent>
@@ -38,7 +38,7 @@ export const SelectGroup = SelectPrimitive.Group;
  *   <Field controlId="ward" label="Ward">
  *     <SelectTrigger width="xs"><SelectValue /></SelectTrigger>
  *   </Field>
- *   <SelectContent>…</SelectContent>
+ *   <SelectContent aria-label="Wards">…</SelectContent>
  * </Select>
  */
 export function SelectTrigger({

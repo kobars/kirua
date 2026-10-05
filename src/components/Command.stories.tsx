@@ -86,7 +86,7 @@ export const GroupedActions: Story = {
             <UserIcon aria-hidden="true" /> Register a new patient
           </CommandItem>
         </CommandGroup>
-        <CommandGroup heading="Visits">
+        <CommandGroup heading="Upcoming visits">
           <CommandItem id="cmd-visit" shortcut={<Kbd>K</Kbd>}>
             <CalendarIcon aria-hidden="true" /> Book a visit
           </CommandItem>
@@ -97,6 +97,15 @@ export const GroupedActions: Story = {
       </CommandList>
     </Command>
   ),
+  play: async () => {
+    // A heading of two words still names its group: the id behind
+    // `aria-labelledby` is one generated token, not the heading's text.
+    const body = within(document.body);
+    await expect(
+      await body.findByRole('group', { name: 'Upcoming visits' }),
+    ).toBeInTheDocument();
+    await expect(body.getByRole('group', { name: 'Patients' })).toBeInTheDocument();
+  },
 };
 
 export const NoMatches: Story = {
