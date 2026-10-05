@@ -56,8 +56,8 @@ export function SettingsDialog({ trigger, theme, onThemeChange }: SettingsDialog
           </Stack>
 
           {/* Three states, not a switch: "system" is a real choice and a
-              two-position control cannot say it. The same value backs the
-              header menu — one owner, one key. */}
+              two-position control cannot say it. The value comes from the
+              same store as the header menu's, so the two always agree. */}
           <FieldSet>
             <FieldLegend>Appearance</FieldLegend>
             <RadioGroup
