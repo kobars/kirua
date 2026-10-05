@@ -8,11 +8,6 @@
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "pnpm": ">=10"
   },
-  "pnpm": {
-    "overrides": {
-      "valibot": "^1.4.2"
-    }
-  },
   "browserslist": [
     "chrome >= 120",
     "edge >= 120",
