@@ -1,3 +1,4 @@
+import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import type { VariantProps } from '@/lib/cva';
@@ -15,6 +16,14 @@ export interface ToastViewportProps extends ComponentProps<'section'> {
  * toasts inside it are not. A live region must exist in the document *before*
  * a message is inserted, or the insertion is often not announced. Render this
  * once, empty, in the application shell.
+ *
+ * A toast often reports on something done in a dialog that is still open, so
+ * the viewport stays usable beside a modal one. `aria-live` keeps it exposed
+ * while the modal hides the rest of the page from assistive technology, and
+ * it is a branch of Radix's dismissable layer, so a click on a toast is not a
+ * click outside the dialog and does not close it. Keyboard focus stays trapped
+ * in the dialog until it closes, so a toast must never be the only way to
+ * finish a task started there.
  *
  * @example
  * // In the application shell, once:
@@ -36,16 +45,19 @@ export function ToastViewport({
   ...props
 }: ToastViewportProps) {
   return (
-    <section
-      data-slot="toast-viewport"
-      aria-label={label}
-      className={cn(
-        'pointer-events-none fixed inset-e-0 bottom-0 z-toast',
-        'flex w-full max-w-100 flex-col gap-3 p-4',
-        className,
-      )}
-      {...props}
-    />
+    <DismissableLayerBranch asChild>
+      <section
+        data-slot="toast-viewport"
+        aria-label={label}
+        aria-live="polite"
+        className={cn(
+          'pointer-events-none fixed inset-e-0 bottom-0 z-toast',
+          'flex w-full max-w-100 flex-col gap-3 p-4',
+          className,
+        )}
+        {...props}
+      />
+    </DismissableLayerBranch>
   );
 }
 
@@ -64,8 +76,11 @@ export interface ToastProps extends ComponentProps<'div'>, VariantProps<typeof t
 }
 
 /**
- * One message. `role` follows the status: `alert` interrupts a screen reader,
- * `status` waits for a pause, so only `danger` interrupts.
+ * One message. Only `danger` takes a role of its own, `alert`, which
+ * interrupts a screen reader. The others are read by the viewport's polite
+ * live region when they arrive; a `status` role here would be a second live
+ * region inside the first, inserted already filled, which is the insertion
+ * that often goes unannounced.
  *
  * Dismissal is the consumer's. Do not auto-dismiss a `danger` toast that is the
  * only copy of the error.
@@ -74,7 +89,7 @@ export function Toast({ className, status, icon, close, children, ...props }: To
   return (
     <div
       data-slot="toast"
-      role={status === 'danger' ? 'alert' : 'status'}
+      role={status === 'danger' ? 'alert' : undefined}
       className={cn(toastVariants({ status }), className)}
       {...props}
     >

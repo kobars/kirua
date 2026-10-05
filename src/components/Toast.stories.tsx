@@ -72,19 +72,24 @@ export const AnchoredToTheCorner: Story = {
 
 export const OnlyFailureInterrupts: Story = {
   render: (args) => (
-    <div className="grid max-w-100 gap-3">
-      <Toast {...args} status="success">
-        <ToastTitle>Saved</ToastTitle>
-      </Toast>
-      <Toast {...args} status="danger">
-        <ToastTitle>Payment declined</ToastTitle>
-      </Toast>
+    <div className="relative min-h-72">
+      <ToastViewport data-testid="viewport">
+        <Toast {...args} status="success" data-testid="success">
+          <ToastTitle>Saved</ToastTitle>
+        </Toast>
+        <Toast {...args} status="danger">
+          <ToastTitle>Payment declined</ToastTitle>
+        </Toast>
+      </ToastViewport>
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('status')).toHaveTextContent('Saved');
+    // The viewport is the polite live region, present before any toast is.
+    await expect(canvas.getByTestId('viewport')).toHaveAttribute('aria-live', 'polite');
+    // A toast inside it is not a second region, or it would announce twice.
+    await expect(canvas.getByTestId('success')).not.toHaveAttribute('role');
     await expect(canvas.getByRole('alert')).toHaveTextContent('Payment declined');
   },
 };
