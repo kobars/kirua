@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Opens every route of the example app at five widths and fails on either of
+ * Opens every route of the example app at six widths and fails on either of
  * two defects: a page that scrolls sideways, or a control too small to hit
  * with a finger.
  *
@@ -8,19 +8,23 @@
  * one component. They cannot catch a shell whose sticky header is wider than
  * the viewport, or a table that scrolls its page instead of itself.
  *
- * ## Why five widths and not one
+ * ## Why six widths and not one
  *
  * A single width tests the size a phone *usually* is and none of the sizes
  * where a layout actually changes. A responsive shell does not stretch — it
- * swaps at a breakpoint, and a swap is where a layout breaks. The five widths
- * here are each a distinct question:
+ * swaps at a breakpoint, and a swap is where a layout breaks. Between two
+ * breakpoints the layout is the same and only the room changes, so the width
+ * that has the least room for a layout is the breakpoint that switches it on.
+ * The breakpoints are read from the tokens, so they follow a retuned one:
  *
  *   - **320** — the real floor. A Galaxy Fold's cover screen and an iPhone SE
  *     in a larger text size both land here, and 55 pixels below 375 is enough
  *     to overrun a row of `shrink-0` buttons that fits at 375.
  *   - **375** — the most common phone width.
- *   - **768** — `md`. Rails expand, drawers become sidebars.
- *   - **1024** — `lg`. The second column appears.
+ *   - **`sm`** — a row that `Visible from="sm"` reveals appears here, with the
+ *     least room it will ever have.
+ *   - **`md`** — rails expand, drawers become sidebars.
+ *   - **`lg`** — the second column appears.
  *   - **1440** — a laptop. Catches a `max-w` that was never set, so a line of
  *     text runs the full width of the screen.
  *
@@ -32,8 +36,9 @@
  *
  * **Target size** is WCAG 2.5.8 (AA, 2.2): an interactive control must be at
  * least 24x24 CSS pixels, unless another target's centre is 24 pixels away or
- * it is an inline link in a sentence. Checked at the two phone widths only,
- * because the criterion is about a finger and a pointer is exempt. It is a
+ * it is an inline link in a sentence. Checked below `md` only — two phones
+ * and a phone on its side — because the criterion is about a finger and a
+ * pointer is exempt. It is a
  * separate assertion from sideways scroll because the fixes are opposite: a
  * layout that overflows is usually fixed by making something smaller, and this
  * is fixed by making something bigger.
@@ -41,13 +46,15 @@
  *     pnpm build:examples && node tools/responsive-check.mjs
  */
 import { chromium } from 'playwright';
+import { breakpointPx } from './breakpoints.mjs';
 import { eachRoute, open, ROUTE_COUNT } from './example-apps.mjs';
 
 const WIDTHS = [
   { width: 320, height: 812, phone: true },
   { width: 375, height: 812, phone: true },
-  { width: 768, height: 1024, phone: false },
-  { width: 1024, height: 800, phone: false },
+  { width: breakpointPx('sm'), height: 360, phone: true },
+  { width: breakpointPx('md'), height: 1024, phone: false },
+  { width: breakpointPx('lg'), height: 800, phone: false },
   { width: 1440, height: 900, phone: false },
 ];
 

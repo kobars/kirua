@@ -27,7 +27,7 @@
  * check half of the shipped design.
  *
  * Dark mode is five night palettes, each re-pointing the page, the card and
- * the lines. The default night runs at both widths like light mode; the other
+ * the lines. The default night runs at every width like light mode; the other
  * four run at desktop width, because a night changes colours and not the tree.
  *
  *     pnpm build:examples && node tools/a11y-check.mjs
@@ -36,6 +36,7 @@ import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
+import { breakpointPx } from './breakpoints.mjs';
 import { SECTIONS, eachRoute, open } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
@@ -45,18 +46,19 @@ const AXE_SOURCE = await readFile(
 );
 
 /**
- * The widths worth an axe run, and why two and not one.
+ * The widths worth an axe run, and why three and not one.
  *
- * A responsive shell does not resize — it *swaps*. `Sidebar` collapses to a rail
- * of icons, a `TabsList` becomes a `Select`, a row of buttons folds into a
- * menu. The narrow tree and the wide tree are different documents, so a name
- * that goes missing on the rail is invisible to a desktop-only run: a rail
- * whose labels are `hidden` rather than `sr-only` loses every accessible name,
- * and only the narrow run sees it.
+ * A responsive shell does not resize — it *swaps*. A rail becomes a drawer, a
+ * `TabsList` becomes a `Select`, a row that `Visible from="sm"` hides on a
+ * phone appears beside the others. Each side of a switch is a different
+ * document, and a name that goes missing on one side is invisible to a run on
+ * the other. `sm` sits between the phone and `md`, where the `sm` switches are
+ * on and the `md` ones are still off.
  */
 const WIDTHS = [
-  { name: 'phone', width: 375, height: 812 },
-  { name: 'desktop', width: 1280, height: 900 },
+  { name: 'phone', width: 375, height: 812, touch: true },
+  { name: 'sm', width: breakpointPx('sm'), height: 800, touch: true },
+  { name: 'desktop', width: 1280, height: 900, touch: false },
 ];
 
 const THEMES = [
@@ -91,8 +93,8 @@ for (const { name: theme, scheme, night, widths } of THEMES) {
       viewport: { width: size.width, height: size.height },
       deviceScaleFactor: 1,
       colorScheme: scheme,
-      isMobile: size.name === 'phone',
-      hasTouch: size.name === 'phone',
+      isMobile: size.touch,
+      hasTouch: size.touch,
     });
     // The host document's blocking script reads the stored night before paint.
     if (night)
