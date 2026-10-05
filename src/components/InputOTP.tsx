@@ -139,7 +139,7 @@ export function InputOTPSlot({ className, char, isActive, ...props }: InputOTPSl
         'transition-[border-color] duration-fast ease-out',
         'group-has-[input:focus-visible]/otp:border-field-line-hover',
         'group-has-[input:focus]/otp:data-active:border-ring',
-        'group-has-[input[aria-invalid="true"]]/otp:border-field-line-invalid',
+        'group-has-[input[aria-invalid=true]]/otp:border-field-line-invalid',
         'group-has-[input:focus-visible]/otp:data-active:outline-2',
         'group-has-[input:focus-visible]/otp:data-active:outline-offset-0',
         'group-has-[input:focus-visible]/otp:data-active:outline-ring',

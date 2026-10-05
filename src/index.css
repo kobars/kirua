@@ -6,4 +6,8 @@
 
 @source not '../examples';
 
+@source not '../packages';
+
+@source not '../*.md';
+
 @import './styles/kirua.css';

@@ -18,7 +18,7 @@
  * This measures the **application** build — the rebuilt hero page — which
  * includes React and ReactDOM. It therefore catches "something heavy entered
  * the graph" and cannot answer "what does one Button cost". A per-component
- * figure needs tree-shaken library output, which does not exist yet.
+ * figure would measure the package output in `packages/kirua/dist` instead.
  */
 import { gzipSync } from 'node:zlib';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -52,7 +52,7 @@ const DIST = path.join(import.meta.dirname, '..', 'dist', 'assets');
  */
 const BUDGETS = {
   javascript: { extension: '.js', measured: 105.66, gzipLimitKb: 115 },
-  css: { extension: '.css', measured: 16.44, gzipLimitKb: 18 },
+  css: { extension: '.css', measured: 18.02, gzipLimitKb: 19.8 },
 };
 
 const kb = (bytes) => bytes / 1000;

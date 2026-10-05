@@ -5,7 +5,9 @@ import { Meta } from '@storybook/addon-docs/blocks';
 # Getting started
 
 Run kirua locally, explore a working screen, then inspect its components.
-The package is private and has no published installation flow yet.
+kirua is packaged for npm as `@kobars/kirua`. Once a version is published, install
+it with `pnpm add @kobars/kirua` and import `@kobars/kirua/styles.css` after
+`tailwindcss` in your stylesheet.
 
 ## 1. Start the workspace
 
@@ -38,7 +40,8 @@ and actions are local demos.
 
 Within the example app, `kirua` points to `src/components/index.ts` and
 `kirua/styles.css` points to the app's stylesheet. These aliases are configured
-in `examples/vite.config.ts`; they are not installed packages.
+in `examples/vite.config.ts` and stand in for the installed package, which
+exports the same names from `@kobars/kirua` and `@kobars/kirua/styles.css`.
 
 ```tsx
 import { Button, Card, CardBody, CardTitle, Field, Input } from 'kirua';
@@ -122,4 +125,4 @@ for appearance. Set `dir="rtl"` on a container to exercise logical direction.
 
 Read [Design direction](?path=/docs/design-direction--docs) before experimenting
 with a new palette or style. The repository README lists verification commands
-and current distribution limitations.
+and the package setup.

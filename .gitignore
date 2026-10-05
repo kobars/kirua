@@ -39,3 +39,6 @@ coverage
 
 # The example app builds into its own root.
 examples/dist
+
+# The package build copies this from the repository root.
+packages/kirua/LICENSE

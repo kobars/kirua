@@ -1,0 +1,10 @@
+The MIT License in LICENSE covers the code in this package.
+
+The values marked [FIGMA] in the stylesheets under dist/styles/ were measured
+from "Figma Anime Website UI Design: Futuristic & Interactive Hero Section" by
+@Dsingr on Figma Community. The design's rights remain with its author.
+
+This package contains no third-party artwork. The source repository,
+https://github.com/kobars/kirua, also holds character images and a rebuild of
+that hero design, which its own NOTICE excludes from the license. Neither is
+part of this package.

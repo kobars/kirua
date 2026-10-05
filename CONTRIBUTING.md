@@ -66,7 +66,7 @@ Code examples should include their imports and necessary state. The interactive
 examples in `src/patterns/examples/` supply both executable previews and raw source
 for the docs, so their displayed handlers stay in sync with what runs. For multi-part
 components, import every demonstrated part. Use kirua's own controls in examples.
-Do not describe local aliases as published package imports.
+Inside this repository `kirua` is a local alias; an installed import is `@kobars/kirua`.
 
 MDX prose uses a neutral reading font. Components inside previews keep the base
 style's fonts. Use HTML tables in MDX; this configuration does not enable GFM tables.
@@ -123,6 +123,16 @@ pnpm check:examples
 It builds the app and runs the dogfood, usage, `className`, responsive,
 accessibility, performance and journey checks in order. Each also runs alone, for
 example `pnpm check:a11y`.
+
+Changes to the barrel, to a runtime dependency or to `src/styles` also need:
+
+```bash
+pnpm pack:check
+```
+
+It builds the npm package in `packages/kirua` and lists what `npm pack` would
+publish. The `node` test project builds the package too, and fails when its
+dependencies stop matching what the components import.
 
 Visual baselines in `src/components/__screenshots__` are committed. To approve an
 intended visual change, delete the affected PNG, re-run

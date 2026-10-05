@@ -1,0 +1,15 @@
+{
+  /* Declarations for the published package. `tools/build-lib.mjs` passes
+   * `--outDir` and rewrites the `@/` specifiers that `paths` leaves in place. */
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": null,
+    "types": [],
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "./src"
+  },
+  "include": ["src/components/index.ts"],
+  "exclude": []
+}

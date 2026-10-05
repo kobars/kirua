@@ -47,7 +47,9 @@ export function Menubar({ className, ...props }: ComponentProps<typeof MenubarPr
   );
 }
 
-export const MenubarMenu = MenubarPrimitive.Menu;
+// Annotated: inferred, the emitted declaration would need Radix's `Scope` type,
+// which its package does not export.
+export const MenubarMenu: typeof MenubarPrimitive.Menu = MenubarPrimitive.Menu;
 export const MenubarGroup = MenubarPrimitive.Group;
 export const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 

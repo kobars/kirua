@@ -107,45 +107,28 @@ routes above link to the deployed app.
 
 ## Using the components
 
-kirua is a **Vite app with Storybook, not a published npm package**.
-`package.json` is private, and there is no library build and no `exports`
-field. To use the components in your own project, copy them in:
+kirua is packaged for npm as **`@kobars/kirua`**: ES modules, one file per
+component, with TypeScript declarations. The steps below apply once a version
+is on npm.
 
-1. **Copy** `src/components`, `src/lib` and `src/styles` into your project,
-   for example under `src/kirua/`. The `*.stories.tsx` and `*.test.*` files
-   can be left behind.
-2. **Install the runtime dependencies**: `react` and `react-dom` 19,
-   `tailwindcss` 4 with its build plugin (such as `@tailwindcss/vite`),
-   `class-variance-authority`, `clsx`, `tailwind-merge`,
-   `react-resizable-panels` and the `@radix-ui/react-*` packages listed in
-   `package.json`.
-3. **Add the `@/` alias.** Components import each other as `@/components/…`
-   and `@/lib/…`, so `@` must resolve to the folder holding the copied
-   directories, in both your bundler and TypeScript:
+1. **Install** it beside its peers, `react` and `react-dom` 19 and
+   `tailwindcss` 4.3 or later with its Vite or PostCSS plugin
+   (`@tailwindcss/vite`, `@tailwindcss/postcss`):
 
-   ```ts
-   // vite.config.ts
-   resolve: { alias: { '@': path.resolve(import.meta.dirname, 'src/kirua') } }
+   ```bash
+   pnpm add @kobars/kirua
    ```
 
-   ```jsonc
-   // tsconfig.json → compilerOptions
-   "paths": { "@/*": ["./src/kirua/*"] }
-   ```
-
-4. **Import the styles** from your stylesheet. Tailwind finds classes by
-   scanning source text, so name the copied directories as sources:
+2. **Import the styles** from your stylesheet. The package's stylesheet holds
+   the tokens and the Tailwind theme, and names the package's own components as
+   a Tailwind source, so every class they use is generated:
 
    ```css
    @import 'tailwindcss';
-
-   @source './kirua/components';
-   @source './kirua/lib';
-
-   @import './kirua/styles/kirua.css';
+   @import '@kobars/kirua/styles.css';
    ```
 
-5. **Load the fonts** in the document head. The stylesheet does not fetch them,
+3. **Load the fonts** in the document head. The stylesheet does not fetch them,
    and system fonts are the fallback:
 
    ```html
@@ -160,12 +143,14 @@ field. To use the components in your own project, copy them in:
 Then compose:
 
 ```tsx
-import { Badge, Button, Card, CardBody, CardTitle } from '@/components';
+import { Badge, Button, Card, CardBody, CardTitle } from '@kobars/kirua';
 
 export function CollectionCard() {
   return (
     <Card padding="md">
-      <Badge status="info">New collection</Badge>
+      <Badge status="info" className="self-start">
+        New collection
+      </Badge>
       <CardTitle as="h2">Small worlds, big stories</CardTitle>
       <CardBody>Prints and accessories from independent artists.</CardBody>
       <Button asChild>
@@ -176,10 +161,15 @@ export function CollectionCard() {
 }
 ```
 
-`examples/vite.config.ts` and `examples/styles.css` show a working setup: the
-example app imports everything from one `kirua` alias that points at
-`src/components/index.ts`, and its stylesheet names the component and library
-directories as sources while leaving stories and tests out.
+The [package README](packages/kirua/README.md) covers the rest of the setup:
+what the stylesheet changes across the app, dark mode and the night palettes,
+`TooltipProvider`, the icons, and a `next build --webpack` setting.
+
+Copying the source in is still possible: take `src/components`, `src/lib` and
+`src/styles` (the stories and tests can stay behind), resolve the `@/` alias the
+components import each other through to the folder holding them, and name the
+copied directories as Tailwind sources. `examples/vite.config.ts` and
+`examples/styles.css` show that setup working against this repository's source.
 
 Some conventions every component follows:
 
@@ -280,7 +270,8 @@ examples/
   shop/ his/ social/ assistant/ marketing/   one directory per section
   shared/          the theme and night menu, routing and other shared hooks
   styles.css       imports and @source lines only
-tools/             the example-app checks, size budgets and the dead-class check
+packages/kirua/    the npm package: its manifest, README and changelog; the build writes dist/
+tools/             the package build, the example-app checks, size budgets and the dead-class check
 public/            favicon and the hero's character artwork
 docs/screenshots/  the images in this README
 .storybook/        Storybook configuration and the Mode, Surface and Night toolbar
@@ -296,6 +287,8 @@ docs/screenshots/  the images in this README
 | `pnpm board`            | The project-tracker demo, rendered from `src/board/sample`                                                           |
 | `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
 | `pnpm build:examples`   | Build the example app into `examples/dist`                                                                           |
+| `pnpm build:lib`        | Build the npm package into `packages/kirua/dist`                                                                     |
+| `pnpm pack:check`       | Build the package and list what `npm pack` would publish, without publishing                                         |
 | `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                                                       |
 | `pnpm check`            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit                                   |
 | `pnpm test`             | Every Vitest project except WebKit, once                                                                             |
