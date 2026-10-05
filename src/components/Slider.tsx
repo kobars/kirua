@@ -79,7 +79,7 @@ export function Slider({
           className={cn(
             'relative block size-5 rounded-pill border-2 border-primary bg-field shadow-resting',
             // The circle is 20px; the touch target must be 44.
-            'before:absolute before:-inset-3 before:content-[""]',
+            "before:absolute before:-inset-3 before:content-['']",
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
             'disabled:pointer-events-none',
           )}

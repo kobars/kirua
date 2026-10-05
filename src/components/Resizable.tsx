@@ -73,11 +73,11 @@ export function ResizableHandle({
         'group/handle relative flex shrink-0 items-center justify-center',
         'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring',
         'after:absolute after:bg-line-subtle after:transition-colors after:duration-fast',
-        'hover:after:bg-brand data-[separator="active"]:after:bg-brand',
-        'aria-[orientation="vertical"]:w-3 aria-[orientation="vertical"]:after:inset-y-0',
-        'aria-[orientation="vertical"]:after:w-px',
-        'aria-[orientation="horizontal"]:h-3 aria-[orientation="horizontal"]:after:inset-x-0',
-        'aria-[orientation="horizontal"]:after:h-px',
+        'hover:after:bg-brand data-[separator=active]:after:bg-brand',
+        'aria-[orientation=vertical]:w-3 aria-[orientation=vertical]:after:inset-y-0',
+        'aria-[orientation=vertical]:after:w-px',
+        'aria-[orientation=horizontal]:h-3 aria-[orientation=horizontal]:after:inset-x-0',
+        'aria-[orientation=horizontal]:after:h-px',
         className,
       )}
       {...props}
@@ -88,15 +88,15 @@ export function ResizableHandle({
           className={cn(
             'relative z-raised flex items-center justify-center gap-0.5',
             'rounded-xs border border-line bg-raised',
-            'group-aria-[orientation="vertical"]/handle:h-6 group-aria-[orientation="vertical"]/handle:w-2',
-            'group-aria-[orientation="horizontal"]/handle:h-2 group-aria-[orientation="horizontal"]/handle:w-6',
+            'group-aria-[orientation=vertical]/handle:h-6 group-aria-[orientation=vertical]/handle:w-2',
+            'group-aria-[orientation=horizontal]/handle:h-2 group-aria-[orientation=horizontal]/handle:w-6',
           )}
         >
           <span
             className={cn(
               'bg-line-strong',
-              'group-aria-[orientation="vertical"]/handle:h-3 group-aria-[orientation="vertical"]/handle:w-px',
-              'group-aria-[orientation="horizontal"]/handle:h-px group-aria-[orientation="horizontal"]/handle:w-3',
+              'group-aria-[orientation=vertical]/handle:h-3 group-aria-[orientation=vertical]/handle:w-px',
+              'group-aria-[orientation=horizontal]/handle:h-px group-aria-[orientation=horizontal]/handle:w-3',
             )}
           />
         </span>

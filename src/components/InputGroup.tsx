@@ -41,7 +41,7 @@ export function InputGroup({ className, size, width, ...props }: InputGroupProps
         'has-[[data-slot=input-group-input]:focus-visible]:outline-2',
         'has-[[data-slot=input-group-input]:focus-visible]:outline-offset-2',
         'has-[[data-slot=input-group-input]:focus-visible]:outline-ring',
-        'has-[input[aria-invalid="true"]]:border-field-line-invalid',
+        'has-[input[aria-invalid=true]]:border-field-line-invalid',
         'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-field-line-disabled',
         'has-[input:disabled]:bg-field-disabled',
         inputGroupVariants({ size, width }),

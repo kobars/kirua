@@ -205,8 +205,8 @@ export function SidebarMenuButton({
         'font-text text-body-sm text-fg no-underline',
         'transition-[color,background-color,border-color] duration-fast ease-out hover:bg-ghost-hover',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        'aria-[current="page"]:bg-selected aria-[current="page"]:font-medium',
-        'aria-[current="page"]:text-on-selected',
+        'aria-[current=page]:bg-selected aria-[current=page]:font-medium',
+        'aria-[current=page]:text-on-selected',
         '[--icon-size:var(--icon-md)] [&_svg]:shrink-0',
         // Room for the action button laid over the end of the row.
         'group-has-data-[slot=sidebar-menu-action]/menu-item:pe-11',
