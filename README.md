@@ -107,9 +107,9 @@ routes above link to the deployed app.
 
 ## Using the components
 
-kirua is packaged for npm as **`@kobars/kirua`**: ES modules, one file per
-component, with TypeScript declarations. The steps below apply once a version
-is on npm.
+kirua is published on npm as
+**[`@kobars/kirua`](https://www.npmjs.com/package/@kobars/kirua)**: ES modules,
+one file per component, with TypeScript declarations.
 
 1. **Install** it beside its peers, `react` and `react-dom` 19 and
    `tailwindcss` 4.3 or later with its Vite or PostCSS plugin
