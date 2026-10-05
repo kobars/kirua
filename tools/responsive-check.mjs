@@ -133,6 +133,8 @@ for (const size of WIDTHS) {
             return parent.textContent.replace(el.textContent, '').trim().length > 0;
           };
 
+          // The control and its label as one rectangle: the union of the two,
+          // with every edge the spacing test below reads.
           const boxOf = (el) => {
             const own = el.getBoundingClientRect();
             const label = el.id
@@ -142,11 +144,19 @@ for (const size of WIDTHS) {
             const partner = label ?? wrapping;
             if (!partner) return own;
             const both = partner.getBoundingClientRect();
+            const left = Math.min(own.left, both.left);
+            const top = Math.min(own.top, both.top);
+            const right = Math.max(own.right, both.right);
+            const bottom = Math.max(own.bottom, both.bottom);
             return {
-              width: Math.max(own.width, both.width),
-              height: Math.max(own.height, both.height),
-              x: Math.min(own.x, both.x),
-              y: Math.min(own.y, both.y),
+              left,
+              top,
+              right,
+              bottom,
+              x: left,
+              y: top,
+              width: right - left,
+              height: bottom - top,
             };
           };
 
