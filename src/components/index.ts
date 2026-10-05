@@ -361,6 +361,8 @@ export {
   ResizableGroup,
   ResizablePanel,
   ResizableHandle,
+  type ResizableGroupProps,
+  type ResizablePanelProps,
   type ResizableHandleProps,
 } from './Resizable';
 
