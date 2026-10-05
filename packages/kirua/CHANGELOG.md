@@ -39,6 +39,11 @@ Those are listed first.
 - `ref` on `ResizableGroup`, `ResizablePanel` and `ResizableHandle`, and their
   props types.
 - The `default` export condition, so `require` and Jest can resolve the package.
+- A `data-slot` on every inner element that carries classes, 70 new names, so
+  each part has a stable selector: for example `app-header-actions`,
+  `nav-bar-list`, `page-header-actions`, `pane-body-content`, `dialog-overlay`,
+  `select-viewport`, `stepper-item-marker` and `tooltip-arrow`. Each name is
+  the owning component's slot followed by the part.
 
 ### Fixed
 
