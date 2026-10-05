@@ -189,6 +189,11 @@ export default defineConfig({
     // Vitest allows `.only` unless `CI` is set, so a focused test committed
     // while debugging would skip the rest of its file on every local run.
     allowOnly: false,
+    // A hosted macOS runner has three cores and no GPU. Every project opening
+    // browsers at once there starves the renderer: a story with no play
+    // function timed out at 15s, and screenshots never settled. Fewer workers
+    // and a longer budget on CI; local runs keep the defaults.
+    ...(process.env['CI'] ? { maxWorkers: 2, testTimeout: 60_000 } : {}),
     projects: [
       ...webkitProjects,
       ...storyProjects,

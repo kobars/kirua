@@ -74,7 +74,8 @@ export const ALongTitleKeepsClearOfTheCloseButton: Story = {
   ),
   play: async () => {
     const dialog = await screen.findByRole('dialog');
-    await waitFor(() => expect(dialog).toBeVisible());
+    // The pop-in animation starts transparent and can outlast the default wait.
+    await waitFor(() => expect(dialog).toBeVisible(), { timeout: 5000 });
     const title = within(dialog).getByRole('heading');
     const close = within(dialog).getByRole('button', { name: 'Close' });
 
