@@ -1,0 +1,10 @@
+:root {
+  --color-action-primary-bg: var(--color-blue-600);
+  --color-action-primary-fg: var(--color-neutral-0);
+}
+
+/* One class on the panel, and every button inside inverts. */
+.ctx-brand {
+  --color-action-primary-bg: var(--color-neutral-0);
+  --color-action-primary-fg: var(--color-neutral-1000);
+}

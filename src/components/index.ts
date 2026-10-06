@@ -167,6 +167,8 @@ export {
 export { Carousel, CarouselItem, type CarouselProps, type CarouselItemProps } from './Carousel';
 export { QuantityStepper, type QuantityStepperProps } from './QuantityStepper';
 export { CodeBlock, type CodeBlockProps } from './CodeBlock';
+export { CodeToken, type CodeTokenProps, type CodeTokenKind } from './CodeToken';
+export { codeTokenVariants } from './CodeToken.variants';
 export { Code } from './Code';
 export { List, ListItem, type ListProps, type ListItemProps } from './List';
 export { listVariants } from './List.variants';

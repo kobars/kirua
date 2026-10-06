@@ -1,0 +1,7 @@
+[data-slot='switch-thumb'] {
+  --switch-dir: 1;
+}
+
+:dir(rtl) [data-slot='switch-thumb'] {
+  --switch-dir: -1;
+}

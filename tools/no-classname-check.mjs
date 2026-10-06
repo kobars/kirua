@@ -31,7 +31,9 @@ const ALLOWED_AT_RULES = /^@(?:import|source|custom-variant)\b/;
 /** Every file under `examples/` with one of the extensions, skipping build output. */
 function sources(dir, extension, out = []) {
   for (const entry of readdirSync(dir)) {
-    if (entry === 'dist' || entry === 'node_modules') continue;
+    // A `snippets` folder holds code the app shows in a `CodeBlock` and never
+    // loads, so a rule in one of its stylesheets is text, not styling.
+    if (entry === 'dist' || entry === 'node_modules' || entry === 'snippets') continue;
     const full = path.join(dir, entry);
     if (statSync(full).isDirectory()) sources(full, extension, out);
     else if (full.endsWith(extension)) out.push(full);

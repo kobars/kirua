@@ -6,6 +6,7 @@ import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { highlight } from './highlight.plugin.ts';
 
 const ROOT = import.meta.dirname;
 const REPO = path.resolve(ROOT, '..');
@@ -20,7 +21,7 @@ export default defineConfig({
   // The repository's own `public/`: the favicon, and the character artwork the
   // marketing hero reuses, served from where it already is rather than copied.
   publicDir: path.join(REPO, 'public'),
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), highlight()],
   build: {
     target: BUILD_TARGET,
     outDir: 'dist',

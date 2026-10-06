@@ -12,9 +12,13 @@ export interface CodeBlockProps extends ComponentProps<'div'> {
 /**
  * A block of code in a page of prose.
  *
- * No syntax highlighting: that needs a large dependency this system does not
- * ship. The `language-*` class is on the `<code>` element, which is where every
- * highlighter looks, so one can be added on top.
+ * Highlighting is `CodeToken`s as children: the system colours code but does
+ * not parse it, so a highlighter run by the consumer, ideally at build time,
+ * decides the kinds. The `language-*` class stays on the `<code>` element too,
+ * which is where a highlighter that runs in the page looks.
+ *
+ * The language label is `text-fg-secondary`, not muted: it is copy, and muted
+ * copy falls under 4.5:1 on a brand panel's sunken well.
  *
  * `ScrollArea` makes its own viewport the focusable scroller, so nothing here
  * sets `tabIndex` or `role`. `action` is a slot because copying needs a click
@@ -41,7 +45,7 @@ export function CodeBlock({ className, language, action, children, ...props }: C
       >
         <span
           data-slot="code-block-language"
-          className="font-text text-caption text-fg-muted lowercase"
+          className="font-text text-caption text-fg-secondary lowercase"
         >
           {language ?? 'text'}
         </span>

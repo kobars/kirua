@@ -1,10 +1,16 @@
 /** Fixed sample content. No network, no clock — the same page every time. */
 
+import type { Snippet } from '../shared/snippet';
+import surfaceContexts from './snippets/surface-contexts.css?highlight';
+import forcedColors from './snippets/forced-colors.css?highlight';
+import deadClasses from './snippets/dead-classes.sh?highlight';
+import logicalDirection from './snippets/logical-direction.css?highlight';
+
 export interface Turn {
   id: string;
   from: 'you' | 'assistant';
   text: string;
-  code?: { language: string; source: string };
+  code?: { language: string; snippet: Snippet };
   /**
    * What the assistant worked through before answering. Shown in a collapsed
    * panel, because it is the thing a reader wants available and not in the way.
@@ -63,19 +69,7 @@ export const conversations: Conversation[] = [
         id: 't4',
         from: 'assistant',
         text: 'The middle layer names roles, and a surface re-points them for everything inside it:',
-        code: {
-          language: 'css',
-          source: `:root {
-  --color-action-primary-bg: var(--color-blue-600);
-  --color-action-primary-fg: var(--color-neutral-0);
-}
-
-/* One class on the panel, and every button inside inverts. */
-.ctx-brand {
-  --color-action-primary-bg: var(--color-neutral-0);
-  --color-action-primary-fg: var(--color-neutral-1000);
-}`,
-        },
+        code: { language: 'css', snippet: surfaceContexts },
       },
       {
         id: 't5',
@@ -159,11 +153,7 @@ export const moreConversations: Conversation[] = [
         reasoning:
           'Two mechanisms are at play. Forced colors replaces every author colour with a user-chosen palette, and separately it drops box-shadow entirely. If a design separates surfaces by fill and elevation, both go at once.',
         text: "Nothing in your CSS changed — the browser changed it for you.\n\nForced colors mode replaces every colour you declared with one from the user's palette, and it also drops `box-shadow` completely. If your cards are separated from the page by a fill and a shadow, both of those disappear in the same instant, and a page of cards becomes a page.\n\nThe fix is to give the boundary a `border`, which forced colors keeps and recolours. Put the rule outside `@layer` so it beats the utility layer.",
-        code: {
-          language: 'css',
-          source:
-            "@media (forced-colors: active) {\n  [data-slot='card'],\n  [data-slot='dialog-content'] {\n    border: 1px solid CanvasText;\n  }\n}",
-        },
+        code: { language: 'css', snippet: forcedColors },
       },
       {
         id: 'f3',
@@ -193,11 +183,7 @@ export const moreConversations: Conversation[] = [
         reasoning:
           'A class that generates no rule leaves the markup unchanged and the declaration absent. Type checking cannot see it, the linter has no list of real utilities, and a visual test only fails if a baseline happens to cover it.',
         text: 'That failure mode is the worst kind: the component renders, and renders wrong.\n\nThere is no list of valid utilities to lint against, because the valid set depends on your theme, your plugins and your own `@utility` rules. So the only authority is Tailwind itself.\n\nCollect every class token your source names, write them into a probe stylesheet, compile it against your real entry point, and report the ones that produced no rule.',
-        code: {
-          language: 'bash',
-          source:
-            'node tools/dead-classes.mjs\n# dead-classes: checked 473 class tokens.\n# dead-classes: every class generates a rule.',
-        },
+        code: { language: 'bash', snippet: deadClasses },
       },
     ],
   },
@@ -234,11 +220,7 @@ export const moreConversations: Conversation[] = [
         id: 'l2',
         from: 'assistant',
         text: 'Almost. `transform` has no logical form, so a horizontal flip stays horizontal in a right-to-left page — a switch thumb slides out of its track, and a mirrored corner ornament points the wrong way.\n\nKeep the sign in CSS, keyed on a data attribute, so it can re-invert under `:dir(rtl)`. And check it rather than trust it: render each component both ways and compare the computed values.',
-        code: {
-          language: 'css',
-          source:
-            "[data-slot='switch-thumb'] {\n  --switch-dir: 1;\n}\n\n:dir(rtl) [data-slot='switch-thumb'] {\n  --switch-dir: -1;\n}",
-        },
+        code: { language: 'css', snippet: logicalDirection },
       },
     ],
   },

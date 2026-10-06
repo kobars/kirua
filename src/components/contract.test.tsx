@@ -62,6 +62,7 @@ import {
   Chip,
   Code,
   CodeBlock,
+  CodeToken,
   Collapsible,
   CollapsibleContent,
   Combobox,
@@ -389,6 +390,15 @@ const cases: Case[] = [
     'DIV',
   ],
   ['CodeBlock', (p) => <CodeBlock {...p}>code</CodeBlock>, 'DIV'],
+  [
+    'CodeToken',
+    (p) => (
+      <CodeToken kind="keyword" {...p}>
+        const
+      </CodeToken>
+    ),
+    'SPAN',
+  ],
   ['Combobox', (p) => <Combobox {...p} />, 'DIV'],
   // Both parts are positioned by the root's popover, so they render inside it.
   [

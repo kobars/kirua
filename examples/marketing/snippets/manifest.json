@@ -1,0 +1,8 @@
+{
+  "gallery": "mei-tsukino",
+  "title": "Evening studies",
+  "pieces": [
+    { "file": "pieces/0001.png", "title": "Rooftop, 6pm", "sold": true },
+    { "file": "pieces/0002.png", "title": "Bus window", "sold": false }
+  ]
+}

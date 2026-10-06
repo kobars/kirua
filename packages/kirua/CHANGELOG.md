@@ -39,6 +39,11 @@ Those are listed first.
 - `ref` on `ResizableGroup`, `ResizablePanel` and `ResizableHandle`, and their
   props types.
 - The `default` export condition, so `require` and Jest can resolve the package.
+- `CodeToken`, one highlighted token inside a `CodeBlock`, and a `code` colour
+  token family behind it, measured at 4.5:1 on the block in light mode, on
+  every night and on a dark card. On a brand surface every kind is white. The
+  package parses nothing: a highlighter, ideally run at build time, maps its
+  token types to `kind`.
 - A `data-slot` on every inner element that carries classes, 70 new names, so
   each part has a stable selector: for example `app-header-actions`,
   `nav-bar-list`, `page-header-actions`, `pane-body-content`, `dialog-overlay`,
@@ -71,6 +76,11 @@ Those are listed first.
 - `cn()` now merges `font-regular`, `ease-out-soft` and the custom radius steps
   on every side and corner.
 - The package no longer declares a Node engine range.
+- The `CodeBlock` language label failed contrast on a brand surface; it now
+  uses the secondary text colour.
+- `SpotlightContent`'s `measure` counted the gutter beside the artwork as part
+  of the copy's 44rem, so from `md` up the copy came out narrower than its
+  measure and the headline wrapped early.
 
 ## 0.1.0
 
