@@ -46,29 +46,31 @@ const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
 /** Tab into the field, as a keyboard user does, so `:focus-visible` applies. */
 async function focusField(container: HTMLElement, slot: string) {
   const ring = container.querySelector<HTMLElement>(`[data-slot="${slot}"]`)!;
-  const atRest = getComputedStyle(ring).borderTopColor;
+  const invalidBorder = getComputedStyle(ring).borderTopColor;
   await userEvent.tab();
-  return { ring, atRest };
+  return { ring, invalidBorder };
 }
 
 describe.each(FIELDS)('a focused %s', (_name, field, slot) => {
   it('draws one 2px ring on its border and leaves the border colour alone', async () => {
     const container = render(field(false));
-    const { ring, atRest } = await focusField(container, slot);
+    const { ring } = await focusField(container, slot);
 
     await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
     const style = getComputedStyle(ring);
     expect(style.outlineWidth).toBe('2px');
     expect(style.outlineOffset).toBe('-1px');
-    expect(style.borderTopColor).toBe(atRest);
+    // Compared with the ring, not with the resting border: a pointer left over
+    // the field gives it the hover colour, which is still not the ring's.
+    expect(style.borderTopColor).not.toBe(style.outlineColor);
   });
 
   it('rings an invalid field in the invalid colour', async () => {
     const container = render(field(true));
-    const { ring, atRest } = await focusField(container, slot);
+    const { ring, invalidBorder } = await focusField(container, slot);
 
     await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
-    // At rest an invalid field's border is already the invalid colour.
-    expect(getComputedStyle(ring).outlineColor).toBe(atRest);
+    // An invalid field's border is the invalid colour, hovered or not.
+    expect(getComputedStyle(ring).outlineColor).toBe(invalidBorder);
   });
 });
