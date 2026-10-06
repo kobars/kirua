@@ -93,6 +93,10 @@ To run the example app:
 pnpm example
 ```
 
+It installs `@kobars/kirua` from npm, as any app would, so it shows the latest
+release. `pnpm example:source` runs it against the components in this
+repository instead, which is what you want while changing one.
+
 It opens on a hub at `#/` that links to five sections:
 
 | Section  | What it shows                                                         | Route                                                            |
@@ -285,11 +289,12 @@ docs/screenshots/  the images in this README
 | Command                 | What it does                                                                                                         |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `pnpm storybook`        | Storybook on http://localhost:6006                                                                                   |
-| `pnpm example`          | The example app in development                                                                                       |
+| `pnpm example`          | The example app in development, using the published package                                                          |
+| `pnpm example:source`   | The example app in development, using the components in `src`                                                        |
 | `pnpm dev`              | The rebuilt hero page on http://localhost:5173                                                                       |
 | `pnpm board`            | The project-tracker demo, rendered from `src/board/sample`                                                           |
 | `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
-| `pnpm build:examples`   | Build the example app into `examples/dist`                                                                           |
+| `pnpm build:examples`   | Build the example app into `examples/dist`, using the published package                                              |
 | `pnpm build:lib`        | Build the npm package into `packages/kirua/dist`                                                                     |
 | `pnpm pack:check`       | Build the package and list what `npm pack` would publish, without publishing                                         |
 | `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                                                       |
@@ -300,7 +305,7 @@ docs/screenshots/  the images in this README
 | `pnpm lint`             | oxlint, including Tailwind class rules; warnings fail                                                                |
 | `pnpm lint:fix`         | Apply the auto-fixable lint findings                                                                                 |
 | `pnpm format`           | Prettier, including Tailwind class order                                                                             |
-| `pnpm check:examples`   | Build the example app, then run the dogfood, usage, `className`, responsive, a11y, perf and journeys checks in order |
+| `pnpm check:examples`   | Build the example app from `src` and run the dogfood, usage, `className`, responsive, a11y, perf and journeys checks |
 | `pnpm check:dogfood`    | No example writes raw markup a component already covers                                                              |
 | `pnpm check:usage`      | Every exported component is placed by the example app, or exempted with a reason                                     |
 | `pnpm check:classname`  | No `className` or `style` in the example app, and no stylesheet rules of its own                                     |

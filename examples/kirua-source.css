@@ -1,0 +1,11 @@
+/* What `@kobars/kirua/styles.css` resolves to under `KIRUA_SOURCE=1`: the
+ * package stylesheet, written against the repository's sources. The token
+ * layers, and the components for Tailwind to scan. A story or a test is not
+ * part of any application, and the classes only they use would ship in the
+ * app's stylesheet. */
+@import '../src/styles/kirua.css';
+
+@source '../src/components';
+@source not '../src/components/**/*.stories.tsx';
+@source not '../src/components/**/*.test.{ts,tsx}';
+@source '../src/lib';

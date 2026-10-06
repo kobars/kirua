@@ -1,6 +1,11 @@
 /**
  * The example app: one Vite app rooted here, with each section in its own
  * directory and its own lazily loaded chunk.
+ *
+ * It imports `@kobars/kirua` as any app does, and by default that is the
+ * published package from `node_modules`. With `KIRUA_SOURCE=1` the same import
+ * resolves to this repository's components instead, so `pnpm check:examples`
+ * measures the code in the working tree rather than the last release.
  */
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
@@ -11,6 +16,7 @@ import { sectionNights } from './sectionNights.plugin.ts';
 
 const ROOT = import.meta.dirname;
 const REPO = path.resolve(ROOT, '..');
+const FROM_SOURCE = process.env['KIRUA_SOURCE'] === '1';
 
 /** Kept in step with `vite.config.ts` by `src/styles/browsers.test.ts`. */
 const BUILD_TARGET = ['chrome120', 'edge120', 'safari16.4', 'firefox128'];
@@ -33,17 +39,23 @@ export default defineConfig({
       // The barrel only re-exports. Declared free of side effects, it is looked
       // through rather than kept, so a component lands in the chunk of the
       // sections that use it; kept, it puts every component the barrel names
-      // in the entry, because the entry imports the barrel too.
+      // in the entry, because the entry imports the barrel too. The published
+      // package declares the same in its `sideEffects` field.
       treeshake: { moduleSideEffects: (id) => !id.endsWith('/src/components/index.ts') },
     },
   },
   resolve: {
-    alias: [
-      // Longest first: the stylesheet must not be swallowed by the package entry.
-      { find: '@kobars/kirua/styles.css', replacement: path.join(ROOT, 'styles.css') },
-      { find: '@kobars/kirua', replacement: path.join(REPO, 'src/components/index.ts') },
-      // The components import each other through `@/`, as in the root config.
-      { find: '@', replacement: path.join(REPO, 'src') },
-    ],
+    alias: FROM_SOURCE
+      ? [
+          // Longest first: the stylesheet must not be swallowed by the package entry.
+          {
+            find: '@kobars/kirua/styles.css',
+            replacement: path.join(ROOT, 'kirua-source.css'),
+          },
+          { find: '@kobars/kirua', replacement: path.join(REPO, 'src/components/index.ts') },
+          // The components import each other through `@/`, as in the root config.
+          { find: '@', replacement: path.join(REPO, 'src') },
+        ]
+      : [],
   },
 });

@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { DirectionProvider, TooltipProvider } from '@kobars/kirua';
 import { App } from './App';
-import '@kobars/kirua/styles.css';
+import './styles.css';
 
 const RELOADED = 'kirua-preload-reload';
 
