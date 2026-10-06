@@ -36,9 +36,9 @@ import { STUDIO, TOPICS } from './data';
 /**
  * The one form on the site, and the only screen here that holds state.
  *
- * A marketing site is mostly read-only, which is exactly why it is worth having
- * one form: it puts the field family on a page that is not an application, and
- * a form that never validates is a form nothing tests.
+ * A marketing site is mostly read-only, which is why it is worth having one
+ * form: it puts the field family, with validation, on a page that is not an
+ * application.
  */
 export function ContactPage() {
   const [name, setName] = useState('');
@@ -176,8 +176,8 @@ export function ContactPage() {
             The studio
           </CardTitle>
           <CardBody>
-            We are in one room in Yogyakarta, and the address is real. Post reaches us slower
-            than email does.
+            We work from one room in Yogyakarta. Post reaches us, but more slowly than email
+            does.
           </CardBody>
           <DescriptionList layout="stacked" gap="lg">
             {STUDIO.map((entry) => (

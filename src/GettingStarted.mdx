@@ -36,12 +36,12 @@ Open the URL Vite prints. Each section's routes start with its name, such as
 `#/shop/` or `#/his/patients`, and each section loads only its own code. Data
 and actions are local demos.
 
-## 3. Compose with the local aliases
+## 3. Compose a screen
 
-Within the example app, `kirua` points to `src/components/index.ts` and
-`kirua/styles.css` points to the app's stylesheet. These aliases are configured
-in `examples/vite.config.ts` and stand in for the installed package, which
-exports the same names from `@kobars/kirua` and `@kobars/kirua/styles.css`.
+Inside the example app, `@kobars/kirua` resolves to `src/components/index.ts`
+and `@kobars/kirua/styles.css` to the app's own stylesheet, so the examples
+import exactly what an installed app imports. The aliases are configured in
+`examples/vite.config.ts`.
 
 ```tsx
 import { Button, Card, CardBody, CardTitle, Field, Input } from '@kobars/kirua';
@@ -108,8 +108,8 @@ application's client component when using React Server Components.
 - **Command** needs search, keyboard navigation, execution and a trigger.
 - **Carousel** scrolls natively; your client code supplies previous/next controls.
 
-Their Storybook pages include examples of the application code involved. Server
-rendering is tested locally, but a complete framework integration is not yet verified.
+Their Storybook pages include examples of the application code involved. The test
+suite covers server rendering and hydration, but not a complete framework build.
 
 ## Useful component conventions
 

@@ -16,7 +16,7 @@ const meta = {
   },
   title: 'Components/Chip',
   component: Chip,
-  args: { children: "+1M Like's", variant: 'dark', size: 'md' },
+  args: { children: '1M+ likes', variant: 'dark', size: 'md' },
   argTypes: {
     variant: { control: 'inline-radio', options: ['dark', 'light', 'brand', 'outline'] },
     size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
@@ -87,7 +87,7 @@ export const BrandOnBrand: Story = {
 export const AsInTheReference: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      <Chip leading={<AvatarStack items={PEOPLE} max={3} />}>+1M Like&apos;s</Chip>
+      <Chip leading={<AvatarStack items={PEOPLE} max={3} />}>1M+ likes</Chip>
       <Chip
         size="sm"
         leading={<span className="size-5 rounded-pill bg-amber-500" aria-hidden="true" />}

@@ -176,7 +176,7 @@ describe('insets follow the reading direction', () => {
    * `transform` is physical, so the blade's horizontal flip has to invert again
    * in a right-to-left document or the taper points the wrong way. That is the
    * one thing logical properties cannot do on their own, and the reason the
-   * mirror lives in `index.css` keyed on `data-corner` rather than in the
+   * mirror lives in `styles/kirua.css` keyed on `data-corner` rather than in the
    * component's inline style.
    */
   it('CornerGlint mirrors back, so the blade still tapers along the edge', () => {

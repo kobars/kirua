@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <div className="max-w-xl">
-      <CodeBlock {...args}>{`pnpm add kirua`}</CodeBlock>
+      <CodeBlock {...args}>{`pnpm add @kobars/kirua`}</CodeBlock>
     </div>
   ),
 };

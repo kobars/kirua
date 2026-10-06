@@ -17,7 +17,7 @@ afterEach(() => {
  */
 const settled = async (element: Element, property: 'color' | 'backgroundColor') => {
   // Let a transition the last change started begin, then wait for it to end.
-  // A fixed delay read a colour part-way through on a busy machine.
+  // A fixed delay can read a colour part-way through on a busy machine.
   await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   await Promise.all(element.getAnimations().map((animation) => animation.finished));
   return getComputedStyle(element)[property];

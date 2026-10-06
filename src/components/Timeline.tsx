@@ -15,7 +15,7 @@ import {
  * the same rail and claim different things, and the claim is carried by the
  * markup rather than by the drawing: a timeline marks its moments with
  * `<time datetime>`, a stepper marks its position with `aria-current="step"`.
- * A flag would have made one of those two wrong on every render.
+ * A flag would make one of those two wrong on every render.
  *
  * A table invites comparison across rows; a delivery history is a sequence.
  * The test is the shape of the data, not the word "history" — a six-column

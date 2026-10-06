@@ -16,7 +16,7 @@ export interface ChipProps extends ComponentProps<'span'>, VariantProps<typeof c
  * `brand` variant keeps a contextual border so it still has an edge when its
  * fill matches a brand surface.
  *
- * @example <Chip leading={<AvatarStack items={people} />}>+1M Likes</Chip>
+ * @example <Chip leading={<AvatarStack items={people} />}>1M+ likes</Chip>
  */
 export function Chip({ className, variant, size, leading, children, ...props }: ChipProps) {
   return (

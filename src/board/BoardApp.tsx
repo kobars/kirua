@@ -211,7 +211,7 @@ export function BoardApp({ source }: BoardAppProps) {
                     )}
                   </div>
 
-                  {/* Capped: `done` runs to 112 cards. */}
+                  {/* Capped, so a long column scrolls inside itself. */}
                   <ScrollArea className="max-h-144">
                     {mine.length === 0 ? (
                       <Text size="sm" tone="muted">

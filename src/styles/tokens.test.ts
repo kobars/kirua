@@ -4,9 +4,8 @@ import { describe, expect, it } from 'vitest';
 /**
  * Spacing, breakpoints and the stacking order are declared as tokens.
  * Declaring them is half the job: a declaration that does not reach the browser
- * is worse than none,
- * because it reads as ownership the CSS does not actually have. So every one is
- * read back out of the live cascade rather than trusted.
+ * is worse than none, because it reads as ownership the CSS does not actually
+ * have. So every one is read back out of the live cascade rather than trusted.
  */
 const root = () => getComputedStyle(document.documentElement);
 
@@ -115,8 +114,9 @@ describe('the stacking order', () => {
   /**
    * `@utility` rules are tree-shaken like any other utility: a layer no source
    * file names generates no CSS. A layer such as `z-sticky` or `z-toast` is
-   * absent from kirua's own build until a component or a consumer writes it. Only the layers in use can be asserted here — and
-   * they are, against the token they are supposed to resolve to.
+   * absent from kirua's own build until a component or a consumer writes it.
+   * Only the layers in use can be asserted here — and they are, against the
+   * token they are supposed to resolve to.
    */
   it.each(['raised', 'ornament', 'scrim', 'modal', 'popover', 'tooltip'])(
     'z-%s resolves to its token',

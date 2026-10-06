@@ -44,7 +44,7 @@ export interface ButtonProps
  * fire a consumer's `onClick`. Guard the handler, or use `loading`, which
  * drops it.
  *
- * @example <Button variant="secondary" trailingIcon={<ArrowRightIcon />}>Enroll</Button>
+ * @example <Button variant="secondary" trailingIcon={<ArrowRightIcon />}>Join the class</Button>
  * @example <Button type="submit" loading={saving}>Save</Button>
  */
 export function Button({

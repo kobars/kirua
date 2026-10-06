@@ -119,9 +119,7 @@ export function App() {
           <Separator />
           <Inline wrap justify="between" gap={2}>
             <Wordmark icon={<SparkleIcon />}>Aozora</Wordmark>
-            <Text size="sm">
-              An example application. Every pixel comes from the kirua design system.
-            </Text>
+            <Text size="sm">An example site, built only from kirua components.</Text>
           </Inline>
         </Container>
       </Stack>

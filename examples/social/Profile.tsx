@@ -70,8 +70,8 @@ export function Profile({ person }: ProfileProps) {
               <AlertDialogContent>
                 <AlertDialogTitle>Block @{person.handle}?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Neither of you would see the other's posts. This is an example screen, so
-                  nobody is really blocked.
+                  Neither of you will see the other's posts. This is a demo, so nobody is
+                  actually blocked.
                 </AlertDialogDescription>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -143,7 +143,7 @@ export function Profile({ person }: ProfileProps) {
         </TabsContent>
 
         <TabsContent value="likes">
-          <Text size="sm">Liked posts are private on this example screen.</Text>
+          <Text size="sm">Likes are private. Only {person.name} can see them.</Text>
         </TabsContent>
 
         <TabsContent value="activity">
@@ -151,9 +151,7 @@ export function Profile({ person }: ProfileProps) {
             <CardContent>
               <Chart label={`Posts by ${person.name} per month, the last twelve months`}>
                 <BarChart data={postsPerMonth} series={2} />
-                <ChartCaption>
-                  These numbers are made up for the example, not measured from anywhere.
-                </ChartCaption>
+                <ChartCaption>Sample figures for this demo.</ChartCaption>
               </Chart>
             </CardContent>
           </Card>

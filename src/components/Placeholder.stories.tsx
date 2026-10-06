@@ -134,7 +134,7 @@ export const AThumbnailInARow: Story = {
       </ItemMedia>
       <ItemContent>
         <ItemTitle>Round glasses</ItemTitle>
-        <ItemDescription>Qty 1 · Rp 240.000</ItemDescription>
+        <ItemDescription>Qty 1 · Rp 240,000</ItemDescription>
       </ItemContent>
     </Item>
   ),

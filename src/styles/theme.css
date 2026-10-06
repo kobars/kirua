@@ -140,12 +140,8 @@
 
 /* Type, radius and easing utilities come straight from the primitive @theme
  * block — they carry no context-dependent meaning, so no alias. Elevation does
- * carry one, which is why it is aliased above.
- *
- * The stacking order needs `@utility` rather than `@theme`, because Tailwind
- * has no `--z-*` theme namespace to generate from: `z-*` takes a bare number.
- * Written out one per layer so a component names its layer and never a number.
- * `cn.ts` lists these under the `z` group, or two of them would stop cancelling. */
+ * carry one, which is why it is aliased above. */
+
 /* CLAY SHADOWS. A hard offset shadow, down and towards the end of the line.
  * Box shadows have no logical form, so every horizontal offset is multiplied
  * by `--shadow-dir`, which each utility sets on its own element: 1 left to
@@ -251,6 +247,10 @@
   transition-duration: var(--duration-slow);
 }
 
+/* The stacking order needs `@utility` rather than `@theme`, because Tailwind
+ * has no `--z-*` theme namespace to generate from: `z-*` takes a bare number.
+ * Written out one per layer so a component names its layer and never a number.
+ * `cn.ts` lists these under the `z` group, or two of them would stop cancelling. */
 @utility z-base {
   z-index: var(--z-base);
 }

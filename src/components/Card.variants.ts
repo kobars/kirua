@@ -26,7 +26,7 @@ export const cardVariants = cva(
        * spacing scale is built from, where 31 is not.
        *
        * That one pixel is why these stay on the scale instead of becoming
-       * `p-[1.9375rem]`. The four `[FIGMA]` arbitrary values in this repository
+       * `p-[1.9375rem]`. The `[FIGMA]` arbitrary values in this repository
        * are all cases where the measurement is *structural* — a 54px call to
        * action, a 70px nav pill. A card's inner padding is not one of those, and
        * an arbitrary value here would cost the scale and buy a pixel.

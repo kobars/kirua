@@ -15,8 +15,8 @@ afterEach(cleanup);
 /**
  * A focused field draws one ring, on its own border: a 2px outline pulled in by
  * the border's 1px, so it covers the border rather than sitting a gap outside
- * it. Recolouring the border as well drew the same signal twice, as two lines
- * with the page between them.
+ * it. Recolouring the border as well would draw the same signal twice, as two
+ * lines with the page between them.
  */
 const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
   ['Input', (invalid) => <Input aria-label="Name" aria-invalid={invalid} />, 'input'],

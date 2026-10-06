@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A visible label associated with a control through htmlFor. Use Field when the control also needs description or error text.',
+          'A visible label tied to its control through `htmlFor`. Use `Field` when the control also needs a description or an error message.',
       },
     },
   },

@@ -57,9 +57,9 @@ const tone = { out: 'danger', low: 'warning', ok: 'success' } as const;
 const levelLabel = { out: 'Out', low: 'Below par', ok: 'OK' } as const;
 
 /**
- * The three columns worth sorting, and how each one compares. Ascending always
- * means "the row a pharmacist should act on first": the soonest expiry, the
- * smallest stock, the cheapest item.
+ * The three columns worth sorting, and how each one compares. Ascending puts
+ * the row a pharmacist acts on first at the top: the smallest stock, the
+ * soonest expiry. Cost ascends from the cheapest item.
  */
 const COMPARE = {
   stock: (a: Medication, b: Medication) => a.stock - b.stock,
@@ -112,7 +112,7 @@ export function Pharmacy() {
   const commands = (item: Medication) => [
     { label: 'Receive stock', shortcut: '⌘+', run: () => undefined },
     { label: 'Print a bin label', run: () => window.print() },
-    { label: 'Waste the lot', destructive: true, run: () => setDiscarding(item) },
+    { label: 'Record as waste', destructive: true, run: () => setDiscarding(item) },
   ];
 
   return (
@@ -168,7 +168,7 @@ export function Pharmacy() {
         <EmptyState
           icon={<SearchIcon size="2xl" />}
           title="No medication matches"
-          description="Try another keyword, or go back to every item."
+          description="Try another drug name or item code, or show every item."
           action={
             <Button
               variant="secondary"
@@ -311,10 +311,10 @@ export function Pharmacy() {
         onOpenChange={(open) => !open && setDiscarding(null)}
       >
         <AlertDialogContent>
-          <AlertDialogTitle>Waste the {discarding?.name} lot?</AlertDialogTitle>
+          <AlertDialogTitle>Record {discarding?.name} as waste?</AlertDialogTitle>
           <AlertDialogDescription>
-            {discarding?.stock} units in bin {discarding?.bin} are recorded as waste and leave
-            inventory. The entry cannot be undone from this screen.
+            {discarding?.stock} units in bin {discarding?.bin} are recorded as waste and removed
+            from inventory. The entry cannot be undone from this screen.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
@@ -328,7 +328,7 @@ export function Pharmacy() {
                   setDiscarding(null);
                 }}
               >
-                Waste
+                Record as waste
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>

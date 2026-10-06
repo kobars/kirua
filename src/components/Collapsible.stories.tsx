@@ -143,7 +143,7 @@ export const ARailWithAGap: Story = {
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            The reasoning, set apart by a rule rather than a fill.
+            Read the returns policy, then checked the order date against the thirty-day window.
           </CollapsibleContent>
         </Collapsible>
       ))}

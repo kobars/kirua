@@ -38,8 +38,8 @@
  * least 24x24 CSS pixels, unless another target's centre is 24 pixels away or
  * it is an inline link in a sentence. Checked below `md` only — two phones
  * and a phone on its side — because the criterion is about a finger and a
- * pointer is exempt. It is a
- * separate assertion from sideways scroll because the fixes are opposite: a
+ * pointer is exempt. It is a separate assertion from sideways scroll because
+ * the fixes are opposite: a
  * layout that overflows is usually fixed by making something smaller, and this
  * is fixed by making something bigger.
  *

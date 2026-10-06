@@ -15,7 +15,7 @@ const meta = {
         component: [
           "The reference design's hero, rebuilt entirely from the design system.",
           '',
-          'An expressive landing-page composition with oversized artwork, a brand panel and a call to action. Replace the content and artwork to suit your project; third-party artwork permissions are not supplied.',
+          'An expressive landing-page composition with oversized artwork, a brand panel and a call to action. Replace the copy and artwork with your own: the artwork shown is third-party and comes with no permission to reuse it.',
           '',
           '**Deliberate deviations from the Figma file:**',
           '1. The blue panel uses blue-600, not the measured blue-500. White body copy on blue-500 measures 3.65:1 and fails WCAG AA.',

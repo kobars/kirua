@@ -35,10 +35,9 @@ export function Composer({
   const [uploaded, setUploaded] = useState<number | null>(null);
   const left = LIMIT - text.length;
 
-  // The one thing on this screen that is a task rather than a measurement, and
-  // therefore the one `Progress` in the example applications. Everything else
-  // that looked like a bar — bed occupancy, record completeness, a stock level
-  // — is a `Meter`.
+  // An upload is a task with an end, so it is a `Progress`. A level that is
+  // measured rather than completed — bed occupancy, record completeness, a
+  // stock level — is a `Meter`.
   useEffect(() => {
     if (uploaded === null || uploaded >= 100) return;
     const timer = window.setTimeout(
@@ -75,7 +74,7 @@ export function Composer({
       {uploaded !== null && (
         <Stack gap={1.5}>
           <Inline justify="between" align="baseline">
-            <Text size="sm">{uploaded < 100 ? 'Uploading the image…' : 'Image uploaded'}</Text>
+            <Text size="sm">{uploaded < 100 ? 'Uploading image…' : 'Image uploaded'}</Text>
             <Text size="sm" tone="muted" inline numeric>
               {uploaded}%
             </Text>

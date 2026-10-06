@@ -70,10 +70,11 @@ export function PostCard({ post, onDelete }: PostCardProps) {
       );
       setNotice('Post and profile link copied.');
     } catch {
-      setNotice('Could not copy. Select the post text to copy it manually.');
+      setNotice('Could not copy. Select the post text and copy it yourself.');
     }
   };
-  const report = () => setNotice('Report recorded for this demo session. Nothing was sent.');
+  const report = () =>
+    setNotice('Thanks for letting us know. This is a demo, so no report was sent.');
   const [replyOrder, setReplyOrder] = useState('newest');
   const person = people[post.handle];
   if (!person) return null;
@@ -115,9 +116,9 @@ export function PostCard({ post, onDelete }: PostCardProps) {
               </IconButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" width="md">
-              {/* Grouped, because the three commands, the two settings and the
+              {/* Grouped, because the three commands, the setting and the
                 destructive one are three different kinds of thing and a menu
-                that does not say so is a list of six. */}
+                that does not say so is a flat list of five. */}
               <DropdownMenuGroup>
                 <DropdownMenuItem onSelect={() => void copy()}>Copy post</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setPinned(!pinned)}>
@@ -142,8 +143,8 @@ export function PostCard({ post, onDelete }: PostCardProps) {
         </Inline>
       </Split>
 
-      {pinned && <Text size="sm">Pinned in this session</Text>}
-      {muted && <Text size="sm">Muted in this session</Text>}
+      {pinned && <Text size="sm">Pinned post</Text>}
+      {muted && <Text size="sm">You muted @{person.handle}.</Text>}
       <Text tone="primary" wrap="anywhere">
         {post.text}
       </Text>
@@ -196,7 +197,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
       </Inline>
       <CollapsibleContent>
         <Stack gap={3}>
-          <Text size="sm">Replies added here stay in this demo session.</Text>
+          <Text size="sm">Replies you write here are not saved.</Text>
           {(replyOrder === 'newest' ? [...replies].reverse() : replies).map((text, index) => (
             <Text key={`${index}-${text}`} wrap="anywhere">
               {text}

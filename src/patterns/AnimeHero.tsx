@@ -39,7 +39,7 @@ const NAV_ITEMS = [
   { label: 'Home', href: '#home', current: true },
   { label: 'Portfolio', href: '#portfolio' },
   { label: 'About', href: '#about' },
-  { label: 'Contact Us', href: '#contact' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 const LIKERS = [{ name: 'Rin' }, { name: 'Kai' }, { name: 'Mio' }, { name: 'Sora' }];
@@ -80,7 +80,7 @@ export function AnimeHero() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <IconButton aria-label="Open menu" variant="ghost" size="md">
+                <IconButton aria-label="Browse categories" variant="ghost" size="md">
                   <GridIcon />
                 </IconButton>
               </DropdownMenuTrigger>
@@ -112,7 +112,7 @@ export function AnimeHero() {
               className="absolute inset-e-0 top-[38%] shadow-raised"
               leading={<AvatarStack items={LIKERS} max={3} />}
             >
-              +1M Like&apos;s
+              1M+ likes
             </Chip>
             <Chip
               size="sm"
@@ -143,21 +143,20 @@ export function AnimeHero() {
                 size="display-md"
                 className="md:text-display-lg xl:text-display-xl"
               >
-                Bring your anime worlds to life
+                Show your art. Sell your prints.
               </Heading>
 
               <Text size="lg">
-                Whether you create chibi characters, digital comics, or lively cartoon
-                animations, we give you the tools to design, display, and sell your work
-                beautifully.
+                Chibi characters, digital comics, cartoon animations: give your work a portfolio
+                that shows it at its best, and sell prints from the same page.
               </Text>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" size="lg">
-                  Start now
+                  Open your shop
                 </Button>
                 <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon />}>
-                  Enroll Now
+                  Browse the gallery
                 </Button>
               </div>
             </SpotlightContent>
@@ -183,13 +182,14 @@ export function AnimeHero() {
             className="justify-between"
           >
             <div className="flex flex-col gap-2">
-              <CardEyebrow>Join our anime class</CardEyebrow>
+              <CardEyebrow>Anime drawing class</CardEyebrow>
               {/* h2 — the hero headline is the h1 and levels must not skip. */}
               <CardTitle as="h2" className="text-display-md">
-                50% Off
+                50% off
               </CardTitle>
               <CardBody>
-                Create, showcase, and sell your digital art and cartoon creations with ease.
+                Weekly lessons in character design, inking and colour, at half price for your
+                first month.
               </CardBody>
             </div>
             <CardFooter className="justify-between">
@@ -199,7 +199,7 @@ export function AnimeHero() {
                 trailingIcon={<ArrowRightIcon />}
                 className="min-w-40 justify-between"
               >
-                Claim
+                Claim offer
               </Button>
               <div className="flex items-center gap-2" aria-hidden="true">
                 <span className="h-6 w-9 rounded-xs bg-fg-muted" />
@@ -217,8 +217,8 @@ export function AnimeHero() {
             className="justify-between"
           >
             <CardBody className="text-body-lg">
-              We&apos;re a platform built for digital artists and cartoon creators who want to
-              share their anime-inspired art with the world.
+              A home for digital artists and comic creators: publish anime-inspired work, grow
+              an audience and stay in touch with the people who follow you.
             </CardBody>
             <CardFooter>
               <StatRow>

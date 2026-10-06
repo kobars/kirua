@@ -31,9 +31,9 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <Alert {...args} icon={<SparkleIcon />} className="max-w-lg">
-      <AlertTitle>New tools are available</AlertTitle>
+      <AlertTitle>New brushes in the studio</AlertTitle>
       <AlertDescription>
-        Explore the updated drawing workspace when you are ready.
+        Ink and screentone brushes are ready the next time you open a canvas.
       </AlertDescription>
     </Alert>
   ),
@@ -71,13 +71,13 @@ export const AnnouncementIsOptIn: Story = {
     <div className="grid max-w-xl gap-4">
       <Alert {...args} data-testid="static-alert">
         <AlertTitle>Before you continue</AlertTitle>
-        <AlertDescription>Static guidance is not announced as a new event.</AlertDescription>
+        <AlertDescription>
+          Every print needs a size and a price before it goes on sale.
+        </AlertDescription>
       </Alert>
       <Alert {...args} status="danger" role="alert" icon={<CloseIcon />}>
         <AlertTitle>Upload failed</AlertTitle>
-        <AlertDescription>
-          The urgent dynamic failure opts into an announcement.
-        </AlertDescription>
+        <AlertDescription>harbour-at-dusk.png is larger than 20 MB.</AlertDescription>
       </Alert>
     </div>
   ),

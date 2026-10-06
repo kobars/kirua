@@ -33,8 +33,7 @@ export interface MeterProps
    * *low* value is the problem — a stock level, a battery — has no threshold
    * here on purpose, because inverting the comparison would make the same two
    * numbers mean opposite things depending on a third prop. Carry that meaning
-   * beside the bar instead, as a `Badge` does in the hospital system's pharmacy
-   * inventory.
+   * beside the bar instead, in a `Badge` for example.
    */
   thresholds?: { warning: number; danger: number };
 }
@@ -58,13 +57,12 @@ export interface MeterProps
  * `::-webkit-meter-bar` and `::-moz-meter-bar` — which `getComputedStyle` does
  * not read back: both the bar and the value pseudo-element report
  * `rgba(0, 0, 0, 0)` whether or not a rule targets them, with and without
- * `appearance: none`. So no test in this repository could assert that the fill
- * is the colour it claims, and the vendor prefixes differ across the four
- * declared browsers while the suite runs two of them.
+ * `appearance: none`. So no test can assert that the fill is the colour it
+ * claims, and the vendor prefixes differ from one browser to the next.
  *
  * `role="meter"` is ARIA's own answer for the same semantics, it styles like
  * any other element, and every claim it makes is assertable. That trade — a
- * verifiable appearance over a native tag — is the one this repository makes
+ * verifiable appearance over a native tag — is the one this system makes
  * everywhere else.
  *
  * @example

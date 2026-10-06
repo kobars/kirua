@@ -20,8 +20,8 @@ afterEach(cleanup);
  * mistake and is not: **importance reverses layer order**, so an `!important`
  * declaration in the *lowest* layer beats an `!important` declaration in a
  * higher one. It is the strongest thing in the cascade. The forced-colors rules
- * had to leave `base` entirely for exactly the opposite reason — they carry no
- * `!important`, so a plain utility outranked them.
+ * sit outside `base` entirely for exactly the opposite reason — they carry no
+ * `!important`, so inside it a plain utility would outrank them.
  *
  * Without this file the rule could be deleted, moved out of the media query,
  * or lose its `!important`, and every other test here would still pass — a

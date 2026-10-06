@@ -4,7 +4,7 @@
  *
  * The reference shows no motion at all, so these are invented. Kept short and
  * low-travel to suit a UI whose character comes from flat colour, not movement.
- * `prefers-reduced-motion` is honoured globally in index.css. */
+ * `prefers-reduced-motion` is honoured globally in kirua.css. */
 
 @theme {
   --animate-fade-in: fade-in var(--duration-base) var(--ease-out);

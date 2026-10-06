@@ -84,7 +84,7 @@ export const AnEyebrowAboveAHeading: Story = {
     <div className="grid gap-2">
       <Eyebrow>Our story</Eyebrow>
       <Text size="lg" tone="primary">
-        We built the thing we kept failing to do by hand.
+        We built Aozora because a spreadsheet kept losing our commissions.
       </Text>
     </div>
   ),

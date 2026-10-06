@@ -21,7 +21,7 @@ const meta = {
       // panel and back out, and axe reports them as `aria-hidden-focus` — an
       // element cannot be both hidden and focusable.
       //
-      // It is a real finding about a real node, and the node is the vendor's.
+      // The violation is real, and the node is the vendor's.
       // Nothing in this file can remove it without removing the keyboard path
       // it exists to provide, so the one rule is turned off here rather than
       // the whole run. Re-check it when Radix ships a fix.

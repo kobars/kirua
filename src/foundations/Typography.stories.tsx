@@ -43,9 +43,9 @@ export const Scale: Story = {
             Display — Luckiest Guy
           </h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            A single-weight decorative face. It carries the brand and nothing else. It has no
-            weight range, no true lowercase design, and it is unreadable below about 24px, so
-            the system permits it at display sizes only.
+            A single-weight decorative face that carries the brand. It has no weight range and
+            no true lowercase, and it becomes hard to read below about 24px, so the system uses
+            it at display sizes only.
           </p>
         </div>
         {DISPLAY.map((step) => (
@@ -53,7 +53,7 @@ export const Scale: Story = {
             <span className="font-mono text-caption text-fg-muted">
               {step.cls} · {step.px}
             </span>
-            <span className={`font-display text-fg ${step.cls}`}>Bring your worlds</span>
+            <span className={`font-display text-fg ${step.cls}`}>Show your art</span>
           </div>
         ))}
       </section>
@@ -62,9 +62,9 @@ export const Scale: Story = {
         <div>
           <h2 className="font-text text-heading-lg font-semibold text-fg">Text — Nunito</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            The working face, and the one that does 95% of the job. Nunito is a rounded text
-            family with a full weight range, which is why the system can use it for headings,
-            labels, and body copy without reaching for a second family.
+            The working face, used for nearly everything. Nunito is a rounded text family with a
+            full weight range, so the system can use it for headings, labels and body copy
+            without a second family.
           </p>
         </div>
         {TEXT.map((step) => (
@@ -73,7 +73,7 @@ export const Scale: Story = {
               {step.cls} · {step.px}
             </span>
             <span className={`font-text text-fg ${step.cls}`}>
-              Whether you create chibi characters, digital comics, or lively cartoon animations.
+              Chibi characters, digital comics and cartoon animations, all in one portfolio.
             </span>
           </div>
         ))}
@@ -95,7 +95,7 @@ export const Scale: Story = {
               {step.cls} · {step.weight} · {step.role}
             </span>
             <span className={`font-text text-heading-sm text-fg ${step.cls}`}>
-              Whether you create chibi characters, digital comics, or lively cartoon animations.
+              Chibi characters, digital comics and cartoon animations, all in one portfolio.
             </span>
           </div>
         ))}
@@ -107,8 +107,8 @@ export const Scale: Story = {
         </h2>
         <p className="max-w-2xl font-text text-body-md text-fg-secondary">
           The reference file sets body copy at 18px with a 20px line height — a ratio of 1.11.
-          That is tight enough to work for one line and to crowd badly across three. The system
-          ships 1.44 instead. Both are shown below at the same width.
+          That works for a single line and crowds badly across three, so the system ships 1.44
+          instead. Both are shown below at the same width.
         </p>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-md border border-line-subtle p-5">
@@ -116,8 +116,8 @@ export const Scale: Story = {
               Reference: 18px / 20px (1.11)
             </div>
             <p className="font-text text-fg" style={{ fontSize: '18px', lineHeight: '20px' }}>
-              Whether you create chibi characters, digital comics, or lively cartoon animations,
-              we give you the tools to design, display, and sell your work beautifully.
+              Chibi characters, digital comics, cartoon animations: give your work a portfolio
+              that shows it at its best, and sell prints from the same page.
             </p>
           </div>
           <div className="rounded-md border border-line-subtle p-5">
@@ -125,8 +125,8 @@ export const Scale: Story = {
               System: text-body-lg — 18px / 26px (1.44)
             </div>
             <p className="font-text text-body-lg text-fg">
-              Whether you create chibi characters, digital comics, or lively cartoon animations,
-              we give you the tools to design, display, and sell your work beautifully.
+              Chibi characters, digital comics, cartoon animations: give your work a portfolio
+              that shows it at its best, and sell prints from the same page.
             </p>
           </div>
         </div>

@@ -1,15 +1,11 @@
 /**
  * Everything the marketing site says, in one place.
  *
- * A marketing page is mostly copy, and copy inlined into JSX is copy nobody can
- * read end to end. Keeping it here means the prose can be edited as prose —
- * which matters more than usual, because this is the app the `List` and `Text`
- * components were designed against.
+ * A marketing page is mostly copy, and copy inlined into JSX is hard to read
+ * end to end. Keeping it here means the prose can be edited as prose.
  *
- * Aozora is a fiction: a small studio selling tools to anime and cartoon
- * artists. It is the subject the reference hero was already selling, so the
- * marketing family of components has a home that wants them rather than a
- * gallery that merely displays them.
+ * Aozora is fictional: a small studio selling tools to anime and cartoon
+ * artists, the same subject as the hero the design system was built from.
  */
 
 export interface Plan {
@@ -111,7 +107,7 @@ export const MILESTONES: Milestone[] = [
   },
 ];
 
-/** The principles page copy. Prose, and the reason `List` exists. */
+/** The three principles, shown on the home page and listed on the story page. */
 export const PRINCIPLES = [
   {
     title: 'The artwork is the interface',

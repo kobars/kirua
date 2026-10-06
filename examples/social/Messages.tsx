@@ -156,7 +156,7 @@ export function Messages() {
       <PaneHeader>
         <Visible below="md">
           <IconButton
-            aria-label="Back to the list"
+            aria-label="Back to messages"
             variant="ghost"
             size="sm"
             onClick={() => setOpenId('')}
@@ -303,7 +303,7 @@ export function Messages() {
       {openId === '' && (
         <Visible below="md">
           <Button variant="ghost" onClick={() => setOpenId(threads[0]?.id ?? '')}>
-            Open the first conversation
+            Open the latest conversation
           </Button>
         </Visible>
       )}

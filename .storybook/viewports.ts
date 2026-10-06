@@ -17,8 +17,8 @@ const md = breakpointPx('md');
  * straddling the breakpoint the moment the token moves, and the suite stays
  * green while the assertion quietly stops meaning anything.
  *
- * Three, not five: just below `md`, exactly at `md`, and the desktop width the
- * reference was drawn for. Each one multiplies the whole suite, and these are
+ * Three, not five: just below `md`, exactly at `md`, and `lg`, where the
+ * desktop layout of the reference design applies. Each one multiplies the whole suite, and these are
  * the three sides of the only two reflows the system has.
  */
 export const KIRUA_VIEWPORTS = {

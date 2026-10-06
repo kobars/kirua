@@ -48,6 +48,30 @@ const DESTINATIONS = [
   { label: 'Profile', icon: <UserIcon />, href: '#/profile' },
 ];
 
+const ACTIVITY = [
+  'Mio commented on “Harbour at dusk”.',
+  'Kai started following you.',
+  'Your print of “Lantern street” sold out in A3.',
+  'Rin added “Moonlit shrine” to a collection.',
+  'Sora asked about a commission slot in May.',
+  'Two new reviews on “Sakura season”.',
+  'Aki shared your sketchbook page.',
+  'Your gallery had 1,240 visitors this week.',
+  'Mio replied to your comment.',
+  'A buyer left a note with their order.',
+  'Kai liked “Rain on the river”.',
+  'Your payout for March is on its way.',
+];
+
+const TURNS = [
+  'Which week is best for the cherry blossoms in Kyoto?',
+  'Usually late March to early April, and the dates move a little each year.',
+  'Can we fit Nara in as a day trip?',
+  'Yes. It is about 45 minutes by train, so a day there is easy.',
+  'What should we book ahead?',
+  'Temple stays and the popular restaurants near Gion fill up first.',
+];
+
 const header = (
   <AppHeader
     actions={
@@ -95,11 +119,8 @@ export const APageBesideARail: Story = {
         <AppMain>
           <Container width="full">
             <PageHeader title="Home" description="What happened while you were away" />
-            {Array.from({ length: 12 }, (_, index) => (
-              <Text key={index}>
-                Paragraph {index + 1}. Enough content to scroll the page under the sticky
-                header.
-              </Text>
+            {ACTIVITY.map((line) => (
+              <Text key={line}>{line}</Text>
             ))}
           </Container>
         </AppMain>
@@ -162,11 +183,11 @@ export const AnApplicationThatScrollsInPanes: Story = {
             </PaneHeader>
             <PaneBody padding="md" data-testid="body">
               {Array.from({ length: 30 }, (_, index) => (
-                <Text key={index}>Turn {index + 1} of a long conversation.</Text>
+                <Text key={index}>{TURNS[index % TURNS.length]}</Text>
               ))}
             </PaneBody>
             <PaneFooter>
-              <Text size="sm">The composer stays on the screen.</Text>
+              <Text size="sm">Ask a follow-up about the trip.</Text>
             </PaneFooter>
           </Pane>
         </AppMain>

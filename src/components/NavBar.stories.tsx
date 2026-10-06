@@ -16,7 +16,7 @@ const meta = {
       { label: 'Home', href: '#home', current: true },
       { label: 'Portfolio', href: '#portfolio' },
       { label: 'About', href: '#about' },
-      { label: 'Contact Us', href: '#contact' },
+      { label: 'Contact', href: '#contact' },
     ],
   },
   argTypes: { actions: { control: false } },
@@ -72,7 +72,7 @@ export const MarksTheCurrentPage: Story = {
     // Exactly one. Two would be a contradiction rather than extra emphasis, and
     // `aria-current` absent is the correct state for the rest — not `false`,
     // which some assistive technology still announces.
-    for (const label of ['Portfolio', 'About', 'Contact Us']) {
+    for (const label of ['Portfolio', 'About', 'Contact']) {
       await expect(canvas.getByRole('link', { name: label })).not.toHaveAttribute(
         'aria-current',
       );

@@ -9,9 +9,9 @@ export interface BadgeProps extends ComponentProps<'span'>, VariantProps<typeof 
 }
 
 /**
- * Invented — the reference has nothing to succeed or fail. Colour never carries
- * the meaning alone: every badge shows a word, so the state survives greyscale
- * and colour blindness.
+ * A short status label: draft, published, failed. Colour never carries the
+ * meaning alone: every badge shows a word, so the state survives greyscale and
+ * colour blindness.
  *
  * @example <Badge status="success" icon={<CheckIcon />}>Published</Badge>
  */

@@ -55,7 +55,7 @@ export function HomePage() {
           <Chip size="sm">For anime and cartoon artists</Chip>
 
           <Heading as="h1" size="display-hero">
-            Bring your anime worlds to life
+            Show your art. Sell your prints.
           </Heading>
 
           <Text size="lg">
@@ -122,9 +122,8 @@ export function HomePage() {
                 beside it is the taller one. */}
             <CardContent grow>
               <CardBody size="lg">
-                Eleven thousand artists publish on Aozora, and last year they were paid for a
-                little over four hundred thousand pieces. Those are the only two numbers we
-                think are worth putting on a home page.
+                Eleven thousand artists publish on Aozora. Last year they were paid for a little
+                over four hundred thousand pieces, by buyers in thirty-eight countries.
               </CardBody>
             </CardContent>
             <StatRow>

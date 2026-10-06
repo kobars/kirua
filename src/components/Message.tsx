@@ -77,7 +77,7 @@ export type MessageProps<T extends MessageElement = 'li'> = Omit<ComponentProps<
  *       <MessageHeader>
  *         Maya Kusuma <time dateTime="09:15">09:15</time>
  *       </MessageHeader>
- *       <MessageBubble from="other" size="sm">So the docs cannot drift.</MessageBubble>
+ *       <MessageBubble from="other" size="sm">The proofs came back today.</MessageBubble>
  *       <MessageReactions aria-label="Reactions">
  *         <MessageReaction label="Rin reacted with a thumbs up">👍 1</MessageReaction>
  *       </MessageReactions>
@@ -88,7 +88,7 @@ export type MessageProps<T extends MessageElement = 'li'> = Omit<ComponentProps<
  *       <MessageHeader>
  *         <VisuallyHidden>You</VisuallyHidden> <time dateTime="09:16">09:16</time>
  *       </MessageHeader>
- *       <MessageBubble from="self" size="sm">That is the whole point.</MessageBubble>
+ *       <MessageBubble from="self" size="sm">Send me a photo of page six.</MessageBubble>
  *       <MessageFooter>Seen</MessageFooter>
  *     </MessageContent>
  *   </Message>

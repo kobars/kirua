@@ -23,13 +23,6 @@ describe('dark mode is a class on the document, and nothing else', () => {
   });
 
   /**
-   * There is deliberately no bare `@media (prefers-color-scheme: dark)` block.
-   * A consumer offering a three-way light/dark/system control could then never
-   * render light on a machine set to dark, because a media query cannot be
-   * turned off from inside the page. The preference is read by the head
-   * snippet instead — one decision, in the one place that runs before paint.
-   */
-  /**
    * The browser draws scrollbars, autofill and the native date and time
    * pickers itself, and reads only `color-scheme` to pick their palette.
    */
@@ -73,6 +66,13 @@ describe('dark mode is a class on the document, and nothing else', () => {
     panel.remove();
   });
 
+  /**
+   * There is deliberately no bare `@media (prefers-color-scheme: dark)` block.
+   * A consumer offering a three-way light/dark/system control could then never
+   * render light on a machine set to dark, because a media query cannot be
+   * turned off from inside the page. The preference is read by the head
+   * snippet instead — one decision, in the one place that runs before paint.
+   */
   it('does not re-point tokens from a media query', () => {
     const withoutComments = semanticCss.replace(/\/\*[\s\S]*?\*\//g, '');
     expect(withoutComments).not.toContain('prefers-color-scheme');

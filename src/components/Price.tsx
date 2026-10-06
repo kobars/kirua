@@ -27,7 +27,7 @@ export interface PriceProps extends ComponentProps<'p'> {
  * of prices lines up digit for digit.
  *
  * A screen reader does not announce `<s>`, so a reduced price read aloud as
- * "Rp 120.000 Rp 150.000" sounds like two prices. The struck figure is
+ * "Rp 120,000 Rp 150,000" sounds like two prices. The struck figure is
  * preceded by `wasLabel`, off the screen.
  *
  * @example <Price amount={idr(120000)} was={idr(150000)} />

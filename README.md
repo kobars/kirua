@@ -35,10 +35,10 @@ components and their props.
 
 ## Features
 
-- **90 components and 31 icons.** Layout (`AppShell`, `Stack`, `Inline`,
-  `Grid`, `Split`, `Pane`, `PageHeader`), typography, buttons, cards, forms,
-  menus, overlays, navigation, tables, charts, feedback and decorative
-  ornaments. Radix supplies the behaviour — focus management, typeahead, roving
+- **Components for whole applications, plus a set of icons.** Layout
+  (`AppShell`, `Stack`, `Inline`, `Grid`, `Split`, `Pane`, `PageHeader`),
+  typography, buttons, cards, forms, menus, overlays, navigation, tables,
+  charts, feedback and decorative ornaments. Radix supplies the behaviour — focus management, typeahead, roving
   tabindex, collision-aware positioning, ARIA wiring — and kirua supplies the
   appearance.
 - **A token architecture in four layers.** Raw primitives, semantic roles,
@@ -168,7 +168,7 @@ The [package README](packages/kirua/README.md) covers the rest of the setup:
 what the stylesheet changes across the app, dark mode and the night palettes,
 `TooltipProvider`, the icons, and a `next build --webpack` setting.
 
-Copying the source in is still possible: take `src/components`, `src/lib` and
+You can also copy the source in: take `src/components`, `src/lib` and
 `src/styles` (the stories and tests can stay behind), resolve the `@/` alias the
 components import each other through to the folder holding them, and name the
 copied directories as Tailwind sources. `examples/vite.config.ts` and

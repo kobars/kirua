@@ -31,7 +31,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A flat corner accent for the base style. Use it sparingly on brand or inverse panels, where its translucent fill contrasts with the surface. Prefer Card glint or SpotlightPanel for automatic placement. Direct use requires radius and inset values that match the containing shape.',
+          'A flat corner accent from the reference design. Use it sparingly on brand or inverse panels, where its translucent fill contrasts with the surface. Prefer Card glint or SpotlightPanel for automatic placement. Direct use requires radius and inset values that match the containing shape.',
       },
     },
   },
@@ -61,7 +61,7 @@ export const AllFourCorners: Story = {
     docs: {
       description: {
         story:
-          'The shape is drawn once for the top-left corner and mirrored into the other three. Mirrors rather than rotations, because a rotation would also swap the box dimensions and leave the blade hanging off the corner.',
+          'The shape is drawn once for the top-start corner and mirrored into the other three. Mirrors rather than rotations, because a rotation would also swap the box dimensions and leave the blade hanging off the corner.',
       },
     },
   },
@@ -96,18 +96,18 @@ export const InContext: Story = {
         <SpotlightContent className="gap-2">
           <h3 className="font-display text-display-md text-fg">Panel</h3>
           <p className="font-text text-body-md text-fg-secondary">
-            Defaults to the top-left and bottom-left corners.
+            Defaults to the top-start and bottom-start corners.
           </p>
         </SpotlightContent>
       </SpotlightPanel>
       <div className="grid gap-6 md:grid-cols-2">
         <Card variant="dark" padding="lg" glint="top-end">
-          <CardTitle>glint=&quot;tr&quot;</CardTitle>
-          <CardBody className="mt-1">Faces the panel from the left.</CardBody>
+          <CardTitle>glint=&quot;top-end&quot;</CardTitle>
+          <CardBody className="mt-1">One glint, on the top-end corner.</CardBody>
         </Card>
         <Card variant="dark" padding="lg" glint="top-start">
-          <CardTitle>glint=&quot;tl&quot;</CardTitle>
-          <CardBody className="mt-1">Faces the panel from the right.</CardBody>
+          <CardTitle>glint=&quot;top-start&quot;</CardTitle>
+          <CardBody className="mt-1">One glint, on the top-start corner.</CardBody>
         </Card>
       </div>
     </div>

@@ -125,20 +125,20 @@ try {
   await documentMode(docs, 'dark');
 
   await page.goto(`${base}/?path=/docs/components-dialog--docs&globals=mode:light`);
-  await specimen.getByRole('button', { name: 'Enroll Now', exact: true }).click();
-  const dialog = specimen.getByRole('dialog', { name: 'Join the anime class' });
+  await specimen.getByRole('button', { name: 'Join the class', exact: true }).click();
+  const dialog = specimen.getByRole('dialog', { name: 'Join the drawing class' });
   await dialog.waitFor();
   const lightDialog = await background(dialog);
   await chooseMode('dark');
   await documentMode(specimen, 'dark');
   // Storybook remounts docs on global changes; open the new specimen's portal.
-  await specimen.getByRole('button', { name: 'Enroll Now', exact: true }).click();
+  await specimen.getByRole('button', { name: 'Join the class', exact: true }).click();
   await dialog.waitFor();
   assert.notEqual(await background(dialog), lightDialog, 'Docs portal must follow Mode');
 
   await page.goto(`${base}/?path=/story/components-dialog--default&globals=mode:light`);
-  await docs.getByRole('button', { name: 'Enroll Now', exact: true }).click();
-  const openDialog = docs.getByRole('dialog', { name: 'Join the anime class' });
+  await docs.getByRole('button', { name: 'Join the class', exact: true }).click();
+  const openDialog = docs.getByRole('dialog', { name: 'Join the drawing class' });
   await openDialog.waitFor();
   const lightStoryDialog = await background(openDialog);
   await chooseMode('dark');

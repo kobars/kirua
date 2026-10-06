@@ -414,8 +414,8 @@ export function App() {
                   ) : (
                     <>
                       {/* One column on a phone, two from `sm`, three from `lg`.
-                          The hardest reflow in the set, and the reason the card
-                          has no fixed width of its own. */}
+                          The card has no fixed width of its own, so it fills
+                          whichever column it lands in. */}
                       <Grid as="ul" columns={1} sm={2} lg={3} gap={4}>
                         {shown.map((product) => (
                           <li key={product.id}>
