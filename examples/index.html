@@ -44,8 +44,8 @@
       // so nothing the theme script above does can stop it.
       (() => {
         const nights = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
-        const sectionNights = __SECTION_NIGHTS__;
-        const section = location.hash.replace(/^#\/?/, '').split('/')[0];
+        const sectionNights = {};
+        const section = (location.hash || '').replace(/^#\/?/, '').split('/')[0];
         const own = Object.hasOwn(sectionNights, section);
         const key = own ? `kirua-night-palette:${section}` : 'kirua-night-palette';
         const fallback = own ? sectionNights[section] : 'navy';

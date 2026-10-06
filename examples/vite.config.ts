@@ -5,28 +5,15 @@
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import { highlight } from './highlight.plugin.ts';
-import { SECTIONS } from './sections.ts';
+import { sectionNights } from './sectionNights.plugin.ts';
 
 const ROOT = import.meta.dirname;
 const REPO = path.resolve(ROOT, '..');
 
 /** Kept in step with `vite.config.ts` by `src/styles/browsers.test.ts`. */
 const BUILD_TARGET = ['chrome120', 'edge120', 'safari16.4', 'firefox128'];
-
-/**
- * Gives the blocking script in `index.html` each section's night, so the page
- * paints in it before any module has loaded and `sections.ts` stays the one
- * place the nights are written.
- */
-function sectionNights(): Plugin {
-  const nights = JSON.stringify(Object.fromEntries(SECTIONS.map((s) => [s.id, s.night])));
-  return {
-    name: 'kirua-section-nights',
-    transformIndexHtml: (html) => html.replace('__SECTION_NIGHTS__', nights),
-  };
-}
 
 export default defineConfig({
   root: ROOT,

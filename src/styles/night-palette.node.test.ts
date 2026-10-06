@@ -2,14 +2,19 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
+import { injectSectionNights } from '../../examples/sectionNights.plugin';
+import { SECTIONS } from '../../examples/sections';
 import NIGHTS from './nights.json';
 
 /**
  * The example app's `index.html` applies the stored night before first paint, and
  * the application decides it again once it runs. If the two rules differ, the
  * page paints one night and switches to the other a frame later. The rule both
- * must follow: a valid value in the link wins, else a valid stored value, else
- * navy, which sets no attribute.
+ * must follow: a valid value in the link wins, else a valid value stored for
+ * the section on screen, else that section's own night (navy on the hub, which
+ * sets no attribute).
+ *
+ * The scripts run as the build ships them, with each section's night filled in.
  */
 
 const EXAMPLES = path.join(import.meta.dirname, '../../examples');
@@ -26,13 +31,16 @@ const files = (name: string) =>
 /** Every example host document. */
 const hosts = files('index.html');
 
-/** Every inline script in the head, in document order. */
+/** Every inline script in the head, in document order, as the build ships it. */
 const inlineScripts = (file: string) =>
-  [...readFileSync(file, 'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)].map(
-    (match) => match[1] ?? '',
-  );
+  [
+    ...injectSectionNights(readFileSync(file, 'utf8')).matchAll(
+      /<script>([\s\S]*?)<\/script>/g,
+    ),
+  ].map((match) => match[1] ?? '');
 
 interface Boot {
+  hash?: string;
   search: string;
   stored: Record<string, string>;
   storageThrows?: boolean;
@@ -43,7 +51,7 @@ interface Boot {
  * runs on its own, as a browser runs separate script elements: one that throws
  * does not stop the next.
  */
-function boot(scripts: string[], { search, stored, storageThrows = false }: Boot) {
+function boot(scripts: string[], { hash = '', search, stored, storageThrows = false }: Boot) {
   const dataset: Record<string, string> = {};
   const storage = {
     getItem: (key: string) => {
@@ -53,7 +61,7 @@ function boot(scripts: string[], { search, stored, storageThrows = false }: Boot
   };
   const page = {
     URLSearchParams,
-    location: { search },
+    location: { hash, search },
     localStorage: storage,
     matchMedia: () => ({ matches: false }),
     document: { documentElement: { dataset, classList: { toggle: () => {} } } },
@@ -69,11 +77,13 @@ function boot(scripts: string[], { search, stored, storageThrows = false }: Boot
 }
 
 /** The hook's rule, written out independently of either implementation. */
-function expected(fromUrl: string | null, stored: string | undefined) {
+function expected(fromUrl: string | null, stored: string | undefined, own = 'navy') {
   if (fromUrl !== null && NIGHTS.includes(fromUrl)) return fromUrl;
   if (stored !== undefined && NIGHTS.includes(stored)) return stored;
-  return 'navy';
+  return own;
 }
+
+const attribute = (night: string) => (night === 'navy' ? undefined : night);
 
 const URL_VALUES = [null, 'onyx', 'navy', 'slate'];
 const STORED_VALUES = [undefined, 'carbon', 'bogus'];
@@ -105,14 +115,39 @@ describe('the blocking script follows the night palette hook', () => {
         search: fromUrl === null ? '' : `?night=${fromUrl}`,
         stored: stored === undefined ? {} : { 'kirua-night-palette': stored },
       });
-      const want = expected(fromUrl, stored);
-      expect(night).toBe(want === 'navy' ? undefined : want);
+      expect(night).toBe(attribute(expected(fromUrl, stored)));
+    });
+
+    // A section reads only its own key, and opens in its own night.
+    it.each(
+      SECTIONS.flatMap((section) =>
+        URL_VALUES.flatMap((fromUrl) =>
+          STORED_VALUES.map((stored) => [section.id, fromUrl, stored, section.night] as const),
+        ),
+      ),
+    )('%s: link %s, stored %s', (id, fromUrl, stored, own) => {
+      const night = boot(scripts, {
+        hash: `#/${id}/some/route`,
+        search: fromUrl === null ? '' : `?night=${fromUrl}`,
+        stored: {
+          'kirua-night-palette': 'graphite',
+          ...(stored === undefined ? {} : { [`kirua-night-palette:${id}`]: stored }),
+        },
+      });
+      expect(night).toBe(attribute(expected(fromUrl, stored, own)));
     });
 
     it('takes a valid link value when storage is refused', () => {
       expect(boot(scripts, { search: '?night=ink', stored: {}, storageThrows: true })).toBe(
         'ink',
       );
+    });
+
+    it("falls back to the section's own night when storage is refused", () => {
+      for (const { id, night } of SECTIONS)
+        expect(
+          boot(scripts, { hash: `#/${id}/`, search: '', stored: {}, storageThrows: true }),
+        ).toBe(attribute(night));
     });
   });
 });
