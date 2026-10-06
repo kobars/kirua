@@ -104,22 +104,17 @@ export const TheGroupTakesTheFocusRing: Story = {
     const group = canvasElement.querySelector('[data-slot="input-group"]') as HTMLElement;
     const input = canvas.getByRole('textbox');
 
-    const resting = getComputedStyle(group).borderTopColor;
     await userEvent.tab();
     await expect(input).toHaveFocus();
 
-    // The border transitions, so the computed value is still the old colour on
-    // the tick the focus lands. Reading it once is a test that passes or fails
-    // on timing.
+    // The ring `Input` draws, on the box and over its border: one 2px line,
+    // with the input itself drawing nothing.
     await waitFor(async () => {
-      await expect(getComputedStyle(group).borderTopColor).not.toBe(resting);
+      await expect(getComputedStyle(group).outlineStyle).toBe('solid');
     });
-    await expect(getComputedStyle(input).borderTopWidth).toBe('0px');
-
-    // The same ring `Input` draws, on the box: a border colour alone is too
-    // faint to be the only sign of focus.
-    await expect(getComputedStyle(group).outlineStyle).toBe('solid');
     await expect(getComputedStyle(group).outlineWidth).toBe('2px');
+    await expect(getComputedStyle(group).outlineOffset).toBe('-1px');
+    await expect(getComputedStyle(input).borderTopWidth).toBe('0px');
     await expect(getComputedStyle(input).outlineStyle).toBe('none');
   },
 };

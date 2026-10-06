@@ -23,7 +23,11 @@ export function Input({ className, ...props }: InputProps) {
         'flex h-11 w-full min-w-0 rounded-md border border-field-line bg-field px-3',
         'font-text text-body-md text-on-field shadow-resting placeholder:text-placeholder',
         'transition-[border-color,box-shadow] duration-fast ease-out',
-        'hover:border-field-line-hover focus-visible:border-ring',
+        // One focus ring, laid over the border: recolouring the border as
+        // well drew the same signal twice, with the page between the lines.
+        // An invalid field keeps its colour in the ring.
+        'hover:border-field-line-hover focus-visible:-outline-offset-1',
+        'aria-invalid:focus-visible:outline-field-line-invalid',
         'aria-invalid:border-field-line-invalid aria-invalid:hover:border-field-line-invalid',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',
         className,
