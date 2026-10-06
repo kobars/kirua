@@ -58,7 +58,9 @@ import { appearanceRecipes, findAppearanceCopies } from './dogfood-appearance.mj
 const INSTEAD = {
   button: 'Button, IconButton or Toggle',
   input: 'Input, Checkbox, RadioGroupItem or Slider',
-  select: 'Select',
+  select: 'Select or NativeSelect',
+  option: 'NativeSelectOption',
+  optgroup: 'NativeSelectOptGroup',
   textarea: 'Textarea',
   label: 'Label',
   fieldset: 'FieldSet',

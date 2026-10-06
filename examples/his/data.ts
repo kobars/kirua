@@ -371,6 +371,40 @@ export const departmentGroups = [
 ];
 
 /**
+ * The languages an interpreter can be booked in. A plain-text list long enough
+ * that a user types the first letter to reach theirs, with the few most asked
+ * for at this clinic first.
+ */
+export const languageGroups = [
+  {
+    label: 'Most requested',
+    languages: ['English', 'Spanish', 'Mandarin', 'Vietnamese', 'Tagalog', 'Arabic'],
+  },
+  {
+    label: 'Other languages',
+    languages: [
+      'American Sign Language',
+      'Amharic',
+      'Bengali',
+      'Cantonese',
+      'Farsi',
+      'French',
+      'Haitian Creole',
+      'Hindi',
+      'Japanese',
+      'Korean',
+      'Polish',
+      'Portuguese',
+      'Punjabi',
+      'Russian',
+      'Somali',
+      'Ukrainian',
+      'Urdu',
+    ],
+  },
+];
+
+/**
  * A slice of ICD-10-CM, which is the case a combobox exists for: a clinician
  * knows the first letters and the full code set is far too long to scroll.
  */

@@ -8,6 +8,7 @@ import { Chip } from './Chip';
 import { CornerGlint } from './CornerGlint';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { Field } from './Field';
+import { NativeSelect } from './NativeSelect';
 import { SpotlightContent, SpotlightMedia } from './SpotlightPanel';
 import { Switch } from './Switch';
 
@@ -54,6 +55,17 @@ describe('padding follows the reading direction', () => {
     expect(ltr.paddingLeft).not.toBe(ltr.paddingRight);
     expect(ltr.paddingLeft).toBe(rtl.paddingRight);
     expect(ltr.paddingRight).toBe(rtl.paddingLeft);
+  });
+
+  it('NativeSelect reserves its chevron gutter at the end', () => {
+    const [ltr, rtl] = bothWays(
+      <NativeSelect aria-label="Clinic" />,
+      '[data-slot="native-select"]',
+    );
+
+    expect(ltr.paddingRight).not.toBe(ltr.paddingLeft);
+    expect(ltr.paddingRight).toBe(rtl.paddingLeft);
+    expect(ltr.paddingLeft).toBe(rtl.paddingRight);
   });
 
   it('SpotlightContent reserves its artwork gutter on the correct side', () => {
@@ -130,6 +142,16 @@ describe('insets follow the reading direction', () => {
 
     expect(ltr.right).toBe('0px');
     expect(rtl.left).toBe('0px');
+  });
+
+  it('NativeSelect puts its chevron at the end', () => {
+    const [ltr, rtl] = bothWays(
+      <NativeSelect aria-label="Clinic" />,
+      '[data-slot="native-select-icon"]',
+    );
+
+    expect(ltr.right).toBe('12px');
+    expect(rtl.left).toBe('12px');
   });
 
   it('CornerGlint top-end tucks into the opposite corner', () => {

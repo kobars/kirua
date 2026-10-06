@@ -12,6 +12,12 @@ export { Field, FieldLegend, FieldSet, type FieldProps } from './Field';
 export { Label, type LabelProps } from './Label';
 export { Input, type InputProps } from './Input';
 export { Textarea, type TextareaProps } from './Textarea';
+export {
+  NativeSelect,
+  NativeSelectOption,
+  NativeSelectOptGroup,
+  type NativeSelectProps,
+} from './NativeSelect';
 export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';

@@ -135,6 +135,9 @@ import {
   MenubarTrigger,
   MessageBubble,
   Meter,
+  NativeSelect,
+  NativeSelectOptGroup,
+  NativeSelectOption,
   NavBar,
   NavBarLink,
   NavigationMenu,
@@ -350,6 +353,29 @@ const cases: Case[] = [
   ],
   ['Input', (p) => <Input {...p} />, 'INPUT'],
   ['Textarea', (p) => <Textarea {...p} />, 'TEXTAREA'],
+  // The <select>, not the wrapper that holds the chevron: it is the control a
+  // Field labels and a form library registers.
+  ['NativeSelect', (p) => <NativeSelect aria-label="Clinic" {...p} />, 'SELECT'],
+  [
+    'NativeSelectOption',
+    (p) => (
+      <NativeSelect aria-label="Clinic">
+        <NativeSelectOption {...p}>Dental</NativeSelectOption>
+      </NativeSelect>
+    ),
+    'OPTION',
+  ],
+  [
+    'NativeSelectOptGroup',
+    (p) => (
+      <NativeSelect aria-label="Clinic">
+        <NativeSelectOptGroup label="Specialist" {...p}>
+          <option>Dental</option>
+        </NativeSelectOptGroup>
+      </NativeSelect>
+    ),
+    'OPTGROUP',
+  ],
   [
     'Field',
     (p) => (
