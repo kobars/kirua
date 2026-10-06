@@ -76,7 +76,7 @@ function Specimen() {
       <div className="flex flex-wrap items-center gap-3">
         <Badge status="success">Published</Badge>
         <Badge status="danger">Failed</Badge>
-        <Chip variant="brand">+1M Likes</Chip>
+        <Chip variant="brand">1M+ likes</Chip>
       </div>
       <Card padding="md" className="max-w-sm">
         <CardTitle>A card on this surface</CardTitle>
@@ -120,8 +120,7 @@ export const EverySurface: Story = {
 /**
  * Reads a token *inside* a context and grades it. Resolving from
  * `document.documentElement` instead would return the `:root` value and report
- * the light palette four times — which is the mistake the field audit test
- * exists to make impossible.
+ * the light palette for every context.
  */
 function useContextRatio(
   contextClass: string,

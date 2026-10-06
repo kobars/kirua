@@ -134,11 +134,10 @@ export function Summary() {
                     {unit.used} / {unit.beds}
                   </Text>
                 </Inline>
-                {/* A measurement, not a task, and the one screen that
-                      wanted thresholds: amber past 85% of the unit, red past
-                      95%. Written in beds rather than percent, because a
-                      threshold as a percentage means something different the
-                      moment `min` stops being zero. */}
+                {/* A measurement, not a task, so it takes thresholds: amber
+                      past 85% of the unit, red past 95%. Written in beds
+                      rather than percent, because a percentage threshold
+                      means something different once `min` is not zero. */}
                 <Meter
                   value={unit.used}
                   max={unit.beds}

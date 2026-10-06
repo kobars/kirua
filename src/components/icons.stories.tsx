@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Decorative inline SVG icons that inherit currentColor. Put an accessible label on their containing control when an icon appears without visible text.',
+          'Decorative inline SVG icons that take the colour of the text around them. When an icon stands without visible text, put the accessible name on the control that contains it.',
       },
     },
   },

@@ -19,7 +19,7 @@ const meta = {
   tags: ['autodocs'],
   title: 'Components/Heading',
   component: Heading,
-  args: { as: 'h2', size: 'heading-md', children: 'Bring your anime worlds to life' },
+  args: { as: 'h2', size: 'heading-md', children: 'Show your art. Sell your prints.' },
   argTypes: {
     as: { control: 'inline-radio', options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] },
     size: { control: 'select', options: SIZES },
@@ -28,7 +28,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A heading with independent document level and visual size. Choose as for the page outline and size for emphasis. Reserve display sizes for short promotional headlines.',
+          'A heading whose document level and visual size are set separately. Use `as` to fit the page outline and `size` to set the emphasis. Keep the display sizes for short promotional headlines.',
       },
     },
   },

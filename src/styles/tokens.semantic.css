@@ -364,10 +364,9 @@
    * blue-100 3.82:1, blue-50 4.33:1, white 4.67:1. `Link`'s inline variant
    * sets text in it, so 3.82 fails axe.
    *
-   * The consequence is worth stating rather than discovering. On a brand
-   * surface, accent cannot be a hue — the surface already is the accent — so
-   * an inline link there is told apart by its underline alone. That is why the
-   * underline is permanent and not a hover state. */
+   * On a brand surface, accent cannot be a hue — the surface already is the
+   * accent — so an inline link there is told apart by its underline alone.
+   * That is why the underline is permanent and not a hover state. */
   --color-text-accent: var(--color-neutral-0);
   --color-text-inverse: var(--color-neutral-1000);
 

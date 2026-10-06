@@ -7,11 +7,11 @@
  *
  * The example app under `examples/`, five applications as five sections, is
  * the proof that this design system can be built with. It imports the bare
- * specifier `@kobars/kirua`, exactly as an outside consumer would, and cannot reach
- * into `src`. That only means anything while the app keeps using the system —
- * a screen that reaches past a component and writes the markup by hand is
- * measuring nothing, and it is the easiest thing in the world to do by
- * accident under time pressure.
+ * specifier `@kobars/kirua`, exactly as an outside consumer would, and cannot
+ * reach into `src`. That only means anything while the app keeps using the
+ * system — a screen that reaches past a component and writes the markup by
+ * hand is measuring nothing, and it is the easiest thing in the world to do
+ * by accident under time pressure.
  *
  * Raw markup mistakes it catches:
  *

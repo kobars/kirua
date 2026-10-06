@@ -19,7 +19,7 @@ const REM = 16;
  *
  * Three widths, not five. Each one multiplies the whole suite, and these are
  * the three sides of the only two reflows the system has: just below `md`,
- * exactly at `md`, and the desktop width the reference was drawn for.
+ * exactly at `md`, and `lg`, where the reference's desktop layout applies.
  *
  * `.storybook/viewports.ts` derives the same three from the same file, for the
  * story side. Two readers, one source.
@@ -191,10 +191,10 @@ export default defineConfig({
     // Vitest allows `.only` unless `CI` is set, so a focused test committed
     // while debugging would skip the rest of its file on every local run.
     allowOnly: false,
-    // A hosted macOS runner has three cores and no GPU. Every project opening
-    // browsers at once there starves the renderer: a story with no play
-    // function timed out at 15s, and screenshots never settled. Fewer workers
-    // and a longer budget on CI; local runs keep the defaults.
+    // A hosted macOS runner has three cores and no GPU, and every project
+    // opening browsers at once there starves the renderer until tests time
+    // out. Fewer workers and a longer budget on CI; local runs keep the
+    // defaults.
     ...(process.env['CI'] ? { maxWorkers: 2, testTimeout: 60_000 } : {}),
     projects: [
       ...webkitProjects,
@@ -248,8 +248,8 @@ export default defineConfig({
        * `unit:*` set this file would run at three widths against a single
        * filename, and the three runs would overwrite each other.
        *
-       * `lg` is the width the reference file was drawn at, so a diff here is a
-       * diff against the design rather than against a reflow.
+       * `lg` shows the desktop layout of the reference design, so a diff here is
+       * a diff against the design rather than against a reflow.
        *
        * The comparator lives here rather than at each call site. Anti-aliasing
        * moves by a pixel or two between runs and between machines, so zero
@@ -257,10 +257,10 @@ export default defineConfig({
        * which is how a visual gate gets switched off. 1% of pixels is far below
        * a one-step padding change and far above rasterisation noise.
        *
-       * **Not on CI.** The baselines were drawn on a developer's Mac. A hosted
-       * macOS runner draws with no GPU and never produced two matching
-       * captures in a row, so every comparison failed before it compared
-       * anything. The project runs in every local `pnpm check`.
+       * **Not on CI.** A hosted macOS runner draws with no GPU and does not
+       * produce two matching captures in a row, so a comparison there fails
+       * before it compares anything. The project runs in every local
+       * `pnpm check`.
        */
       ...(process.env['CI']
         ? []
@@ -330,8 +330,8 @@ export default defineConfig({
       // completeness, and `src/components/variants.test.tsx` enforces it by
       // rendering every story and failing on any variant none of them shows.
       include: ['src/lib/**'],
-      // What the suite actually reaches, not an aspiration. `src/lib` is
-      // three small pure modules, so full cover is the honest number; the one
+      // What the suite actually reaches, not an aspiration. `src/lib` is a
+      // few small pure modules, so full cover is the honest number; the one
       // uncovered branch is a guard for a colour string no browser produces.
       thresholds: { lines: 100, functions: 100, statements: 100, branches: 95 },
     },

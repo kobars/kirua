@@ -35,13 +35,14 @@ export const Playground: Story = {
   render: (args) => (
     <Card {...args} className="max-w-md">
       <CardEyebrow>Join our anime class</CardEyebrow>
-      <CardTitle className="text-display-md">50% Off</CardTitle>
+      <CardTitle className="text-display-md">50% off</CardTitle>
       <CardBody className="mt-2">
-        Create, showcase, and sell your digital art and cartoon creations with ease.
+        Weekly lessons in character design, inking and colour, at half price for your first
+        month.
       </CardBody>
       <CardFooter>
         <Button variant="primary" trailingIcon={<ArrowRightIcon />}>
-          Claim
+          Claim offer
         </Button>
       </CardFooter>
     </Card>
@@ -95,8 +96,8 @@ export const WithStats: Story = {
   render: () => (
     <Card variant="dark" padding="lg" className="max-w-lg">
       <CardBody className="text-body-lg">
-        We&apos;re a platform built for digital artists and cartoon creators who want to share
-        their anime-inspired art with the world.
+        A home for digital artists and comic creators: publish anime-inspired work, grow an
+        audience and stay in touch with the people who follow you.
       </CardBody>
       <CardFooter>
         <StatRow>

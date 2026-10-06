@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A quiet line inside a conversation or a feed — a day break, someone joining. It is text, not role="separator": a separator’s children are presentational, so its words would be lost. Render it as a heading where a reader should be able to jump between days.',
+          'A quiet line inside a conversation or a feed — a day break, someone joining. It is text, not `role="separator"`: a separator’s children are presentational, so its words would be lost. Render it as a heading where a reader should be able to jump between days.',
       },
     },
   },

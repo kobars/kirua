@@ -25,7 +25,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Things side by side with one gap between them. Set wrap on any row that may meet a narrow screen; justify="between" replaces a spacer element.',
+          'Things side by side with one gap between them. Set `wrap` on any row that may meet a narrow screen; `justify="between"` replaces a spacer element.',
       },
     },
   },
@@ -39,9 +39,9 @@ export const Playground: Story = {
     <Inline {...args}>
       <Badge status="info">New</Badge>
       <Text inline size="sm">
-        Three items in a row
+        Three new prints this week
       </Text>
-      <Button size="sm">Act</Button>
+      <Button size="sm">View</Button>
     </Inline>
   ),
 };

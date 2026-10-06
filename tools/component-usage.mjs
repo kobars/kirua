@@ -17,11 +17,11 @@
  *
  * ## How usage is decided
  *
- * Every example imports the bare specifier `kirua`, exactly as an outside
- * consumer would, so the import lists *are* the usage. An imported binding
- * that is never rendered would fail `tsc` under `noUnusedLocals` before it
- * reached this tool, so an import is evidence of a use rather than a claim of
- * one.
+ * Every example imports the bare specifier `@kobars/kirua`, exactly as an
+ * outside consumer would, so the import lists *are* the usage. An imported
+ * binding that is never rendered would fail `tsc` under `noUnusedLocals`
+ * before it reached this tool, so an import is evidence of a use rather than a
+ * claim of one.
  *
  * Only exported **values** count. `Corner` and `NamedPanel` are types — a type
  * has no runtime and cannot be placed on a screen.
@@ -148,8 +148,9 @@ function exportedValues() {
 }
 
 /**
- * Which bindings each section imports from `kirua`. The hub is the files at
- * the root of `examples/` — the entry, the router and the page at `#/`.
+ * Which bindings each section imports from `@kobars/kirua`. The hub is the
+ * files at the root of `examples/` — the entry, the router and the page at
+ * `#/`.
  *
  * `examples/shared` counts for every section: `ThemeMenu` is one file that all
  * of them render, and scanning only `examples/<section>` would report
@@ -158,8 +159,8 @@ function exportedValues() {
  * The clause pattern is `[^}]*` and not `[\s\S]*?` for a reason worth keeping:
  * lazy matching still crosses an intervening import, so in a `main.tsx` that
  * imports React first, the match would run from `import {` on line one to
- * `} from '@kobars/kirua'` on line three and swallow three modules into one clause,
- * reporting `TooltipProvider` unused while the app wraps itself in it.
+ * `} from '@kobars/kirua'` on line three and swallow three modules into one
+ * clause, reporting `TooltipProvider` unused while the app wraps itself in it.
  */
 function usageBySection() {
   const shared = sources(path.join(EXAMPLES, 'shared'));

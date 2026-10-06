@@ -100,7 +100,7 @@ describe('VisuallyHidden with asChild', () => {
   });
 });
 
-describe('new props on existing components', () => {
+describe('individual component props', () => {
   it('an icon takes a tone and still merges a consumer class', () => {
     const container = render(<StarIcon tone="warning" className="consumer-class" />);
     const svg = container.querySelector('svg')!;

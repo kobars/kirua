@@ -2,8 +2,8 @@
 
 ## 0.2.0
 
-A minor version, because some of these changes can alter an existing screen.
-Those are listed first.
+Some changes in this release can alter an existing screen, which is why it is
+a minor version. They are listed first, under **Changed**.
 
 ### Changed
 

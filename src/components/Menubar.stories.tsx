@@ -51,7 +51,7 @@ export const Default: Story = {
               <MenubarShortcut>⌘O</MenubarShortcut>
             </MenubarItem>
             <MenubarSeparator />
-            <MenubarItem disabled>Print — no printer</MenubarItem>
+            <MenubarItem disabled>Print (no printer found)</MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>

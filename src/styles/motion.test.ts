@@ -56,7 +56,7 @@ describe('the motion scale is declared and used', () => {
   });
 
   /**
-   * The reduced-motion block in `index.css` overrides `transition-duration`,
+   * The reduced-motion block in `kirua.css` overrides `transition-duration`,
    * which is exactly the property these utilities set — so the named scale
    * stays inside its cover.
    */
@@ -73,7 +73,7 @@ describe('the motion scale is declared and used', () => {
    * a utility that was never generated — both read as "not 500ms".
    *
    * This is the other half: with no preference set, the same class really is
-   * half a second. Move or weaken the rule in `index.css` and exactly one of the
+   * half a second. Move or weaken the rule in `kirua.css` and exactly one of the
    * two fails, which is what makes the pair diagnostic rather than decorative.
    */
   it('with no preference set, the same class is really half a second', () => {

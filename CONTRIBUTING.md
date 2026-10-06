@@ -35,7 +35,8 @@ already does:
    primitive Radix already covers. Exit animations are `@keyframes`, not
    transitions.
 5. Components hold no state and read no browser API during render, so they
-   stay renderable on the server. No `"use client"` directives.
+   stay renderable on the server. No `"use client"` directive outside the
+   short list of client modules named in `server.node.test.tsx`.
 6. Variant definitions live in a sibling `*.variants.ts` file, so a component
    module exports components only.
 7. Sub-components are flat named exports, never static properties.
@@ -67,7 +68,8 @@ Code examples should include their imports and necessary state. The interactive
 examples in `src/patterns/examples/` supply both executable previews and raw source
 for the docs, so their displayed handlers stay in sync with what runs. For multi-part
 components, import every demonstrated part. Use kirua's own controls in examples.
-Inside this repository `kirua` is a local alias; an installed import is `@kobars/kirua`.
+Write imports as `@kobars/kirua`; inside this repository that name is an alias
+for the source.
 
 MDX prose uses a neutral reading font. Components inside previews keep the base
 style's fonts. Use HTML tables in MDX; this configuration does not enable GFM tables.

@@ -4,8 +4,8 @@
  * An optional `board/` folder at the repository root, if present, is shown
  * instead of the committed sample under `./sample`. `main.tsx` globs that
  * folder and passes it to `choose`; Storybook and tests import `sample`
- * directly, so they render the same board on every machine. The reasoning is written beside the sample
- * in `src/board/sample/index.md`.
+ * directly, so they render the same board on every machine. The reasoning is
+ * written beside the sample in `src/board/sample/index.md`.
  */
 
 export interface Source {

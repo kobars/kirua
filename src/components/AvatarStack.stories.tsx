@@ -48,7 +48,7 @@ export const Sizes: Story = {
 };
 
 export const InAChip: Story = {
-  render: (args) => <Chip leading={<AvatarStack {...args} size="sm" />}>+1M Likes</Chip>,
+  render: (args) => <Chip leading={<AvatarStack {...args} size="sm" />}>1M+ likes</Chip>,
 };
 
 export const CustomLabel: Story = {

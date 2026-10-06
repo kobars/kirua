@@ -74,7 +74,7 @@ export function PricingPage() {
             >
               <Inline justify="between" gap={2}>
                 <CardEyebrow>{plan.name}</CardEyebrow>
-                {plan.featured && <Chip size="sm">Most chosen</Chip>}
+                {plan.featured && <Chip size="sm">Most popular</Chip>}
               </Inline>
 
               <CardTitle as="h3" size="display-md" numeric>
@@ -115,7 +115,7 @@ export function PricingPage() {
 
       <Section>
         <Heading as="h2" size="heading-md">
-          What actually differs
+          How the plans differ
         </Heading>
         <Card padding="md">
           {/* No ScrollArea: `Table` wraps itself in its own focusable scroll
@@ -197,7 +197,7 @@ export function PricingPage() {
 
       <Section>
         <Heading as="h2" size="heading-md">
-          Questions we are asked
+          Common questions
         </Heading>
         <Card padding="md">
           <Accordion type="single" collapsible defaultValue={FAQ[0].question}>

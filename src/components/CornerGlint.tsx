@@ -30,7 +30,7 @@ export interface CornerGlintProps extends ComponentProps<'span'> {
  * The mirror is deliberately NOT here. The blade is drawn once for the
  * start-top corner and flipped into the other three, and `transform` knows
  * nothing about direction — in a right-to-left document every horizontal flip
- * has to invert again. That inversion is one rule in `index.css` keyed on
+ * has to invert again. That inversion is one rule in `kirua.css` keyed on
  * `data-corner`; this component only reports which corner it is in.
  */
 const edges: Record<Corner, (inset: number) => CSSProperties> = {

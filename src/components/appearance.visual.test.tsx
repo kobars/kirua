@@ -125,8 +125,10 @@ describe('surfaces', () => {
       'bg-page',
       <SpotlightPanel className="w-160">
         <SpotlightContent className="gap-4">
-          <h2 className="font-display text-display-md text-fg">Bring worlds to life</h2>
-          <Button variant="primary">Start now</Button>
+          <h2 className="font-display text-display-md text-fg">
+            Show your art. Sell your prints.
+          </h2>
+          <Button variant="primary">Open your shop</Button>
         </SpotlightContent>
       </SpotlightPanel>,
     );

@@ -19,6 +19,19 @@ import {
  * collision-aware positioning that flips near a viewport edge, and focus return
  * to the trigger.
  *
+ * `modal` defaults to **false** here, where Radix defaults it to true.
+ *
+ * A modal menu locks page scroll and marks everything outside itself
+ * `aria-hidden` — including its own trigger, which is a `<button>` and stays
+ * focusable. axe reports that as `aria-hidden-focus`, and it is not a false
+ * positive: an element cannot be both hidden from assistive technology and
+ * reachable by Tab. It only shows while the menu is open, which makes it easy
+ * to miss.
+ *
+ * A dropdown menu is also not a modal dialog. Scroll locking and inerting the
+ * page are what a `Dialog` is for. Pass `modal` back to Radix's default if a
+ * particular menu really does need it.
+ *
  * @example
  * <DropdownMenu>
  *   <DropdownMenuTrigger asChild><IconButton aria-label="More"><GridIcon /></IconButton></DropdownMenuTrigger>
@@ -27,20 +40,6 @@ import {
  *     <DropdownMenuItem>Newest</DropdownMenuItem>
  *   </DropdownMenuContent>
  * </DropdownMenu>
- */
-/**
- * `modal` defaults to **false** here, where Radix defaults it to true.
- *
- * A modal menu locks page scroll and marks everything outside itself
- * `aria-hidden` — including its own trigger, which is a `<button>` and stays
- * focusable. axe reports that as `aria-hidden-focus`, and it is not a false
- * positive: an element cannot be both hidden from assistive technology and
- * reachable by Tab. It only appears once a menu is open, so a story that never
- * opens one cannot see it.
- *
- * A dropdown menu is also not a modal dialog. Scroll locking and inerting the
- * page are what a `Dialog` is for. Pass `modal` back to Radix's default if a
- * particular menu really does need it.
  */
 export function DropdownMenu({
   modal = false,

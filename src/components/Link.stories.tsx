@@ -14,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'An inline navigation link with a focus treatment. Use a meaningful destination and link text. For a prominent navigation action, Button supports asChild.',
+          'An ordinary link with the focus ring built in. Inside a sentence it is always underlined; as a card title or a name in a table it keeps the colour of the text around it. For navigation that should look like a button, use `Button` with `asChild`.',
       },
     },
   },

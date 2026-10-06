@@ -173,7 +173,7 @@ export const AnUnreadRowInAGroup: Story = {
   ),
   /**
    * A filled row inside an outlined group is a band from edge to edge. With
-   * the row's own corners it showed notches of the page at both ends, which
+   * corners of its own it would show notches of the page at both ends, which
    * looks like a separate pill floating in the list.
    */
   play: async ({ canvasElement }) => {

@@ -29,7 +29,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'An action represented by an icon. aria-label is required to name the action. A tooltip may add a hint, but the control must already have an accessible name.',
+          'An action shown as an icon alone. `aria-label` is required, because it is the only name the action has. A tooltip can add a hint, but the button must be named without it.',
       },
     },
   },

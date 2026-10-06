@@ -38,7 +38,7 @@ export interface SpotlightPanelProps
  *     <img src={character} alt="" />
  *   </SpotlightMedia>
  *   <SpotlightContent>
- *     <h1 className="font-display text-display-xl">Bring your anime worlds to life</h1>
+ *     <h1 className="font-display text-display-xl">Show your art. Sell your prints.</h1>
  *   </SpotlightContent>
  * </SpotlightPanel>
  */

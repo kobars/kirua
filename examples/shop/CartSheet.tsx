@@ -57,7 +57,9 @@ export function CartSheet({
           <SheetDescription>
             {lines.length === 0
               ? 'Nothing in it yet.'
-              : `${lines.length} items in this demo session.`}
+              : lines.length === 1
+                ? '1 item in this demo cart.'
+                : `${lines.length} items in this demo cart.`}
           </SheetDescription>
         </Stack>
 

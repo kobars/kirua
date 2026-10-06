@@ -56,7 +56,7 @@ export const Playground: Story = {
               <time dateTime="09:15">09:15</time>
             </MessageHeader>
             <MessageBubble from={args.from} size="sm">
-              So the docs cannot drift from the CSS.
+              The proofs for your zine came back today.
             </MessageBubble>
           </MessageContent>
         </Message>
@@ -84,10 +84,10 @@ function Thread({ dir }: { dir: 'ltr' | 'rtl' }) {
               <time dateTime="09:15">09:15</time>
             </MessageHeader>
             <MessageBubble from="other" size="sm">
-              So the docs cannot drift from the CSS.
+              The proofs for your zine came back today.
             </MessageBubble>
             <MessageBubble from="other" size="sm">
-              That is the bit I keep failing to sell to people.
+              Page six prints much warmer than it looks on screen.
             </MessageBubble>
             <MessageReactions aria-label="Reactions">
               <MessageReaction label="You reacted with a thumbs up">👍 1</MessageReaction>
@@ -102,7 +102,7 @@ function Thread({ dir }: { dir: 'ltr' | 'rtl' }) {
               <time dateTime="09:16">09:16</time>
             </MessageHeader>
             <MessageBubble from="self" size="sm">
-              Show them the page that grades itself.
+              Send me a photo and I will adjust the file tonight.
             </MessageBubble>
             <MessageFooter>Seen</MessageFooter>
           </MessageContent>

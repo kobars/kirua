@@ -29,7 +29,7 @@ export function StoryPage() {
       <Section>
         <Eyebrow>Our story</Eyebrow>
         <Heading as="h1" size="heading-lg">
-          We built the thing we kept failing to do by hand
+          We built Aozora because a spreadsheet kept losing our commissions
         </Heading>
         <Text size="lg">
           Aozora started as a shared spreadsheet between two illustrators, and it exists because

@@ -107,7 +107,7 @@ export function Explore({ onOpen }: ExploreProps) {
         <EmptyState
           icon={<SearchIcon size="2xl" />}
           title="Nothing matches"
-          description="Try another word, or drop the topic."
+          description="Try a different word, or clear the topic."
           action={
             <Button
               variant="secondary"

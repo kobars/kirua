@@ -75,8 +75,8 @@ export function Notifications() {
       {shown.length === 0 ? (
         <EmptyState
           icon={<SparkleIcon size="2xl" />}
-          title="Everything is read"
-          description="No new notifications for you."
+          title="You are all caught up"
+          description="New likes, replies and follows will show up here."
           action={
             <Button variant="secondary" onClick={() => setTab('all')}>
               Show all

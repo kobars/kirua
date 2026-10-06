@@ -75,9 +75,9 @@ export const Ramps: Story = {
         <div>
           <h2 className="font-text text-heading-lg font-semibold text-fg">Status hues</h2>
           <p className="mt-1 max-w-2xl font-text text-body-md text-fg-secondary">
-            None of these exist in the reference design — it is one marketing screen, with
-            nothing to succeed or fail. <strong>Info is violet, not blue,</strong> on purpose:
-            brand blue is the page surface here, so a blue info state would disappear into it.
+            None of these come from the reference design: it is one marketing screen, with
+            nothing to succeed or fail. <strong>Info is violet, not blue,</strong> because brand
+            blue is already a surface colour, and a blue info state would disappear into it.
           </p>
         </div>
         <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
@@ -108,7 +108,7 @@ const PAIRS: Pair[] = [
     label: 'White body text on the REFERENCE blue (blue-500)',
     fg: '#FFFFFF',
     bg: 'var(--color-blue-500)',
-    note: 'What the Figma file specifies. Large display type only.',
+    note: 'What the Figma file specifies. Suitable for large display type only.',
   },
   {
     label: 'Reference body text — 80% white on blue-500',
@@ -120,10 +120,10 @@ const PAIRS: Pair[] = [
     label: 'White body text on our brand surface (blue-600)',
     fg: '#FFFFFF',
     bg: 'var(--color-blue-600)',
-    note: 'The fix. This is what --color-surface-brand points at.',
+    note: 'The shipped choice. This is what --color-surface-brand points at.',
   },
   {
-    label: 'REJECTED: tinted secondary — 88% white on blue-600',
+    label: 'Not used: tinted secondary — 88% white on blue-600',
     fg: 'color-mix(in srgb, #FFFFFF 88%, transparent)',
     bg: 'var(--color-blue-600)',
     note: 'Why --color-text-secondary is pure white on brand surfaces. White is only 4.67:1 here, so any transparency drops below 4.5:1. Hierarchy comes from size and weight instead.',
@@ -145,13 +145,13 @@ const PAIRS: Pair[] = [
     label: 'The accent edge on the page (non-text, needs 3:1)',
     fg: 'var(--color-border-accent)',
     bg: 'var(--color-surface-page)',
-    note: 'The only edge in this system that is not grey. WCAG 1.4.11 puts a meaningful boundary at 3:1 — and an edge is drawn between two colours, so the row below is the other half. blue-400 passes neither and looks perfectly reasonable in a swatch.',
+    note: 'The only edge in this system that is not grey. WCAG 1.4.11 asks 3:1 of a meaningful boundary, and an edge sits between two colours, so the row below is the other half. blue-400 passes neither, though it looks reasonable in a swatch.',
   },
   {
     label: 'The accent edge on its own fill (non-text, needs 3:1)',
     fg: 'var(--color-border-accent)',
     bg: 'var(--color-surface-brand-subtle)',
-    note: 'Picking an edge against the page alone is the trap: it passes, and then vanishes on the inside of the box. src/styles/accent-edge.test.tsx asserts both halves in all four contexts.',
+    note: 'An edge chosen against the page alone can pass there and vanish against the fill inside the box. The test suite checks both halves in all four contexts.',
   },
 ];
 
@@ -224,7 +224,7 @@ export const ContrastAudit: Story = {
         <p className="mt-1 max-w-3xl font-text text-body-md text-fg-secondary">
           These ratios are computed at render time from the shipped tokens, not written by hand.
           The first two rows are the reference design as drawn; the third is the single token
-          change that fixes it. <strong>AA</strong> needs 4.5:1 for body text.{' '}
+          change that brings it to AA. <strong>AA</strong> needs 4.5:1 for body text.{' '}
           <strong>AA Large</strong> needs 3:1, and applies only at 24px, or 18.66px bold.
         </p>
       </div>

@@ -37,7 +37,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Reads the painted stacking order rather than the class list: `z-index` is
- *  what the browser actually resolved, class names are only what we asked for. */
+ *  what the browser actually resolved, class names are only what was requested. */
 const layerOf = (element: Element) => Number(getComputedStyle(element).zIndex);
 
 /**

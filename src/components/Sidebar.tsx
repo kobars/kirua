@@ -20,10 +20,9 @@ export interface SidebarProps
  * One landmark, named, is the whole rule.
  *
  * **It holds no state.** `open` is a prop, and the button that changes it is
- * the application's. That is not a limitation being worked around — every
- * component in this system is stateless so it can render on a server with no
- * JavaScript, and a sidebar is the component most likely to want its open state
- * remembered in a URL or a cookie, which is the application's job anyway.
+ * the application's. Every component in this system is stateless so it can
+ * render on a server with no JavaScript, and a sidebar's open state usually
+ * belongs in a URL or a cookie, which is the application's job anyway.
  *
  * The prop is published as `data-open` / `data-closed` on the root, so the
  * children style themselves from it — `SidebarLabel` disappears on the rail

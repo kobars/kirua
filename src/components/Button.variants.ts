@@ -90,7 +90,6 @@ export const buttonVariants = cva(
         sm: 'h-9 px-4 text-body-sm [--icon-size:var(--icon-sm)]',
         /** 44px — meets the minimum touch target. */
         md: 'h-11 px-6 text-body-md [--icon-size:var(--icon-md)]',
-        /** 54px — the reference design's hero call to action. */
         /** 54px — the reference design's hero call to action. Arbitrary, not
          *  `h-13.5`: numeric utilities compile to calc(var(--spacing) * n), and a
          *  measured value must not move when the spacing scale is retuned. */

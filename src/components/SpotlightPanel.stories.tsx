@@ -44,18 +44,18 @@ export const Playground: Story = {
         </SpotlightMedia>
         <SpotlightContent className="max-w-160 gap-6">
           <h2 className="font-display text-display-lg text-fg">
-            Bring your anime worlds to life
+            Show your art. Sell your prints.
           </h2>
           <p className="font-text text-body-lg text-fg-secondary">
-            Whether you create chibi characters, digital comics, or lively cartoon animations,
-            we give you the tools to design, display, and sell your work beautifully.
+            Chibi characters, digital comics, cartoon animations: give your work a portfolio
+            that shows it at its best, and sell prints from the same page.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button variant="primary" size="lg">
-              Start now
+              Open your shop
             </Button>
             <Button variant="secondary" size="lg" trailingIcon={<ArrowRightIcon />}>
-              Enroll Now
+              Browse the gallery
             </Button>
           </div>
         </SpotlightContent>
@@ -140,7 +140,7 @@ export const MediaOnTheStartSide: Story = {
         </SpotlightMedia>
         <SpotlightContent gap={6}>
           <h2 className="font-display text-display-lg text-fg">
-            Bring your anime worlds to life, however long the headline runs
+            Show your art and sell your prints, however long the headline runs
           </h2>
         </SpotlightContent>
       </SpotlightPanel>
@@ -168,7 +168,7 @@ export const TheMeasureCapsTheCopyNotTheGutter: Story = {
         </SpotlightMedia>
         <SpotlightContent measure gap={6}>
           <h2 className="font-display text-display-lg text-fg">
-            Bring your anime worlds to life
+            Show your art. Sell your prints.
           </h2>
         </SpotlightContent>
       </SpotlightPanel>
@@ -176,8 +176,8 @@ export const TheMeasureCapsTheCopyNotTheGutter: Story = {
   ),
   /**
    * `measure` is a reading length for the copy. Capping the whole box instead
-   * took the artwork's gutter out of it: a 44rem cap less a 30% gutter left a
-   * display headline one word per line beside empty panel.
+   * would take the artwork's gutter out of it: a 44rem cap less a 30% gutter
+   * leaves a display headline one word per line beside an empty panel.
    */
   play: async ({ canvasElement }) => {
     const panel = canvasElement.querySelector('[data-slot="spotlight-panel"]') as HTMLElement;

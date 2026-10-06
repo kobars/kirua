@@ -24,7 +24,7 @@ export function Input({ className, ...props }: InputProps) {
         'font-text text-body-md text-on-field shadow-resting placeholder:text-placeholder',
         'transition-[border-color,box-shadow] duration-fast ease-out',
         // One focus ring, laid over the border: recolouring the border as
-        // well drew the same signal twice, with the page between the lines.
+        // well would draw the same signal twice, with the page between the lines.
         // An invalid field keeps its colour in the ring.
         'hover:border-field-line-hover focus-visible:-outline-offset-1 focus-visible:outline-field-ring',
         'aria-invalid:focus-visible:outline-field-line-invalid',

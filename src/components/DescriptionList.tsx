@@ -18,9 +18,9 @@ export interface DescriptionListProps
  * @example
  * <DescriptionList>
  *   <DescriptionTerm>Subtotal</DescriptionTerm>
- *   <DescriptionDetails numeric>Rp 1.200.000</DescriptionDetails>
+ *   <DescriptionDetails numeric>Rp 1,200,000</DescriptionDetails>
  *   <DescriptionTerm emphasis>Total</DescriptionTerm>
- *   <DescriptionDetails emphasis numeric>Rp 1.230.000</DescriptionDetails>
+ *   <DescriptionDetails emphasis numeric>Rp 1,230,000</DescriptionDetails>
  * </DescriptionList>
  */
 export function DescriptionList({ className, layout, gap, ...props }: DescriptionListProps) {

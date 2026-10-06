@@ -46,8 +46,8 @@ import {
 } from './data';
 
 /**
- * The form that exercises real validation, a `Select`, a `DatePicker` and an
- * error summary. Nothing is submitted anywhere — the point is the wiring.
+ * Registers a visit, with real validation, a `Select`, a `DatePicker` and an
+ * error summary. Nothing is submitted anywhere.
  */
 export function NewVisit() {
   const [month, setMonth] = useState(new Date(2026, 2, 1));
@@ -65,12 +65,12 @@ export function NewVisit() {
   // message clears the moment its field is valid and the count follows.
   const validate = () => {
     const found: Record<string, string> = {};
-    if (patient === '') found['patient'] = 'Choose a patient first.';
+    if (patient === '') found['patient'] = 'A patient is required.';
     if (department === '') found['department'] = 'A department is required.';
     if (date === undefined) found['date'] = 'A visit date is required.';
     if (reason.trim().length < 5)
-      found['reason'] = 'Describe the reason for visit in at least five characters.';
-    if (!consent) found['consent'] = 'Confirm the consent to treat is signed.';
+      found['reason'] = 'Describe the reason for the visit in at least five characters.';
+    if (!consent) found['consent'] = 'Confirm that the consent to treat is signed.';
     return found;
   };
   const errors = attempts > 0 ? validate() : {};
@@ -150,7 +150,7 @@ export function NewVisit() {
         >
           <Alert status="success" icon={<CheckIcon />}>
             <AlertTitle>Visit scheduled</AlertTitle>
-            <AlertDescription>An example screen — nothing is really stored.</AlertDescription>
+            <AlertDescription>This is a demo, so nothing has been saved.</AlertDescription>
           </Alert>
         </Stack>
       )}
@@ -164,7 +164,10 @@ export function NewVisit() {
           status="danger"
           role="alert"
         >
-          <AlertTitle>{Object.keys(errors).length} fields need attention</AlertTitle>
+          <AlertTitle>
+            {Object.keys(errors).length}{' '}
+            {Object.keys(errors).length === 1 ? 'field needs' : 'fields need'} attention
+          </AlertTitle>
           <AlertDescription>
             <ErrorLinks errors={errors} />
           </AlertDescription>
@@ -309,7 +312,7 @@ export function NewVisit() {
           <Field
             controlId="language"
             label="Preferred language"
-            description="An interpreter is booked for any language but English."
+            description="An interpreter is booked for any language other than English."
           >
             <NativeSelect
               id="language"
@@ -331,9 +334,9 @@ export function NewVisit() {
           </Field>
 
           {/* A combobox rather than a select: the real list is tens of
-              thousands of codes long and a clinician knows the first letters. Focus never
-              leaves the input, so `aria-activedescendant` is what announces the
-              highlighted row. */}
+              thousands of codes long and a clinician knows the first letters.
+              Focus never leaves the input, so `aria-activedescendant` is what
+              announces the highlighted row. */}
           <Combobox open={listOpen} onOpenChange={setListOpen}>
             <Field
               controlId="diagnosis"

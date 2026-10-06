@@ -6,8 +6,8 @@
  * `tools/size-budget.mjs` does this for `dist` — the rebuilt hero page. That is
  * one screen importing a handful of components, so it answers "did something
  * heavy enter the graph" for a page nobody ships. The example app is the
- * closest thing here to a real consumer: five sections, thirty-six screens,
- * and most of the component set between them.
+ * closest thing here to a real consumer: five sections and most of the
+ * component set between them.
  *
  * ## What is enforced, and what is only reported
  *
@@ -71,9 +71,9 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * Its headroom is under 3%, because the one sheet carries the classes of all
  * five sections; the limit is kept tight so that growth here stays visible.
  *
- * Elsewhere the headroom is roughly a tenth, for the reason `size-budget.mjs` gives: a
- * budget with room for a whole extra dependency does not fail until after the
- * mistake has shipped.
+ * Elsewhere the headroom is roughly a tenth, for the reason `size-budget.mjs`
+ * gives: a budget with room for a whole extra dependency does not fail until
+ * after the mistake has shipped.
  *
  * **Raising one of these is a normal thing to do and should be a visible thing
  * to do.** Edit the number here, in the same commit as the change that needed

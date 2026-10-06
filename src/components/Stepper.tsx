@@ -13,8 +13,8 @@ import { stepperMarker, type StepStatus } from './Stepper.styles';
 /**
  * Where you are in a process.
  *
- * It shares its rail with `Timeline` and nothing else — see the note there
- * about why a mode flag on one component would have been wrong.
+ * It shares its rail with `Timeline` and nothing else; `Timeline` explains why
+ * the two are separate components rather than one with a mode flag.
  *
  * `aria-label` is required in the type. A stepper is an `<ol>` in the middle of
  * a form, and "list of 2 items" is not what it is; naming it is the difference

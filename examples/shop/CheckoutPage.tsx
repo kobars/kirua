@@ -149,7 +149,11 @@ export function CheckoutPage({ lines, onPlaced }: CheckoutPageProps) {
           status="danger"
           role="alert"
         >
-          <AlertTitle>{Object.keys(errors).length} fields need fixing</AlertTitle>
+          <AlertTitle>
+            {Object.keys(errors).length === 1
+              ? '1 field needs fixing'
+              : `${Object.keys(errors).length} fields need fixing`}
+          </AlertTitle>
           <AlertDescription>
             <ErrorLinks errors={errors} />
           </AlertDescription>

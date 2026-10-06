@@ -93,16 +93,23 @@ export const AWideChildDoesNotStretchThePage: Story = {
       <Table>
         <TableHeader>
           <TableRow>
-            {['Feature', 'Sketch', 'Studio', 'Atelier', 'Notes', 'Platform fee'].map((head) => (
+            {[
+              'Plan',
+              'Price',
+              'Galleries',
+              'Custom domain',
+              'Commissions',
+              'Platform fee per sale',
+            ].map((head) => (
               <TableHead key={head} className="whitespace-nowrap">
-                {head} column heading
+                {head}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow>
-            {['Galleries', 'One', 'Unlimited', 'Ten artists', 'Per artist', '3%'].map(
+            {['Atelier', '$40 a month', 'Unlimited', 'Yes', 'Shared queue', '2%'].map(
               (cell) => (
                 <TableCell key={cell} className="whitespace-nowrap">
                   {cell}

@@ -48,8 +48,7 @@ interface Resolved {
  * source *text* and treats a `--custom-property` name as a reference wherever it
  * finds one — a JSDoc comment included. Writing it out emits the variable into
  * the application bundle, so a sentence describing an unused token makes it
- * used. Measured: deleting the mention takes the declaration from 1 occurrence
- * to 0 in `dist`.
+ * used: one mention is enough to put the declaration in `dist`.
  *
  * A story may do this; a component may not. Nothing in `src/components` reads
  * the DOM during render, because that is what keeps the system
@@ -174,7 +173,7 @@ export const Spacing: Story = {
         <Section
           title="Spacing"
           origin="invented"
-          lead={`One declared unit — --spacing is ${unit?.declared ?? ''} (${unit?.computed ?? ''}) — and every numeric utility is a multiple of it. Tailwind would default to the same 4px, but leaving it undeclared means a consumer retuning their own scale silently moves every gap in this system. SpotlightContent reads var(--spacing) inside a calc(), so the value has to be ours.`}
+          lead={`One declared unit — --spacing is ${unit?.declared ?? ''} (${unit?.computed ?? ''}) — and every numeric utility is a multiple of it. Tailwind's default is the same 4px; declaring it makes the unit an explicit token of the system. SpotlightContent reads var(--spacing) inside a calc(), so the variable has to exist in the shipped stylesheet.`}
         >
           <div className="flex flex-col gap-1">
             {SPACING_STEPS.map((step) => (
@@ -210,7 +209,7 @@ export const Radius: Story = {
         <Section
           title="Radius"
           origin="mixed"
-          lead={`ONE KNOB. --radius is ${tokens['--radius']?.declared ?? ''} (${tokens['--radius']?.computed ?? ''}), measured from the reference, and every other step is a ratio of it — so "how round is this system" is a single number. The ratios are chosen to land on whole pixels: change the knob and the whole scale moves together instead of drifting apart.`}
+          lead={`One base value. --radius is ${tokens['--radius']?.declared ?? ''} (${tokens['--radius']?.computed ?? ''}), measured from the reference, and every other step is a ratio of it, so the roundness of the whole system is a single number. The ratios land on whole pixels: change the base and the scale moves together instead of drifting apart.`}
         >
           <div className="flex flex-col gap-1">
             {RADIUS_STEPS.map((step) => {
@@ -225,7 +224,7 @@ export const Radius: Story = {
                     />
                     <span className="font-text text-caption text-fg-muted">
                       {shipped
-                        ? (RADIUS_NOTE[step] ?? 'derived from the knob')
+                        ? (RADIUS_NOTE[step] ?? 'derived from the base value')
                         : 'not in this stylesheet — Tailwind emits an @theme variable only where something references it'}
                     </span>
                   </div>
@@ -240,19 +239,17 @@ export const Radius: Story = {
             </strong>{' '}
             Tailwind emits an <code className="font-mono">@theme</code> variable only where
             something references it, so a step nothing uses looks identical to a working one
-            until you go looking — the same trap the motion scale was in.
+            until you go looking.
           </p>
           <p className="max-w-2xl font-text text-body-sm text-fg-muted">
-            <strong>And writing that sentence used to break it.</strong> An earlier draft
-            spelled the utility out in full, inside a <code className="font-mono">code</code>{' '}
-            tag. Tailwind finds classes by scanning source <em>text</em> and does not care that
-            this one sits in a paragraph explaining that nothing uses it — so the class was
-            generated, the variable was pulled into the application bundle, and the claim
-            falsified itself. The step is named without its prefix above for that reason.
+            <strong>That is why this page never spells the step out in full.</strong> Tailwind
+            finds classes by scanning source <em>text</em>, including a paragraph like this one,
+            so naming the utility here would generate it, pull the variable into the application
+            bundle and make the sentence untrue.
           </p>
           <p className="max-w-2xl font-text text-body-sm text-fg-muted">
             The reference file contradicts itself here: its white card and nav pill are both 22,
-            its black card is 24. <strong>The knob stays at 22</strong> — because every step is
+            its black card is 24. <strong>The base stays at 22</strong> — because every step is
             a ratio of it, adopting 24 would push <code className="font-mono">--radius-md</code>{' '}
             off 16px and <code className="font-mono">--radius-xl</code> off the panel’s measured
             32px — and the black card’s 24 is a step of its own,{' '}
@@ -325,7 +322,7 @@ export const Elevation: Story = {
         <Section
           title="Elevation"
           origin="invented"
-          lead="The one visual layer that is CONTEXT-DEPENDENT rather than absolute. A near-black shadow is invisible on a black surface, so a dark Card and a Tooltip would cast nothing exactly where they most need to read as floating. The inverse and brand contexts therefore re-point these to a ring of light plus a deeper shadow. Dark mode needs no ring: a night page sits above a darker shade colour, and its shadows are cast in that shade."
+          lead="The one visual layer that depends on context rather than being absolute. A near-black shadow is invisible on a black surface, so a dark Card and a Tooltip would cast nothing exactly where they most need to read as floating. The inverse and brand contexts therefore re-point these to a ring of light plus a deeper shadow. Dark mode needs no ring: a night page sits above a darker shade colour, and its shadows are cast in that shade."
         >
           {[
             ['on a page', 'bg-page'],
@@ -384,7 +381,7 @@ export const Motion: Story = {
         <Section
           title="Motion"
           origin="invented"
-          lead="Three durations and three curves. --ease-out IS a Tailwind theme namespace, so declaring it replaces Tailwind's own ease-out rather than sitting beside it — every ease-out utility in the components is already on this curve. The spring overshoots and settles, and is only for a button's lift and press."
+          lead="Three durations and three curves. --ease-out is one of Tailwind's own theme variables, so declaring it replaces Tailwind's own ease-out rather than sitting beside it, and every ease-out utility uses this curve. The spring overshoots and settles, and is only for a button's lift and press."
         >
           <div className="flex flex-col gap-1">
             {DURATIONS.map((step) => (
@@ -400,8 +397,8 @@ export const Motion: Story = {
           </div>
 
           <h3 className="pt-2 font-text text-body-sm font-medium text-fg-muted">
-            The named animations. Exits are real @keyframes, never transitions — Radix keeps a
-            closing node mounted only for the duration of a NAMED animation.
+            The named animations. Exits are real @keyframes, never transitions: Radix keeps a
+            closing node mounted only for the duration of a named animation.
           </h3>
           <div className="flex flex-wrap gap-6">
             {ANIMATIONS.map(([name, className]) => (
@@ -434,7 +431,7 @@ export const Breakpoints: Story = {
         <Section
           title="Breakpoints"
           origin="invented"
-          lead="Tailwind's own five, declared explicitly rather than inherited. Declaring them is what lets the test harness and the Storybook viewports both READ them: vite.config.ts parses this file for the widths the suite runs at, so a retuned breakpoint moves the tests with it instead of leaving them asserting either side of a line that moved."
+          lead="Tailwind's own five, declared explicitly rather than inherited, so the test suite and the Storybook viewports read the same widths from the token file. A retuned breakpoint moves the tests with it instead of leaving them on either side of a line that has moved."
         >
           <div className="flex flex-col gap-1">
             {BREAKPOINTS.map((name) => {
@@ -515,7 +512,7 @@ export const StackingOrder: Story = {
         <Section
           title="Stacking order"
           origin="invented"
-          lead="Nine named layers. These are SEMANTIC tokens rather than primitives, because with z-index the name is the meaning: 50 means nothing, modal means something. A component names its layer and never writes a number — grep -rn 'z-[0-9]' src/ must stay empty."
+          lead="Nine named layers. These are semantic tokens rather than primitives, because with z-index the name is the meaning: 50 means nothing, modal means something. A component names its layer and never writes a number."
         >
           <div className="flex flex-col gap-1">
             {LAYERS.map((name) => (

@@ -40,7 +40,7 @@ export const Playground: Story = {
         <SheetTitle>Your cart</SheetTitle>
         <SheetDescription>Two items, ready to check out.</SheetDescription>
         <SheetFooter>
-          <Button fullWidth>Checkout</Button>
+          <Button fullWidth>Check out</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -52,11 +52,11 @@ export const SeveralOpenAtOnce: Story = {
       <Accordion type="multiple" defaultValue={['size', 'colour']}>
         <AccordionItem value="size">
           <AccordionTrigger>Size</AccordionTrigger>
-          <AccordionContent>A filter panel keeps its groups open.</AccordionContent>
+          <AccordionContent>XS to XXL, in regular and relaxed fits.</AccordionContent>
         </AccordionItem>
         <AccordionItem value="colour">
           <AccordionTrigger>Colour</AccordionTrigger>
-          <AccordionContent>Closing one to open another would be maddening.</AccordionContent>
+          <AccordionContent>Eleven colours, from ink black to sakura pink.</AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>

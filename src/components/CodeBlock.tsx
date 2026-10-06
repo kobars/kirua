@@ -26,7 +26,7 @@ export interface CodeBlockProps extends ComponentProps<'div'> {
  *
  * @example
  * <CodeBlock language="bash" action={<IconButton aria-label="Copy"><CopyIcon /></IconButton>}>
- *   {`pnpm add kirua`}
+ *   {`pnpm add @kobars/kirua`}
  * </CodeBlock>
  */
 export function CodeBlock({ className, language, action, children, ...props }: CodeBlockProps) {

@@ -27,9 +27,9 @@ import {
 import { flagLabel, flagTone, formatDateTime, labResults, patients } from './data';
 
 /**
- * Laboratory orders, each under its accession number. Each order opens on its own — a
- * `Collapsible` and not an `Accordion`, because reading two panels side by side
- * is the normal thing to want here and an accordion would shut the first one.
+ * Laboratory orders, listed by accession number. Each order opens on its own —
+ * a `Collapsible` and not an `Accordion`, because comparing two panels is
+ * routine here and an accordion would close the first one.
  */
 export function Lab() {
   const [query, setQuery] = useState('');

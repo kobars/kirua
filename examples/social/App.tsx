@@ -197,7 +197,7 @@ export function App() {
                         likes: 0,
                         comments: 0,
                         ...(image
-                          ? { media: { ratio: 16 / 9, caption: 'Demo image attachment' } }
+                          ? { media: { ratio: 16 / 9, caption: 'Your attached image' } }
                           : {}),
                       },
                       ...all,
@@ -244,7 +244,7 @@ export function App() {
         <AlertDialogContent>
           <AlertDialogTitle>Delete this post?</AlertDialogTitle>
           <AlertDialogDescription>
-            The post and every reply to it go too, and none of it can be recovered.
+            This removes the post and all of its replies. It cannot be undone.
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>

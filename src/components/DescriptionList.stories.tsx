@@ -30,12 +30,12 @@ export const Playground: Story = {
     <div className="max-w-80">
       <DescriptionList {...args}>
         <DescriptionTerm>Subtotal</DescriptionTerm>
-        <DescriptionDetails numeric>Rp 1.200.000</DescriptionDetails>
+        <DescriptionDetails numeric>Rp 1,200,000</DescriptionDetails>
         <DescriptionTerm>Delivery</DescriptionTerm>
-        <DescriptionDetails numeric>Rp 30.000</DescriptionDetails>
+        <DescriptionDetails numeric>Rp 30,000</DescriptionDetails>
         <DescriptionTerm emphasis>Total</DescriptionTerm>
         <DescriptionDetails emphasis numeric>
-          Rp 1.230.000
+          Rp 1,230,000
         </DescriptionDetails>
       </DescriptionList>
     </div>
@@ -64,8 +64,8 @@ export const Gaps: Story = {
         <DescriptionList {...args} key={gap} gap={gap}>
           <DescriptionTerm>Gap</DescriptionTerm>
           <DescriptionDetails>{gap}</DescriptionDetails>
-          <DescriptionTerm>Second</DescriptionTerm>
-          <DescriptionDetails>row</DescriptionDetails>
+          <DescriptionTerm>Delivery</DescriptionTerm>
+          <DescriptionDetails>Two to four days</DescriptionDetails>
         </DescriptionList>
       ))}
     </div>

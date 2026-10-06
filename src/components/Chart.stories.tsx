@@ -77,7 +77,7 @@ export const InlineSparkline: Story = {
     <div className="flex flex-col gap-4">
       <StatRow>
         <Stat label="Visits this month" value="355" />
-        <Stat label="Prescriptions" value="1.204" />
+        <Stat label="Prescriptions" value="1,204" />
       </StatRow>
       <div className="flex items-center gap-6">
         <Sparkline data={VISITS} />
