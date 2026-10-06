@@ -73,6 +73,7 @@
   --color-field-line: var(--color-field-border);
   --color-field-line-hover: var(--color-field-border-hover);
   --color-field-line-invalid: var(--color-field-border-invalid);
+  --color-field-ring: var(--color-field-focus-ring);
   --color-invalid: var(--color-field-fg-invalid);
 
   --color-field-disabled: var(--color-field-bg-disabled);

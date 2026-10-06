@@ -108,7 +108,7 @@ export function ComboboxInput({ className, ...props }: ComponentProps<'input'>) 
           'flex h-11 w-full min-w-0 rounded-md border border-field-line bg-field px-3',
           'font-text text-body-md text-on-field shadow-resting placeholder:text-placeholder',
           'transition-[border-color] duration-fast ease-out hover:border-field-line-hover',
-          'focus-visible:border-ring',
+          'focus-visible:-outline-offset-1 focus-visible:outline-field-ring aria-invalid:focus-visible:outline-field-line-invalid',
           'aria-invalid:border-field-line-invalid',
           'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled',
           className,

@@ -233,6 +233,11 @@
   --color-field-border-hover: var(--color-neutral-700);
 
   --color-field-border-invalid: var(--color-red-600);
+  /* The focus ring a field draws over its own border, so it is measured
+   * against the field it covers as well as the surface beside it. The
+   * system ring everywhere but a brand panel, where it would be white on a
+   * white field. */
+  --color-field-focus-ring: var(--color-focus-ring);
 
   /* The message under the field, which sits on the SURFACE and not on the
    * field. It is a separate token from `--color-status-danger-fg` for exactly
@@ -412,6 +417,9 @@
   --color-field-border: var(--color-neutral-500);
   --color-field-border-hover: var(--color-neutral-700);
   --color-field-border-invalid: var(--color-red-600);
+  /* White would vanish into the white field it is drawn over. Black clears
+   * the field and both brand blues: 4.5:1 on blue-600, 3.45:1 on blue-700. */
+  --color-field-focus-ring: var(--color-neutral-1000);
 
   /* On the panel, not on the field. red-100 measures 3.95:1 on blue-600 —
    * under AA — so this is white, and "invalid" is carried by the border, an
@@ -525,6 +533,7 @@
   --color-field-border: var(--color-neutral-500);
   --color-field-border-hover: var(--color-neutral-400);
   --color-field-border-invalid: var(--color-red-500);
+  --color-field-focus-ring: var(--color-focus-ring);
 
   /* red-100, not red-900: red-900 on this surface is illegible. */
   --color-field-fg-invalid: var(--color-red-100);
@@ -739,6 +748,7 @@
   --color-field-border: var(--color-neutral-500);
   --color-field-border-hover: var(--color-neutral-400);
   --color-field-border-invalid: var(--color-red-500);
+  --color-field-focus-ring: var(--color-focus-ring);
 
   /* red-100, not red-900: red-900 on this surface is illegible. */
   --color-field-fg-invalid: var(--color-red-100);
