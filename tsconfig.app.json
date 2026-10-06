@@ -13,7 +13,9 @@
     "paths": {
       "@/*": ["./src/*"],
       /* The example app imports the published package name, as a consumer
-       * would, resolved to the source here. `src` keeps `@/`. */
+       * would. Its type check reads the source, like `pnpm check:examples`, so
+       * a component added in the same change type-checks before it is
+       * published. `src` keeps `@/`. */
       "@kobars/kirua": ["./src/components/index.ts"],
       "@kobars/kirua/styles.css": ["./src/index.css"]
     },

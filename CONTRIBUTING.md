@@ -135,9 +135,11 @@ Changes to the example app, or to any component it uses, also need:
 pnpm check:examples
 ```
 
-It builds the app and runs the dogfood, usage, `className`, responsive,
-accessibility, performance and journey checks in order. Each also runs alone, for
-example `pnpm check:a11y`.
+It builds the app against the components in `src`, not the published package,
+and runs the dogfood, usage, `className`, responsive, accessibility, performance
+and journey checks in order. Each also runs alone, for example
+`pnpm check:a11y`, against whatever `examples/dist` holds: build it with
+`KIRUA_SOURCE=1 pnpm build:examples` first to check your changes.
 
 Changes to the barrel, to a runtime dependency or to `src/styles` also need:
 

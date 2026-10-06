@@ -1,19 +1,14 @@
-/* The app's stylesheet, and all of it: the design system and the sources
- * Tailwind scans. A rule of the app's own would be styling the system does not
- * offer, which is a gap in the system rather than something to patch here.
+/* The app's stylesheet, and all of it: Tailwind, the design system as
+ * published, and the sources Tailwind scans. A rule of the app's own would be
+ * styling the system does not offer, which is a gap in the system rather than
+ * something to patch here.
  *
- * Tailwind finds classes by scanning source text, and automatic detection
- * starts at the Vite root, this directory, so the system's own components are
- * named explicitly. `src/index.css` carries the matching `@source not`. */
+ * The package's stylesheet names its own components for Tailwind to scan, so
+ * only the app's sources are listed here. With `KIRUA_SOURCE=1` the package
+ * stylesheet is `kirua-source.css`, which does the same for the repository's
+ * components. */
 @import 'tailwindcss';
+@import '@kobars/kirua/styles.css';
 
 @source '.';
 @source not './dist';
-@source '../src/components';
-/* A story or a test is not part of any application, and the classes only
-   they use would ship in the app's stylesheet. */
-@source not '../src/components/**/*.stories.tsx';
-@source not '../src/components/**/*.test.{ts,tsx}';
-@source '../src/lib';
-
-@import '../src/styles/kirua.css';
