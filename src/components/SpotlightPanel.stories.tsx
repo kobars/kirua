@@ -158,6 +158,47 @@ export const MediaOnTheStartSide: Story = {
   },
 };
 
+export const TheMeasureCapsTheCopyNotTheGutter: Story = {
+  args: { padding: 'lg', mediaWidth: '30%' },
+  render: (args) => (
+    <div className="py-16">
+      <SpotlightPanel {...args} minHeight="md">
+        <SpotlightMedia side="end" overhang="both" width="42%" fit>
+          <img src={CHARACTERS.yoyo.src} alt="" />
+        </SpotlightMedia>
+        <SpotlightContent measure gap={6}>
+          <h2 className="font-display text-display-lg text-fg">
+            Bring your anime worlds to life
+          </h2>
+        </SpotlightContent>
+      </SpotlightPanel>
+    </div>
+  ),
+  /**
+   * `measure` is a reading length for the copy. Capping the whole box instead
+   * took the artwork's gutter out of it: a 44rem cap less a 30% gutter left a
+   * display headline one word per line beside empty panel.
+   */
+  play: async ({ canvasElement }) => {
+    const panel = canvasElement.querySelector('[data-slot="spotlight-panel"]') as HTMLElement;
+    const content = canvasElement.querySelector(
+      '[data-slot="spotlight-content"]',
+    ) as HTMLElement;
+    const style = getComputedStyle(content);
+    const panelStyle = getComputedStyle(panel);
+    const gutter = Number.parseFloat(style.paddingInlineEnd);
+    const room =
+      panel.clientWidth -
+      Number.parseFloat(panelStyle.paddingInlineStart) -
+      Number.parseFloat(panelStyle.paddingInlineEnd) -
+      gutter;
+    const copy = content.clientWidth - gutter;
+    const measure = 44 * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    await expect(Math.abs(copy - Math.min(measure, room))).toBeLessThan(1);
+  },
+};
+
 export const MinimumHeights: Story = {
   render: () => (
     <div className="grid gap-6">
