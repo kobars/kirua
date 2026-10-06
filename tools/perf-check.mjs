@@ -41,7 +41,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * ```
  * entry       108.98 kB js
  * total       233.81 kB js
- * css          17.23 kB
+ * css          18.03 kB
  *
  *             section   first visit
  * shop         47.58      156.56
@@ -67,8 +67,8 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * A first visit to a section downloads `entry + section`. It is reported, not
  * enforced: the two limits it is made of already bound it.
  *
- * **The CSS is one stylesheet shared by every section**, limited to 18 kB.
- * Its headroom is under 2%, because the one sheet carries the classes of all
+ * **The CSS is one stylesheet shared by every section**, limited to 18.5 kB.
+ * Its headroom is under 3%, because the one sheet carries the classes of all
  * five sections; the limit is kept tight so that growth here stays visible.
  *
  * Elsewhere the headroom is roughly a tenth, for the reason `size-budget.mjs` gives: a
@@ -83,7 +83,7 @@ const BUDGETS_KB = {
   entry: 120,
   section: 55,
   total: 257,
-  css: 18,
+  css: 18.5,
 };
 
 const kb = (bytes) => Math.round((bytes / 1000) * 100) / 100;

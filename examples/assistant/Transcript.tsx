@@ -24,6 +24,7 @@ import {
 } from '@kobars/kirua';
 import { HighlightedCode } from '../shared/HighlightedCode';
 import type { Conversation } from './data';
+import { InlineCode } from './InlineCode';
 
 export interface TranscriptProps {
   conversation: Conversation;
@@ -80,7 +81,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
 
               {turn.text.split('\n\n').map((paragraph) => (
                 <Text key={paragraph.slice(0, 24)} tone="primary" wrap="anywhere">
-                  {paragraph}
+                  <InlineCode text={paragraph} />
                 </Text>
               ))}
 
