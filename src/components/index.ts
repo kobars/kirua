@@ -271,6 +271,7 @@ export {
   type ToggleGroupProps,
   type ToggleGroupItemProps,
 } from './ToggleGroup';
+export { DirectionProvider } from './DirectionProvider';
 export { Kbd, type KbdProps } from './Kbd';
 export { NightSwatch, type NightSwatchProps, type NightPalette } from './NightSwatch';
 export { kbdVariants } from './Kbd.variants';

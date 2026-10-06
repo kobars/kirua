@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { TooltipProvider } from '@kobars/kirua';
+import { DirectionProvider, TooltipProvider } from '@kobars/kirua';
 import { App } from './App';
 import '@kobars/kirua/styles.css';
 
@@ -24,8 +24,12 @@ window.addEventListener('vite:preloadError', (event) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <TooltipProvider delayDuration={200}>
-      <App />
-    </TooltipProvider>
+    {/* Radix never reads the document's `dir`, so its keyboard behaviour is
+        told the same direction the layout already follows. */}
+    <DirectionProvider dir={document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'}>
+      <TooltipProvider delayDuration={200}>
+        <App />
+      </TooltipProvider>
+    </DirectionProvider>
   </StrictMode>,
 );

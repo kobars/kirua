@@ -1304,6 +1304,7 @@ const EXEMPT: Record<string, string> = {
       'AlertDialog',
       'ContextMenu',
       'Dialog',
+      'DirectionProvider',
       'HoverCard',
       'MenubarMenu',
       'Popover',
