@@ -320,3 +320,11 @@ export const AlertIcon = (p: IconProps) => (
     <path d="M12 7.75v5M12 16.25h.01" />
   </Icon>
 );
+
+/** A payment card: the outline, its magnetic stripe and a short line of digits. */
+export const CardIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="5.5" width="18" height="13" rx="2.5" />
+    <path d="M3 10h18M7 15h4" />
+  </Icon>
+);

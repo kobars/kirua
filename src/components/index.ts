@@ -172,6 +172,7 @@ export { ScrollArea, ScrollBar, type ScrollAreaProps, type ScrollBarProps } from
 export { Avatar, AvatarImage, AvatarFallback, type AvatarProps } from './Avatar';
 export { avatarVariants } from './Avatar.variants';
 export { AspectRatio, type AspectRatioProps } from './AspectRatio';
+export { DeviceFrame, type DeviceFrameProps } from './DeviceFrame';
 export { Separator, type SeparatorProps } from './Separator';
 export { Skeleton, type SkeletonProps } from './Skeleton';
 export { Spinner, type SpinnerProps } from './Spinner';
