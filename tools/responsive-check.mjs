@@ -47,7 +47,7 @@
  */
 import { chromium } from 'playwright';
 import { breakpointPx } from './breakpoints.mjs';
-import { eachRoute, open, ROUTE_COUNT } from './example-apps.mjs';
+import { eachRoute, newContext, open, ROUTE_COUNT } from './example-apps.mjs';
 
 const WIDTHS = [
   { width: 320, height: 812, phone: true },
@@ -67,7 +67,7 @@ const overflows = [];
 const targets = [];
 
 for (const size of WIDTHS) {
-  const context = await browser.newContext({
+  const context = await newContext(browser, {
     viewport: { width: size.width, height: size.height },
     deviceScaleFactor: size.phone ? 2 : 1,
     isMobile: size.phone,

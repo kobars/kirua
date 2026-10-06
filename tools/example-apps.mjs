@@ -80,6 +80,19 @@ const ROUTES = new Map([
     ['', 'explore', 'notifications', 'messages', 'profile/rin', 'profile/maya', 'profile/eko'],
   ],
   [
+    'mobile',
+    [
+      '',
+      'activity',
+      'activity/tx-1042',
+      'activity/tx-1038',
+      'send',
+      'send/maya',
+      'cards',
+      'profile',
+    ],
+  ],
+  [
     'assistant',
     ['', 'tokens', 'contrast', 'rtl', 'forced-colors', 'dead-classes', 'overlays', 'usage'],
   ],
@@ -108,6 +121,45 @@ export const SECTIONS = [
   { section: 'hub', prefix: '', routes: [''] },
   ...appIds.map((id) => ({ section: id, prefix: `${id}/`, routes: ROUTES.get(id) })),
 ];
+
+/**
+ * Google Fonts responses, fetched once per run and then answered from memory.
+ *
+ * Every tool opens the app hundreds of times, each in a fresh context with an
+ * empty cache, and Google Fonts slows down when one address asks that often —
+ * at times for longer than a test's whole budget. Its stylesheet holds back the
+ * app's script, so a slow answer looks exactly like an app that never loads.
+ * The pages still render in the real typefaces; they are just asked for once.
+ */
+const fontResponses = new Map();
+
+/** A browser context whose Google Fonts requests are answered from `fontResponses`. */
+export async function newContext(browser, options) {
+  const context = await browser.newContext(options);
+  await context.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, async (route) => {
+    const url = route.request().url();
+    if (!fontResponses.has(url)) {
+      fontResponses.set(
+        url,
+        route.fetch().then(async (response) => {
+          // The body arrives decoded, so the headers must not claim otherwise.
+          const headers = { ...response.headers() };
+          delete headers['content-encoding'];
+          delete headers['content-length'];
+          return { status: response.status(), headers, body: await response.body() };
+        }),
+      );
+    }
+    try {
+      await route.fulfill(await fontResponses.get(url));
+    } catch {
+      // A failed first fetch is not kept: the next page asks Google again.
+      fontResponses.delete(url);
+      await route.continue().catch(() => {});
+    }
+  });
+  return context;
+}
 
 /** How many route views the whole sweep covers, for a tool's summary line. */
 export const ROUTE_COUNT = SECTIONS.reduce((total, group) => total + group.routes.length, 0);
@@ -193,6 +245,16 @@ export async function open(page, url, { timeout = 10_000 } = {}) {
   if (state === 'error') throw new Error(`#/${route}: the section failed to load`);
   if (state === 'not-found')
     throw new Error(`#/${route}: the section has no screen for this route (stale id?)`);
+  // A `DeviceFrame` is a second document. The route is not on screen until the
+  // page inside it has drawn its own screen too.
+  for (const frame of page.frames()) {
+    if (frame === page.mainFrame()) continue;
+    try {
+      await frame.waitForSelector(screen, { state: 'attached', timeout });
+    } catch {
+      throw new Error(`#/${route}: the page inside the device frame drew no screen`);
+    }
+  }
   // The screen is in the document; let its effects run and any entrance
   // animation finish, so nothing is measured mid-fade. Endless animations — a
   // spinner, a skeleton's pulse — are not waited for.

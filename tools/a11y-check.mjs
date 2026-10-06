@@ -44,7 +44,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 import { breakpointPx } from './breakpoints.mjs';
-import { APP_SECTIONS, SECTIONS, eachRoute, open, serve } from './example-apps.mjs';
+import { APP_SECTIONS, SECTIONS, eachRoute, newContext, open, serve } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(
@@ -144,7 +144,7 @@ const violations = [];
 let runs = 0;
 
 const contextFor = (size, scheme) =>
-  browser.newContext({
+  newContext(browser, {
     viewport: { width: size.width, height: size.height },
     deviceScaleFactor: 1,
     colorScheme: scheme,
@@ -154,7 +154,9 @@ const contextFor = (size, scheme) =>
 
 /** Runs axe on the page as it stands and records what it reports. */
 async function audit(page, { section, route, theme, width }) {
-  await page.addScriptTag({ content: AXE_SOURCE });
+  // Into every frame: axe audits a `DeviceFrame`'s page only when axe is in it
+  // too, and otherwise waits for an answer that never comes.
+  for (const frame of page.frames()) await frame.addScriptTag({ content: AXE_SOURCE });
   const result = await page.evaluate(
     (options) => window.axe.run(document, options),
     AXE_OPTIONS,

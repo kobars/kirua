@@ -6,7 +6,7 @@
  * `tools/size-budget.mjs` does this for `dist` — the rebuilt hero page. That is
  * one screen importing a handful of components, so it answers "did something
  * heavy enter the graph" for a page nobody ships. The example app is the
- * closest thing here to a real consumer: five sections and most of the
+ * closest thing here to a real consumer: six sections and most of the
  * component set between them.
  *
  * ## What is enforced, and what is only reported
@@ -32,7 +32,7 @@ import { gzipSync } from 'node:zlib';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
+import { DIST, SECTIONS, newContext, open, serve } from './example-apps.mjs';
 
 /**
  * Measured from the build, so each budget is a record of reality plus headroom
@@ -52,13 +52,13 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * ```
  *
  * **The JavaScript is weighed in three parts**, because the app is one entry
- * and five lazily loaded sections:
+ * and six lazily loaded sections:
  *
  * - `entry` is what every visitor downloads before any section: React, the
  *   theme menu, the hub and the components they share.
  * - `section` is what opening one section adds: its own chunk and every
  *   shared chunk it imports that the entry does not already hold. One limit
- *   for all five rather than five, because a per-section limit would invite
+ *   for all six rather than six, because a per-section limit would invite
  *   raising one quietly.
  * - `total` is every script the build emits. It catches growth that moves
  *   between the other two — a component the entry stops sharing lands in each
@@ -69,7 +69,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  *
  * **The CSS is one stylesheet shared by every section**, limited to 19.3 kB.
  * Its headroom is under 3%, because the one sheet carries the classes of all
- * five sections; the limit is kept tight so that growth here stays visible.
+ * six sections; the limit is kept tight so that growth here stays visible.
  *
  * Elsewhere the headroom is roughly a tenth, for the reason `size-budget.mjs`
  * gives: a budget with room for a whole extra dependency does not fail until
@@ -82,7 +82,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
 const BUDGETS_KB = {
   entry: 120,
   section: 62,
-  total: 257,
+  total: 285,
   css: 19.3,
 };
 
@@ -175,7 +175,7 @@ console.table(sizes);
 // ---------------------------------------------------------------------------
 
 const browser = await chromium.launch();
-const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+const context = await newContext(browser, { viewport: { width: 1280, height: 900 } });
 const runtime = [];
 const server = await serve();
 const { port } = server.address();
