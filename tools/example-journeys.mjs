@@ -88,6 +88,24 @@ try {
           }
           await go();
           assert.equal(await page.title(), HUB_TITLE);
+          if (theme === 'light') {
+            // A night is dark mode's, so picking one on a light page switches
+            // to dark, the night already chosen included.
+            const pick = async (name) => {
+              await page.getByRole('button', { name: 'Theme', exact: true }).click();
+              await page.getByRole('menuitemradio', { name }).click();
+              // The menu closes with an animation; open it again once it has.
+              await page.getByRole('menu').waitFor({ state: 'detached' });
+            };
+            await pick(/^Ink/);
+            await visible(page.locator('html.dark[data-night-palette="ink"]'));
+            await pick(/^Light/);
+            await visible(page.locator('html:not(.dark)'));
+            await pick(/^Ink/);
+            await visible(page.locator('html.dark[data-night-palette="ink"]'));
+            await pick(/^System/);
+            await visible(page.locator('html:not(.dark)'));
+          }
         } else if (slug === 'marketing') {
           await go('contact');
           await page.getByRole('button', { name: 'Send message' }).click();

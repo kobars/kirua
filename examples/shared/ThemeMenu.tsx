@@ -11,7 +11,6 @@ import {
   MoonIcon,
   NightSwatch,
   SunIcon,
-  type NightPalette,
 } from '@kobars/kirua';
 import { NIGHT_PALETTES, useNightPalette } from './useNightPalette';
 import { useTheme, type ThemePreference } from './useTheme';
@@ -19,7 +18,8 @@ import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
 
 /**
  * The theme control: one button at any width, and a menu of three choices,
- * then the night palette dark mode uses.
+ * then the night palette dark mode uses. Picking a night on a light page
+ * switches to dark, so the choice is never invisible.
  *
  * A menu rather than a row of three toggles, because the header is the most
  * contested space on a phone: three more 44px controls there leave the shop's
@@ -60,12 +60,19 @@ export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
 
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Night palette</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
-          value={palette}
-          onValueChange={(value) => choosePalette(value as NightPalette)}
-        >
+        <DropdownMenuRadioGroup value={palette}>
           {NIGHT_PALETTES.map((option) => (
-            <DropdownMenuRadioItem key={option.id} value={option.id}>
+            <DropdownMenuRadioItem
+              key={option.id}
+              value={option.id}
+              // A night is dark mode's, so picking one on a light page shows
+              // it rather than changing nothing visible. `onSelect`, not the
+              // group's `onValueChange`, so the night already chosen counts.
+              onSelect={() => {
+                choosePalette(option.id);
+                if (resolved !== 'dark') choose('dark');
+              }}
+            >
               {option.label}
               <NightSwatch palette={option.id} />
             </DropdownMenuRadioItem>

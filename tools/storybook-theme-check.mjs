@@ -30,13 +30,16 @@ async function settles(locator, expected) {
 
 async function chooseMode(mode) {
   await page.getByRole('button', { name: /^Colour mode / }).click();
-  await page.getByText(mode === 'dark' ? 'Dark' : 'Light', { exact: true }).click();
+  await page
+    .getByRole('option', { name: mode === 'dark' ? 'Dark' : 'Light', exact: true })
+    .click();
   await documentMode(docs, mode);
 }
 
 async function chooseNight(title) {
   await page.getByRole('button', { name: /^Night palette of dark mode / }).click();
-  await page.getByText(title, { exact: true }).click();
+  // An option, not the text: the button names the chosen night as well.
+  await page.getByRole('option', { name: title, exact: true }).click();
 }
 
 async function documentMode(frame, mode) {
@@ -108,6 +111,13 @@ try {
   await settles(docs.locator('.sbdocs-wrapper'), lightDocs);
   await settles(specimen.locator('body'), lightPreview);
 
+  // A night is dark mode's, so picking one on a light page switches to dark.
+  await chooseNight('Ink');
+  await docs.locator('html.dark[data-night-palette="ink"]').waitFor();
+  await chooseNight('Navy night');
+  await docs.locator('html.dark:not([data-night-palette])').waitFor();
+  await chooseMode('light');
+
   await chooseMode('dark');
   await page.getByRole('link', { name: 'Introduction', exact: true }).click();
   await docs.locator('.sbdocs-content h1').filter({ hasText: 'kirua' }).waitFor();
@@ -146,6 +156,14 @@ try {
   await documentMode(docs, 'dark');
   await documentMode(docs.frameLocator('iframe[title="Light"]'), 'light');
   await documentMode(docs.frameLocator('iframe[title="Dark"]'), 'dark');
+
+  // A night saved in the address does not switch a light page by itself.
+  await page.goto(
+    `${base}/?path=/docs/components-aspectratio--docs&globals=mode:light;nightPalette:carbon`,
+  );
+  await specimen.locator('[data-slot="aspect-ratio"]').waitFor();
+  await documentMode(docs, 'light');
+  await documentMode(specimen, 'light');
 
   await page.setViewportSize({ width: 375, height: 900 });
   await page.goto(
