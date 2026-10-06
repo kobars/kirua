@@ -133,7 +133,18 @@ import {
   MenubarContent,
   MenubarMenu,
   MenubarTrigger,
+  Marker,
+  MarkerContent,
+  MarkerIcon,
+  Message,
+  MessageAvatar,
   MessageBubble,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
+  MessageHeader,
+  MessageReaction,
+  MessageReactions,
   Meter,
   NativeSelect,
   NativeSelectOptGroup,
@@ -580,6 +591,35 @@ const cases: Case[] = [
   ['Price', (p) => <Price amount="$10.00" {...p} />, 'P'],
   ['Rating', (p) => <Rating value={4.5} {...p} />, 'P'],
   ['MessageBubble', (p) => <MessageBubble {...p}>Hi</MessageBubble>, 'DIV'],
+  ['MessageGroup', (p) => <MessageGroup {...p} />, 'OL'],
+  [
+    'Message',
+    (p) => (
+      <MessageGroup>
+        <Message {...p} />
+      </MessageGroup>
+    ),
+    'LI',
+  ],
+  ['MessageAvatar', (p) => <MessageAvatar {...p} />, 'DIV'],
+  ['MessageContent', (p) => <MessageContent {...p} />, 'DIV'],
+  ['MessageHeader', (p) => <MessageHeader {...p}>Maya</MessageHeader>, 'DIV'],
+  ['MessageFooter', (p) => <MessageFooter {...p}>Seen</MessageFooter>, 'DIV'],
+  ['MessageReactions', (p) => <MessageReactions {...p} />, 'UL'],
+  [
+    'MessageReaction',
+    (p) => (
+      <MessageReactions>
+        <MessageReaction label="Rin reacted with a thumbs up" {...p}>
+          👍 1
+        </MessageReaction>
+      </MessageReactions>
+    ),
+    'LI',
+  ],
+  ['Marker', (p) => <Marker {...p}>Today</Marker>, 'DIV'],
+  ['MarkerIcon', (p) => <MarkerIcon {...p} />, 'SPAN'],
+  ['MarkerContent', (p) => <MarkerContent {...p}>Today</MarkerContent>, 'SPAN'],
   ['BottomNav', (p) => <BottomNav aria-label="Main" {...p} />, 'NAV'],
   [
     'BottomNavLink',

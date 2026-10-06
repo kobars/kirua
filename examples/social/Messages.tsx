@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   ChevronStartIcon,
+  CommentIcon,
   Heading,
   IconButton,
   InputGroup,
@@ -19,7 +20,18 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
+  Marker,
+  MarkerContent,
+  MarkerIcon,
+  Message,
+  MessageAvatar,
   MessageBubble,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
+  MessageHeader,
+  MessageReaction,
+  MessageReactions,
   Pane,
   PaneBody,
   PaneFooter,
@@ -31,8 +43,34 @@ import {
   Stack,
   Text,
   Visible,
+  VisuallyHidden,
 } from '@kobars/kirua';
-import { initials, people, threads } from './data';
+import { initials, people, threads, type ThreadMessage } from './data';
+
+/** Consecutive messages from one sender: one avatar, one header. */
+interface Turn {
+  from: ThreadMessage['from'];
+  messages: ThreadMessage[];
+}
+
+/** The thread cut at each day break, and each day cut at each change of sender. */
+function byDayAndTurn(messages: ThreadMessage[]) {
+  const days: { day: string; turns: Turn[] }[] = [];
+  for (const message of messages) {
+    let day = days[days.length - 1];
+    if (day?.day !== message.day) {
+      day = { day: message.day, turns: [] };
+      days.push(day);
+    }
+    const turn = day.turns[day.turns.length - 1];
+    if (turn?.from === message.from) turn.messages.push(message);
+    else day.turns.push({ from: message.from, messages: [message] });
+  }
+  return days;
+}
+
+/** A clock time is machine-readable as it stands; "Now" is not a time a `<time>` can carry. */
+const isClockTime = (at: string) => /^\d{2}:\d{2}$/.test(at);
 
 /**
  * A two-pane inbox on a wide screen, one pane at a time on a phone.
@@ -102,6 +140,17 @@ export function Messages() {
     </Pane>
   );
 
+  const name = open ? (people[open.handle]?.name ?? open.handle) : '';
+  const sentHere = open ? (sent[open.id] ?? []) : [];
+  const messages: ThreadMessage[] = open
+    ? [
+        ...open.messages,
+        ...sentHere.map((text) => ({ from: 'me' as const, day: 'Today', at: 'Now', text })),
+      ]
+    : [];
+  // A reply sent here has not been seen yet; the thread's own status describes its last message.
+  const status = sentHere.length > 0 ? 'Sent' : open?.status;
+
   const conversation = open && (
     <Pane height="fill">
       <PaneHeader>
@@ -124,19 +173,67 @@ export function Messages() {
       </PaneHeader>
 
       <PaneBody padding="sm" data-transcript="">
-        <Stack as="ul" gap={2}>
-          {[
-            ...open.messages,
-            ...(sent[open.id] ?? []).map((text) => ({ from: 'me' as const, at: 'Now', text })),
-          ].map((message, index) => (
-            <MessageBubble
-              as="li"
-              size="sm"
-              key={`${message.at}-${index}`}
-              from={message.from === 'me' ? 'self' : 'other'}
-            >
-              {message.text}
-            </MessageBubble>
+        <Stack gap={4}>
+          <Marker>
+            <MarkerIcon>
+              <CommentIcon />
+            </MarkerIcon>
+            <MarkerContent>The start of your conversation with {name}</MarkerContent>
+          </Marker>
+          {byDayAndTurn(messages).map(({ day, turns }) => (
+            <Fragment key={day}>
+              <Marker variant="divider">
+                <MarkerContent>{day}</MarkerContent>
+              </Marker>
+              <MessageGroup>
+                {turns.map((turn, index) => {
+                  const mine = turn.from === 'me';
+                  const at = turn.messages[0]?.at ?? '';
+                  const newest = turn.messages[turn.messages.length - 1] === messages.at(-1);
+                  return (
+                    <Message key={`${at}-${index}`} from={mine ? 'self' : 'other'}>
+                      {!mine && (
+                        // The header names the sender, so the initials would only repeat it.
+                        <MessageAvatar aria-hidden="true">
+                          <Avatar size="sm">
+                            <AvatarFallback>{initials(name)}</AvatarFallback>
+                          </Avatar>
+                        </MessageAvatar>
+                      )}
+                      <MessageContent>
+                        <MessageHeader>
+                          {mine ? (
+                            <VisuallyHidden>You</VisuallyHidden>
+                          ) : (
+                            <Text inline size="caption" weight="medium" tone="secondary">
+                              {name}
+                            </Text>
+                          )}
+                          {isClockTime(at) ? <time dateTime={at}>{at}</time> : at}
+                        </MessageHeader>
+                        {turn.messages.map((message, position) => (
+                          <Fragment key={`${message.at}-${position}`}>
+                            <MessageBubble size="sm" from={mine ? 'self' : 'other'}>
+                              {message.text}
+                            </MessageBubble>
+                            {message.reactions && (
+                              <MessageReactions aria-label="Reactions">
+                                {message.reactions.map((reaction) => (
+                                  <MessageReaction key={reaction.emoji} label={reaction.label}>
+                                    {reaction.emoji} {reaction.count}
+                                  </MessageReaction>
+                                ))}
+                              </MessageReactions>
+                            )}
+                          </Fragment>
+                        ))}
+                        {mine && newest && status && <MessageFooter>{status}</MessageFooter>}
+                      </MessageContent>
+                    </Message>
+                  );
+                })}
+              </MessageGroup>
+            </Fragment>
           ))}
         </Stack>
       </PaneBody>

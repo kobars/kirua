@@ -285,12 +285,34 @@ export const notices: Notice[] = [
   { id: 'n8', kind: 'like', handle: 'agus', when: '1d', postId: 'p5' },
 ];
 
+/** A reaction under a message, with the sentence a screen reader hears for it. */
+export interface Reaction {
+  emoji: string;
+  count: number;
+  label: string;
+}
+
+/**
+ * One message. `day` is the label of the day break it falls under, written as
+ * the screen shows it, and `at` a time of day a `<time>` can carry — fixed
+ * strings, so the thread reads the same on every visit.
+ */
+export interface ThreadMessage {
+  from: 'me' | 'them';
+  day: string;
+  at: string;
+  text: string;
+  reactions?: Reaction[];
+}
+
 /** One conversation in the messages screen. Newest message last. */
 export interface Thread {
   id: string;
   handle: string;
   unread: number;
-  messages: { from: 'me' | 'them'; at: string; text: string }[];
+  messages: ThreadMessage[];
+  /** What the other person has done with your last message, when it is the newest. */
+  status?: string;
 }
 
 export const threads: Thread[] = [
@@ -301,25 +323,49 @@ export const threads: Thread[] = [
     messages: [
       {
         from: 'them',
-        at: '09:12',
+        day: 'Yesterday',
+        at: '18:40',
         text: 'Did the contrast page ever get the field family graded live?',
       },
       {
         from: 'me',
+        day: 'Today',
         at: '09:14',
         text: 'It did. Four surfaces, three thresholds, all recomputed in the browser.',
+        reactions: [{ emoji: '👍', count: 1, label: 'Maya Kusuma reacted with a thumbs up' }],
       },
-      { from: 'them', at: '09:15', text: 'So the docs cannot drift from the CSS.' },
-      { from: 'them', at: '09:15', text: 'That is the bit I keep failing to sell to people.' },
+      {
+        from: 'them',
+        day: 'Today',
+        at: '09:15',
+        text: 'So the docs cannot drift from the CSS.',
+      },
+      {
+        from: 'them',
+        day: 'Today',
+        at: '09:15',
+        text: 'That is the bit I keep failing to sell to people.',
+      },
     ],
   },
   {
     id: 't2',
     handle: 'sari',
     unread: 0,
+    status: 'Seen',
     messages: [
-      { from: 'them', at: 'Yesterday', text: 'Sending the inks tonight. Colour on Thursday?' },
-      { from: 'me', at: 'Yesterday', text: 'Thursday works. No rush on the flats.' },
+      {
+        from: 'them',
+        day: 'Yesterday',
+        at: '21:02',
+        text: 'Sending the inks tonight. Colour on Thursday?',
+      },
+      {
+        from: 'me',
+        day: 'Yesterday',
+        at: '21:10',
+        text: 'Thursday works. No rush on the flats.',
+      },
     ],
   },
   {
@@ -327,13 +373,20 @@ export const threads: Thread[] = [
     handle: 'dimas',
     unread: 1,
     messages: [
-      { from: 'them', at: 'Monday', text: 'Which switches did you end up with?' },
+      { from: 'them', day: 'Monday', at: '13:20', text: 'Which switches did you end up with?' },
       {
         from: 'me',
-        at: 'Monday',
+        day: 'Monday',
+        at: '13:26',
         text: 'Tactile, 67 gram. Loud enough to annoy exactly one person.',
+        reactions: [{ emoji: '😂', count: 1, label: 'Dimas Anggara reacted with a laugh' }],
       },
-      { from: 'them', at: 'Monday', text: 'That is the correct number of people.' },
+      {
+        from: 'them',
+        day: 'Monday',
+        at: '13:27',
+        text: 'That is the correct number of people.',
+      },
     ],
   },
   {
@@ -341,7 +394,12 @@ export const threads: Thread[] = [
     handle: 'eko',
     unread: 0,
     messages: [
-      { from: 'them', at: 'Last week', text: 'The lobby shot is up. Thanks for the lens.' },
+      {
+        from: 'them',
+        day: '5 March',
+        at: '17:30',
+        text: 'The lobby shot is up. Thanks for the lens.',
+      },
     ],
   },
 ];
