@@ -6,6 +6,21 @@ import forcedColors from './snippets/forced-colors.css?highlight';
 import deadClasses from './snippets/dead-classes.sh?highlight';
 import logicalDirection from './snippets/logical-direction.css?highlight';
 
+export interface ContextFile {
+  name: string;
+  description: string;
+}
+
+/**
+ * The design system's semantic token file, which most questions here are
+ * about. Every conversation starts with it attached; removing it is per
+ * conversation, so it stays with the conversation rather than one message.
+ */
+export const CONTEXT_FILE: ContextFile = {
+  name: 'tokens.semantic.css',
+  description: 'CSS · 40 kB',
+};
+
 export interface Turn {
   id: string;
   from: 'you' | 'assistant';

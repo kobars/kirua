@@ -12,7 +12,7 @@ import { cva } from '@/lib/cva';
  * `border` is a rule under the line, for a label that heads what follows it.
  */
 export const markerVariants = cva(
-  'flex w-full items-center gap-2 text-start font-text text-caption font-medium text-fg-muted [--icon-size:var(--icon-sm)]',
+  'flex w-full items-center gap-2 text-start font-text text-caption font-medium text-fg-secondary [--icon-size:var(--icon-sm)]',
   {
     variants: {
       variant: {

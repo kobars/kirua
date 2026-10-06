@@ -199,6 +199,27 @@ describe('the published package', () => {
     );
   });
 
+  it('pins the direction package to the one copy every Radix primitive reads', () => {
+    // DirectionProvider writes a React context that each primitive reads from
+    // its own copy of this package. Two copies are two contexts, and the
+    // provider silently stops reaching the components, so the version has to
+    // be exactly the one the primitives pin.
+    const ours = manifest.dependencies['@radix-ui/react-direction'];
+    const theirs = Object.keys(manifest.dependencies)
+      .filter((name) => name.startsWith('@radix-ui/react-'))
+      .flatMap((name) => {
+        const pkg = JSON.parse(
+          readFileSync(path.join(REPO, 'node_modules', name, 'package.json'), 'utf8'),
+        ) as { dependencies?: Record<string, string> };
+        const version = pkg.dependencies?.['@radix-ui/react-direction'];
+        return version ? [{ name, version }] : [];
+      });
+
+    expect(theirs.length).toBeGreaterThan(0);
+    for (const { name, version } of theirs)
+      expect({ name, version }).toEqual({ name, version: ours });
+  });
+
   it('pins each dependency to the version the repository builds against', () => {
     for (const [name, version] of Object.entries(manifest.dependencies)) {
       expect({ name, version }).toEqual({ name, version: root.dependencies[name] });

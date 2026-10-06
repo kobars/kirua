@@ -45,6 +45,9 @@ export function NativeSelect({ className, width, ...props }: NativeSelectProps) 
   return (
     <div
       data-slot="native-select-wrapper"
+      // A `dir` on the select alone would mirror its text and gutter but leave
+      // the chevron, a sibling, on the page's side.
+      dir={props.dir}
       className={cn('relative w-full', selectTriggerVariants({ width }))}
     >
       <select

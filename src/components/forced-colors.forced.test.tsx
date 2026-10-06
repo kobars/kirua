@@ -2,6 +2,12 @@ import { act } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render } from '@/test/render';
 import { Alert } from './Alert';
+import {
+  Attachment,
+  AttachmentContent,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from './Attachment';
 import { AlertDialog, AlertDialogContent, AlertDialogTitle } from './AlertDialog';
 import { Badge } from './Badge';
 import { Button } from './Button';
@@ -164,6 +170,27 @@ describe('the focus ring survives', () => {
     expect(getComputedStyle(group).outlineStyle).toBe('solid');
     expect(getComputedStyle(group).outlineWidth).toBe('3px');
     expect(getComputedStyle(input).outlineStyle).toBe('none');
+  });
+
+  it('an attachment rings its card once, not its trigger as well', () => {
+    const container = render(
+      <Attachment>
+        <AttachmentContent>
+          <AttachmentTitle>
+            <AttachmentTrigger asChild>
+              <a href="#report">lab-report.pdf</a>
+            </AttachmentTrigger>
+          </AttachmentTitle>
+        </AttachmentContent>
+      </Attachment>,
+    );
+    const card = container.querySelector('[data-slot="attachment"]') as HTMLElement;
+    const trigger = container.querySelector('a') as HTMLAnchorElement;
+    trigger.focus();
+
+    expect(getComputedStyle(card).outlineStyle).toBe('solid');
+    expect(getComputedStyle(card).outlineWidth).toBe('3px');
+    expect(getComputedStyle(trigger).outlineStyle).toBe('none');
   });
 });
 

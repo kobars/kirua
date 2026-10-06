@@ -1,3 +1,7 @@
+/* oxlint-disable jsx-a11y/no-redundant-roles --
+ * `role="list"` on `MessageGroup` and `MessageReactions` is not redundant in
+ * WebKit, which drops the implicit role from a list styled `list-style: none`.
+ * File-level because oxlint ignores a next-line disable for a `jsx-a11y` rule. */
 import type { ComponentProps } from 'react';
 import type { VariantProps } from '@/lib/cva';
 import { cn } from '@/lib/cn';
@@ -25,6 +29,7 @@ export function MessageGroup({ className, ...props }: ComponentProps<'ol'>) {
   return (
     <ol
       data-slot="message-group"
+      role="list"
       className={cn('grid grid-cols-[minmax(0,1fr)] gap-4', className)}
       {...props}
     />
@@ -164,7 +169,7 @@ export function MessageHeader({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot="message-header"
       className={cn(
-        'flex flex-wrap items-baseline gap-x-2 px-3 font-text text-caption text-fg-muted',
+        'flex flex-wrap items-baseline gap-x-2 px-3 font-text text-caption text-fg-secondary',
         className,
       )}
       {...props}
@@ -184,7 +189,7 @@ export function MessageFooter({ className, ...props }: ComponentProps<'div'>) {
     <div
       data-slot="message-footer"
       className={cn(
-        'flex flex-wrap items-center gap-x-2 px-3 font-text text-caption text-fg-muted',
+        'flex flex-wrap items-center gap-x-2 px-3 font-text text-caption text-fg-secondary',
         className,
       )}
       {...props}
@@ -206,6 +211,7 @@ export function MessageReactions({ className, ...props }: ComponentProps<'ul'>) 
   return (
     <ul
       data-slot="message-reactions"
+      role="list"
       className={cn('flex flex-wrap gap-1 px-2', className)}
       {...props}
     />

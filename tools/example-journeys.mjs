@@ -270,6 +270,10 @@ try {
           await page.getByRole('button', { name: 'Schedule the visit' }).click();
           await visible(page.getByText('Visit scheduled', { exact: true }));
           assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'OUTPUT');
+          // The confirmation describes the form as sent; a language change
+          // after it books a different interpreter, so it is withdrawn.
+          await language.selectOption('Tagalog');
+          assert.equal(await page.getByText('Visit scheduled', { exact: true }).count(), 0);
         } else if (slug === 'social') {
           await go();
           assert(await page.getByRole('navigation', { name: 'Main', exact: true }).isVisible());

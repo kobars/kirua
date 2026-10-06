@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import {
   Attachment,
   AttachmentAction,
@@ -27,13 +27,14 @@ import {
   TooltipTrigger,
   VisuallyHidden,
 } from '@kobars/kirua';
-
-/** The design system's semantic token file, which most questions here are about. */
-const CONTEXT_FILE = { name: 'tokens.semantic.css', description: 'CSS · 40 kB' };
+import type { ContextFile } from './data';
 
 export interface ComposerProps {
   onSend: (text: string) => void;
   busy: boolean;
+  /** Files attached to the conversation, not to one message. */
+  context: ContextFile[];
+  onRemoveContext: (file: ContextFile) => void;
 }
 
 /**
@@ -41,12 +42,8 @@ export interface ComposerProps {
  * transcript above it scrolls. The field grows with its text up to a cap and
  * then scrolls.
  */
-export function Composer({ onSend, busy }: ComposerProps) {
+export function Composer({ onSend, busy, context, onRemoveContext }: ComposerProps) {
   const box = useRef<HTMLTextAreaElement>(null);
-  // The file the conversation is about, attached as context. It stays with
-  // the conversation rather than with one message, so sending keeps it; the
-  // remove button is the only way it goes.
-  const [context, setContext] = useState([CONTEXT_FILE]);
 
   const send = () => {
     const el = box.current;
@@ -82,7 +79,7 @@ export function Composer({ onSend, busy }: ComposerProps) {
                     <AttachmentAction
                       aria-label={`Remove ${file.name}`}
                       onClick={() => {
-                        setContext((all) => all.filter((other) => other !== file));
+                        onRemoveContext(file);
                         // The button is gone; keep the focus in the composer.
                         box.current?.focus();
                       }}

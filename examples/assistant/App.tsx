@@ -41,7 +41,7 @@ import { SettingsDialog } from './SettingsDialog';
 import { ConversationSidebar } from './Sidebar';
 import { Transcript } from './Transcript';
 import { Usage } from './Usage';
-import { allConversations, type Turn } from './data';
+import { allConversations, CONTEXT_FILE, type Turn } from './data';
 import { useHashRoute } from '../shared/useHashRoute';
 
 /**
@@ -57,6 +57,8 @@ export function App() {
   const [addedTurns, setAddedTurns] = useState<Record<string, Turn[]>>({});
   const [deleting, setDeleting] = useState<string | null>(null);
   const [hidden, setHidden] = useState<string[]>([]);
+  // Conversations whose attached context file was removed.
+  const [withoutContext, setWithoutContext] = useState<string[]>([]);
   const { preference, choose } = useTheme();
 
   const visible = allConversations.filter((c) => !hidden.includes(c.id));
@@ -196,6 +198,8 @@ export function App() {
 
               <Composer
                 busy={pendingId !== null}
+                context={withoutContext.includes(conversation.id) ? [] : [CONTEXT_FILE]}
+                onRemoveContext={() => setWithoutContext((all) => [...all, conversation.id])}
                 onSend={(text) => {
                   if (pendingId !== null) return;
                   setAddedTurns((all) => ({

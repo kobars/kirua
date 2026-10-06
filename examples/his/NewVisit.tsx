@@ -311,7 +311,15 @@ export function NewVisit() {
             label="Preferred language"
             description="An interpreter is booked for any language but English."
           >
-            <NativeSelect id="language" name="language" width="sm" defaultValue="English">
+            <NativeSelect
+              id="language"
+              name="language"
+              width="sm"
+              defaultValue="English"
+              // Uncontrolled, so the form's own reset restores it, but a change
+              // still withdraws the confirmation, as every other field's does.
+              onChange={() => setSavedAs(null)}
+            >
               {languageGroups.map((group) => (
                 <NativeSelectOptGroup key={group.label} label={group.label}>
                   {group.languages.map((language) => (

@@ -14,6 +14,20 @@ const specimen = docs.frameLocator('iframe').first();
 const background = (locator) =>
   locator.evaluate((element) => getComputedStyle(element).backgroundColor);
 
+/**
+ * A mode switch lands the class before the frame repaints its body, so one
+ * read can catch the moment between. Poll for the colour, then assert it.
+ */
+async function settles(locator, expected) {
+  let actual;
+  for (const end = Date.now() + 5000; Date.now() < end;) {
+    actual = await background(locator);
+    if (actual === expected) return;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  assert.equal(actual, expected);
+}
+
 async function chooseMode(mode) {
   await page.getByRole('button', { name: /^Colour mode / }).click();
   await page.getByText(mode === 'dark' ? 'Dark' : 'Light', { exact: true }).click();
@@ -79,7 +93,7 @@ try {
   // Docs remount their specimens on a global change, and a fresh frame has no
   // attribute before it has a theme at all, so wait for dark mode as well.
   await specimen.locator('html.dark:not([data-night-palette])').waitFor();
-  assert.equal(await background(specimen.locator('body')), navyPreview);
+  await settles(specimen.locator('body'), navyPreview);
 
   await page.getByRole('button', { name: /^Surface context / }).click();
   await page.getByText('Brand (ctx-brand)', { exact: true }).click();
@@ -91,8 +105,8 @@ try {
 
   await chooseMode('light');
   await documentMode(specimen, 'light');
-  assert.equal(await background(docs.locator('.sbdocs-wrapper')), lightDocs);
-  assert.equal(await background(specimen.locator('body')), lightPreview);
+  await settles(docs.locator('.sbdocs-wrapper'), lightDocs);
+  await settles(specimen.locator('body'), lightPreview);
 
   await chooseMode('dark');
   await page.getByRole('link', { name: 'Introduction', exact: true }).click();
@@ -126,7 +140,7 @@ try {
     'Open story portal must change mode without losing its state',
   );
   await chooseMode('light');
-  assert.equal(await background(openDialog), lightStoryDialog);
+  await settles(openDialog, lightStoryDialog);
 
   await page.goto(`${base}/?path=/docs/patterns-anime-hero--docs&globals=mode:dark`);
   await documentMode(docs, 'dark');
