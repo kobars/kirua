@@ -1,7 +1,10 @@
 /**
  * Sample records for a US hospital information system. Invented people,
  * invented numbers, fixed dates; every phone number is in the 555-01xx range
- * reserved for fiction.
+ * reserved for fiction. Addresses are in an invented town with unassigned ZIP
+ * codes, Medicare numbers use letters a real one never contains (S, L, O, I,
+ * B, Z), and Medicaid numbers carry letters where a real one is all digits, so
+ * no record can match a real person.
  */
 
 /** The hospital the sample system runs. */
@@ -82,7 +85,7 @@ export const patients: Patient[] = [
       verified: '2026-03-10',
     },
     phone: '(614) 555-0142',
-    address: '1428 Maple Ridge Dr, Columbus, OH 43215',
+    address: '1428 Lanternfly Way, Juniper Valley, OH 00010',
     allergies: ['Penicillins'],
   },
   {
@@ -92,7 +95,7 @@ export const patients: Patient[] = [
     sex: 'M',
     payer: 'Self-pay',
     phone: '(614) 555-0118',
-    address: '87 Linden Ave, Westerville, OH 43081',
+    address: '87 Quillfeather Ct, Juniper Valley, OH 00011',
     allergies: [],
   },
   {
@@ -103,12 +106,12 @@ export const patients: Patient[] = [
     payer: 'Medicaid',
     coverage: {
       plan: 'Ohio Medicaid',
-      memberId: '910048372611',
+      memberId: 'MCD048372611',
       eligibility: 'active',
       verified: '2026-03-12',
     },
     phone: '(614) 555-0175',
-    address: '45 Birchwood Ct, Columbus, OH 43219',
+    address: '45 Mossbank Ln, Juniper Valley, OH 00012',
     allergies: ['Amoxicillin', 'Peanut'],
   },
   {
@@ -126,7 +129,7 @@ export const patients: Patient[] = [
       verified: '2026-03-09',
     },
     phone: '(614) 555-0163',
-    address: '2210 Sawmill Pkwy, Dublin, OH 43017',
+    address: '2210 Tinderbox Rd, Juniper Valley, OH 00013',
     allergies: [],
   },
   {
@@ -143,7 +146,7 @@ export const patients: Patient[] = [
       verified: '2026-03-11',
     },
     phone: '(614) 555-0129',
-    address: '310 Hartford St, Worthington, OH 43085',
+    address: '310 Fernwhistle Ave, Juniper Valley, OH 00014',
     allergies: ['Sulfa drugs'],
   },
   {
@@ -154,7 +157,7 @@ export const patients: Patient[] = [
     sex: 'M',
     payer: 'Self-pay',
     phone: '(614) 555-0187',
-    address: '77 Kenny Rd, Upper Arlington, OH 43221',
+    address: '77 Copperkettle Dr, Juniper Valley, OH 00015',
     allergies: [],
   },
   {
@@ -165,12 +168,12 @@ export const patients: Patient[] = [
     payer: 'Medicaid',
     coverage: {
       plan: 'Ohio Medicaid',
-      memberId: '910065518920',
+      memberId: 'MCD065518920',
       eligibility: 'active',
       verified: '2026-03-02',
     },
     phone: '(614) 555-0151',
-    address: '9 Cleveland Ave, Columbus, OH 43211',
+    address: '9 Wrenfield Pl, Juniper Valley, OH 00016',
     allergies: ['Latex'],
   },
   {
@@ -181,12 +184,12 @@ export const patients: Patient[] = [
     payer: 'Medicare',
     coverage: {
       plan: 'Medicare Part A and B',
-      memberId: '3KT7-WD2-RP58',
+      memberId: '3SZ7-LB2-OS58',
       eligibility: 'active',
       verified: '2026-03-10',
     },
     phone: '(614) 555-0106',
-    address: '3 Stringtown Rd, Grove City, OH 43123',
+    address: '3 Thistledown Way, Juniper Valley, OH 00017',
     allergies: [],
   },
   {
@@ -197,12 +200,12 @@ export const patients: Patient[] = [
     payer: 'Medicaid',
     coverage: {
       plan: 'Ohio Medicaid',
-      memberId: '910072043318',
+      memberId: 'MCD072043318',
       eligibility: 'active',
       verified: '2026-03-12',
     },
     phone: '(614) 555-0134',
-    address: '18 Livingston Ave, Columbus, OH 43205',
+    address: '18 Brackenmoor Rd, Juniper Valley, OH 00018',
     allergies: [],
   },
   {
@@ -219,7 +222,7 @@ export const patients: Patient[] = [
       verified: '2026-03-11',
     },
     phone: '(614) 555-0192',
-    address: '210 Hamilton Rd, Gahanna, OH 43230',
+    address: '210 Puddingstone Ln, Juniper Valley, OH 00019',
     allergies: ['Aspirin'],
   },
   {
@@ -236,7 +239,7 @@ export const patients: Patient[] = [
       verified: '2026-03-12',
     },
     phone: '(614) 555-0147',
-    address: '5 Brice Rd, Reynoldsburg, OH 43068',
+    address: '5 Gloamwood Ct, Juniper Valley, OH 00020',
     allergies: ['Egg'],
   },
   {
@@ -246,7 +249,7 @@ export const patients: Patient[] = [
     sex: 'M',
     payer: 'Self-pay',
     phone: '(614) 555-0113',
-    address: '91 Cemetery Rd, Hilliard, OH 43026',
+    address: '91 Kestrelridge Dr, Juniper Valley, OH 00021',
     allergies: [],
   },
   {
@@ -258,12 +261,12 @@ export const patients: Patient[] = [
     payer: 'Medicare',
     coverage: {
       plan: 'Medicare Part A and B',
-      memberId: '6HN2-QE4-XA91',
+      memberId: '6ZS2-OL4-BI91',
       eligibility: 'active',
       verified: '2026-03-11',
     },
     phone: '(614) 555-0168',
-    address: '14 Grandview Ave, Grandview Heights, OH 43212',
+    address: '14 Hollowmere Ave, Juniper Valley, OH 00022',
     allergies: ['Penicillins', 'Sulfa drugs'],
   },
   {
@@ -274,12 +277,12 @@ export const patients: Patient[] = [
     payer: 'Medicaid',
     coverage: {
       plan: 'Ohio Medicaid',
-      memberId: '910081127745',
+      memberId: 'MCD081127745',
       eligibility: 'pending',
       verified: '2026-03-12',
     },
     phone: '(614) 555-0121',
-    address: '402 Parsons Ave, Columbus, OH 43206',
+    address: '402 Starlingfold Way, Juniper Valley, OH 00023',
     allergies: [],
   },
   {
@@ -296,7 +299,7 @@ export const patients: Patient[] = [
       verified: '2026-03-10',
     },
     phone: '(614) 555-0155',
-    address: '33 Northwest Blvd, Columbus, OH 43212',
+    address: '33 Cobbleglen Rd, Juniper Valley, OH 00024',
     allergies: [],
   },
   {
@@ -313,7 +316,7 @@ export const patients: Patient[] = [
       verified: '2026-03-12',
     },
     phone: '(614) 555-0179',
-    address: '88 Morse Rd, Columbus, OH 43229',
+    address: '88 Marigold Shoals Ln, Juniper Valley, OH 00025',
     allergies: ['Iodinated contrast'],
   },
   {
@@ -330,7 +333,7 @@ export const patients: Patient[] = [
       verified: '2026-03-09',
     },
     phone: '(614) 555-0138',
-    address: '27 Winter St, Delaware, OH 43015',
+    address: '27 Wickerbloom Ct, Juniper Valley, OH 00026',
     allergies: [],
   },
   {
@@ -341,12 +344,12 @@ export const patients: Patient[] = [
     payer: 'Medicare',
     coverage: {
       plan: 'Medicare Part A and B',
-      memberId: '2CR5-YK7-UM34',
+      memberId: '2LZ5-SB7-ZO34',
       eligibility: 'active',
       verified: '2026-03-06',
     },
     phone: '(614) 555-0184',
-    address: '6 Diley Rd, Pickerington, OH 43147',
+    address: '6 Nettlecombe Dr, Juniper Valley, OH 00027',
     allergies: ['Codeine'],
   },
 ];
