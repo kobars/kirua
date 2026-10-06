@@ -62,14 +62,22 @@ const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
 ];
 
 /**
- * Tab into the field, as a keyboard user does, so `:focus-visible` applies,
- * then let its colour transitions finish: a border read mid-transition is
- * neither the old colour nor the new one, and passes any inequality.
+ * Focus the field as a keyboard user does, so `:focus-visible` applies, then
+ * let its colour transitions finish: a border read mid-transition is neither
+ * the old colour nor the new one, and passes any inequality.
+ *
+ * A key press first, then focus from the script. Tab alone is not enough:
+ * WebKit's Tab skips buttons by default, as Safari does, so the two fields
+ * that are buttons would never be reached.
  */
 async function focusField(container: HTMLElement, slot: string) {
   const ring = container.querySelector<HTMLElement>(`[data-slot="${slot}"]`)!;
+  const target = ring.matches('input, textarea, button')
+    ? ring
+    : ring.querySelector<HTMLElement>('input, textarea, button')!;
   const invalidBorder = getComputedStyle(ring).borderTopColor;
-  await userEvent.tab();
+  await userEvent.keyboard('{Shift}');
+  target.focus();
   await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
   await Promise.all(ring.getAnimations().map((animation) => animation.finished));
   return { ring, invalidBorder };
