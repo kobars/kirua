@@ -11,6 +11,7 @@ import {
   MoonIcon,
   NightSwatch,
   SunIcon,
+  type NightPalette,
 } from '@kobars/kirua';
 import { NIGHT_PALETTES, useNightPalette } from './useNightPalette';
 import { useTheme, type ThemePreference } from './useTheme';
@@ -18,8 +19,8 @@ import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
 
 /**
  * The theme control: one button at any width, and a menu of three choices,
- * then the night palette dark mode uses. Picking a night on a light page
- * switches to dark, so the choice is never invisible.
+ * then, in dark mode, the night palette it uses. A light page lists no
+ * nights, because choosing one there would change nothing.
  *
  * A menu rather than a row of three toggles, because the header is the most
  * contested space on a phone: three more 44px controls there leave the shop's
@@ -58,26 +59,23 @@ export function ThemeMenu({ labels = DEFAULT }: { labels?: ThemeMenuLabels }) {
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
 
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Night palette</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={palette}>
-          {NIGHT_PALETTES.map((option) => (
-            <DropdownMenuRadioItem
-              key={option.id}
-              value={option.id}
-              // A night is dark mode's, so picking one on a light page shows
-              // it rather than changing nothing visible. `onSelect`, not the
-              // group's `onValueChange`, so the night already chosen counts.
-              onSelect={() => {
-                choosePalette(option.id);
-                if (resolved !== 'dark') choose('dark');
-              }}
+        {resolved === 'dark' && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Night palette</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={palette}
+              onValueChange={(value) => choosePalette(value as NightPalette)}
             >
-              {option.label}
-              <NightSwatch palette={option.id} />
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+              {NIGHT_PALETTES.map((option) => (
+                <DropdownMenuRadioItem key={option.id} value={option.id}>
+                  {option.label}
+                  <NightSwatch palette={option.id} />
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

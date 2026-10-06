@@ -36,8 +36,10 @@ async function chooseMode(mode) {
   await documentMode(docs, mode);
 }
 
+const nightMenu = () => page.getByRole('button', { name: /^Night palette of dark mode/ });
+
 async function chooseNight(title) {
-  await page.getByRole('button', { name: /^Night palette of dark mode / }).click();
+  await nightMenu().click();
   // An option, not the text: the button names the chosen night as well.
   await page.getByRole('option', { name: title, exact: true }).click();
 }
@@ -111,12 +113,8 @@ try {
   await settles(docs.locator('.sbdocs-wrapper'), lightDocs);
   await settles(specimen.locator('body'), lightPreview);
 
-  // A night is dark mode's, so picking one on a light page switches to dark.
-  await chooseNight('Ink');
-  await docs.locator('html.dark[data-night-palette="ink"]').waitFor();
-  await chooseNight('Navy night');
-  await docs.locator('html.dark:not([data-night-palette])').waitFor();
-  await chooseMode('light');
+  // A night colours dark mode only, so a light page has no night menu.
+  await nightMenu().waitFor({ state: 'detached' });
 
   await chooseMode('dark');
   await page.getByRole('link', { name: 'Introduction', exact: true }).click();
@@ -164,6 +162,7 @@ try {
   await specimen.locator('[data-slot="aspect-ratio"]').waitFor();
   await documentMode(docs, 'light');
   await documentMode(specimen, 'light');
+  await nightMenu().waitFor({ state: 'detached' });
 
   await page.setViewportSize({ width: 375, height: 900 });
   await page.goto(

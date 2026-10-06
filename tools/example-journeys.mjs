@@ -89,22 +89,31 @@ try {
           await go();
           assert.equal(await page.title(), HUB_TITLE);
           if (theme === 'light') {
-            // A night is dark mode's, so picking one on a light page switches
-            // to dark, the night already chosen included.
-            const pick = async (name) => {
+            // A night colours dark mode only, so a light page lists none.
+            const menu = async () => {
               await page.getByRole('button', { name: 'Theme', exact: true }).click();
+              await visible(page.getByRole('menu'));
+            };
+            const pick = async (name) => {
+              await menu();
               await page.getByRole('menuitemradio', { name }).click();
               // The menu closes with an animation; open it again once it has.
               await page.getByRole('menu').waitFor({ state: 'detached' });
             };
-            await pick(/^Ink/);
-            await visible(page.locator('html.dark[data-night-palette="ink"]'));
-            await pick(/^Light/);
-            await visible(page.locator('html:not(.dark)'));
+            const nights = () => page.getByRole('menuitemradio', { name: /^Ink/ }).count();
+            await menu();
+            assert.equal(await nights(), 0, 'a light page lists no nights');
+            await page.keyboard.press('Escape');
+            await page.getByRole('menu').waitFor({ state: 'detached' });
+            await pick(/^Dark/);
             await pick(/^Ink/);
             await visible(page.locator('html.dark[data-night-palette="ink"]'));
             await pick(/^System/);
             await visible(page.locator('html:not(.dark)'));
+            await menu();
+            assert.equal(await nights(), 0, 'a light page lists no nights');
+            await page.keyboard.press('Escape');
+            await page.getByRole('menu').waitFor({ state: 'detached' });
           }
         } else if (slug === 'marketing') {
           await go('contact');

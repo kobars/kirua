@@ -34,18 +34,8 @@ const preview: Preview = {
     nightPalette: NIGHTS[0],
   },
   globalTypes: {
-    mode: {
-      description: 'Colour mode',
-      toolbar: {
-        title: 'Mode',
-        icon: 'circlehollow',
-        items: [
-          { value: 'light', title: 'Light' },
-          { value: 'dark', title: 'Dark' },
-        ],
-        dynamicTitle: true,
-      },
-    },
+    // Mode and night are the manager's own menus; see `ThemeTools.tsx`.
+    mode: { description: 'Colour mode' },
     surface: {
       description: 'Surface context the component is rendered on',
       toolbar: {
@@ -59,19 +49,7 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
-    // Applies in dark mode only; a light page has no night.
-    nightPalette: {
-      description: 'Night palette of dark mode',
-      toolbar: {
-        title: 'Night',
-        icon: 'moon',
-        items: NIGHTS.map((night, index) => {
-          const name = night.charAt(0).toUpperCase() + night.slice(1);
-          return { value: night, title: index === 0 ? `${name} night` : name };
-        }),
-        dynamicTitle: true,
-      },
-    },
+    nightPalette: { description: 'Night palette of dark mode' },
   },
   parameters: {
     layout: 'fullscreen',
