@@ -38,19 +38,25 @@
     <script>
       // The night palette of dark mode, applied before first paint too, by the
       // rule examples/shared/useNightPalette.ts follows: a valid value in the
-      // link wins, else a valid stored one, else navy, which sets no
-      // attribute. A script of its own, so nothing the theme script above does
-      // can stop it.
+      // link wins, else the section's stored choice, else the section's own
+      // night (navy on the hub, which sets no attribute). The build fills in
+      // each section's night from examples/sections.ts. A script of its own,
+      // so nothing the theme script above does can stop it.
       (() => {
         const nights = ['navy', 'graphite', 'onyx', 'ink', 'carbon'];
+        const sectionNights = {};
+        const section = (location.hash || '').replace(/^#\/?/, '').split('/')[0];
+        const own = Object.hasOwn(sectionNights, section);
+        const key = own ? `kirua-night-palette:${section}` : 'kirua-night-palette';
+        const fallback = own ? sectionNights[section] : 'navy';
         const pick = () => {
           const fromUrl = new URLSearchParams(location.search).get('night');
           if (nights.includes(fromUrl)) return fromUrl;
           try {
-            const stored = localStorage.getItem('kirua-night-palette');
-            return nights.includes(stored) ? stored : 'navy';
+            const stored = localStorage.getItem(key);
+            return nights.includes(stored) ? stored : fallback;
           } catch {
-            return 'navy';
+            return fallback;
           }
         };
         const night = pick();

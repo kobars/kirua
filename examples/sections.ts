@@ -10,6 +10,9 @@
  */
 export type SectionId = 'shop' | 'his' | 'social' | 'assistant' | 'marketing';
 
+/** The night palettes of dark mode, by name; the design system owns the colours. */
+export type Night = 'navy' | 'graphite' | 'onyx' | 'ink' | 'carbon';
+
 export interface Section {
   id: SectionId;
   /** The product the section pretends to be. */
@@ -18,6 +21,12 @@ export interface Section {
   kind: string;
   title: string;
   summary: string;
+  /**
+   * The night palette the section opens in under dark mode, until a visitor
+   * picks another for it. Each section has its own, so the five read as five
+   * products rather than one.
+   */
+  night: Night;
 }
 
 export const SECTIONS: Section[] = [
@@ -27,6 +36,7 @@ export const SECTIONS: Section[] = [
     kind: 'Shop',
     title: 'Dusk — a kirua example',
     summary: 'A storefront with filters, a product page, a cart, checkout and order history.',
+    night: 'carbon',
   },
   {
     id: 'his',
@@ -35,6 +45,7 @@ export const SECTIONS: Section[] = [
     title: 'Larkspur — a kirua example',
     summary:
       'Patients and coverage, appointments, visit registration, lab results and the pharmacy.',
+    night: 'graphite',
   },
   {
     id: 'social',
@@ -42,6 +53,7 @@ export const SECTIONS: Section[] = [
     kind: 'Social app',
     title: 'Commons — a kirua example',
     summary: 'A mobile-first feed with replies, explore, notifications, messages and profiles.',
+    night: 'navy',
   },
   {
     id: 'assistant',
@@ -49,6 +61,7 @@ export const SECTIONS: Section[] = [
     kind: 'Assistant',
     title: 'Lumen — a kirua example',
     summary: 'An assistant transcript, a composer, a searchable sidebar and a usage page.',
+    night: 'onyx',
   },
   {
     id: 'marketing',
@@ -56,6 +69,7 @@ export const SECTIONS: Section[] = [
     kind: 'Marketing site',
     title: 'Aozora — a kirua example',
     summary: 'A marketing site with pricing, a story, a guide and a contact form.',
+    night: 'ink',
   },
 ];
 

@@ -3,6 +3,7 @@ import { AppMain, Container, Spinner } from '@kobars/kirua';
 import { Hub } from './Hub';
 import { HUB_TITLE, SECTIONS, type SectionId } from './sections';
 import { SectionErrorBoundary } from './shared/SectionErrorBoundary';
+import { useApplyNightPalette } from './shared/useNightPalette';
 import { sectionOf, useHashPath } from './shared/useHashRoute';
 
 /**
@@ -55,6 +56,7 @@ function RouteChange({ path, title, home }: { path: string; title: string; home:
 /** The hub at `#/`, or the section the first segment of the hash names. */
 export function App() {
   const path = useHashPath();
+  useApplyNightPalette();
   const id = sectionOf(path);
   const section = SECTIONS.find((candidate) => candidate.id === id);
 
