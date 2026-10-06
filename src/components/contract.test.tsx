@@ -28,6 +28,15 @@ import {
   AppRail,
   AppShell,
   AspectRatio,
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
   Avatar,
   AvatarFallback,
   AvatarStack,
@@ -693,6 +702,31 @@ const cases: Case[] = [
   ['ItemDescription', (p) => <ItemDescription {...p}>Copy</ItemDescription>, 'P'],
   ['ItemActions', (p) => <ItemActions {...p} />, 'DIV'],
   ['ItemSeparator', (p) => <ItemSeparator {...p} />, 'DIV'],
+  ['Attachment', (p) => <Attachment {...p} />, 'DIV'],
+  ['AttachmentGroup', (p) => <AttachmentGroup {...p} />, 'UL'],
+  ['AttachmentMedia', (p) => <AttachmentMedia {...p} />, 'DIV'],
+  ['AttachmentContent', (p) => <AttachmentContent {...p} />, 'DIV'],
+  ['AttachmentTitle', (p) => <AttachmentTitle {...p}>scan.pdf</AttachmentTitle>, 'DIV'],
+  [
+    'AttachmentDescription',
+    (p) => <AttachmentDescription {...p}>PDF · 214 kB</AttachmentDescription>,
+    'P',
+  ],
+  ['AttachmentActions', (p) => <AttachmentActions {...p} />, 'DIV'],
+  [
+    'AttachmentAction',
+    (p) => (
+      <AttachmentAction aria-label="Remove scan.pdf" {...p}>
+        x
+      </AttachmentAction>
+    ),
+    'BUTTON',
+  ],
+  [
+    'AttachmentTrigger',
+    (p) => <AttachmentTrigger {...p}>scan.pdf</AttachmentTrigger>,
+    'BUTTON',
+  ],
   ['Meter', (p) => <Meter value={40} label="Beds" {...p} />, 'DIV'],
   ['Chart', (p) => <Chart label="Visits" {...p} />, 'FIGURE'],
   ['ChartCaption', (p) => <ChartCaption {...p}>Per month</ChartCaption>, 'FIGCAPTION'],

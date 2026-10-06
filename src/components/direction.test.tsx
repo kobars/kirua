@@ -2,6 +2,14 @@ import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { cleanup, render } from '@/test/render';
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentMedia,
+  AttachmentTitle,
+} from './Attachment';
 import { Calendar } from './Calendar';
 import { Checkbox } from './Checkbox';
 import { Chip } from './Chip';
@@ -10,6 +18,7 @@ import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { Field } from './Field';
 import { SpotlightContent, SpotlightMedia } from './SpotlightPanel';
 import { Switch } from './Switch';
+import { CloseIcon, FileIcon } from './icons';
 
 afterEach(cleanup);
 
@@ -152,6 +161,48 @@ describe('insets follow the reading direction', () => {
     // matrix(a, b, c, d, tx, ty) — `a` is the horizontal scale.
     expect(ltr.transform).toContain('matrix(-1');
     expect(rtl.transform).toContain('matrix(1');
+  });
+});
+
+describe('an Attachment lays out from the start of the line', () => {
+  const card = (orientation: 'horizontal' | 'vertical') => (
+    <div className="w-80">
+      <Attachment orientation={orientation}>
+        <AttachmentMedia>
+          <FileIcon />
+        </AttachmentMedia>
+        <AttachmentContent>
+          <AttachmentTitle>cbc-2026-03-12.pdf</AttachmentTitle>
+        </AttachmentContent>
+        <AttachmentActions>
+          <AttachmentAction aria-label="Remove cbc-2026-03-12.pdf">
+            <CloseIcon />
+          </AttachmentAction>
+        </AttachmentActions>
+      </Attachment>
+    </div>
+  );
+
+  it('a row puts its media on the left in English and on the right in Arabic', () => {
+    const sides = (['ltr', 'rtl'] as const).map((dir) => {
+      const container = render(<div dir={dir}>{card('horizontal')}</div>);
+      const media = container
+        .querySelector('[data-slot="attachment-media"]')!
+        .getBoundingClientRect();
+      const content = container
+        .querySelector('[data-slot="attachment-content"]')!
+        .getBoundingClientRect();
+      cleanup();
+      return media.left < content.left;
+    });
+    expect(sides).toEqual([true, false]);
+  });
+
+  it("a tile's actions sit in the media's end corner", () => {
+    const [ltr, rtl] = bothWays(card('vertical'), '[data-slot="attachment-actions"]');
+
+    expect(ltr.right).toBe('12px');
+    expect(rtl.left).toBe('12px');
   });
 });
 
