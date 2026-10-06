@@ -39,8 +39,12 @@ jobs:
 
       # The same four commands as `pnpm check:all`, one step each so a failure
       # names its gate.
+      # About 28 minutes on a passing run. A browser that stops answering
+      # leaves Vitest waiting with no test timer left to fire, so the step
+      # stops itself rather than holding the runner for the whole job.
       - name: Component gate (types, lint, format, every Vitest project, WebKit)
         run: pnpm check
+        timeout-minutes: 40
 
       - name: Hero page build and size budget
         run: pnpm build
