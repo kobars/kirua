@@ -2,13 +2,18 @@
 import assert from 'node:assert/strict';
 import { mkdir, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import { chromium } from 'playwright';
-import { APP_SECTIONS, HUB_TITLE, SECTIONS, open, serve } from './example-apps.mjs';
+import { APP_SECTIONS, DIST, HUB_TITLE, SECTIONS, open, serve } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const axe = await readFile(require.resolve('axe-core/axe.min.js'), 'utf8');
 const output = process.env.KIRUA_REVIEW_OUTPUT ?? '/tmp/kirua-review';
 await mkdir(output, { recursive: true });
+const html = await readFile(path.join(DIST, 'index.html'), 'utf8');
+for (const { id, night } of APP_SECTIONS)
+  assert(html.includes(`"${id}":"${night}"`), `index.html is missing the ${id} night`);
+
 const browser = await chromium.launch();
 let checks = 0;
 async function eventually(check) {
@@ -88,18 +93,18 @@ try {
           }
           await go();
           assert.equal(await page.title(), HUB_TITLE);
+          const menu = async () => {
+            await page.getByRole('button', { name: 'Theme', exact: true }).click();
+            await visible(page.getByRole('menu'));
+          };
+          const pick = async (name) => {
+            await menu();
+            await page.getByRole('menuitemradio', { name }).click();
+            // The menu closes with an animation; open it again once it has.
+            await page.getByRole('menu').waitFor({ state: 'detached' });
+          };
           if (theme === 'light') {
             // A night colours dark mode only, so a light page lists none.
-            const menu = async () => {
-              await page.getByRole('button', { name: 'Theme', exact: true }).click();
-              await visible(page.getByRole('menu'));
-            };
-            const pick = async (name) => {
-              await menu();
-              await page.getByRole('menuitemradio', { name }).click();
-              // The menu closes with an animation; open it again once it has.
-              await page.getByRole('menu').waitFor({ state: 'detached' });
-            };
             const nights = () => page.getByRole('menuitemradio', { name: /^Ink/ }).count();
             await menu();
             assert.equal(await nights(), 0, 'a light page lists no nights');
@@ -114,6 +119,33 @@ try {
             assert.equal(await nights(), 0, 'a light page lists no nights');
             await page.keyboard.press('Escape');
             await page.getByRole('menu').waitFor({ state: 'detached' });
+          } else {
+            // Each section opens in its own night, on a fresh load and on a
+            // move from another section, and a night picked in one section
+            // stays in that section.
+            const night = () =>
+              page.evaluate(() => document.documentElement.dataset.nightPalette ?? 'navy');
+            const move = async (id) => {
+              await page.evaluate((hash) => (location.hash = hash), `#/${id}/`);
+              await page.locator(`[data-route="${id}/"]`).waitFor();
+            };
+            for (const { id, night: own } of APP_SECTIONS) {
+              await go(`${id}/`);
+              await eventually(async () => assert.equal(await night(), own, `${id} on load`));
+            }
+            for (const { id, night: own } of APP_SECTIONS) {
+              await move(id);
+              await eventually(async () => assert.equal(await night(), own, `${id} on a move`));
+            }
+            await go('shop/');
+            await pick(/^Ink/);
+            await eventually(async () => assert.equal(await night(), 'ink'));
+            await move('his');
+            await eventually(async () => assert.equal(await night(), 'graphite'));
+            await move('shop');
+            await eventually(async () => assert.equal(await night(), 'ink'));
+            await page.evaluate(() => (location.hash = '#/'));
+            await eventually(async () => assert.equal(await night(), 'navy'));
           }
         } else if (slug === 'marketing') {
           await go('contact');

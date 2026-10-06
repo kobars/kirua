@@ -27,9 +27,9 @@
  * check half of the shipped design.
  *
  * Dark mode is a set of night palettes, each re-pointing the page, the card
- * and the lines. The default night runs at every width like light mode; the
- * others run at desktop width, because a night changes colours and not the
- * tree.
+ * and the lines. Each section opens in its own night, and that run covers
+ * every width like light mode; then every night is forced on every route at
+ * desktop width, because a night changes colours and not the tree.
  *
  * ## States a route does not open in
  *
@@ -44,7 +44,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 import { breakpointPx } from './breakpoints.mjs';
-import { SECTIONS, eachRoute, open, serve } from './example-apps.mjs';
+import { APP_SECTIONS, SECTIONS, eachRoute, open, serve } from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = await readFile(
@@ -72,6 +72,15 @@ const WIDTHS = [
 const NIGHTS = JSON.parse(
   await readFile(path.join(import.meta.dirname, '../src/styles/nights.json'), 'utf8'),
 );
+
+/** The night each section opens in; the hub opens in the default. */
+const OWN_NIGHT = new Map(APP_SECTIONS.map((section) => [section.id, section.night]));
+
+/** Every key a night is stored under: the hub's, then one per section. */
+const NIGHT_KEYS = [
+  'kirua-night-palette',
+  ...APP_SECTIONS.map((section) => `kirua-night-palette:${section.id}`),
+];
 
 const THEMES = [
   { name: 'light', scheme: 'light', widths: WIDTHS },
@@ -170,22 +179,25 @@ for (const { name: theme, scheme, night, widths } of THEMES) {
     const context = await contextFor(size, scheme);
     // The host document's blocking script reads the stored night before paint.
     if (night)
-      await context.addInitScript((value) => {
-        try {
-          localStorage.setItem('kirua-night-palette', value);
-        } catch {
-          // The blank page between sections has no storage.
-        }
-      }, night);
+      await context.addInitScript(
+        ({ value, keys }) => {
+          try {
+            for (const key of keys) localStorage.setItem(key, value);
+          } catch {
+            // The blank page between sections has no storage.
+          }
+        },
+        { value: night, keys: NIGHT_KEYS },
+      );
     const page = await context.newPage();
 
     await eachRoute(async ({ section, label, url }) => {
       await open(page, url);
-      if (
-        night &&
-        (await page.evaluate(() => document.documentElement.dataset.nightPalette)) !== night
-      )
-        throw new Error(`${section} ${label}: the ${night} night was not applied`);
+      const expected = night ?? OWN_NIGHT.get(section) ?? NIGHTS[0];
+      const applied =
+        (await page.evaluate(() => document.documentElement.dataset.nightPalette)) ?? NIGHTS[0];
+      if (scheme === 'dark' && applied !== expected)
+        throw new Error(`${section} ${label}: the ${expected} night was not applied`);
       await audit(page, { section, route: label, theme, width: size.name });
     });
 
