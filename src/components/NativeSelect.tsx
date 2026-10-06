@@ -59,7 +59,7 @@ export function NativeSelect({ className, width, ...props }: NativeSelectProps) 
           'transition-[border-color,box-shadow] duration-fast ease-out',
           'hover:border-field-line-hover',
           // One ring, drawn over the border rather than beside it.
-          'focus-visible:-outline-offset-1',
+          'focus-visible:-outline-offset-1 focus-visible:outline-field-ring',
           'aria-invalid:border-field-line-invalid aria-invalid:hover:border-field-line-invalid',
           'aria-invalid:focus-visible:outline-field-line-invalid',
           'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',
