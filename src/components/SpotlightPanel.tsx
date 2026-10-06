@@ -151,7 +151,8 @@ const contentGaps = { 4: 'gap-4', 6: 'gap-6' } as const;
 export interface SpotlightContentProps extends ComponentProps<'div'> {
   /** The rhythm between the copy's blocks. Unset, they touch. */
   gap?: keyof typeof contentGaps;
-  /** Cap the copy at 44rem, so a headline on a wide screen wraps at a readable length. */
+  /** Cap the copy at 44rem, so a headline on a wide screen wraps at a readable
+   *  length. The gutter beside the artwork is added on top, not taken from it. */
   measure?: boolean;
 }
 
@@ -176,7 +177,12 @@ export function SpotlightContent({
         'md:group-has-[[data-slot=spotlight-media][data-side=start]]/spotlight:pe-0',
         'md:group-has-[[data-slot=spotlight-media][data-side=start]]/spotlight:ps-[calc(var(--spotlight-media-width,0px)+var(--spacing)*4)]',
         gap !== undefined && contentGaps[gap],
-        measure && 'max-w-176',
+        // The cap is for the copy. From `md` the box also holds the gutter
+        // beside the artwork, so the cap grows by that gutter; otherwise the
+        // gutter comes out of the copy's 44rem. Both resolve against the
+        // panel's width, so the sum holds at every size.
+        measure &&
+          'max-w-176 md:max-w-[calc(var(--spacing)*176+var(--spotlight-media-width,0px)+var(--spacing)*4)]',
         className,
       )}
       {...props}

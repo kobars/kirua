@@ -207,7 +207,14 @@ describe('new props on existing components', () => {
     expect(media).not.toHaveClass('inset-e-0');
     expect(getComputedStyle(container.querySelector('img')!).objectFit).toBe('contain');
     expect(getComputedStyle(content).rowGap).toBe('24px');
-    expect(getComputedStyle(content).maxWidth).toBe('704px');
+    // The measure caps the copy. From `md` the box also holds the gutter beside
+    // the artwork, and the cap grows by exactly that much.
+    const style = getComputedStyle(content);
+    const copy =
+      parseFloat(style.maxWidth) -
+      parseFloat(style.paddingInlineStart) -
+      parseFloat(style.paddingInlineEnd);
+    expect(copy).toBe(704);
   });
 
   it('SidebarHeader has a small step and SidebarFooter can drop its divider', () => {
