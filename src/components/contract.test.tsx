@@ -93,6 +93,7 @@ import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
+  DeviceFrame,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -417,6 +418,7 @@ const cases: Case[] = [
     'SPAN',
   ],
   ['AspectRatio', (p) => <AspectRatio ratio={1} {...p} />, 'DIV'],
+  ['DeviceFrame', (p) => <DeviceFrame title="A page" srcDoc="" {...p} />, 'IFRAME'],
   ['Separator', (p) => <Separator {...p} />, 'DIV'],
   ['Skeleton', (p) => <Skeleton {...p} />, 'DIV'],
   // `OUTPUT`: an <output> is already a polite live region.

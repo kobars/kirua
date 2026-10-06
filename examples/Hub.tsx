@@ -18,7 +18,7 @@ import {
 import { ThemeMenu } from './shared/ThemeMenu';
 import { SECTIONS } from './sections';
 
-/** The page at `#/`: what kirua is, and a way into each of the five sections. */
+/** The page at `#/`: what kirua is, and a way into each of its sections. */
 export function Hub() {
   return (
     <AppShell>
@@ -32,7 +32,7 @@ export function Hub() {
           <Container width="6xl" gap="lg" pad="lg">
             <PageHeader
               eyebrow="Examples"
-              title="Five applications, one design system"
+              title="Six applications, one design system"
               description="Each section is a small application built only from kirua's components and their props. Pick one, then switch the theme and the night palette from the menu in its header."
               size="heading-lg"
             />

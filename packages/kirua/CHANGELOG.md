@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+### Added
+
+- `DeviceFrame`, a page shown at a phone's size inside a phone's outline. It
+  is an `iframe`, so the page inside gets its own window at the phone's width
+  and its breakpoints, sticky bars and overlays behave as they do on a phone.
+  `device` is `sm` (320 × 568), `md` (390 × 844) or `lg` (430 × 932).
+- `CardIcon`, a payment card.
+
 ## 0.2.0
 
 Some changes in this release can alter an existing screen, which is why it is

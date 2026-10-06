@@ -4,7 +4,15 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { APP_SECTIONS, DIST, HUB_TITLE, SECTIONS, open, serve } from './example-apps.mjs';
+import {
+  APP_SECTIONS,
+  DIST,
+  HUB_TITLE,
+  SECTIONS,
+  newContext,
+  open,
+  serve,
+} from './example-apps.mjs';
 
 const require = createRequire(import.meta.url);
 const axe = await readFile(require.resolve('axe-core/axe.min.js'), 'utf8');
@@ -37,7 +45,8 @@ async function select(page, name) {
 async function audit(page, label) {
   // Read the settled surface, after enabled/disabled and overlay transitions.
   await page.waitForTimeout(250);
-  await page.addScriptTag({ content: axe });
+  // Into every frame, so a `DeviceFrame`'s page is audited with the page around it.
+  for (const frame of page.frames()) await frame.addScriptTag({ content: axe });
   const violations = await page.evaluate(async () =>
     (
       await window.axe.run(document, {
@@ -63,7 +72,7 @@ try {
   for (const { section: slug, prefix } of SECTIONS) {
     for (const width of [375, 700, 1280]) {
       for (const theme of ['light', 'dark']) {
-        const context = await browser.newContext({
+        const context = await newContext(browser, {
           viewport: { width, height: 900 },
           colorScheme: theme,
           reducedMotion: width === 700 ? 'reduce' : 'no-preference',
@@ -369,6 +378,57 @@ try {
           await visible(
             page.getByText('LongMessage'.repeat(30), { exact: true }).filter({ visible: true }),
           );
+        } else if (slug === 'mobile') {
+          await go();
+          // From the md breakpoint the app is shown in a DeviceFrame, a page
+          // of its own at a phone's width, and everything below runs in it.
+          const framed = width >= 768;
+          const frame = page.locator('iframe[data-slot="device-frame"]');
+          assert.equal(await frame.count(), framed ? 1 : 0, 'a frame from md only');
+          const ui = framed ? page.frameLocator('iframe[data-slot="device-frame"]') : page;
+          const nav = ui.getByRole('navigation', { name: 'Main', exact: true });
+          // The phone's tab bar shows inside the frame even on a desktop.
+          await visible(nav);
+
+          await nav.getByRole('link', { name: 'Send', exact: true }).click();
+          await ui.getByRole('link', { name: /Maya Lindqvist/ }).click();
+          for (const key of ['4', '2', 'Decimal point', '5'])
+            await ui.getByRole('button', { name: key, exact: true }).click();
+          await visible(ui.getByRole('status', { name: 'Amount' }).getByText('$42.5'));
+          await ui.getByRole('button', { name: 'Review', exact: true }).click();
+          const sheet = ui.getByRole('dialog', { name: 'Send $42.50 to Maya?' });
+          await visible(sheet);
+          await sheet.getByRole('button', { name: 'Send $42.50', exact: true }).click();
+          await visible(ui.getByRole('heading', { level: 1, name: 'Maya Lindqvist' }));
+          await visible(ui.getByText('Money sent', { exact: true }));
+
+          await nav.getByRole('link', { name: 'Home', exact: true }).click();
+          await visible(ui.getByText('$2,439.10', { exact: true }));
+
+          await nav.getByRole('link', { name: 'Cards', exact: true }).click();
+          await ui.getByRole('switch', { name: 'Freeze card' }).first().click();
+          await visible(ui.getByText('Frozen', { exact: true }));
+
+          if (framed) {
+            const inner = () => page.frames()[1]?.evaluate(() => window.innerWidth);
+            await page.getByRole('radio', { name: 'Small · 320' }).click();
+            await eventually(async () => assert.equal(await inner(), 320));
+            await page.getByRole('radio', { name: 'Standard · 390' }).click();
+            await eventually(async () => assert.equal(await inner(), 390));
+            // A theme picked inside the phone reaches the page around it.
+            const opposite = theme === 'light' ? /^Dark/ : /^Light/;
+            await ui.getByRole('button', { name: 'Theme', exact: true }).click();
+            await ui.getByRole('menuitemradio', { name: opposite }).click();
+            await ui.getByRole('menu').waitFor({ state: 'detached' });
+            await eventually(async () =>
+              assert.equal(
+                await page.evaluate(() => document.documentElement.classList.contains('dark')),
+                theme === 'light',
+              ),
+            );
+            await ui.getByRole('button', { name: 'Theme', exact: true }).click();
+            await ui.getByRole('menuitemradio', { name: /^System/ }).click();
+          }
         } else {
           await go('tokens');
           await page.getByRole('button', { name: 'Suggest a prompt' }).click();

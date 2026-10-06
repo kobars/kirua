@@ -67,9 +67,10 @@ components and their props.
   can still import them; they render on the client. The whole barrel renders
   in Node with no browser present, and server markup hydrates cleanly in
   Chromium and WebKit.
-- **An example app with zero `className`.** Five small applications — a shop, a
-  hospital system, a social app, an assistant and a marketing site — written
-  without a single `className` or `style` prop. A check fails if one appears.
+- **An example app with zero `className`.** Six small applications — a shop, a
+  hospital system, a social app, a phone-only money app, an assistant and a
+  marketing site — written without a single `className` or `style` prop. A check
+  fails if one appears.
 
 ## Quick start
 
@@ -97,18 +98,20 @@ It installs `@kobars/kirua` from npm, as any app would, so it shows the latest
 release. `pnpm example:source` runs it against the components in this
 repository instead, which is what you want while changing one.
 
-It opens on a hub at `#/` that links to five sections:
+It opens on a hub at `#/` that links to six sections:
 
 | Section  | What it shows                                                         | Route                                                            |
 | -------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | Dusk     | A storefront with filters, a product page, cart and checkout          | [`#/shop/`](https://kirua-examples.vercel.app/#/shop/)           |
 | Larkspur | A US hospital chart: patients, coverage, appointments, labs, pharmacy | [`#/his/`](https://kirua-examples.vercel.app/#/his/)             |
 | Commons  | A mobile-first feed, explore, notifications, messages                 | [`#/social/`](https://kirua-examples.vercel.app/#/social/)       |
+| Pouch    | A money app for phones only: balance, activity, sending, cards        | [`#/mobile/`](https://kirua-examples.vercel.app/#/mobile/)       |
 | Lumen    | An assistant transcript, composer, searchable sidebar, usage          | [`#/assistant/`](https://kirua-examples.vercel.app/#/assistant/) |
 | Aozora   | A marketing site with pricing, a story, a guide and a form            | [`#/marketing/`](https://kirua-examples.vercel.app/#/marketing/) |
 
 Each section loads as its own chunk. All data is local sample data. The
-routes above link to the deployed app.
+routes above link to the deployed app. Pouch is made only for phones: on a wide
+screen it runs inside a `DeviceFrame`, a real page at a phone's width.
 
 `pnpm dev` serves the rebuilt reference hero on http://localhost:5173.
 
