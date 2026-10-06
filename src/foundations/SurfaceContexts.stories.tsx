@@ -66,7 +66,7 @@ function Specimen() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant="primary">Enroll</Button>
+        <Button variant="primary">Join</Button>
         <Button variant="secondary">Explore</Button>
         <Button variant="ghost">Later</Button>
         <IconButton aria-label="Search the gallery" variant="secondary">

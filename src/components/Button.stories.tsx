@@ -129,7 +129,7 @@ export const WithIcons: Story = {
         Generate
       </Button>
       <Button {...args} variant="secondary" trailingIcon={<ArrowRightIcon />}>
-        Enroll Now
+        Join the class
       </Button>
     </div>
   ),
@@ -248,7 +248,7 @@ export const AcrossSurfaces: Story = {
               Start now
             </Button>
             <Button {...args} variant="secondary">
-              Enroll
+              Join
             </Button>
           </div>
         </div>

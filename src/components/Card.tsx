@@ -30,8 +30,8 @@ export interface CardProps extends ComponentProps<'div'>, VariantProps<typeof ca
  *
  * @example
  * <Card variant="dark" padding="lg">
- *   <CardTitle>Join our anime class</CardTitle>
- *   <Button variant="primary">Enroll</Button>
+ *   <CardTitle>Anime drawing class</CardTitle>
+ *   <Button variant="primary">Join the class</Button>
  * </Card>
  *
  * @example

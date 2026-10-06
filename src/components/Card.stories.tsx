@@ -34,7 +34,7 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   render: (args) => (
     <Card {...args} className="max-w-md">
-      <CardEyebrow>Join our anime class</CardEyebrow>
+      <CardEyebrow>Anime drawing class</CardEyebrow>
       <CardTitle className="text-display-md">50% off</CardTitle>
       <CardBody className="mt-2">
         Weekly lessons in character design, inking and colour, at half price for your first

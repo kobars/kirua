@@ -34,21 +34,21 @@ export const Default: Story = {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="primary" size="lg">
-          Enroll Now
+          Join the class
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Join the anime class</DialogTitle>
+        <DialogTitle>Join the drawing class</DialogTitle>
         <DialogDescription>
-          Two live sessions a week, plus a critique thread. Cancel any time — the first week is
-          free.
+          Weekly lessons in character design, inking and colour, with feedback on your own
+          pages. Your first month is half price, and you can cancel any time.
         </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="ghost">Not now</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button variant="primary">Claim 50% off</Button>
+            <Button variant="primary">Claim offer</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
@@ -95,7 +95,9 @@ export const CustomCloseLabel: Story = {
       </DialogTrigger>
       <DialogContent closeLabel="Close the course details">
         <DialogTitle>Join the course</DialogTitle>
-        <DialogDescription>Two live sessions a week.</DialogDescription>
+        <DialogDescription>
+          Weekly lessons in character design, inking and colour.
+        </DialogDescription>
       </DialogContent>
     </Dialog>
   ),
@@ -138,7 +140,7 @@ export const Destructive: Story = {
 export const TrapsAndRestoresFocus: Story = {
   ...Default,
   play: async ({ canvasElement }) => {
-    const trigger = within(canvasElement).getByRole('button', { name: 'Enroll Now' });
+    const trigger = within(canvasElement).getByRole('button', { name: 'Join the class' });
 
     await userEvent.click(trigger);
     const dialog = await screen.findByRole('dialog');

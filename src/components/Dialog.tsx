@@ -15,10 +15,10 @@ import { CloseIcon } from './icons';
  *
  * @example
  * <Dialog>
- *   <DialogTrigger asChild><Button>Enroll now</Button></DialogTrigger>
+ *   <DialogTrigger asChild><Button>Join the class</Button></DialogTrigger>
  *   <DialogContent>
  *     <DialogTitle>Join the class</DialogTitle>
- *     <DialogDescription>Two live sessions a week.</DialogDescription>
+ *     <DialogDescription>Weekly lessons, half price for your first month.</DialogDescription>
  *   </DialogContent>
  * </Dialog>
  */

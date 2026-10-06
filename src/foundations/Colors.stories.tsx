@@ -311,7 +311,7 @@ function Night({ id, note }: (typeof NIGHTS)[number]) {
           <CardBody>Its shadow is the night’s shade, darker than the page.</CardBody>
         </Card>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="primary">Enroll</Button>
+          <Button variant="primary">Join</Button>
           <Button variant="secondary">Explore</Button>
         </div>
       </div>
