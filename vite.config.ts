@@ -195,7 +195,21 @@ export default defineConfig({
     // opening browsers at once there starves the renderer until tests time
     // out. Fewer workers and a longer budget on CI; local runs keep the
     // defaults.
-    ...(process.env['CI'] ? { maxWorkers: 2, testTimeout: 60_000 } : {}),
+    //
+    // The longer budget is still not always enough. A large story spends most
+    // of its time in the accessibility scan, which runs one at a time per
+    // page, and on a loaded runner one scan can pass 60 seconds where a quiet
+    // run takes 4. One retry on CI absorbs that. A test that fails twice still
+    // fails the run, and `tools/vitest-retries.mjs` names every test that
+    // needed its retry, which the default reporter shows as a plain pass.
+    ...(process.env['CI']
+      ? {
+          maxWorkers: 2,
+          testTimeout: 60_000,
+          retry: 1,
+          reporters: ['default', path.join(dirname, 'tools/vitest-retries.mjs')],
+        }
+      : {}),
     projects: [
       ...webkitProjects,
       ...storyProjects,
