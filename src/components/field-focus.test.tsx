@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { cleanup, render } from '@/test/render';
+import { Combobox, ComboboxInput } from './Combobox';
+import { DatePicker } from './DatePicker';
 import { Input } from './Input';
 import { InputGroup, InputGroupInput } from './InputGroup';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
@@ -41,13 +43,35 @@ const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
     ),
     'select-trigger',
   ],
+  [
+    'DatePicker',
+    (invalid) => (
+      <DatePicker month={new Date(2026, 9, 1)} aria-label="Visit date" aria-invalid={invalid} />
+    ),
+    'date-picker',
+  ],
+  [
+    'Combobox',
+    (invalid) => (
+      <Combobox>
+        <ComboboxInput aria-label="City" aria-expanded={false} aria-invalid={invalid} />
+      </Combobox>
+    ),
+    'combobox-input',
+  ],
 ];
 
-/** Tab into the field, as a keyboard user does, so `:focus-visible` applies. */
+/**
+ * Tab into the field, as a keyboard user does, so `:focus-visible` applies,
+ * then let its colour transitions finish: a border read mid-transition is
+ * neither the old colour nor the new one, and passes any inequality.
+ */
 async function focusField(container: HTMLElement, slot: string) {
   const ring = container.querySelector<HTMLElement>(`[data-slot="${slot}"]`)!;
   const invalidBorder = getComputedStyle(ring).borderTopColor;
   await userEvent.tab();
+  await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
+  await Promise.all(ring.getAnimations().map((animation) => animation.finished));
   return { ring, invalidBorder };
 }
 
@@ -56,7 +80,6 @@ describe.each(FIELDS)('a focused %s', (_name, field, slot) => {
     const container = render(field(false));
     const { ring } = await focusField(container, slot);
 
-    await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
     const style = getComputedStyle(ring);
     expect(style.outlineWidth).toBe('2px');
     expect(style.outlineOffset).toBe('-1px');
@@ -69,8 +92,16 @@ describe.each(FIELDS)('a focused %s', (_name, field, slot) => {
     const container = render(field(true));
     const { ring, invalidBorder } = await focusField(container, slot);
 
-    await expect.poll(() => getComputedStyle(ring).outlineStyle).toBe('solid');
     // An invalid field's border is the invalid colour, hovered or not.
     expect(getComputedStyle(ring).outlineColor).toBe(invalidBorder);
+  });
+  it('rings in a colour the white field does not share, on a brand panel', async () => {
+    const container = render(<div className="ctx-brand">{field(false)}</div>);
+    const { ring } = await focusField(container, slot);
+
+    // The system ring is white on a brand panel, and so is the field it covers.
+    expect(getComputedStyle(ring).outlineColor).not.toBe(
+      getComputedStyle(ring).backgroundColor,
+    );
   });
 });

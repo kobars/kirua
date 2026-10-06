@@ -100,7 +100,7 @@ export function DatePicker({
             'border border-field-line bg-field font-text text-body-md shadow-resting',
             '[--icon-size:var(--icon-md)]',
             'transition-[border-color] duration-fast ease-out hover:border-field-line-hover',
-            'focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-ring',
+            'focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-field-ring',
             'aria-invalid:focus-visible:outline-field-line-invalid',
             'aria-invalid:border-field-line-invalid',
             'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',

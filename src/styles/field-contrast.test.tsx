@@ -120,6 +120,19 @@ const PAIRS: Pair[] = [
     minimum: BOUNDARY,
   },
   {
+    name: 'the focus ring against the field it covers',
+    foreground: '--color-field-focus-ring',
+    background: '--color-field-bg',
+    minimum: BOUNDARY,
+  },
+  {
+    name: 'the focus ring against the surface beside it',
+    foreground: '--color-field-focus-ring',
+    background: '--color-surface-page',
+    on: 'page',
+    minimum: BOUNDARY,
+  },
+  {
     name: 'the validation message on the surface',
     foreground: '--color-field-fg-invalid',
     background: '--color-surface-page',

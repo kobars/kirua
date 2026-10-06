@@ -26,7 +26,7 @@ export function Input({ className, ...props }: InputProps) {
         // One focus ring, laid over the border: recolouring the border as
         // well drew the same signal twice, with the page between the lines.
         // An invalid field keeps its colour in the ring.
-        'hover:border-field-line-hover focus-visible:-outline-offset-1',
+        'hover:border-field-line-hover focus-visible:-outline-offset-1 focus-visible:outline-field-ring',
         'aria-invalid:focus-visible:outline-field-line-invalid',
         'aria-invalid:border-field-line-invalid aria-invalid:hover:border-field-line-invalid',
         'disabled:cursor-not-allowed disabled:border-field-line-disabled disabled:bg-field-disabled disabled:text-on-field-disabled',
