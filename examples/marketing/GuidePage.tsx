@@ -19,16 +19,9 @@ import {
   Separator,
   Text,
 } from '@kobars/kirua';
+import { HighlightedCode } from '../shared/HighlightedCode';
 import { PUBLISH_STEPS } from './data';
-
-const MANIFEST = `{
-  "gallery": "mei-tsukino",
-  "title": "Evening studies",
-  "pieces": [
-    { "file": "pieces/0001.png", "title": "Rooftop, 6pm", "sold": true },
-    { "file": "pieces/0002.png", "title": "Bus window", "sold": false }
-  ]
-}`;
+import manifest from './snippets/manifest.json?highlight';
 
 /**
  * Prose about code. It is where an inline `Code` earns its place — a file name or a
@@ -99,7 +92,7 @@ export function GuidePage() {
             </IconButton>
           }
         >
-          {MANIFEST}
+          <HighlightedCode lines={manifest.lines} />
         </CodeBlock>
 
         <Text>

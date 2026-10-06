@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
   VisuallyHidden,
 } from '@kobars/kirua';
+import { HighlightedCode } from '../shared/HighlightedCode';
 import type { Conversation } from './data';
 
 export interface TranscriptProps {
@@ -95,7 +96,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                           variant="ghost"
                           onClick={async () => {
                             try {
-                              await navigator.clipboard.writeText(turn.code!.source);
+                              await navigator.clipboard.writeText(turn.code!.snippet.source);
                               setCopyStatus('Code copied');
                             } catch {
                               setCopyStatus(
@@ -111,7 +112,7 @@ export function Transcript({ conversation, pending }: TranscriptProps) {
                     </Tooltip>
                   }
                 >
-                  {turn.code.source}
+                  <HighlightedCode lines={turn.code.snippet.lines} />
                 </CodeBlock>
               )}
             </>

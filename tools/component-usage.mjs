@@ -54,6 +54,7 @@ const EXEMPT = {
   alertVariants: 'Same as buttonVariants — a recipe, not an element.',
   avatarVariants: 'Same as buttonVariants.',
   buttonGroupVariants: 'Same as buttonVariants.',
+  codeTokenVariants: 'Same as buttonVariants.',
   containerVariants: 'Same as buttonVariants.',
   descriptionListVariants: 'Same as buttonVariants.',
   headingVariants: 'Same as buttonVariants.',

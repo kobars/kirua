@@ -106,6 +106,15 @@
   --color-chart-grid: var(--color-chart-grid-line);
   --color-chart-track: var(--color-chart-track-fill);
 
+  /* `text-code-keyword` and its siblings, read by `CodeToken`. */
+  --color-code-keyword: var(--color-code-token-keyword);
+  --color-code-string: var(--color-code-token-string);
+  --color-code-constant: var(--color-code-token-constant);
+  --color-code-function: var(--color-code-token-function);
+  --color-code-parameter: var(--color-code-token-parameter);
+  --color-code-comment: var(--color-code-token-comment);
+  --color-code-punctuation: var(--color-code-token-punctuation);
+
   /* Short names again, after the `action` family: `bg-avatar-1` with
    * `text-on-avatar-1`. */
   --color-avatar-1: var(--color-avatar-swatch-1-bg);

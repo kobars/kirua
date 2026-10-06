@@ -54,6 +54,16 @@ interface Pair {
 
 const SURFACES = ['--color-surface-page', '--color-surface-raised', '--color-surface-sunken'];
 
+const CODE_TOKENS = [
+  'keyword',
+  'string',
+  'constant',
+  'function',
+  'parameter',
+  'comment',
+  'punctuation',
+].map((kind) => `--color-code-token-${kind}`);
+
 const PAIRS: Pair[] = [
   ...['--color-text-primary', '--color-text-secondary', '--color-text-muted'].flatMap(
     (foreground) => SURFACES.map((background) => ({ foreground, background, minimum: TEXT })),
@@ -115,6 +125,12 @@ const PAIRS: Pair[] = [
       minimum: BOUNDARY,
     })),
   ),
+  // A highlighted token is text on the code block's sunken well.
+  ...CODE_TOKENS.map((foreground) => ({
+    foreground,
+    background: '--color-surface-sunken',
+    minimum: TEXT,
+  })),
 ];
 
 describe.each(MODES)('%s', (name, contextClass, night) => {
@@ -131,6 +147,25 @@ describe.each(MODES)('%s', (name, contextClass, night) => {
       ).toBeGreaterThanOrEqual(pair.minimum);
     },
   );
+});
+
+/**
+ * A code block can sit on a dark card or a brand panel, and both re-point the
+ * sunken well under it. Each context declares its own code colours, so the
+ * light page is enough to measure them: under `.dark` the context's own
+ * declarations still win.
+ */
+describe.each(['ctx-inverse', 'ctx-brand'])('code in %s', (contextClass) => {
+  it.each(CODE_TOKENS)('%s on the sunken well', (foreground) => {
+    const { read, page } = inMode(contextClass);
+    const background = read('--color-surface-sunken', page);
+    const ratio = contrastRatio(read(foreground, background), background);
+
+    expect(
+      ratio,
+      `${foreground} measures ${formatRatio(ratio)} in ${contextClass}`,
+    ).toBeGreaterThanOrEqual(TEXT);
+  });
 });
 
 describe.each(NIGHTS)('the %s night', (night) => {

@@ -42,5 +42,5 @@
   /* The example app's Vite config belongs to the node project: it imports
    * `vite` and runs under Node. Listed in both, it would compile twice under
    * different `module` settings. */
-  "exclude": ["examples/vite.config.ts", "examples/dist"]
+  "exclude": ["examples/vite.config.ts", "examples/highlight.plugin.ts", "examples/dist"]
 }

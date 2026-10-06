@@ -14,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A labelled block of code with optional actions. Syntax highlighting and clipboard behaviour are application responsibilities; the language class is available for a highlighter.',
+          "A labelled block of code with optional actions. Highlighting is `CodeToken` children, whose kinds a highlighter run by the application decides; clipboard behaviour is the application's too.",
       },
     },
   },
