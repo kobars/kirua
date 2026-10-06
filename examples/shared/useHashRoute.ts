@@ -6,7 +6,7 @@ import { useCallback, useSyncExternalStore } from 'react';
  * under a relative base.
  *
  * The first segment names the section — `#/shop/orders` is the shop's
- * `orders` route — so the five sections share one document without sharing a
+ * `orders` route — so the sections share one document without sharing a
  * route table.
  */
 const readPath = () => window.location.hash.replace(/^#\/?/, '');

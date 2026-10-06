@@ -52,12 +52,24 @@ const onSystemChange = () => {
   if (current().preference === 'system') set(resolve('system'));
 };
 
+// A choice made in another document of the app — another tab, or the page
+// inside a `DeviceFrame` — arrives as a storage event, so both show one theme.
+const onStorage = (event: StorageEvent) => {
+  if (event.key === KEY || event.key === null) set(resolve(stored()));
+};
+
 function subscribe(listener: () => void) {
-  if (listeners.size === 0) query().addEventListener('change', onSystemChange);
+  if (listeners.size === 0) {
+    query().addEventListener('change', onSystemChange);
+    window.addEventListener('storage', onStorage);
+  }
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
-    if (listeners.size === 0) query().removeEventListener('change', onSystemChange);
+    if (listeners.size === 0) {
+      query().removeEventListener('change', onSystemChange);
+      window.removeEventListener('storage', onStorage);
+    }
   };
 }
 

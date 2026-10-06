@@ -50,11 +50,21 @@ function read(section: Section | undefined): NightPalette {
 }
 
 // A choice changes storage, which no browser event reports to the page that
-// made it, so the hooks that read it are told directly.
+// made it, so the hooks that read it are told directly. Another document of
+// the app — another tab, or the page inside a `DeviceFrame` — does get a
+// storage event, so a choice made in one shows in both.
 const listeners = new Set<() => void>();
+const onStorage = (event: StorageEvent) => {
+  if (event.key === null || event.key.startsWith(KEY))
+    listeners.forEach((listener) => listener());
+};
 function subscribe(onChange: () => void) {
+  if (listeners.size === 0) window.addEventListener('storage', onStorage);
   listeners.add(onChange);
-  return () => listeners.delete(onChange);
+  return () => {
+    listeners.delete(onChange);
+    if (listeners.size === 0) window.removeEventListener('storage', onStorage);
+  };
 }
 
 /** The night of the section on screen, and a `choose` that stores one for it. */

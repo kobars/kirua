@@ -83,7 +83,7 @@ Put instructions for users in the visible docs instead of only above a story exp
 
 ## The example app
 
-The example app in `examples/` is one hash-routed app with a hub and five
+The example app in `examples/` is one hash-routed app with a hub and six
 sections. It is written only with kirua's components and their props:
 
 - No `className` and no `style` prop anywhere in `examples/**/*.tsx`.
