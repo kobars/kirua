@@ -54,7 +54,7 @@ export function NativeSelect({ className, width, ...props }: NativeSelectProps) 
           'peer block h-11 w-full min-w-0 appearance-none rounded-md border border-field-line bg-field ps-3 pe-10',
           'font-text text-body-md text-on-field shadow-resting',
           'transition-[border-color,box-shadow] duration-fast ease-out',
-          'hover:border-field-line-hover focus-visible:border-ring',
+          'hover:border-field-line-hover',
           // One ring, drawn over the border rather than beside it.
           'focus-visible:-outline-offset-1',
           'aria-invalid:border-field-line-invalid aria-invalid:hover:border-field-line-invalid',
