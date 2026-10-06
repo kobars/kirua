@@ -37,10 +37,10 @@ export function InputGroup({ className, size, width, ...props }: InputGroupProps
         'hover:border-field-line-hover',
         // The ring `Input` draws, moved to the box. Scoped to the input's own
         // slot, so a button inside an addon does not light up the whole group.
-        'has-[[data-slot=input-group-input]:focus-visible]:border-ring',
         'has-[[data-slot=input-group-input]:focus-visible]:outline-2',
-        'has-[[data-slot=input-group-input]:focus-visible]:outline-offset-2',
-        'has-[[data-slot=input-group-input]:focus-visible]:outline-ring',
+        'has-[[data-slot=input-group-input]:focus-visible]:-outline-offset-1',
+        'has-[[data-slot=input-group-input]:focus-visible]:outline-field-ring',
+        'has-[input[aria-invalid=true]:focus-visible]:outline-field-line-invalid',
         'has-[input[aria-invalid=true]]:border-field-line-invalid',
         'has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-field-line-disabled',
         'has-[input:disabled]:bg-field-disabled',

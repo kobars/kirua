@@ -24,6 +24,12 @@ Those are listed first.
 - `Text weight="normal"` uses the system's regular weight instead of
   Tailwind's 400.
 - `CommandList` and `ComboboxList` require an accessible name in their types.
+- A focused `Input`, `Textarea`, `InputGroup`, `SelectTrigger`, `DatePicker`,
+  `Combobox` or `InputOTP` box draws one 2px ring over its border, not a
+  recoloured border with a second ring outside it. The ring reads a new
+  `field-focus-ring` token, which is black on a brand surface, where the
+  system ring would be white on a white field. An invalid field's ring is the
+  invalid colour.
 
 ### Added
 

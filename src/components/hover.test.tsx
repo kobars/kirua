@@ -16,8 +16,10 @@ afterEach(() => {
  * that overrides a selected state is invisible to every other test.
  */
 const settled = async (element: Element, property: 'color' | 'backgroundColor') => {
-  // Read after the colour transition, not on the first frame of it.
-  await new Promise((resolve) => setTimeout(resolve, 250));
+  // Let a transition the last change started begin, then wait for it to end.
+  // A fixed delay read a colour part-way through on a busy machine.
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await Promise.all(element.getAnimations().map((animation) => animation.finished));
   return getComputedStyle(element)[property];
 };
 
