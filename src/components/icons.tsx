@@ -295,3 +295,28 @@ export const MonitorIcon = (p: IconProps) => (
     <path d="M9 20h6M12 16.5V20" />
   </Icon>
 );
+
+/** A document: a page with its corner folded and two lines of text. */
+export const FileIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5Z" />
+    <path d="M14 3.5v5h5M9 13h6M9 16.5h4" />
+  </Icon>
+);
+
+/** A picture: a frame with a sun and a hill. */
+export const ImageIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
+    <circle cx="9" cy="10" r="1.75" />
+    <path d="m20.5 15.5-4.5-4.5-9.5 8.5" />
+  </Icon>
+);
+
+/** Something went wrong. Pair it with words: an icon alone is not the message. */
+export const AlertIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.75v5M12 16.25h.01" />
+  </Icon>
+);

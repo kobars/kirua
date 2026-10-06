@@ -39,16 +39,16 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * rather than an aspiration.
  *
  * ```
- * entry       108.98 kB js
- * total       233.81 kB js
- * css          18.03 kB
+ * entry       110.54 kB js
+ * total       244.98 kB js
+ * css          18.79 kB
  *
  *             section   first visit
- * shop         47.58      156.56
- * his          50.19      159.17
- * social       42.79      151.77
- * assistant    39.70      148.68
- * marketing    33.27      142.25
+ * shop         54.48      165.03
+ * his          56.55      167.09
+ * social       45.43      155.97
+ * assistant    44.19      154.74
+ * marketing    35.10      145.64
  * ```
  *
  * **The JavaScript is weighed in three parts**, because the app is one entry
@@ -67,7 +67,7 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  * A first visit to a section downloads `entry + section`. It is reported, not
  * enforced: the two limits it is made of already bound it.
  *
- * **The CSS is one stylesheet shared by every section**, limited to 18.5 kB.
+ * **The CSS is one stylesheet shared by every section**, limited to 19.3 kB.
  * Its headroom is under 3%, because the one sheet carries the classes of all
  * five sections; the limit is kept tight so that growth here stays visible.
  *
@@ -81,9 +81,9 @@ import { DIST, SECTIONS, open, serve } from './example-apps.mjs';
  */
 const BUDGETS_KB = {
   entry: 120,
-  section: 55,
+  section: 62,
   total: 257,
-  css: 18.5,
+  css: 19.3,
 };
 
 const kb = (bytes) => Math.round((bytes / 1000) * 100) / 100;

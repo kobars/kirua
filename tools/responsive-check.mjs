@@ -126,6 +126,12 @@ for (const size of WIDTHS) {
           //  - **An inline link in a sentence**, which WCAG 2.5.8 exempts by
           //    name: its height is the line height of the prose around it and
           //    cannot be raised without respacing the paragraph.
+          //
+          // And one kind is measured by more than its own box: a **stretched
+          // trigger**, whose absolutely positioned `::after` with every inset
+          // at zero covers its positioned ancestor — `AttachmentTrigger`
+          // makes a whole card the target that way. A click anywhere on that
+          // ancestor lands on the trigger, so the ancestor is the target.
           const hidden = (el) => el.closest('[aria-hidden="true"]') !== null;
 
           const inSentence = (el) => {
@@ -145,7 +151,22 @@ for (const size of WIDTHS) {
               ? document.querySelector(`label[for="${CSS.escape(el.id)}"]`)
               : null;
             const wrapping = el.closest('label');
-            const partner = label ?? wrapping;
+            // A stretched link: its `::after` covers the positioned ancestor
+            // and takes the presses there. Only when the pseudo-element is
+            // really drawn, receives the pointer, and the control itself is
+            // static — a positioned control is its own pseudo-element's
+            // containing block, so the cover would be no larger than it.
+            const after = getComputedStyle(el, '::after');
+            const stretched =
+              getComputedStyle(el).position === 'static' &&
+              after.content !== 'none' &&
+              after.content !== 'normal' &&
+              after.pointerEvents !== 'none' &&
+              after.position === 'absolute' &&
+              ['top', 'right', 'bottom', 'left'].every((side) => after[side] === '0px')
+                ? el.offsetParent
+                : null;
+            const partner = label ?? wrapping ?? stretched;
             if (!partner) return own;
             const both = partner.getBoundingClientRect();
             const left = Math.min(own.left, both.left);

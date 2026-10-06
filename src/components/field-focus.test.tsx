@@ -5,6 +5,7 @@ import { cleanup, render } from '@/test/render';
 import { Combobox, ComboboxInput } from './Combobox';
 import { DatePicker } from './DatePicker';
 import { Input } from './Input';
+import { NativeSelect, NativeSelectOption } from './NativeSelect';
 import { InputGroup, InputGroupInput } from './InputGroup';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
 import { Textarea } from './Textarea';
@@ -59,6 +60,15 @@ const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
     ),
     'combobox-input',
   ],
+  [
+    'NativeSelect',
+    (invalid) => (
+      <NativeSelect aria-label="Language" aria-invalid={invalid}>
+        <NativeSelectOption>English</NativeSelectOption>
+      </NativeSelect>
+    ),
+    'native-select',
+  ],
 ];
 
 /**
@@ -72,9 +82,9 @@ const FIELDS: [string, (invalid: boolean) => ReactNode, string][] = [
  */
 async function focusField(container: HTMLElement, slot: string) {
   const ring = container.querySelector<HTMLElement>(`[data-slot="${slot}"]`)!;
-  const target = ring.matches('input, textarea, button')
+  const target = ring.matches('input, textarea, button, select')
     ? ring
-    : ring.querySelector<HTMLElement>('input, textarea, button')!;
+    : ring.querySelector<HTMLElement>('input, textarea, button, select')!;
   const invalidBorder = getComputedStyle(ring).borderTopColor;
   await userEvent.keyboard('{Shift}');
   target.focus();

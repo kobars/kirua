@@ -12,6 +12,12 @@ export { Field, FieldLegend, FieldSet, type FieldProps } from './Field';
 export { Label, type LabelProps } from './Label';
 export { Input, type InputProps } from './Input';
 export { Textarea, type TextareaProps } from './Textarea';
+export {
+  NativeSelect,
+  NativeSelectOption,
+  NativeSelectOptGroup,
+  type NativeSelectProps,
+} from './NativeSelect';
 export { DotGrid, type DotGridProps } from './DotGrid';
 export { CornerGlint, type CornerGlintProps } from './CornerGlint';
 export { resolveGlints, type Corner } from '@/lib/glint';
@@ -69,6 +75,30 @@ export { Placeholder, type PlaceholderProps } from './Placeholder';
 export { Price, type PriceProps } from './Price';
 export { Rating, type RatingProps } from './Rating';
 export { MessageBubble, type MessageBubbleProps } from './MessageBubble';
+export {
+  MessageGroup,
+  Message,
+  MessageAvatar,
+  MessageContent,
+  MessageHeader,
+  MessageFooter,
+  MessageReactions,
+  MessageReaction,
+  type MessageElement,
+  type MessageProps,
+  type MessageAvatarProps,
+  type MessageReactionProps,
+} from './Message';
+export { messageVariants } from './Message.variants';
+export { messageAvatarVariants } from './MessageAvatar.variants';
+export {
+  Marker,
+  MarkerIcon,
+  MarkerContent,
+  type MarkerElement,
+  type MarkerProps,
+} from './Marker';
+export { markerVariants } from './Marker.variants';
 export {
   BottomNav,
   BottomNavLink,
@@ -271,6 +301,7 @@ export {
   type ToggleGroupProps,
   type ToggleGroupItemProps,
 } from './ToggleGroup';
+export { DirectionProvider } from './DirectionProvider';
 export { Kbd, type KbdProps } from './Kbd';
 export { NightSwatch, type NightSwatchProps, type NightPalette } from './NightSwatch';
 export { kbdVariants } from './Kbd.variants';
@@ -290,6 +321,23 @@ export {
 } from './Item';
 export { itemVariants } from './Item.variants';
 export { itemGroupVariants } from './ItemGroup.variants';
+export {
+  Attachment,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentContent,
+  AttachmentTitle,
+  AttachmentDescription,
+  AttachmentActions,
+  AttachmentAction,
+  AttachmentTrigger,
+  type AttachmentProps,
+  type AttachmentGroupProps,
+  type AttachmentActionProps,
+  type AttachmentTriggerProps,
+} from './Attachment';
+export { attachmentVariants } from './Attachment.variants';
+export { attachmentGroupVariants } from './AttachmentGroup.variants';
 
 export {
   ButtonGroup,

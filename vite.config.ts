@@ -177,6 +177,8 @@ export default defineConfig({
       '@storybook/addon-docs/blocks',
       'storybook/internal/core-events',
       'storybook/theming',
+      // Reached only through DirectionProvider, so the startup scan misses it.
+      '@radix-ui/react-direction',
     ],
   },
   build: { target: BUILD_TARGET },

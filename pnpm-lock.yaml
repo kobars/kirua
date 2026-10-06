@@ -35,6 +35,9 @@ importers:
       '@radix-ui/react-dialog':
         specifier: ^1.1.23
         version: 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-direction':
+        specifier: 1.1.4
+        version: 1.1.4(@types/react@19.2.18)(react@19.2.8)
       '@radix-ui/react-dismissable-layer':
         specifier: ^1.1.19
         version: 1.1.19(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

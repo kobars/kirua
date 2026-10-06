@@ -18,6 +18,9 @@ import {
   Heading,
   Inline,
   Input,
+  NativeSelect,
+  NativeSelectOptGroup,
+  NativeSelectOption,
   Select,
   SelectContent,
   SelectGroup,
@@ -33,7 +36,14 @@ import {
 } from '@kobars/kirua';
 import { ErrorLinks } from '../shared/ErrorLinks';
 import { useActiveDescendant } from '../shared/useActiveDescendant';
-import { departmentGroups, diagnoses, formatDate, patients, providers } from './data';
+import {
+  departmentGroups,
+  diagnoses,
+  formatDate,
+  languageGroups,
+  patients,
+  providers,
+} from './data';
 
 /**
  * The form that exercises real validation, a `Select`, a `DatePicker` and an
@@ -292,6 +302,33 @@ export function NewVisit() {
               <Input id="time" name="time" type="time" defaultValue="08:00" />
             </Field>
           </Grid>
+
+          {/* The browser's own select: a long plain-text list a user types
+              into, a wheel on the phone at the front desk, and a value the
+              form's reset restores with no state of its own. */}
+          <Field
+            controlId="language"
+            label="Preferred language"
+            description="An interpreter is booked for any language but English."
+          >
+            <NativeSelect
+              id="language"
+              name="language"
+              width="sm"
+              defaultValue="English"
+              // Uncontrolled, so the form's own reset restores it, but a change
+              // still withdraws the confirmation, as every other field's does.
+              onChange={() => setSavedAs(null)}
+            >
+              {languageGroups.map((group) => (
+                <NativeSelectOptGroup key={group.label} label={group.label}>
+                  {group.languages.map((language) => (
+                    <NativeSelectOption key={language}>{language}</NativeSelectOption>
+                  ))}
+                </NativeSelectOptGroup>
+              ))}
+            </NativeSelect>
+          </Field>
 
           {/* A combobox rather than a select: the real list is tens of
               thousands of codes long and a clinician knows the first letters. Focus never

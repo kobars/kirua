@@ -52,6 +52,8 @@ const EXEMPT = {
   buttonVariants:
     'A cva definition, not a component. Exported so a consumer can compose the button recipe; an application would import the component instead.',
   alertVariants: 'Same as buttonVariants — a recipe, not an element.',
+  attachmentVariants: 'Same as buttonVariants.',
+  attachmentGroupVariants: 'Same as buttonVariants.',
   avatarVariants: 'Same as buttonVariants.',
   buttonGroupVariants: 'Same as buttonVariants.',
   codeTokenVariants: 'Same as buttonVariants.',
@@ -63,6 +65,9 @@ const EXEMPT = {
   kbdVariants: 'Same as buttonVariants.',
   linkVariants: 'Same as buttonVariants.',
   listVariants: 'Same as buttonVariants.',
+  markerVariants: 'Same as buttonVariants.',
+  messageVariants: 'Same as buttonVariants.',
+  messageAvatarVariants: 'Same as buttonVariants.',
   meterVariants: 'Same as buttonVariants.',
   sectionVariants: 'Same as buttonVariants.',
   sheetContentVariants: 'Same as buttonVariants.',

@@ -238,6 +238,8 @@ try {
           await visible(page.getByText(/^Cardinal Mutual PPO · eligibility active/));
           await select(page, 'Department');
           await select(page, 'Provider');
+          const language = page.getByRole('combobox', { name: 'Preferred language' });
+          await language.selectOption('Tagalog');
           await page.getByRole('combobox', { name: 'Diagnosis (ICD-10-CM)' }).fill('zzzz');
           await page.keyboard.press('ArrowDown');
           await page.getByRole('combobox', { name: 'Diagnosis (ICD-10-CM)' }).fill('J06');
@@ -247,6 +249,8 @@ try {
             await page.getByRole('combobox', { name: 'Diagnosis (ICD-10-CM)' }).inputValue(),
             '',
           );
+          // A native select is reset by the form itself, with no state to clear.
+          assert.equal(await language.inputValue(), 'English');
           assert(
             await page.getByRole('combobox', { name: 'Provider', exact: true }).isDisabled(),
           );
@@ -266,6 +270,10 @@ try {
           await page.getByRole('button', { name: 'Schedule the visit' }).click();
           await visible(page.getByText('Visit scheduled', { exact: true }));
           assert.equal(await page.evaluate(() => document.activeElement?.tagName), 'OUTPUT');
+          // The confirmation describes the form as sent; a language change
+          // after it books a different interpreter, so it is withdrawn.
+          await language.selectOption('Tagalog');
+          assert.equal(await page.getByText('Visit scheduled', { exact: true }).count(), 0);
         } else if (slug === 'social') {
           await go();
           assert(await page.getByRole('navigation', { name: 'Main', exact: true }).isVisible());

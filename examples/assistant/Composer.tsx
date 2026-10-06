@@ -1,7 +1,17 @@
 import { useRef } from 'react';
 import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
   Button,
+  CloseIcon,
   Container,
+  FileIcon,
   IconButton,
   Inline,
   Kbd,
@@ -17,10 +27,14 @@ import {
   TooltipTrigger,
   VisuallyHidden,
 } from '@kobars/kirua';
+import type { ContextFile } from './data';
 
 export interface ComposerProps {
   onSend: (text: string) => void;
   busy: boolean;
+  /** Files attached to the conversation, not to one message. */
+  context: ContextFile[];
+  onRemoveContext: (file: ContextFile) => void;
 }
 
 /**
@@ -28,7 +42,7 @@ export interface ComposerProps {
  * transcript above it scrolls. The field grows with its text up to a cap and
  * then scrolls.
  */
-export function Composer({ onSend, busy }: ComposerProps) {
+export function Composer({ onSend, busy, context, onRemoveContext }: ComposerProps) {
   const box = useRef<HTMLTextAreaElement>(null);
 
   const send = () => {
@@ -50,6 +64,33 @@ export function Composer({ onSend, busy }: ComposerProps) {
             send();
           }}
         >
+          {context.length > 0 && (
+            <AttachmentGroup layout="wrap" aria-label="Context for this conversation">
+              {context.map((file) => (
+                <Attachment key={file.name} size="sm">
+                  <AttachmentMedia>
+                    <FileIcon />
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>{file.name}</AttachmentTitle>
+                    <AttachmentDescription>{file.description}</AttachmentDescription>
+                  </AttachmentContent>
+                  <AttachmentActions>
+                    <AttachmentAction
+                      aria-label={`Remove ${file.name}`}
+                      onClick={() => {
+                        onRemoveContext(file);
+                        // The button is gone; keep the focus in the composer.
+                        box.current?.focus();
+                      }}
+                    >
+                      <CloseIcon />
+                    </AttachmentAction>
+                  </AttachmentActions>
+                </Attachment>
+              ))}
+            </AttachmentGroup>
+          )}
           {/* The placeholder carries the meaning on the screen; the name has to
               stay in the accessibility tree. */}
           <VisuallyHidden asChild>

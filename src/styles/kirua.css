@@ -270,6 +270,17 @@
     outline: none;
   }
 
+  /* The same for an attachment: its ring is on the card, and the trigger's own
+     would be a second one, clipped by the truncated file name it wraps. */
+  [data-slot='attachment']:has([data-slot='attachment-trigger']:focus-visible) {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  [data-slot='attachment-trigger']:focus-visible {
+    outline: none;
+  }
+
   /* Ornament only. In forced colours both resolve to CanvasText and become
      solid marks competing with the text they sit behind. */
   [data-slot='dot-grid'],

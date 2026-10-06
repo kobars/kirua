@@ -45,6 +45,26 @@ Those are listed first.
 - `ref` on `ResizableGroup`, `ResizablePanel` and `ResizableHandle`, and their
   props types.
 - The `default` export condition, so `require` and Jest can resolve the package.
+- `NativeSelect`, `NativeSelectOption` and `NativeSelectOptGroup`: the
+  browser's own `<select>`, drawn as a field. The open list is the operating
+  system's, so it works without JavaScript and posts as a plain form field.
+- `DirectionProvider`, Radix's provider re-exported. Radix primitives never
+  read the document's `dir`, so a right-to-left page needs it once around the
+  app or their arrow keys run left-to-right. It adds
+  `@radix-ui/react-direction`, pinned to the version the primitives pin.
+- The `Message` family — `MessageGroup`, `Message`, `MessageAvatar`,
+  `MessageContent`, `MessageHeader`, `MessageFooter`, `MessageReactions` and
+  `MessageReaction` — around `MessageBubble`: one sender's turn with an avatar,
+  a name and time, a status line and read-only reactions, each reaction named
+  in words.
+- `Marker`, `MarkerIcon` and `MarkerContent`: a quiet line in a conversation or
+  feed, such as a day break, in `plain`, `divider` and `border` variants.
+- The `Attachment` family — `Attachment`, `AttachmentGroup`, `AttachmentMedia`,
+  `AttachmentContent`, `AttachmentTitle`, `AttachmentDescription`,
+  `AttachmentActions`, `AttachmentAction` and `AttachmentTrigger` — a file as a
+  small card, with an `uploading` or `error` status, a vertical tile, and a
+  trigger that makes the whole card open the file while its actions stay
+  separate. `FileIcon`, `ImageIcon` and `AlertIcon` join the icons.
 - `CodeToken`, one highlighted token inside a `CodeBlock`, and a `code` colour
   token family behind it, measured at 4.5:1 on the block in light mode, on
   every night and on a dark card. On a brand surface every kind is white. The

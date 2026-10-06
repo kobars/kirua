@@ -28,6 +28,15 @@ import {
   AppRail,
   AppShell,
   AspectRatio,
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
   Avatar,
   AvatarFallback,
   AvatarStack,
@@ -133,8 +142,22 @@ import {
   MenubarContent,
   MenubarMenu,
   MenubarTrigger,
+  Marker,
+  MarkerContent,
+  MarkerIcon,
+  Message,
+  MessageAvatar,
   MessageBubble,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
+  MessageHeader,
+  MessageReaction,
+  MessageReactions,
   Meter,
+  NativeSelect,
+  NativeSelectOptGroup,
+  NativeSelectOption,
   NavBar,
   NavBarLink,
   NavigationMenu,
@@ -350,6 +373,29 @@ const cases: Case[] = [
   ],
   ['Input', (p) => <Input {...p} />, 'INPUT'],
   ['Textarea', (p) => <Textarea {...p} />, 'TEXTAREA'],
+  // The <select>, not the wrapper that holds the chevron: it is the control a
+  // Field labels and a form library registers.
+  ['NativeSelect', (p) => <NativeSelect aria-label="Clinic" {...p} />, 'SELECT'],
+  [
+    'NativeSelectOption',
+    (p) => (
+      <NativeSelect aria-label="Clinic">
+        <NativeSelectOption {...p}>Dental</NativeSelectOption>
+      </NativeSelect>
+    ),
+    'OPTION',
+  ],
+  [
+    'NativeSelectOptGroup',
+    (p) => (
+      <NativeSelect aria-label="Clinic">
+        <NativeSelectOptGroup label="Specialist" {...p}>
+          <option>Dental</option>
+        </NativeSelectOptGroup>
+      </NativeSelect>
+    ),
+    'OPTGROUP',
+  ],
   [
     'Field',
     (p) => (
@@ -554,6 +600,35 @@ const cases: Case[] = [
   ['Price', (p) => <Price amount="$10.00" {...p} />, 'P'],
   ['Rating', (p) => <Rating value={4.5} {...p} />, 'P'],
   ['MessageBubble', (p) => <MessageBubble {...p}>Hi</MessageBubble>, 'DIV'],
+  ['MessageGroup', (p) => <MessageGroup {...p} />, 'OL'],
+  [
+    'Message',
+    (p) => (
+      <MessageGroup>
+        <Message {...p} />
+      </MessageGroup>
+    ),
+    'LI',
+  ],
+  ['MessageAvatar', (p) => <MessageAvatar {...p} />, 'DIV'],
+  ['MessageContent', (p) => <MessageContent {...p} />, 'DIV'],
+  ['MessageHeader', (p) => <MessageHeader {...p}>Maya</MessageHeader>, 'DIV'],
+  ['MessageFooter', (p) => <MessageFooter {...p}>Seen</MessageFooter>, 'DIV'],
+  ['MessageReactions', (p) => <MessageReactions {...p} />, 'UL'],
+  [
+    'MessageReaction',
+    (p) => (
+      <MessageReactions>
+        <MessageReaction label="Rin reacted with a thumbs up" {...p}>
+          👍 1
+        </MessageReaction>
+      </MessageReactions>
+    ),
+    'LI',
+  ],
+  ['Marker', (p) => <Marker {...p}>Today</Marker>, 'DIV'],
+  ['MarkerIcon', (p) => <MarkerIcon {...p} />, 'SPAN'],
+  ['MarkerContent', (p) => <MarkerContent {...p}>Today</MarkerContent>, 'SPAN'],
   ['BottomNav', (p) => <BottomNav aria-label="Main" {...p} />, 'NAV'],
   [
     'BottomNavLink',
@@ -693,6 +768,31 @@ const cases: Case[] = [
   ['ItemDescription', (p) => <ItemDescription {...p}>Copy</ItemDescription>, 'P'],
   ['ItemActions', (p) => <ItemActions {...p} />, 'DIV'],
   ['ItemSeparator', (p) => <ItemSeparator {...p} />, 'DIV'],
+  ['Attachment', (p) => <Attachment {...p} />, 'DIV'],
+  ['AttachmentGroup', (p) => <AttachmentGroup {...p} />, 'UL'],
+  ['AttachmentMedia', (p) => <AttachmentMedia {...p} />, 'DIV'],
+  ['AttachmentContent', (p) => <AttachmentContent {...p} />, 'DIV'],
+  ['AttachmentTitle', (p) => <AttachmentTitle {...p}>scan.pdf</AttachmentTitle>, 'DIV'],
+  [
+    'AttachmentDescription',
+    (p) => <AttachmentDescription {...p}>PDF · 214 kB</AttachmentDescription>,
+    'P',
+  ],
+  ['AttachmentActions', (p) => <AttachmentActions {...p} />, 'DIV'],
+  [
+    'AttachmentAction',
+    (p) => (
+      <AttachmentAction aria-label="Remove scan.pdf" {...p}>
+        x
+      </AttachmentAction>
+    ),
+    'BUTTON',
+  ],
+  [
+    'AttachmentTrigger',
+    (p) => <AttachmentTrigger {...p}>scan.pdf</AttachmentTrigger>,
+    'BUTTON',
+  ],
   ['Meter', (p) => <Meter value={40} label="Beds" {...p} />, 'DIV'],
   ['Chart', (p) => <Chart label="Visits" {...p} />, 'FIGURE'],
   ['ChartCaption', (p) => <ChartCaption {...p}>Per month</ChartCaption>, 'FIGCAPTION'],
@@ -1304,6 +1404,7 @@ const EXEMPT: Record<string, string> = {
       'AlertDialog',
       'ContextMenu',
       'Dialog',
+      'DirectionProvider',
       'HoverCard',
       'MenubarMenu',
       'Popover',
