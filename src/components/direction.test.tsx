@@ -8,6 +8,8 @@ import { Chip } from './Chip';
 import { CornerGlint } from './CornerGlint';
 import { Dialog, DialogContent, DialogTitle } from './Dialog';
 import { Field } from './Field';
+import { Message, MessageAvatar, MessageContent, MessageFooter, MessageGroup } from './Message';
+import { MessageBubble } from './MessageBubble';
 import { SpotlightContent, SpotlightMedia } from './SpotlightPanel';
 import { Switch } from './Switch';
 
@@ -225,5 +227,56 @@ describe('a horizontal Field puts its control at the start', () => {
       return box.left < label.left;
     });
     expect(positions).toEqual([true, false]);
+  });
+});
+
+describe('a turn sits on the side of its sender, in both directions', () => {
+  /**
+   * `self` reverses the row instead of naming a side, so the whole turn —
+   * bubble, footer and all — lands at the end of the line: the right in
+   * English and the left in Arabic. The avatar of an `other` turn is at the
+   * start. Measured as boxes, because a class that names a side would still
+   * read as correct in one of the two directions.
+   */
+  it.each(['ltr', 'rtl'] as const)('in %s', (dir) => {
+    const container = render(
+      <div dir={dir} className="w-96">
+        <MessageGroup>
+          <Message from="other" data-testid="other">
+            <MessageAvatar>
+              <span className="block size-8" data-testid="avatar" />
+            </MessageAvatar>
+            <MessageContent>
+              <MessageBubble from="other">Thursday?</MessageBubble>
+            </MessageContent>
+          </Message>
+          <Message from="self" data-testid="self">
+            <MessageContent>
+              <MessageBubble from="self">Thursday.</MessageBubble>
+              <MessageFooter>Seen</MessageFooter>
+            </MessageContent>
+          </Message>
+        </MessageGroup>
+      </div>,
+    );
+    const box = (selector: string) =>
+      container.querySelector(selector)!.getBoundingClientRect();
+    const frame = box('[data-slot="message-group"]');
+    const self = box('[data-testid="self"] [data-slot="message-bubble"]');
+    const footer = box('[data-slot="message-footer"]');
+    const other = box('[data-testid="other"] [data-slot="message-bubble"]');
+    const avatar = box('[data-testid="avatar"]');
+
+    if (dir === 'ltr') {
+      expect(Math.round(self.right)).toBe(Math.round(frame.right));
+      expect(Math.round(footer.right)).toBe(Math.round(frame.right));
+      expect(Math.round(avatar.left)).toBe(Math.round(frame.left));
+      expect(other.left).toBeGreaterThan(avatar.right);
+    } else {
+      expect(Math.round(self.left)).toBe(Math.round(frame.left));
+      expect(Math.round(footer.left)).toBe(Math.round(frame.left));
+      expect(Math.round(avatar.right)).toBe(Math.round(frame.right));
+      expect(other.right).toBeLessThan(avatar.left);
+    }
   });
 });
