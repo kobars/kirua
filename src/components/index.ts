@@ -321,6 +321,23 @@ export {
 } from './Item';
 export { itemVariants } from './Item.variants';
 export { itemGroupVariants } from './ItemGroup.variants';
+export {
+  Attachment,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentContent,
+  AttachmentTitle,
+  AttachmentDescription,
+  AttachmentActions,
+  AttachmentAction,
+  AttachmentTrigger,
+  type AttachmentProps,
+  type AttachmentGroupProps,
+  type AttachmentActionProps,
+  type AttachmentTriggerProps,
+} from './Attachment';
+export { attachmentVariants } from './Attachment.variants';
+export { attachmentGroupVariants } from './AttachmentGroup.variants';
 
 export {
   ButtonGroup,

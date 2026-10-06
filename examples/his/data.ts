@@ -867,6 +867,82 @@ export const age = (born: string, today = local(TODAY)) => {
 };
 
 /**
+ * The index entries of documents filed to a chart: a lab report, a referral
+ * letter, an image. Only the entries — the example app holds no files.
+ */
+export interface PatientDocument {
+  id: string;
+  mrn: string;
+  /** The file's name as it was filed. */
+  name: string;
+  kind: 'document' | 'image';
+  /** What the document is, in the chart's words. */
+  type: string;
+  format: 'PDF' | 'PNG';
+  size: string;
+  filed: string;
+  author: string;
+}
+
+export const documents: PatientDocument[] = [
+  {
+    id: 'DOC-30117',
+    mrn: '20418801',
+    name: 'cbc-ACC-8801-2026-03-12.pdf',
+    kind: 'document',
+    type: 'Lab report',
+    format: 'PDF',
+    size: '214 kB',
+    filed: '2026-03-12 08:40',
+    author: 'Clinical Laboratory',
+  },
+  {
+    id: 'DOC-29854',
+    mrn: '20418801',
+    name: 'referral-letter-pulmonology-andrew-park-md-2026-02-04.pdf',
+    kind: 'document',
+    type: 'Referral letter',
+    format: 'PDF',
+    size: '88 kB',
+    filed: '2026-02-04 09:05',
+    author: 'Andrew Park, MD',
+  },
+  {
+    id: 'DOC-29102',
+    mrn: '20418801',
+    name: 'chest-xray-pa-lateral-2025-12-19.png',
+    kind: 'image',
+    type: 'Chest X-ray',
+    format: 'PNG',
+    size: '1.2 MB',
+    filed: '2025-12-19 22:15',
+    author: 'Samuel Ortiz, MD',
+  },
+  {
+    id: 'DOC-29377',
+    mrn: '20418803',
+    name: 'discharge-summary-3-north-pediatrics-2026-01-09.pdf',
+    kind: 'document',
+    type: 'Discharge summary',
+    format: 'PDF',
+    size: '132 kB',
+    filed: '2026-01-09 11:20',
+    author: 'Nadia Rahman, MD',
+  },
+  {
+    id: 'DOC-29361',
+    mrn: '20418803',
+    name: 'chest-xray-ap-2026-01-08.png',
+    kind: 'image',
+    type: 'Chest X-ray',
+    format: 'PNG',
+    size: '940 kB',
+    filed: '2026-01-08 16:10',
+    author: 'Emergency Department',
+  },
+];
+
+/**
  * A laboratory order: one accession, several resulted components. `loinc` is
  * the component's LOINC code, `reference` the interval as the laboratory
  * prints it, and `flag` is what the laboratory decided — not something a

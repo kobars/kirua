@@ -9,7 +9,15 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
+  AlertIcon,
   AlertTitle,
+  Attachment,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
   Avatar,
   AvatarFallback,
   Badge,
@@ -25,8 +33,15 @@ import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  FileIcon,
   Grid,
   Heading,
+  ImageIcon,
   Inline,
   LineChart,
   Menubar,
@@ -63,6 +78,7 @@ import {
 import {
   age,
   celsius,
+  documents,
   eligibilityTone,
   encounters,
   flagLabel,
@@ -104,6 +120,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
   const measurements = vitals[patient.mrn] ?? [];
   const latest = measurements[0];
   const orders = labResults.filter((order) => order.mrn === patient.mrn);
+  const files = documents.filter((file) => file.mrn === patient.mrn);
   const target = encounters.find((e) => e.id === cancelling);
   const coverage = patient.coverage;
   // Registration is complete when the payer has confirmed coverage, or when
@@ -239,7 +256,7 @@ export function PatientRecord({ patient }: PatientRecordProps) {
       </Inline>
 
       {patient.allergies.length > 0 && (
-        <Alert status="danger">
+        <Alert status="danger" icon={<AlertIcon />}>
           <AlertTitle>Allergies</AlertTitle>
           <AlertDescription>
             {patient.allergies.join(', ')}. Review before ordering or administering medications.
@@ -318,6 +335,60 @@ export function PatientRecord({ patient }: PatientRecordProps) {
                   Last vitals {formatDateTime(latest.at)} — BP {latest.systolic}/
                   {latest.diastolic} mmHg
                 </Text>
+              )}
+            </Card>
+
+            <Card padding="md" gap={3}>
+              <Heading as="h2" size="body-md" id="patient-documents">
+                Documents
+              </Heading>
+              <Separator />
+              {files.length === 0 ? (
+                <Text size="sm">No documents on file.</Text>
+              ) : (
+                <AttachmentGroup aria-labelledby="patient-documents">
+                  {files.map((file) => (
+                    // The whole card opens the document's index entry. The
+                    // example app holds no files, so that entry is all it opens.
+                    <Dialog key={file.id}>
+                      <Attachment size="sm">
+                        <AttachmentMedia>
+                          {file.kind === 'image' ? <ImageIcon /> : <FileIcon />}
+                        </AttachmentMedia>
+                        <AttachmentContent>
+                          <AttachmentTitle>
+                            <DialogTrigger asChild>
+                              <AttachmentTrigger>{file.name}</AttachmentTrigger>
+                            </DialogTrigger>
+                          </AttachmentTitle>
+                          <AttachmentDescription>
+                            {file.type} · {file.format} · {file.size}
+                          </AttachmentDescription>
+                        </AttachmentContent>
+                      </Attachment>
+                      <DialogContent>
+                        <Stack gap={4}>
+                          <DialogTitle>{file.type}</DialogTitle>
+                          <DialogDescription>
+                            Filed to {patient.name}’s chart on {formatDateTime(file.filed)}.
+                          </DialogDescription>
+                          <DescriptionList layout="aligned">
+                            <DescriptionTerm>File</DescriptionTerm>
+                            <DescriptionDetails>{file.name}</DescriptionDetails>
+                            <DescriptionTerm>Format</DescriptionTerm>
+                            <DescriptionDetails>
+                              {file.format}, {file.size}
+                            </DescriptionDetails>
+                            <DescriptionTerm>Author</DescriptionTerm>
+                            <DescriptionDetails>{file.author}</DescriptionDetails>
+                            <DescriptionTerm>Document ID</DescriptionTerm>
+                            <DescriptionDetails numeric>{file.id}</DescriptionDetails>
+                          </DescriptionList>
+                        </Stack>
+                      </DialogContent>
+                    </Dialog>
+                  ))}
+                </AttachmentGroup>
               )}
             </Card>
           </Grid>
