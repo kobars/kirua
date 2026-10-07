@@ -2,16 +2,24 @@
 
 ## Unreleased
 
+### Changed
+
+- `Button` with `asChild` and `loading` now shows the spinner in place of
+  `leadingIcon`, as a `<button>` already did.
+
+### Added
+
+- `@kobars/kirua/theme.css` and `@kobars/kirua/sources/<Module>.css`: import
+  the theme and one file per component module you use, instead of
+  `styles.css`, to generate only those components' classes. `Button` alone
+  needs 8.23 kB of CSS gzipped where `styles.css` is 18.84 kB. `styles.css` is
+  unchanged.
+
 ### Fixed
 
 - `Button` with `asChild` now renders `leadingIcon` and `trailingIcon` inside
   the child element, around its content. They were accepted and silently
   dropped.
-
-### Changed
-
-- `Button` with `asChild` and `loading` now shows the spinner in place of
-  `leadingIcon`, as a `<button>` already did.
 
 ## 0.3.0
 

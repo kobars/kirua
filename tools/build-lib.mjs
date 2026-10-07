@@ -14,6 +14,9 @@
  *   and `nodenext` module resolution.
  * - **Styles**: the token layers, copied as Tailwind source CSS, and a
  *   `styles.css` entry that names the emitted JavaScript as a Tailwind source.
+ *   Beside it, `theme.css` (the token layers alone) and one `sources/<Module>.css`
+ *   per component module, naming the files that module reaches, so a consumer
+ *   can generate the classes of only the components they import.
  *
  * Only what the barrel reaches is emitted. Stories, tests and the browser-only
  * contrast module are never imported by it.
@@ -133,6 +136,46 @@ writeFileSync(
 @source './lib/*.js';
 `,
 );
+
+writeFileSync(
+  path.join(OUT, 'theme.css'),
+  `/* kirua: the token layers and the Tailwind theme, with no component sources.
+ * Import after \`tailwindcss\`, then one \`sources/<Module>.css\` per component
+ * module you use. \`styles.css\` is this file plus every module. */
+@import './styles/kirua.css';
+`,
+);
+
+/**
+ * Tailwind finds classes by reading files as text and never follows an import,
+ * so each module's sources are its whole closure: every emitted file it
+ * reaches through relative imports. `Dialog` needs `Button`'s classes because
+ * it renders one.
+ */
+// `import "../lib/radius.js"` has no `from`: the build inlines a constant and
+// keeps the bare import, and that file is still reached.
+const RELATIVE_IMPORT = /^(?:import|export)\s(?:[^;]*?\bfrom\s*)?"(\.{1,2}\/[^"]+)"/gm;
+function closure(file, seen = new Set()) {
+  if (seen.has(file)) return seen;
+  seen.add(file);
+  for (const [, specifier] of readFileSync(file, 'utf8').matchAll(RELATIVE_IMPORT)) {
+    closure(path.resolve(path.dirname(file), specifier), seen);
+  }
+  return seen;
+}
+mkdirSync(path.join(OUT, 'sources'), { recursive: true });
+const barrel = readFileSync(path.join(OUT, 'components/index.js'), 'utf8');
+for (const [, name] of barrel.matchAll(/^import \{ [^}]+ \} from "\.\/([^"]+)\.js";$/gm)) {
+  if (name.endsWith('.variants')) continue;
+  const reached = [...closure(path.join(OUT, 'components', `${name}.js`))]
+    .map((file) => path.relative(path.join(OUT, 'sources'), file))
+    .sort();
+  writeFileSync(
+    path.join(OUT, 'sources', `${name}.css`),
+    `/* The files ${name}.js reaches, for Tailwind to scan. */\n` +
+      reached.map((file) => `@source '${file}';\n`).join(''),
+  );
+}
 
 // The package keeps a NOTICE of its own, which covers only what the tarball holds.
 if (!values.out) copyFileSync(path.join(REPO, 'LICENSE'), path.join(PACKAGE, 'LICENSE'));

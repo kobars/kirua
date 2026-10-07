@@ -170,6 +170,47 @@ describe('the published package', () => {
     }
   });
 
+  /**
+   * Tailwind never follows an import, so a module's sources must name every
+   * file it reaches. Checked as a closed set rather than against the build's
+   * own walk: a listed file's relative imports must all be listed too.
+   */
+  it('lists, per component module, every file that module reaches', () => {
+    const sources = path.join(DIST, 'sources');
+    const modules = [
+      ...read(path.join(DIST, 'components/index.js')).matchAll(
+        /^import \{ [^}]+ \} from "\.\/([^"]+)\.js";$/gm,
+      ),
+    ]
+      .map((m) => m[1] ?? '')
+      .filter((name) => !name.endsWith('.variants'));
+    expect(readdirSync(sources).sort()).toEqual(modules.map((name) => `${name}.css`).sort());
+
+    const gaps: string[] = [];
+    for (const name of modules) {
+      const listed = new Set(
+        [...read(path.join(sources, `${name}.css`)).matchAll(/@source\s+'([^']+)'/g)].map((m) =>
+          path.resolve(sources, m[1] ?? ''),
+        ),
+      );
+      if (!listed.has(path.join(DIST, 'components', `${name}.js`)))
+        gaps.push(`${name}: itself`);
+      for (const file of listed) {
+        for (const specifier of specifiers(read(file)).filter((s) => s.startsWith('.'))) {
+          const target = path.resolve(path.dirname(file), specifier);
+          if (!listed.has(target)) gaps.push(`${name}: ${path.relative(DIST, target)}`);
+        }
+      }
+    }
+    expect(gaps).toEqual([]);
+  });
+
+  it('keeps theme.css free of component sources', () => {
+    const entry = manifest.exports['./theme.css'];
+    if (typeof entry !== 'string') throw new Error('exports["./theme.css"] must be a path');
+    expect(read(path.join(ROOT, entry))).not.toMatch(/@source/);
+  });
+
   it('depends on exactly the packages its modules import', () => {
     const imported = new Set(
       code()

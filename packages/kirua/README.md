@@ -50,6 +50,26 @@ generated. Remove the `body`, background, colour and font rules a framework
 scaffold writes, such as the ones in create-next-app's `globals.css`. Those
 rules are unlayered, so they override kirua's base layer.
 
+### Only the styles of the components you use
+
+`styles.css` generates the classes of every component, whichever ones you
+import. To generate only some, import `theme.css` and one file per component
+module instead:
+
+```css
+@import 'tailwindcss';
+@import '@kobars/kirua/theme.css';
+@import '@kobars/kirua/sources/Button.css';
+@import '@kobars/kirua/sources/Card.css';
+```
+
+A module file is named after the component its parts start with: `Card.css`
+covers `CardTitle` and `CardFooter`, and `icons.css` covers every icon. Each
+file also covers the components that module renders itself, such as the close
+`IconButton` inside `Dialog`. A component whose file is missing still renders,
+without most of its styles, so add the line when you add the import.
+`theme.css` plus every module file generates exactly what `styles.css` does.
+
 The stylesheet acts on the whole app, not only on kirua's components:
 
 - **It replaces part of Tailwind's default theme.** The radius scale, the
@@ -162,28 +182,29 @@ const nextConfig = {
 
 ## Size
 
-Measured on version 0.3.0: each family of exports bundled alone from the
-package entry, tree-shaken, minified and gzipped, with React and ReactDOM left
-out because your app already ships them.
+Measured on the code of this release: each family of exports bundled alone
+from the package entry, tree-shaken, minified and gzipped, with React and
+ReactDOM left out because your app already ships them.
 
-| Import                                        | kirua only | With its dependencies |
-| --------------------------------------------- | ---------- | --------------------- |
-| `Button`                                      | 2.19 kB    | 13.71 kB              |
-| `Card` and its five parts                     | 2.42 kB    | 12.48 kB              |
-| `Dialog` and its six parts, with Radix Dialog | 2.35 kB    | 27.00 kB              |
-| `Select`, the largest                         | 2.28 kB    | 45.71 kB              |
-| `Button`, `Card` and `Dialog` together        | 4.63 kB    | 29.79 kB              |
-| Every export                                  | 34.62 kB   | 129.32 kB             |
+| Import                                        | kirua only | With its dependencies | Its styles |
+| --------------------------------------------- | ---------- | --------------------- | ---------- |
+| `Button`                                      | 2.21 kB    | 13.74 kB              | 8.23 kB    |
+| `Card` and its five parts                     | 2.42 kB    | 12.48 kB              | 7.81 kB    |
+| `Dialog` and its six parts, with Radix Dialog | 2.35 kB    | 27.00 kB              | 8.30 kB    |
+| `Select`, the largest                         | 2.28 kB    | 45.71 kB              | 8.22 kB    |
+| `Button`, `Card` and `Dialog` together        | 4.66 kB    | 29.81 kB              | 10.23 kB   |
+| Every export                                  | 34.64 kB   | 129.34 kB             | 18.84 kB   |
 
 About 10.35 kB of each "with its dependencies" figure is `clsx` and
 `tailwind-merge`, which every component uses to merge your `className`. Your
-app pays it once, so `Button`, `Card` and `Dialog` together cost 29.79 kB, not the 53.19 kB their
-rows add up to. Radix packages are shared the same way: `Dialog`, `Sheet` and
-`AlertDialog` together cost 28.18 kB, 1.18 kB more than `Dialog` alone.
+app pays it once, so `Button`, `Card` and `Dialog` together cost 29.81 kB, not
+the 53.22 kB their rows add up to. Radix packages are shared the same way:
+`Dialog`, `Sheet` and `AlertDialog` together cost 28.18 kB, 1.18 kB more than
+`Dialog` alone.
 
-The stylesheet is a separate cost, the same whatever you import: 18.84 kB
-gzip, Tailwind's base layer included. It holds the utilities of every
-component, because `styles.css` names the whole package as a Tailwind source.
+"Its styles" is `theme.css` plus that row's module files, Tailwind's base
+layer included. With `styles.css` the stylesheet is 18.84 kB whatever you
+import.
 
 Other bundlers differ a little; esbuild gives figures about a tenth smaller.
 
