@@ -49,6 +49,7 @@ import { Messages } from './Messages';
 import { Notifications } from './Notifications';
 import { PostCard } from './PostCard';
 import { NotFound } from '../shared/NotFound';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { Profile } from './Profile';
 import { notices, people, posts, type Post } from './data';
@@ -128,6 +129,7 @@ export function App() {
           </>
         }
       >
+        <AllExamplesLink />
         <Wordmark href="#/social/" icon={<SparkleIcon />}>
           Commons
         </Wordmark>

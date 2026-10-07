@@ -33,6 +33,7 @@ import {
 } from '@kobars/kirua';
 import { Composer } from './Composer';
 import { NotFound } from '../shared/NotFound';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useCommandShortcut } from '../shared/useCommandShortcut';
 import { useTheme } from '../shared/useTheme';
@@ -129,6 +130,7 @@ export function App() {
           </>
         }
       >
+        <AllExamplesLink />
         <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
           <Visible below="md">
             <SheetTrigger asChild>

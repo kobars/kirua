@@ -65,6 +65,7 @@ import { OrdersPage } from './OrdersPage';
 import { SignInPage } from './SignInPage';
 import { Filters } from './Filters';
 import { NotFound } from '../shared/NotFound';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { emptyFilters, isEmptyFilters, type FilterState } from './filterState';
 import { ProductCard } from './ProductCard';
@@ -281,6 +282,7 @@ export function App() {
           </>
         }
       >
+        <AllExamplesLink />
         <Wordmark href="#/shop/" icon={<CartIcon />}>
           Dusk
         </Wordmark>

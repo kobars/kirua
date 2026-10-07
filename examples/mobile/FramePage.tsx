@@ -6,7 +6,6 @@ import {
   AppShell,
   Container,
   DeviceFrame,
-  Link,
   List,
   ListItem,
   PageHeader,
@@ -18,6 +17,7 @@ import {
   ToggleGroupItem,
   Wordmark,
 } from '@kobars/kirua';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 
 const DEVICES = [
@@ -61,6 +61,7 @@ export function FramePage({ route }: FramePageProps) {
       {/* Named, because the page in the frame brings its own header and main:
           two of each, unnamed, are two landmarks nobody can tell apart. */}
       <AppHeader width="6xl" actions={<ThemeMenu />} aria-label="Kirua examples">
+        <AllExamplesLink />
         <Wordmark href="#/" icon={<SparkleIcon />}>
           Kirua
         </Wordmark>
@@ -108,14 +109,19 @@ export function FramePage({ route }: FramePageProps) {
                   </Text>
                   <List>
                     <ListItem>Send money to a friend with the keypad.</ListItem>
+                    <ListItem>
+                      Send $500 or more: Pouch asks for a code first. The demo code is on the
+                      screen.
+                    </ListItem>
+                    <ListItem>Schedule a payment for a later day.</ListItem>
+                    <ListItem>Swipe the savings goals on Home, then add money to one.</ListItem>
+                    <ListItem>Verify your identity in three steps, from Profile.</ListItem>
                     <ListItem>Freeze a card, then change its monthly limit.</ListItem>
                     <ListItem>
                       Switch the theme inside the phone. This page follows it.
                     </ListItem>
                   </List>
                 </Stack>
-
-                <Link href="#/">All examples</Link>
               </Stack>
 
               <DeviceFrame
