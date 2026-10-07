@@ -299,6 +299,7 @@ docs/screenshots/  the images in this README
 | `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
 | `pnpm build:examples`   | Build the example app into `examples/dist`, using the published package                                              |
 | `pnpm build:lib`        | Build the npm package into `packages/kirua/dist`                                                                     |
+| `pnpm size:components`  | What one component costs a consumer, tree-shaken and gzipped; fails if tree-shaking through the entry breaks         |
 | `pnpm pack:check`       | Build the package and list what `npm pack` would publish, without publishing                                         |
 | `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                                                       |
 | `pnpm check`            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit                                   |
