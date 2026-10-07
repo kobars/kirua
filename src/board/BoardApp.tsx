@@ -45,8 +45,7 @@ export interface BoardAppProps {
 function TaskCard({ task, epic, waiting }: { task: Task; epic: string; waiting: string[] }) {
   return (
     <Card variant="brand" padding="sm" radius="lg" className="h-full">
-      {/* `CardTitle` is 28px and has no size axis; a column of 130 needs less. */}
-      <CardTitle as="h3" className="text-heading-sm">
+      <CardTitle as="h3" size="heading-sm">
         {task.title}
       </CardTitle>
       <CardBody className="mt-2 text-body-sm">{task.description}</CardBody>
