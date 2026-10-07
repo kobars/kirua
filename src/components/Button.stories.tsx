@@ -265,6 +265,44 @@ export const AsLink: Story = {
   ),
 };
 
+/**
+ * With `asChild` the icons land inside the link, around its text, so the
+ * link keeps one element and the icons keep the button's spacing.
+ */
+export const AsLinkWithIcons: Story = {
+  render: (args) => (
+    <Button
+      {...args}
+      asChild
+      leadingIcon={<SparkleIcon data-testid="leading" />}
+      trailingIcon={<ArrowRightIcon data-testid="trailing" />}
+    >
+      <a href="#signup">Go to sign up</a>
+    </Button>
+  ),
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Go to sign up' });
+    await expect(link).toHaveAttribute('data-slot', 'button');
+    await expect(link.firstElementChild).toBe(within(link).getByTestId('leading'));
+    await expect(link.lastElementChild).toBe(within(link).getByTestId('trailing'));
+  },
+};
+
+/** `loading` replaces the leading icon with the spinner on a link too. */
+export const AsLinkLoading: Story = {
+  render: (args) => (
+    <Button {...args} asChild loading leadingIcon={<SparkleIcon data-testid="leading" />}>
+      <a href="#signup">Go to sign up</a>
+    </Button>
+  ),
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: /Go to sign up/ });
+    await expect(link).toHaveAttribute('aria-busy', 'true');
+    await expect(within(link).queryByTestId('leading')).toBeNull();
+    await expect(link.querySelector('[data-slot="spinner"]')).not.toBeNull();
+  },
+};
+
 export const OnlyAChevronTurnsOver: Story = {
   render: () => (
     <div className="flex gap-3">

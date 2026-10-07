@@ -1,4 +1,4 @@
-import { Slot } from '@radix-ui/react-slot';
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import type { VariantProps } from '@/lib/cva';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
@@ -11,10 +11,11 @@ export interface ButtonProps
    * Render the styles onto the child element instead of a `<button>`, so a link
    * keeps real link semantics rather than faking one with a click handler.
    *
-   * Radix `Slot` merges onto exactly one child, so the icon props are ignored
-   * here — compose icons inside the child.
+   * `leadingIcon` and `trailingIcon` are placed inside the child, around its
+   * own content, through Radix `Slottable`.
    *
    * @example <Button asChild><a href="/signup">Start now</a></Button>
+   * @example <Button asChild trailingIcon={<ArrowRightIcon />}><a href="/signup">Start now</a></Button>
    */
   asChild?: boolean;
   leadingIcon?: ReactNode;
@@ -27,8 +28,7 @@ export interface ButtonProps
    * While loading it is `aria-disabled` and `aria-busy`, drops `onClick`,
    * renders as `type="button"` so Enter cannot resubmit its form, and shows a
    * spinner in place of `leadingIcon`, which keeps its width. With `asChild`
-   * there is no spinner and no `type` to change: the attributes and the
-   * dropped `onClick` are all it does.
+   * there is no `type` to change; the spinner still replaces `leadingIcon`.
    */
   loading?: boolean;
   /** What the spinner announces while `loading`. */
@@ -72,10 +72,14 @@ export function Button({
     ...(loading && { 'aria-disabled': true, 'aria-busy': true }),
   } as const;
 
+  const leading = loading ? <Spinner label={loadingLabel} /> : leadingIcon;
+
   if (asChild) {
     return (
       <Slot {...shared} onClick={loading ? undefined : onClick} {...{ type, ...props }}>
-        {children}
+        {leading}
+        <Slottable>{children}</Slottable>
+        {trailingIcon}
       </Slot>
     );
   }
@@ -87,7 +91,7 @@ export function Button({
       onClick={loading ? undefined : onClick}
       {...props}
     >
-      {loading ? <Spinner label={loadingLabel} /> : leadingIcon}
+      {leading}
       {children}
       {trailingIcon}
     </button>
