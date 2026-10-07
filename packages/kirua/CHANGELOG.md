@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- `Button` with `asChild` now renders `leadingIcon` and `trailingIcon` inside
+  the child element, around its content. They were accepted and silently
+  dropped.
+
+### Changed
+
+- `Button` with `asChild` and `loading` now shows the spinner in place of
+  `leadingIcon`, as a `<button>` already did.
+
 ## 0.3.0
 
 ### Added
