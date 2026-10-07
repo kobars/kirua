@@ -26,6 +26,7 @@ import { HomePage } from './HomePage';
 import { PricingPage } from './PricingPage';
 import { StoryPage } from './StoryPage';
 import { NotFound } from '../shared/NotFound';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useHashRoute } from '../shared/useHashRoute';
 
@@ -54,41 +55,46 @@ export function App() {
       <Stack as="header" gap={0}>
         <Container width="7xl" pad="xs">
           <Split layout="fit-end" from="base" align="center" gap={4}>
-            {/* The site's controls sit inside the pill, which sets `ctx-inverse`
-              for them, so the primary button renders as the white pill. */}
-            <NavBar
-              aria-label="Main"
-              actions={
-                <>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <IconButton aria-label="Search the site" variant="ghost" size="md">
-                        <SearchIcon />
-                      </IconButton>
-                    </TooltipTrigger>
-                    <TooltipContent>Search the site</TooltipContent>
-                  </Tooltip>
+            {/* The way back to the hub stands before the pill, on the page: the
+                pill is the site's own navigation, and the hub is not part of it. */}
+            <Split layout="fit-start" from="base" align="center" gap={2}>
+              <AllExamplesLink />
+              {/* The site's controls sit inside the pill, which sets `ctx-inverse`
+                for them, so the primary button renders as the white pill. */}
+              <NavBar
+                aria-label="Main"
+                actions={
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <IconButton aria-label="Search the site" variant="ghost" size="md">
+                          <SearchIcon />
+                        </IconButton>
+                      </TooltipTrigger>
+                      <TooltipContent>Search the site</TooltipContent>
+                    </Tooltip>
 
-                  <ThemeMenu />
+                    <ThemeMenu />
 
-                  <Visible from="sm">
-                    <Button variant="primary" size="md" asChild>
-                      <a href="#/marketing/pricing">Start free</a>
-                    </Button>
-                  </Visible>
-                </>
-              }
-            >
-              {ROUTES.map((item) => (
-                <NavBarLink
-                  key={item.route}
-                  href={`#/marketing/${item.route}`}
-                  current={item.route === route}
-                >
-                  {item.label}
-                </NavBarLink>
-              ))}
-            </NavBar>
+                    <Visible from="sm">
+                      <Button variant="primary" size="md" asChild>
+                        <a href="#/marketing/pricing">Start free</a>
+                      </Button>
+                    </Visible>
+                  </>
+                }
+              >
+                {ROUTES.map((item) => (
+                  <NavBarLink
+                    key={item.route}
+                    href={`#/marketing/${item.route}`}
+                    current={item.route === route}
+                  >
+                    {item.label}
+                  </NavBarLink>
+                ))}
+              </NavBar>
+            </Split>
             <Visible from="xl">
               <DotGrid rows={5} cols={5} tone="brand" />
             </Visible>

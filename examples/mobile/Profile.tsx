@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertDescription,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -7,13 +9,23 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
+  AlertIcon,
+  AlertTitle,
   Avatar,
   AvatarFallback,
+  Badge,
   Button,
+  ChevronEndIcon,
   Card,
   Field,
   Heading,
   Inline,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemTitle,
   Label,
   NativeSelect,
   NativeSelectOption,
@@ -24,6 +36,7 @@ import {
 } from '@kobars/kirua';
 
 export interface ProfileProps {
+  verified: boolean;
   onNotice: (title: string, description: string) => void;
 }
 
@@ -51,20 +64,33 @@ function SettingSwitch({
 }
 
 /** The account, the settings a phone app keeps, and the way out. */
-export function Profile({ onNotice }: ProfileProps) {
+export function Profile({ verified, onNotice }: ProfileProps) {
   return (
     <Stack gap={6}>
       <Inline gap={4}>
         <Avatar size="xl">
           <AvatarFallback>RA</AvatarFallback>
         </Avatar>
-        <Stack gap={0}>
+        <Stack gap={0} align="start">
           <Heading as="h1" size="heading-md">
             Rin Aoki
           </Heading>
           <Text size="sm">@rin · member since 2024</Text>
+          {verified && <Badge status="success">Identity verified</Badge>}
         </Stack>
       </Inline>
+
+      {!verified && (
+        <Alert status="warning" icon={<AlertIcon />}>
+          <AlertTitle>Verify your identity</AlertTitle>
+          <AlertDescription>
+            Until you do, one payment can be at most $1,000. It takes about two minutes.
+          </AlertDescription>
+          <Button asChild variant="secondary" size="sm">
+            <a href="#/mobile/profile/verify">Verify now</a>
+          </Button>
+        </Alert>
+      )}
 
       <Card padding="md" gap={4}>
         <Heading as="h2" size="heading-sm">
@@ -99,6 +125,21 @@ export function Profile({ onNotice }: ProfileProps) {
           </NativeSelect>
         </Field>
       </Card>
+
+      <ItemGroup variant="outlined">
+        <Item asChild interactive size="sm">
+          {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label -- the name is the row's title, deeper than the rule looks */}
+          <a href="#/mobile/profile/help">
+            <ItemContent>
+              <ItemTitle>Help and support</ItemTitle>
+              <ItemDescription>Answers, and a way to reach us</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <ChevronEndIcon />
+            </ItemActions>
+          </a>
+        </Item>
+      </ItemGroup>
 
       <Stack gap={3}>
         <Button

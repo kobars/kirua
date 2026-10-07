@@ -409,6 +409,75 @@ try {
           await ui.getByRole('switch', { name: 'Freeze card' }).first().click();
           await visible(ui.getByText('Frozen', { exact: true }));
 
+          // A savings goal: swipe row on Home, a preset amount, and the balance moves.
+          await nav.getByRole('link', { name: 'Home', exact: true }).click();
+          await ui.getByRole('link', { name: /Trip to Lisbon/ }).click();
+          await visible(ui.getByRole('heading', { level: 1, name: 'Trip to Lisbon' }));
+          await ui.getByRole('radio', { name: '$50', exact: true }).click();
+          await ui.getByRole('button', { name: 'Add $50.00', exact: true }).click();
+          await visible(ui.getByText('$1,220.00', { exact: true }));
+
+          // $500 and up asks for the code from the phone before it sends.
+          await nav.getByRole('link', { name: 'Send', exact: true }).click();
+          await ui.getByRole('link', { name: /Maya Lindqvist/ }).click();
+          for (const key of ['6', '0', '0'])
+            await ui.getByRole('button', { name: key, exact: true }).click();
+          await ui.getByRole('button', { name: 'Review', exact: true }).click();
+          await ui
+            .getByRole('dialog', { name: 'Send $600.00 to Maya?' })
+            .getByRole('button', { name: 'Send $600.00', exact: true })
+            .click();
+          const asks = ui.getByRole('dialog', { name: 'Enter the code we sent' });
+          await asks.getByLabel('Six-digit code').fill('111111');
+          await visible(asks.getByText('That code does not match', { exact: true }));
+          await asks.getByLabel('Six-digit code').fill('246810');
+          await visible(ui.getByRole('heading', { level: 1, name: 'Maya Lindqvist' }));
+          await nav.getByRole('link', { name: 'Home', exact: true }).click();
+          await visible(ui.getByText('$1,789.10', { exact: true }));
+
+          // A payment for a later day leaves the balance alone until then.
+          await nav.getByRole('link', { name: 'Send', exact: true }).click();
+          await ui.getByRole('link', { name: /Eko Prasetyo/ }).click();
+          for (const key of ['2', '0'])
+            await ui.getByRole('button', { name: key, exact: true }).click();
+          await ui.getByRole('radio', { name: 'On a later day', exact: true }).click();
+          await ui.getByLabel('Send on').click();
+          await ui.getByRole('button', { name: 'Friday, 9 October 2026', exact: true }).click();
+          await ui.getByRole('button', { name: 'Review', exact: true }).click();
+          await ui
+            .getByRole('dialog', { name: 'Schedule $20.00 to Eko?' })
+            .getByRole('button', { name: 'Schedule $20.00', exact: true })
+            .click();
+          await visible(ui.getByText('Payment scheduled', { exact: true }));
+          await visible(
+            ui.getByText('Sends to Eko Prasetyo on Friday 9 October', { exact: true }),
+          );
+
+          // Verifying identity, one step per screen.
+          await nav.getByRole('link', { name: 'Profile', exact: true }).click();
+          await ui.getByRole('link', { name: 'Verify now', exact: true }).click();
+          await ui.getByLabel('Date of birth').fill('1996-04-12');
+          await ui.getByRole('button', { name: 'Continue', exact: true }).click();
+          await ui.getByRole('button', { name: 'Take a photo of it', exact: true }).click();
+          await visible(ui.getByText('Photo received', { exact: true }));
+          await ui.getByRole('button', { name: 'Continue', exact: true }).click();
+          await ui
+            .getByRole('checkbox', { name: 'These details are mine and correct' })
+            .click();
+          await ui.getByRole('button', { name: 'Send for checking', exact: true }).click();
+          await visible(ui.getByRole('heading', { level: 1, name: 'Rin Aoki' }));
+          await visible(ui.getByText('Identity verified', { exact: true }).first());
+
+          // Help answers open in place.
+          await ui.getByRole('link', { name: /Help and support/ }).click();
+          await ui.getByRole('button', { name: 'Why do I need to type a code?' }).click();
+          await visible(ui.getByText(/^From \$500 up/));
+
+          // Older payments arrive behind grey rows.
+          await nav.getByRole('link', { name: 'Activity', exact: true }).click();
+          await ui.getByRole('button', { name: 'Load earlier', exact: true }).click();
+          await visible(ui.getByRole('link', { name: /Northside Gym/ }));
+
           if (framed) {
             const inner = () => page.frames()[1]?.evaluate(() => window.innerWidth);
             await page.getByRole('radio', { name: 'Small · 320' }).click();
@@ -442,6 +511,9 @@ try {
           assert.equal(await composer.inputValue(), 'Keep this draft while busy.');
           await visible(page.getByText(/^This is a local demo reply\./));
         }
+        // Every section offers the way back to the hub.
+        if (slug !== 'hub')
+          await visible(page.getByRole('link', { name: 'All examples', exact: true }));
         await audit(page, `${slug}/${width}/${theme}`);
         await page.evaluate(() => window.scrollTo(0, 0));
         await page.screenshot({

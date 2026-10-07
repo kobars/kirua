@@ -54,6 +54,7 @@ import { PatientRecord } from './PatientRecord';
 import { Pharmacy } from './Pharmacy';
 import { Summary } from './Summary';
 import { NotFound } from '../shared/NotFound';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { APPEARANCE } from '../shared/themeLabels';
 import { HOSPITAL, patients } from './data';
@@ -186,6 +187,7 @@ export function App() {
           </>
         }
       >
+        <AllExamplesLink />
         <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
           <Visible below="md">
             <SheetTrigger asChild>
