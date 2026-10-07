@@ -278,41 +278,35 @@ describe('the published package', () => {
    * newer primitives than this lockfile holds. An exact pin here therefore
    * matched the repository and split every consumer: 0.4.0 asked for 1.1.4
    * while the primitives npm installed asked for 1.1.5, and a fresh install
-   * held 12 copies. A caret range lets the consumer's install pick the
-   * primitives' version. This test only checks that the range accepts the
-   * pins installed here; `tools/consumer-install.mjs` installs the packed
-   * tarball and counts the copies a consumer actually gets.
+   * held 12 copies. So the range is a caret, and its floor is the version the
+   * primitives pin: npm keeps an installed copy that still satisfies the
+   * range, so a floor below their pin left an upgrade from 0.4.0 on 1.1.4.
+   * The primitives' own floors must pin that version too, or a consumer
+   * whose lockfile holds a floor release gets the old copy beside the new.
+   * `tools/consumer-install.mjs` installs the packed tarball, fresh and over
+   * the previous release, and counts the copies a consumer actually gets.
    */
-  it('asks for a direction range that accepts the version every Radix primitive pins', () => {
+  it('asks for direction at the version every Radix primitive floor pins', () => {
     const ours = manifest.dependencies['@radix-ui/react-direction'] ?? '';
-    const caret = /^\^(\d+)\.(\d+)\.(\d+)$/.exec(ours);
-    expect(caret, `expected a caret range, got ${ours}`).not.toBeNull();
-    const [major, minor, patch] = (caret ?? []).slice(1).map(Number) as [
-      number,
-      number,
-      number,
-    ];
-    expect(major).toBeGreaterThanOrEqual(1);
-    const accepts = (version: string) => {
-      const [m, n, p] = version.split('.').map(Number) as [number, number, number];
-      return m === major && (n > minor || (n === minor && p >= patch));
-    };
+    const floor = /^\^(\d+\.\d+\.\d+)$/.exec(ours)?.[1];
+    expect(floor, `expected a caret range, got ${ours}`).toBeDefined();
     const theirs = Object.keys(manifest.dependencies)
       .filter((name) => name.startsWith('@radix-ui/react-'))
       .flatMap((name) => {
         const pkg = JSON.parse(
           readFileSync(path.join(REPO, 'node_modules', name, 'package.json'), 'utf8'),
-        ) as { dependencies?: Record<string, string> };
-        const version = pkg.dependencies?.['@radix-ui/react-direction'];
-        return version ? [{ name, version }] : [];
+        ) as { version: string; dependencies?: Record<string, string> };
+        const direction = pkg.dependencies?.['@radix-ui/react-direction'];
+        return direction ? [{ name, floor: manifest.dependencies[name], pkg, direction }] : [];
       });
 
     expect(theirs.length).toBeGreaterThan(0);
-    for (const { name, version } of theirs)
-      expect({ name, version, accepted: accepts(version) }).toEqual({
+    for (const { name, floor: range, pkg, direction } of theirs)
+      expect({ name, range, direction }).toEqual({
         name,
-        version,
-        accepted: true,
+        // The installed release is the floor, so its pin is the floor's pin.
+        range: `^${pkg.version}`,
+        direction: floor,
       });
   });
 
