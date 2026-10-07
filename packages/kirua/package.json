@@ -1,6 +1,6 @@
 {
   "name": "@kobars/kirua",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A React design system with a playful, cut-out look: bold outlines, hard offset shadows, rounded corners and a vivid blue brand. React 19, Tailwind CSS v4 and Radix Primitives.",
   "license": "MIT",
   "author": "Kobar Septyanus",
