@@ -9,8 +9,14 @@
  *
  * Each family is one source module of the barrel — `Dialog` is every export of
  * `Dialog.js` — and is bundled alone, with Vite in library mode and its own
- * minifier, from an entry that re-exports those names from `index.js`. Two
- * figures:
+ * minifier, from an entry that re-exports those names from `index.js`.
+ *
+ * **The output is minified a second time, fully.** Library mode with ES output
+ * turns whitespace removal off, so that a library keeps the `@__PURE__`
+ * annotations its consumer's bundler needs; `Button` came out as 2,117 lines
+ * with `//#region` comments, and every figure read 13 to 15% above what an
+ * app ships. `output.minify` minifies the final chunk, which nothing bundles
+ * again. Two figures:
  *
  * - **kirua only**: every npm package stays outside the bundle. What this
  *   package adds by itself.
@@ -104,6 +110,7 @@ async function bundle(entry, { kiruaOnly }) {
       lib: { entry: ENTRY, formats: ['es'], fileName: 'entry' },
       rolldownOptions: {
         external: (id) => isPeer(id) || (kiruaOnly && isBare(id) && !id.endsWith(ENTRY)),
+        output: { minify: true },
       },
     },
   });
