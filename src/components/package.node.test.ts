@@ -21,6 +21,8 @@ const DIST = path.join(ROOT, 'dist');
 
 type Manifest = {
   name: string;
+  module?: string;
+  main?: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   peerDependencies: Record<string, string>;
@@ -94,6 +96,19 @@ describe('the published package', () => {
       unknown
     >;
     expect(Object.keys(built).sort()).toEqual(Object.keys(barrel).sort());
+  });
+
+  /**
+   * Bundlers read `exports`; `module` is for tools that never learned to.
+   * Bundlephobia's per-export analysis looks for `module || main ||
+   * './index.js'` and failed on 0.4.0, which had only `exports`. No `main`:
+   * pointing it at ESM would mislead a require-based resolver.
+   */
+  it('names the ES entry as `module`, the same file as exports["."].import', () => {
+    const entry = manifest.exports['.'];
+    if (typeof entry !== 'object') throw new Error('exports["."] must name types and import');
+    expect(manifest.module).toBe(entry.import);
+    expect(manifest.main).toBeUndefined();
   });
 
   it('ships declarations beside the entry', () => {

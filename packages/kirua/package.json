@@ -28,6 +28,7 @@
     "**/*.css"
   ],
   "types": "./dist/components/index.d.ts",
+  "module": "./dist/components/index.js",
   "exports": {
     ".": {
       "types": "./dist/components/index.d.ts",
