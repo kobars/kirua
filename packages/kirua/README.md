@@ -182,24 +182,25 @@ const nextConfig = {
 
 ## Size
 
-Measured on version 0.3.0: each family of exports bundled alone from the
-package entry, tree-shaken, minified and gzipped, with React and ReactDOM left
-out because your app already ships them.
+Measured on the code of this release: each family of exports bundled alone
+from the package entry, tree-shaken, minified and gzipped, with React and
+ReactDOM left out because your app already ships them.
 
 | Import                                        | kirua only | With its dependencies | Its styles |
 | --------------------------------------------- | ---------- | --------------------- | ---------- |
-| `Button`                                      | 2.19 kB    | 13.71 kB              | 8.23 kB    |
+| `Button`                                      | 2.21 kB    | 13.74 kB              | 8.23 kB    |
 | `Card` and its five parts                     | 2.42 kB    | 12.48 kB              | 7.81 kB    |
 | `Dialog` and its six parts, with Radix Dialog | 2.35 kB    | 27.00 kB              | 8.30 kB    |
 | `Select`, the largest                         | 2.28 kB    | 45.71 kB              | 8.22 kB    |
-| `Button`, `Card` and `Dialog` together        | 4.63 kB    | 29.79 kB              | 10.23 kB   |
-| Every export                                  | 34.62 kB   | 129.32 kB             | 18.84 kB   |
+| `Button`, `Card` and `Dialog` together        | 4.66 kB    | 29.81 kB              | 10.23 kB   |
+| Every export                                  | 34.64 kB   | 129.34 kB             | 18.84 kB   |
 
 About 10.35 kB of each "with its dependencies" figure is `clsx` and
 `tailwind-merge`, which every component uses to merge your `className`. Your
-app pays it once, so `Button`, `Card` and `Dialog` together cost 29.79 kB, not the 53.19 kB their
-rows add up to. Radix packages are shared the same way: `Dialog`, `Sheet` and
-`AlertDialog` together cost 28.18 kB, 1.18 kB more than `Dialog` alone.
+app pays it once, so `Button`, `Card` and `Dialog` together cost 29.81 kB, not
+the 53.22 kB their rows add up to. Radix packages are shared the same way:
+`Dialog`, `Sheet` and `AlertDialog` together cost 28.18 kB, 1.18 kB more than
+`Dialog` alone.
 
 "Its styles" is `theme.css` plus that row's module files, Tailwind's base
 layer included. With `styles.css` the stylesheet is 18.84 kB whatever you

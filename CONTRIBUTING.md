@@ -155,8 +155,8 @@ Run `pnpm size:components` for the same changes, and before a release. It
 prints what each component costs a consumer and fails if importing one
 component through the package entry starts pulling in others. Every figure in
 the **Size** section of `packages/kirua/README.md` is in its output, or is a
-sum or difference of figures in it: when a release moves one, update the
-section and its version.
+sum or difference of figures in it: when a change moves one, update the
+section.
 
 Visual baselines in `src/components/__screenshots__` are committed. To approve an
 intended visual change, delete the affected PNG, re-run
