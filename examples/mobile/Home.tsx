@@ -1,30 +1,41 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import {
   BarChart,
   Button,
   Card,
   CardTitle,
+  Carousel,
+  CarouselItem,
   Chart,
   ChartCaption,
   Grid,
   Heading,
   Inline,
+  Item,
+  ItemContent,
+  ItemDescription,
   ItemGroup,
   ItemSeparator,
+  ItemTitle,
+  LineChart,
   Link,
   PlusIcon,
   Price,
+  Progress,
   SendIcon,
   ShareIcon,
   Stack,
   Text,
+  ToggleGroup,
+  ToggleGroupItem,
 } from '@kobars/kirua';
-import { formatMoney, week, type Transaction } from './data';
+import { balanceWeek, formatMoney, week, type Goal, type Transaction } from './data';
 import { TransactionRow } from './TransactionRow';
 
 export interface HomeProps {
   balance: number;
   recent: Transaction[];
+  goals: Goal[];
   onSend: () => void;
   onNotice: (title: string, description: string) => void;
 }
@@ -43,7 +54,8 @@ const spent = week.reduce((total, day) => total + day.value, 0);
 const busiest = week.reduce((most, day) => (day.value > most.value ? day : most));
 
 /** The first screen: what is in the pouch, what to do with it, and what just happened. */
-export function Home({ balance, recent, onSend, onNotice }: HomeProps) {
+export function Home({ balance, recent, goals, onSend, onNotice }: HomeProps) {
+  const [shows, setShows] = useState<'spending' | 'balance'>('spending');
   return (
     <Stack gap={6}>
       <Stack gap={0}>
@@ -101,21 +113,75 @@ export function Home({ balance, recent, onSend, onNotice }: HomeProps) {
         </Grid>
       </Card>
 
+      <Stack gap={3}>
+        <Heading as="h2" size="heading-sm">
+          Savings goals
+        </Heading>
+        {/* Swiped sideways, as a phone does with a row of cards; the next card
+            shows at the edge to say there is more. */}
+        <Carousel label="Savings goals">
+          {goals.map((goal) => (
+            <CarouselItem key={goal.id} size="sm">
+              <Item asChild interactive variant="outline">
+                {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label -- the name is the goal's title, deeper than the rule looks */}
+                <a href={`#/mobile/goals/${goal.id}`}>
+                  <ItemContent>
+                    <ItemTitle>{goal.name}</ItemTitle>
+                    <Progress
+                      value={Math.min(goal.saved, goal.target)}
+                      max={goal.target}
+                      aria-label={`${goal.name}, saved so far`}
+                      getValueLabel={(value, max) => `${Math.round((value / max) * 100)}%`}
+                    />
+                    <ItemDescription>
+                      {formatMoney(goal.saved)} of {formatMoney(goal.target)}
+                    </ItemDescription>
+                  </ItemContent>
+                </a>
+              </Item>
+            </CarouselItem>
+          ))}
+        </Carousel>
+      </Stack>
+
       <Card padding="md" gap={3}>
         <Inline justify="between" align="baseline" gap={2}>
           <CardTitle as="h2" size="heading-sm">
             This week
           </CardTitle>
           <Text inline size="sm" tone="primary" weight="semibold" numeric>
-            {formatMoney(spent)}
+            {shows === 'spending' ? `${formatMoney(spent)} spent` : formatMoney(balance)}
           </Text>
         </Inline>
-        <Chart label="Money spent on each of the last seven days, in dollars">
-          <BarChart data={week} />
-          <ChartCaption>
-            {DAY_NAMES[busiest.label] ?? busiest.label} was your biggest day.
-          </ChartCaption>
-        </Chart>
+        {/* A segmented control: two views of the same week, one tap apart. */}
+        <ToggleGroup
+          type="single"
+          value={shows}
+          onValueChange={(next) => {
+            if (next) setShows(next as typeof shows);
+          }}
+          aria-label="Show"
+        >
+          <ToggleGroupItem value="spending" variant="outline" size="sm">
+            Spending
+          </ToggleGroupItem>
+          <ToggleGroupItem value="balance" variant="outline" size="sm">
+            Balance
+          </ToggleGroupItem>
+        </ToggleGroup>
+        {shows === 'spending' ? (
+          <Chart label="Money spent on each of the last seven days, in dollars">
+            <BarChart data={week} />
+            <ChartCaption>
+              {DAY_NAMES[busiest.label] ?? busiest.label} was your biggest day.
+            </ChartCaption>
+          </Chart>
+        ) : (
+          <Chart label="Your balance at the end of each of the last seven days, in dollars">
+            <LineChart data={balanceWeek} filled />
+            <ChartCaption>Your salary arrived on Monday.</ChartCaption>
+          </Chart>
+        )}
       </Card>
 
       <Stack gap={3}>

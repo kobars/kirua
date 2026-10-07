@@ -90,6 +90,9 @@ const ROUTES = new Map([
       'send/maya',
       'cards',
       'profile',
+      'goals/lisbon',
+      'profile/verify',
+      'profile/help',
     ],
   ],
   [

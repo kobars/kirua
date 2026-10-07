@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   AppBody,
   AppHeader,
@@ -23,6 +23,7 @@ import {
   UserIcon,
   Wordmark,
 } from '@kobars/kirua';
+import { AllExamplesLink } from '../shared/AllExamplesLink';
 import { NotFound } from '../shared/NotFound';
 import { ThemeMenu } from '../shared/ThemeMenu';
 import { useHashRoute } from '../shared/useHashRoute';
@@ -31,17 +32,25 @@ import { Cards, type CardSettings } from './Cards';
 import {
   cards,
   contacts,
+  earlier,
+  formatDay,
   formatMoney,
+  goals as startingGoals,
+  isoDay,
   OPENING_BALANCE,
   transactions,
+  type Goal,
   type Transaction,
 } from './data';
 import { FramePage } from './FramePage';
+import { GoalDetail } from './GoalDetail';
+import { Help } from './Help';
 import { Home } from './Home';
 import { Profile } from './Profile';
 import { Send } from './Send';
 import { TransactionDetail } from './TransactionDetail';
-import { useShowsFrame } from './useFramed';
+import { insideFrame, useShowsFrame } from './useFramed';
+import { Verify } from './Verify';
 
 /** The five tabs. A tab stays current on the screens under it. */
 const tabs = [
@@ -52,8 +61,14 @@ const tabs = [
   { route: 'profile', label: 'Profile', icon: UserIcon },
 ] as const;
 
+/** Home has no list of goals of its own, so a goal's screen sits under it. */
 const isUnder = (route: string, tab: string) =>
-  tab === '' ? route === '' : route === tab || route.startsWith(`${tab}/`);
+  tab === ''
+    ? route === '' || route.startsWith('goals/')
+    : route === tab || route.startsWith(`${tab}/`);
+
+/** The screens under Profile, by the last part of their route. */
+const PROFILE_SCREENS = ['verify', 'help'];
 
 interface Notice {
   title: string;
@@ -71,7 +86,11 @@ export function App() {
   const [balance, setBalance] = useState(OPENING_BALANCE);
   const [sent, setSent] = useState<Transaction[]>([]);
   const [settings, setSettings] = useState<Record<string, CardSettings>>({});
+  const [goals, setGoals] = useState<Goal[]>(startingGoals);
+  const [verified, setVerified] = useState(false);
+  const [olderLoaded, setOlderLoaded] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const loadOlder = useCallback(() => setOlderLoaded(true), []);
 
   // A notice reads in a few seconds and then gets out of the way; the close
   // button is there for anyone who is done sooner.
@@ -81,16 +100,31 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [notice]);
 
-  const all = [...sent, ...transactions];
+  const all = [...sent, ...transactions, ...(olderLoaded ? earlier : [])];
   const [screen, id] = route.split('/');
-  const transaction = screen === 'activity' && id ? all.find((t) => t.id === id) : undefined;
+  // An older payment opened from a link is found even before the list loads it.
+  const transaction =
+    screen === 'activity' && id ? [...all, ...earlier].find((t) => t.id === id) : undefined;
   const contact = screen === 'send' && id ? contacts.find((c) => c.id === id) : undefined;
+  const goal = screen === 'goals' && id ? goals.find((g) => g.id === id) : undefined;
+  const profileScreen =
+    screen === 'profile' && id && PROFILE_SCREENS.includes(id) ? id : undefined;
   const known =
     ['', 'activity', 'send', 'cards', 'profile'].includes(route) ||
     transaction !== undefined ||
-    contact !== undefined;
+    contact !== undefined ||
+    goal !== undefined ||
+    profileScreen !== undefined;
   // A screen under a tab offers the way back to it, as a phone app does.
-  const back = transaction ? 'activity' : contact ? 'send' : undefined;
+  const back = transaction
+    ? 'activity'
+    : contact
+      ? 'send'
+      : goal
+        ? ''
+        : profileScreen
+          ? 'profile'
+          : undefined;
   const say = (title: string, description: string) => setNotice({ title, description });
 
   if (showsFrame && known) return <FramePage route={route} />;
@@ -98,6 +132,10 @@ export function App() {
   return (
     <AppShell>
       <AppHeader width="full" actions={<ThemeMenu />}>
+        {/* On a phone the hub is one tap away, as in every section. Inside
+            the frame it is not offered: the page around the frame has it, and
+            following it here would open the hub inside the phone. */}
+        {back === undefined && !insideFrame() && <AllExamplesLink />}
         {back !== undefined && (
           <IconButton asChild variant="ghost" aria-label="Back">
             <a href={`#/mobile/${back}`}>
@@ -115,6 +153,30 @@ export function App() {
           <Container width="full" pad="sm">
             {!known ? (
               <NotFound name="Pouch" home="#/mobile/" />
+            ) : goal ? (
+              <GoalDetail
+                goal={goal}
+                balance={balance}
+                onAdd={(target, amount) => {
+                  setGoals((list) =>
+                    list.map((g) =>
+                      g.id === target.id ? { ...g, saved: g.saved + amount } : g,
+                    ),
+                  );
+                  setBalance((value) => Math.round((value - amount) * 100) / 100);
+                  say('Money added', `${formatMoney(amount)} is in ${target.name} now.`);
+                }}
+              />
+            ) : profileScreen === 'verify' ? (
+              <Verify
+                onDone={() => {
+                  setVerified(true);
+                  say('Identity verified', 'You can now send more than $1,000 at a time.');
+                  navigate('profile');
+                }}
+              />
+            ) : profileScreen === 'help' ? (
+              <Help onNotice={say} />
             ) : transaction ? (
               <TransactionDetail
                 key={transaction.id}
@@ -126,27 +188,37 @@ export function App() {
                 key={route}
                 balance={balance}
                 to={contact}
-                onSent={(to, amount, note) => {
+                verified={verified}
+                onSent={(to, amount, note, on) => {
                   const made: Transaction = {
                     id: `tx-sent-${sent.length + 1}`,
                     title: to.name,
                     category: 'Transfer',
                     amount,
                     direction: 'out',
-                    day: 'Today',
-                    time: 'Just now',
+                    day: on ? formatDay(on) : 'Today',
+                    date: on ? isoDay(on) : '2026-10-07',
+                    time: on ? 'Morning' : 'Just now',
                     method: 'Pouch balance',
-                    status: 'Completed',
+                    status: on ? 'Scheduled' : 'Completed',
                     ...(note ? { note } : {}),
                   };
                   setSent((list) => [made, ...list]);
-                  setBalance((value) => Math.round((value - amount) * 100) / 100);
-                  say('Money sent', `${formatMoney(amount)} is with ${to.name} now.`);
+                  // A scheduled payment leaves the balance on its day, not now.
+                  if (on) {
+                    say(
+                      'Payment scheduled',
+                      `${formatMoney(amount)} goes to ${to.name} on ${formatDay(on)}.`,
+                    );
+                  } else {
+                    setBalance((value) => Math.round((value - amount) * 100) / 100);
+                    say('Money sent', `${formatMoney(amount)} is with ${to.name} now.`);
+                  }
                   navigate(`activity/${made.id}`);
                 }}
               />
             ) : route === 'activity' ? (
-              <Activity transactions={all} />
+              <Activity transactions={all} more={!olderLoaded} onLoadMore={loadOlder} />
             ) : route === 'cards' ? (
               <Cards
                 cards={cards}
@@ -154,11 +226,12 @@ export function App() {
                 onChange={(card, next) => setSettings((all) => ({ ...all, [card]: next }))}
               />
             ) : route === 'profile' ? (
-              <Profile onNotice={say} />
+              <Profile verified={verified} onNotice={say} />
             ) : (
               <Home
                 balance={balance}
-                recent={all.slice(0, 4)}
+                recent={all.filter((t) => t.status !== 'Scheduled').slice(0, 4)}
+                goals={goals}
                 onSend={() => navigate('send')}
                 onNotice={say}
               />

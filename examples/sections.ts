@@ -61,7 +61,7 @@ export const SECTIONS: Section[] = [
     kind: 'Phone app',
     title: 'Pouch — a kirua example',
     summary:
-      'A money app made only for phones: a balance, activity, sending money, cards and settings.',
+      'A money app made only for phones: savings goals, sending with a code check, scheduled payments, cards, identity checks and help.',
     night: 'carbon',
   },
   {

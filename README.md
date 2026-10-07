@@ -105,7 +105,7 @@ It opens on a hub at `#/` that links to six sections:
 | Dusk     | A storefront with filters, a product page, cart and checkout          | [`#/shop/`](https://kirua-examples.vercel.app/#/shop/)           |
 | Larkspur | A US hospital chart: patients, coverage, appointments, labs, pharmacy | [`#/his/`](https://kirua-examples.vercel.app/#/his/)             |
 | Commons  | A mobile-first feed, explore, notifications, messages                 | [`#/social/`](https://kirua-examples.vercel.app/#/social/)       |
-| Pouch    | A money app for phones only: balance, activity, sending, cards        | [`#/mobile/`](https://kirua-examples.vercel.app/#/mobile/)       |
+| Pouch    | A money app for phones only: goals, sending, cards, identity checks   | [`#/mobile/`](https://kirua-examples.vercel.app/#/mobile/)       |
 | Lumen    | An assistant transcript, composer, searchable sidebar, usage          | [`#/assistant/`](https://kirua-examples.vercel.app/#/assistant/) |
 | Aozora   | A marketing site with pricing, a story, a guide and a form            | [`#/marketing/`](https://kirua-examples.vercel.app/#/marketing/) |
 
