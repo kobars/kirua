@@ -121,8 +121,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0(storybook@10.5.8(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
       '@kobars/kirua':
-        specifier: ^0.3.0
-        version: 0.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)
+        specifier: ^0.4.0
+        version: 0.4.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)
       '@storybook/addon-a11y':
         specifier: ^10.5.8
         version: 10.5.8(storybook@10.5.8(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
@@ -506,8 +506,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kobars/kirua@0.3.0':
-    resolution: {integrity: sha512-xzeJACrbB7JMLTFoCvs2ApBBo9MxdaG6LfG9ZAsuUezC4y39pUe1cGj474eyZCsk18rpghsTbd6c8FVuFiknfg==}
+  '@kobars/kirua@0.4.0':
+    resolution: {integrity: sha512-Dl6mNxtingHJNFnYjPGLJX0YnYhoqMqQCedD5Aabf1S/8OgDpujcQe8q1D5cTlTaPJhqKG4OhC0vkQbwtFE/cw==}
     peerDependencies:
       react: ^19
       react-dom: ^19
@@ -3632,7 +3632,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kobars/kirua@0.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)':
+  '@kobars/kirua@0.4.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)':
     dependencies:
       '@radix-ui/react-accordion': 1.2.21(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-alert-dialog': 1.1.24(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
