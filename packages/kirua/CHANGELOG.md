@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `@kobars/kirua/theme.css` and `@kobars/kirua/sources/<Module>.css`: import
+  the theme and one file per component module you use, instead of
+  `styles.css`, to generate only those components' classes. `Button` alone
+  needs 8.23 kB of CSS gzipped where `styles.css` is 18.84 kB. `styles.css` is
+  unchanged.
+
 ## 0.3.0
 
 ### Added

@@ -136,6 +136,48 @@ if (families.length === 0) {
 /** What makes the measurement itself untrustworthy, as opposed to a tree-shaking failure. */
 const broken = unread.map((line) => `${path.relative(REPO, INDEX)}: cannot read \`${line}\``);
 const failures = [];
+
+const CSS_ROOT = path.join(REPO, 'node_modules/.tmp/kirua-size');
+mkdirSync(CSS_ROOT, { recursive: true });
+
+/** `@import 'tailwindcss'` and the given package stylesheets, compiled as a consumer's CSS entry is. */
+async function stylesheet(name, sheets) {
+  const input = path.join(CSS_ROOT, `${name}.css`);
+  writeFileSync(
+    input,
+    `@import 'tailwindcss';\n` +
+      sheets.map((sheet) => `@import ${JSON.stringify(path.join(DIST, sheet))};\n`).join('') +
+      `@source not '.';\n`,
+  );
+  let asset;
+  try {
+    const result = await build({
+      configFile: false,
+      root: CSS_ROOT,
+      logLevel: 'silent',
+      publicDir: false,
+      plugins: [tailwindcss()],
+      build: { write: false, cssMinify: true, rolldownOptions: { input } },
+    });
+    asset = result.output.find(
+      (item) => item.type === 'asset' && item.fileName.endsWith('.css'),
+    );
+  } catch (error) {
+    broken.push(
+      `${name}: ${sheets.join(' + ')} does not compile — ${error.message.split('\n')[0]}`,
+    );
+    return { gzip: 0, source: '' };
+  }
+  if (!asset) {
+    broken.push(
+      `${name}: ${sheets.join(' + ')} emitted no stylesheet — the check found nothing`,
+    );
+    return { gzip: 0, source: '' };
+  }
+  return { gzip: gzipSync(asset.source).byteLength, source: asset.source };
+}
+const sourcesOf = (names) => ['theme.css', ...names.map((name) => `sources/${name}.css`)];
+
 const rows = [];
 for (const family of families) {
   const viaBarrel = reexport(family.exports, INDEX);
@@ -156,6 +198,7 @@ for (const family of families) {
     family: family.name,
     own: own.gzip,
     all: all.gzip,
+    styles: (await stylesheet(family.name, sourcesOf([family.name]))).gzip,
     packages: packages(all.modules),
   });
 }
@@ -165,11 +208,16 @@ const floor = await bundle(
   { kiruaOnly: false },
 );
 
-/** Both figures for one entry, as one row of the second table. */
-async function both(entry) {
+/** Every figure for one import, as one row of the second table. */
+async function figures(entry, name, sheets) {
   const own = await bundle(entry, { kiruaOnly: true });
   const all = await bundle(entry, { kiruaOnly: false });
-  return { 'kirua only': kb(own.gzip), 'with dependencies': kb(all.gzip) };
+  const styles = await stylesheet(name, sheets);
+  return {
+    'kirua only': kb(own.gzip),
+    'with dependencies': kb(all.gzip),
+    'its styles': kb(styles.gzip),
+  };
 }
 
 const together = {};
@@ -179,9 +227,26 @@ for (const names of COMBINATIONS) {
     if (!family) broken.push(`COMBINATIONS names ${name}, which is not a family`);
     return family?.exports ?? [];
   });
-  together[names.join(' + ')] = await both(reexport(exports, INDEX));
+  together[names.join(' + ')] = await figures(
+    reexport(exports, INDEX),
+    names.join('-'),
+    sourcesOf(names),
+  );
 }
-together['every export'] = await both(`export * from ${JSON.stringify(INDEX)};`);
+together['every export'] = await figures(`export * from ${JSON.stringify(INDEX)};`, 'styles', [
+  'styles.css',
+]);
+
+// `theme.css` and every module's sources must be `styles.css` exactly, or a
+// consumer importing per module silently loses a rule `styles.css` would give.
+const whole = await stylesheet('styles', ['styles.css']);
+const assembled = await stylesheet('every-module', sourcesOf(families.map((f) => f.name)));
+if (whole.source && assembled.source !== whole.source) {
+  broken.push(
+    'theme.css plus every sources/*.css compiles to a different stylesheet from styles.css ' +
+      `(${kb(assembled.gzip)} against ${kb(whole.gzip)} gzip)`,
+  );
+}
 
 rows.sort((a, b) => b.all - a.all);
 console.table(
@@ -191,46 +256,18 @@ console.table(
       {
         'kirua only': kb(row.own),
         'with dependencies': kb(row.all),
+        'its styles': kb(row.styles),
         'npm packages': row.packages.length,
       },
     ]),
   ),
 );
 console.log(
-  `\nEvery family above includes cn() — clsx and tailwind-merge — once: ${kb(floor.gzip)} gzip.\n`,
+  `\nEvery family above includes cn() — clsx and tailwind-merge — once: ${kb(floor.gzip)} gzip.` +
+    `\n"its styles" is theme.css plus the family's sources/*.css, Tailwind's base included.\n`,
 );
 console.table(together);
-
-// The stylesheet, compiled the way a consumer's two `@import`s compile it.
-const CSS_ROOT = path.join(REPO, 'node_modules/.tmp/kirua-size');
-mkdirSync(CSS_ROOT, { recursive: true });
-writeFileSync(
-  path.join(CSS_ROOT, 'consumer.css'),
-  `@import 'tailwindcss';\n@import ${JSON.stringify(path.join(DIST, 'styles.css'))};\n@source not '.';\n`,
-);
-const css = await build({
-  configFile: false,
-  root: CSS_ROOT,
-  logLevel: 'silent',
-  publicDir: false,
-  plugins: [tailwindcss()],
-  build: {
-    write: false,
-    cssMinify: true,
-    rolldownOptions: { input: path.join(CSS_ROOT, 'consumer.css') },
-  },
-});
-const sheet = css.output.find(
-  (item) => item.type === 'asset' && item.fileName.endsWith('.css'),
-);
-if (!sheet) {
-  broken.push('styles.css: compiling it emitted no stylesheet — the check found nothing');
-} else {
-  console.log(
-    `styles.css, whatever is imported: ${kb(gzipSync(sheet.source).byteLength)} gzip ` +
-      '(it names every component as a Tailwind source).',
-  );
-}
+console.log(`styles.css, every module: ${kb(whole.gzip)} gzip.`);
 
 if (broken.length > 0) {
   console.error('\ncomponent-size: the measurement cannot be trusted.\n');

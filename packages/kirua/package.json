@@ -35,6 +35,8 @@
       "default": "./dist/components/index.js"
     },
     "./styles.css": "./dist/styles.css",
+    "./theme.css": "./dist/theme.css",
+    "./sources/*": "./dist/sources/*",
     "./package.json": "./package.json"
   },
   "scripts": {
