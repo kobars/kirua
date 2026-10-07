@@ -54,11 +54,34 @@ try {
   process.exit(1);
 }
 
+const COMPONENT_IMPORT = /^import \{ ([^}]+) \} from "\.\/([^"]+)\.js";$/;
+/** The constants and helpers in `lib/` are a few hundred bytes and not a component. */
+const LIB_IMPORT = /^import \{ [^}]+ \} from "\.\.\/lib\/[^"]+\.js";$/;
+
 /** `import { Card, CardTitle } from "./Card.js"` → `{ name: 'Card', exports: [...] }`. */
-const families = [...barrel.matchAll(/^import \{ ([^}]+) \} from "\.\/([^"]+)\.js";$/gm)]
+const families = barrel
+  .split('\n')
+  .map((line) => line.match(COMPONENT_IMPORT))
+  .filter(Boolean)
   .map(([, names, name]) => ({ name, exports: names.split(', ') }))
   // A `*Variants` definition is measured inside the component that uses it.
   .filter((family) => !family.name.endsWith('.variants'));
+
+/**
+ * Imports read together, because the README states what they cost together:
+ * `cn()` and the Radix packages they share are paid once.
+ */
+const COMBINATIONS = [
+  ['Button', 'Card', 'Dialog'],
+  ['Dialog', 'Sheet', 'AlertDialog'],
+];
+
+// A line neither pattern reads would drop a family from the table while the
+// gate still passed — an import printed over two lines, say.
+const unread = barrel
+  .split('\n')
+  .filter((line) => line.startsWith('import'))
+  .filter((line) => !COMPONENT_IMPORT.test(line) && !LIB_IMPORT.test(line));
 
 async function bundle(entry, { kiruaOnly }) {
   const [result] = await build({
@@ -110,6 +133,8 @@ if (families.length === 0) {
   process.exit(1);
 }
 
+/** What makes the measurement itself untrustworthy, as opposed to a tree-shaking failure. */
+const broken = unread.map((line) => `${path.relative(REPO, INDEX)}: cannot read \`${line}\``);
 const failures = [];
 const rows = [];
 for (const family of families) {
@@ -137,13 +162,26 @@ for (const family of families) {
 
 const floor = await bundle(
   `export { cn } from ${JSON.stringify(path.join(DIST, 'lib/cn.js'))};`,
-  {
-    kiruaOnly: false,
-  },
+  { kiruaOnly: false },
 );
-const everything = await bundle(`export * from ${JSON.stringify(INDEX)};`, {
-  kiruaOnly: false,
-});
+
+/** Both figures for one entry, as one row of the second table. */
+async function both(entry) {
+  const own = await bundle(entry, { kiruaOnly: true });
+  const all = await bundle(entry, { kiruaOnly: false });
+  return { 'kirua only': kb(own.gzip), 'with dependencies': kb(all.gzip) };
+}
+
+const together = {};
+for (const names of COMBINATIONS) {
+  const exports = names.flatMap((name) => {
+    const family = families.find((candidate) => candidate.name === name);
+    if (!family) broken.push(`COMBINATIONS names ${name}, which is not a family`);
+    return family?.exports ?? [];
+  });
+  together[names.join(' + ')] = await both(reexport(exports, INDEX));
+}
+together['every export'] = await both(`export * from ${JSON.stringify(INDEX)};`);
 
 rows.sort((a, b) => b.all - a.all);
 console.table(
@@ -159,9 +197,9 @@ console.table(
   ),
 );
 console.log(
-  `\nEvery family above includes cn() — clsx and tailwind-merge — once: ${kb(floor.gzip)} gzip.` +
-    `\nAll ${families.length} families together, with dependencies: ${kb(everything.gzip)} gzip.`,
+  `\nEvery family above includes cn() — clsx and tailwind-merge — once: ${kb(floor.gzip)} gzip.\n`,
 );
+console.table(together);
 
 // The stylesheet, compiled the way a consumer's two `@import`s compile it.
 const CSS_ROOT = path.join(REPO, 'node_modules/.tmp/kirua-size');
@@ -186,7 +224,7 @@ const sheet = css.output.find(
   (item) => item.type === 'asset' && item.fileName.endsWith('.css'),
 );
 if (!sheet) {
-  failures.push('styles.css: compiling it emitted no stylesheet — the check found nothing');
+  broken.push('styles.css: compiling it emitted no stylesheet — the check found nothing');
 } else {
   console.log(
     `styles.css, whatever is imported: ${kb(gzipSync(sheet.source).byteLength)} gzip ` +
@@ -194,6 +232,10 @@ if (!sheet) {
   );
 }
 
+if (broken.length > 0) {
+  console.error('\ncomponent-size: the measurement cannot be trusted.\n');
+  for (const problem of broken) console.error(`  - ${problem}`);
+}
 if (failures.length > 0) {
   console.error('\ncomponent-size: tree-shaking through the barrel is broken.\n');
   for (const failure of failures) console.error(`  - ${failure}`);
@@ -201,6 +243,6 @@ if (failures.length > 0) {
     '\nA module the barrel reaches is no longer dropped when unused. Look for a\n' +
       'top-level side effect, or a `sideEffects` change in packages/kirua/package.json.\n',
   );
-  process.exit(1);
 }
+if (broken.length > 0 || failures.length > 0) process.exit(1);
 console.log('component-size: every family tree-shakes through the barrel.');
