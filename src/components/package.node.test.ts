@@ -16,6 +16,8 @@ import * as barrel from './index';
  */
 
 const REPO = path.join(import.meta.dirname, '../..');
+/** Mirrors `NOT_SOURCES` in `tools/build-lib.mjs`. */
+const NOT_SOURCES = ['lib/cn.js'];
 const ROOT = path.join(REPO, 'node_modules/.tmp/kirua-package');
 const DIST = path.join(ROOT, 'dist');
 
@@ -189,6 +191,10 @@ describe('the published package', () => {
    * Tailwind never follows an import, so a module's sources must name every
    * file it reaches. Checked as a closed set rather than against the build's
    * own walk: a listed file's relative imports must all be listed too.
+   *
+   * `lib/cn.js` is the one file left out on purpose, by `NOT_SOURCES` in
+   * `tools/build-lib.mjs`: it adds no class to any element, and its scale
+   * names generated utilities nothing renders.
    */
   it('lists, per component module, every file that module reaches', () => {
     const sources = path.join(DIST, 'sources');
@@ -213,11 +219,19 @@ describe('the published package', () => {
       for (const file of listed) {
         for (const specifier of specifiers(read(file)).filter((s) => s.startsWith('.'))) {
           const target = path.resolve(path.dirname(file), specifier);
-          if (!listed.has(target)) gaps.push(`${name}: ${path.relative(DIST, target)}`);
+          if (!listed.has(target) && !NOT_SOURCES.includes(path.relative(DIST, target)))
+            gaps.push(`${name}: ${path.relative(DIST, target)}`);
         }
       }
     }
     expect(gaps).toEqual([]);
+  });
+
+  it('leaves the files that are not class sources out of styles.css as well', () => {
+    const entry = manifest.exports['./styles.css'];
+    if (typeof entry !== 'string') throw new Error('exports["./styles.css"] must be a path');
+    const sheet = read(path.join(ROOT, entry));
+    for (const file of NOT_SOURCES) expect(sheet).toContain(`@source not './${file}';`);
   });
 
   it('keeps theme.css free of component sources', () => {

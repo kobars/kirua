@@ -41,6 +41,15 @@ import react from '@vitejs/plugin-react';
 import { build } from 'vite';
 
 const REPO = path.join(import.meta.dirname, '..');
+
+/**
+ * Emitted files that are never a Tailwind source. `lib/cn.js` holds
+ * tailwind-merge's scale names and adds no class to any element, but its
+ * strings generated utilities nothing renders (`shadow-brand`, and
+ * 0.4 to 0.75 kB on a single module's stylesheet). Mirrored in
+ * `package.node.test.ts`.
+ */
+const NOT_SOURCES = ['lib/cn.js'];
 const SRC = path.join(REPO, 'src');
 const PACKAGE = path.join(REPO, 'packages/kirua');
 
@@ -82,6 +91,11 @@ await build({
         preserveModules: true,
         preserveModulesRoot: SRC,
         entryFileNames: '[name].js',
+        // Tailwind scans the emitted JS as text, so a class named in a JSDoc
+        // example generated CSS nothing renders. The JSDoc stays in the
+        // declarations, where editors read it; `@__PURE__` must stay for
+        // the consumer's tree-shaking.
+        comments: { legal: true, annotation: true, jsdoc: false },
       },
     },
   },
@@ -134,6 +148,7 @@ writeFileSync(
 
 @source './components/*.js';
 @source './lib/*.js';
+${NOT_SOURCES.map((file) => `@source not './${file}';`).join('\n')}
 `,
 );
 
@@ -168,6 +183,7 @@ const barrel = readFileSync(path.join(OUT, 'components/index.js'), 'utf8');
 for (const [, name] of barrel.matchAll(/^import \{ [^}]+ \} from "\.\/([^"]+)\.js";$/gm)) {
   if (name.endsWith('.variants')) continue;
   const reached = [...closure(path.join(OUT, 'components', `${name}.js`))]
+    .filter((file) => !NOT_SOURCES.includes(path.relative(OUT, file)))
     .map((file) => path.relative(path.join(OUT, 'sources'), file))
     .sort();
   writeFileSync(
