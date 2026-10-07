@@ -7,9 +7,14 @@ import { Button, ChevronStartIcon, Visible } from '@kobars/kirua';
  */
 export function AllExamplesLink() {
   return (
-    <Button asChild variant="ghost" size="sm" aria-label="All examples">
+    <Button
+      asChild
+      variant="ghost"
+      size="sm"
+      aria-label="All examples"
+      leadingIcon={<ChevronStartIcon />}
+    >
       <a href="#/">
-        <ChevronStartIcon />
         <Visible from="md">All examples</Visible>
       </a>
     </Button>
