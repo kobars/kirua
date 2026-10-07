@@ -45,9 +45,8 @@ const REPO = path.join(import.meta.dirname, '..');
 /**
  * Emitted files that are never a Tailwind source. `lib/cn.js` holds
  * tailwind-merge's scale names and adds no class to any element, but its
- * strings generated utilities nothing renders (`shadow-brand`, and
- * 0.4 to 0.75 kB on a single module's stylesheet). Mirrored in
- * `package.node.test.ts`.
+ * strings still generate three utilities nothing renders, 0.09 to 0.55 kB
+ * on a single module's stylesheet. Mirrored in `package.node.test.ts`.
  */
 const NOT_SOURCES = ['lib/cn.js'];
 const SRC = path.join(REPO, 'src');

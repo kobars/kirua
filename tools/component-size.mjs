@@ -14,7 +14,7 @@
  * **The output is minified a second time, fully.** Library mode with ES output
  * turns whitespace removal off, so that a library keeps the `@__PURE__`
  * annotations its consumer's bundler needs; `Button` came out as 2,117 lines
- * with `//#region` comments, and every figure read 13 to 15% above what an
+ * with `//#region` comments, and every figure read 13 to 25% above what an
  * app ships. `output.minify` minifies the final chunk, which nothing bundles
  * again. Two figures:
  *
