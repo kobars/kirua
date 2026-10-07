@@ -179,7 +179,7 @@ About 10.35 kB of each "with its dependencies" figure is `clsx` and
 `tailwind-merge`, which every component uses to merge your `className`. Your
 app pays it once, so `Button`, `Card` and `Dialog` together cost 29.79 kB, not the 53.19 kB their
 rows add up to. Radix packages are shared the same way: `Dialog`, `Sheet` and
-`AlertDialog` together cost 27.70 kB, 0.70 kB more than `Dialog` alone.
+`AlertDialog` together cost 28.18 kB, 1.18 kB more than `Dialog` alone.
 
 The stylesheet is a separate cost, the same whatever you import: 18.84 kB
 gzip, Tailwind's base layer included. It holds the utilities of every
