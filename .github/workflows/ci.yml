@@ -37,7 +37,7 @@ jobs:
 
       - run: pnpm exec playwright install chromium webkit
 
-      # The same five commands as `pnpm check:all`, one step each so a failure
+      # The same six commands as `pnpm check:all`, one step each so a failure
       # names its gate.
       # About 28 minutes on a passing run. A browser that stops answering
       # leaves Vitest waiting with no test timer left to fire, so the step
@@ -51,6 +51,9 @@ jobs:
 
       - name: Package tree-shaking and per-component size
         run: pnpm size:components
+
+      - name: Package installed as a consumer installs it
+        run: pnpm check:install
 
       - name: Example app checks
         run: pnpm check:examples

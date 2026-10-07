@@ -240,12 +240,34 @@ describe('the published package', () => {
     );
   });
 
-  it('pins the direction package to the one copy every Radix primitive reads', () => {
-    // DirectionProvider writes a React context that each primitive reads from
-    // its own copy of this package. Two copies are two contexts, and the
-    // provider silently stops reaching the components, so the version has to
-    // be exactly the one the primitives pin.
-    const ours = manifest.dependencies['@radix-ui/react-direction'];
+  /**
+   * DirectionProvider writes a React context that each primitive reads from
+   * its own copy of this package, so two copies are two contexts and the
+   * provider silently stops reaching the components.
+   *
+   * Each primitive pins an exact version, and a consumer's install resolves
+   * newer primitives than this lockfile holds. An exact pin here therefore
+   * matched the repository and split every consumer: 0.4.0 asked for 1.1.4
+   * while the primitives npm installed asked for 1.1.5, and a fresh install
+   * held 12 copies. A caret range lets the consumer's install pick the
+   * primitives' version. This test only checks that the range accepts the
+   * pins installed here; `tools/consumer-install.mjs` installs the packed
+   * tarball and counts the copies a consumer actually gets.
+   */
+  it('asks for a direction range that accepts the version every Radix primitive pins', () => {
+    const ours = manifest.dependencies['@radix-ui/react-direction'] ?? '';
+    const caret = /^\^(\d+)\.(\d+)\.(\d+)$/.exec(ours);
+    expect(caret, `expected a caret range, got ${ours}`).not.toBeNull();
+    const [major, minor, patch] = (caret ?? []).slice(1).map(Number) as [
+      number,
+      number,
+      number,
+    ];
+    expect(major).toBeGreaterThanOrEqual(1);
+    const accepts = (version: string) => {
+      const [m, n, p] = version.split('.').map(Number) as [number, number, number];
+      return m === major && (n > minor || (n === minor && p >= patch));
+    };
     const theirs = Object.keys(manifest.dependencies)
       .filter((name) => name.startsWith('@radix-ui/react-'))
       .flatMap((name) => {
@@ -258,7 +280,11 @@ describe('the published package', () => {
 
     expect(theirs.length).toBeGreaterThan(0);
     for (const { name, version } of theirs)
-      expect({ name, version }).toEqual({ name, version: ours });
+      expect({ name, version, accepted: accepts(version) }).toEqual({
+        name,
+        version,
+        accepted: true,
+      });
   });
 
   it('pins each dependency to the version the repository builds against', () => {
