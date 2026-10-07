@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.4.1
+
+### Fixed
+
+- `DirectionProvider` reaches every Radix primitive again. 0.4.0 asked for
+  exactly `@radix-ui/react-direction` 1.1.4 while the primitives a fresh
+  install resolves ask for 1.1.5, so an install held 12 copies, and
+  Accordion, menus, Select, Tabs, Slider, RadioGroup, ToggleGroup,
+  ScrollArea and NavigationMenu did not follow its `dir`. The dependency is
+  now `^1.1.4`, and a fresh install holds one copy.
+- The package names its ES entry as `module` as well, so tools that do not
+  read `exports`, such as Bundlephobia's exports analysis, find it.
+
+### Changed
+
+- The emitted JavaScript carries no JSDoc (the type declarations keep it),
+  and `lib/cn.js` is no longer a Tailwind source. Tailwind had generated
+  classes from those comments and names that nothing renders: `styles.css`
+  goes from 18.84 to 18.41 kB gzipped, and `Button`'s styles from 8.23 to
+  7.78 kB.
+- The README's size figures are measured fully minified, as an app ships
+  them: `Button` is 11.89 kB, not the 13.74 kB 0.4.0 stated.
+
 ## 0.4.0
 
 ### Changed
