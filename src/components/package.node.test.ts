@@ -16,11 +16,15 @@ import * as barrel from './index';
  */
 
 const REPO = path.join(import.meta.dirname, '../..');
+/** Mirrors `NOT_SOURCES` in `tools/build-lib.mjs`. */
+const NOT_SOURCES = ['lib/cn.js'];
 const ROOT = path.join(REPO, 'node_modules/.tmp/kirua-package');
 const DIST = path.join(ROOT, 'dist');
 
 type Manifest = {
   name: string;
+  module?: string;
+  main?: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   peerDependencies: Record<string, string>;
@@ -94,6 +98,19 @@ describe('the published package', () => {
       unknown
     >;
     expect(Object.keys(built).sort()).toEqual(Object.keys(barrel).sort());
+  });
+
+  /**
+   * Bundlers read `exports`; `module` is for tools that never learned to.
+   * Bundlephobia's per-export analysis looks for `module || main ||
+   * './index.js'` and failed on 0.4.0, which had only `exports`. No `main`:
+   * pointing it at ESM would mislead a require-based resolver.
+   */
+  it('names the ES entry as `module`, the same file as exports["."].import', () => {
+    const entry = manifest.exports['.'];
+    if (typeof entry !== 'object') throw new Error('exports["."] must name types and import');
+    expect(manifest.module).toBe(entry.import);
+    expect(manifest.main).toBeUndefined();
   });
 
   it('ships declarations beside the entry', () => {
@@ -174,6 +191,10 @@ describe('the published package', () => {
    * Tailwind never follows an import, so a module's sources must name every
    * file it reaches. Checked as a closed set rather than against the build's
    * own walk: a listed file's relative imports must all be listed too.
+   *
+   * `lib/cn.js` is the one file left out on purpose, by `NOT_SOURCES` in
+   * `tools/build-lib.mjs`: it adds no class to any element, and its scale
+   * names generated utilities nothing renders.
    */
   it('lists, per component module, every file that module reaches', () => {
     const sources = path.join(DIST, 'sources');
@@ -198,11 +219,19 @@ describe('the published package', () => {
       for (const file of listed) {
         for (const specifier of specifiers(read(file)).filter((s) => s.startsWith('.'))) {
           const target = path.resolve(path.dirname(file), specifier);
-          if (!listed.has(target)) gaps.push(`${name}: ${path.relative(DIST, target)}`);
+          if (!listed.has(target) && !NOT_SOURCES.includes(path.relative(DIST, target)))
+            gaps.push(`${name}: ${path.relative(DIST, target)}`);
         }
       }
     }
     expect(gaps).toEqual([]);
+  });
+
+  it('leaves the files that are not class sources out of styles.css as well', () => {
+    const entry = manifest.exports['./styles.css'];
+    if (typeof entry !== 'string') throw new Error('exports["./styles.css"] must be a path');
+    const sheet = read(path.join(ROOT, entry));
+    for (const file of NOT_SOURCES) expect(sheet).toContain(`@source not './${file}';`);
   });
 
   it('keeps theme.css free of component sources', () => {
@@ -240,25 +269,45 @@ describe('the published package', () => {
     );
   });
 
-  it('pins the direction package to the one copy every Radix primitive reads', () => {
-    // DirectionProvider writes a React context that each primitive reads from
-    // its own copy of this package. Two copies are two contexts, and the
-    // provider silently stops reaching the components, so the version has to
-    // be exactly the one the primitives pin.
-    const ours = manifest.dependencies['@radix-ui/react-direction'];
+  /**
+   * DirectionProvider writes a React context that each primitive reads from
+   * its own copy of this package, so two copies are two contexts and the
+   * provider silently stops reaching the components.
+   *
+   * Each primitive pins an exact version, and a consumer's install resolves
+   * newer primitives than this lockfile holds. An exact pin here therefore
+   * matched the repository and split every consumer: 0.4.0 asked for 1.1.4
+   * while the primitives npm installed asked for 1.1.5, and a fresh install
+   * held 12 copies. So the range is a caret, and its floor is the version the
+   * primitives pin: npm keeps an installed copy that still satisfies the
+   * range, so a floor below their pin left an upgrade from 0.4.0 on 1.1.4.
+   * The primitives' own floors must pin that version too, or a consumer
+   * whose lockfile holds a floor release gets the old copy beside the new.
+   * `tools/consumer-install.mjs` installs the packed tarball, fresh and over
+   * the previous release, and counts the copies a consumer actually gets.
+   */
+  it('asks for direction at the version every Radix primitive floor pins', () => {
+    const ours = manifest.dependencies['@radix-ui/react-direction'] ?? '';
+    const floor = /^\^(\d+\.\d+\.\d+)$/.exec(ours)?.[1];
+    expect(floor, `expected a caret range, got ${ours}`).toBeDefined();
     const theirs = Object.keys(manifest.dependencies)
       .filter((name) => name.startsWith('@radix-ui/react-'))
       .flatMap((name) => {
         const pkg = JSON.parse(
           readFileSync(path.join(REPO, 'node_modules', name, 'package.json'), 'utf8'),
-        ) as { dependencies?: Record<string, string> };
-        const version = pkg.dependencies?.['@radix-ui/react-direction'];
-        return version ? [{ name, version }] : [];
+        ) as { version: string; dependencies?: Record<string, string> };
+        const direction = pkg.dependencies?.['@radix-ui/react-direction'];
+        return direction ? [{ name, floor: manifest.dependencies[name], pkg, direction }] : [];
       });
 
     expect(theirs.length).toBeGreaterThan(0);
-    for (const { name, version } of theirs)
-      expect({ name, version }).toEqual({ name, version: ours });
+    for (const { name, floor: range, pkg, direction } of theirs)
+      expect({ name, range, direction }).toEqual({
+        name,
+        // The installed release is the floor, so its pin is the floor's pin.
+        range: `^${pkg.version}`,
+        direction: floor,
+      });
   });
 
   it('pins each dependency to the version the repository builds against', () => {

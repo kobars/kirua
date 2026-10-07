@@ -182,31 +182,42 @@ const nextConfig = {
 
 ## Size
 
-Measured on the code of this release: each family of exports bundled alone
-from the package entry, tree-shaken, minified and gzipped, with React and
-ReactDOM left out because your app already ships them.
+Measured on 7 October 2026 on a fresh npm install of this release: each
+family of exports bundled alone from the package entry, tree-shaken, minified
+and gzipped, the way an app's production build ships it, with React and
+ReactDOM left out because your app already ships them. A fresh install takes
+the newest release each dependency range allows, so a later Radix or
+`tailwind-merge` release moves the "with its dependencies" column; the other
+two columns are this package alone.
 
 | Import                                        | kirua only | With its dependencies | Its styles |
 | --------------------------------------------- | ---------- | --------------------- | ---------- |
-| `Button`                                      | 2.21 kB    | 13.74 kB              | 8.23 kB    |
-| `Card` and its five parts                     | 2.42 kB    | 12.48 kB              | 7.81 kB    |
-| `Dialog` and its six parts, with Radix Dialog | 2.35 kB    | 27.00 kB              | 8.30 kB    |
-| `Select`, the largest                         | 2.28 kB    | 45.71 kB              | 8.22 kB    |
-| `Button`, `Card` and `Dialog` together        | 4.66 kB    | 29.81 kB              | 10.23 kB   |
-| Every export                                  | 34.64 kB   | 129.34 kB             | 18.84 kB   |
+| `Button`                                      | 1.94 kB    | 12.05 kB              | 7.78 kB    |
+| `Card` and its five parts                     | 2.04 kB    | 10.93 kB              | 7.03 kB    |
+| `Dialog` and its six parts, with Radix Dialog | 2.06 kB    | 23.76 kB              | 7.96 kB    |
+| `Select`, the largest with its dependencies   | 2.02 kB    | 39.76 kB              | 7.64 kB    |
+| `Button`, `Card` and `Dialog` together        | 4.07 kB    | 26.15 kB              | 9.78 kB    |
+| Every export                                  | 29.88 kB   | 113.78 kB             | 18.41 kB   |
 
-About 10.35 kB of each "with its dependencies" figure is `clsx` and
+About 9.21 kB of each "with its dependencies" figure is `clsx` and
 `tailwind-merge`, which every component uses to merge your `className`. Your
-app pays it once, so `Button`, `Card` and `Dialog` together cost 29.81 kB, not
-the 53.22 kB their rows add up to. Radix packages are shared the same way:
-`Dialog`, `Sheet` and `AlertDialog` together cost 28.18 kB, 1.18 kB more than
-`Dialog` alone.
+app pays it once, so `Button`, `Card` and `Dialog` together cost 26.15 kB, not
+the 46.74 kB their rows add up to. Radix packages are shared the same way:
+`Dialog`, `Sheet` and `AlertDialog` together cost 24.71 kB, 0.95 kB more than
+`Dialog` alone. If your app already uses `tailwind-merge` 3.6 or later, most
+of that share is already paid, provided one copy is installed: check with
+`npm ls tailwind-merge`.
 
 "Its styles" is `theme.css` plus that row's module files, Tailwind's base
-layer included. With `styles.css` the stylesheet is 18.84 kB whatever you
+layer included. With `styles.css` the stylesheet is 18.41 kB whatever you
 import.
 
-Other bundlers differ a little; esbuild gives figures about a tenth smaller.
+Bundlephobia's headline figure is the "Every export" row: it bundles the
+whole package with every dependency and leaves out only peer dependencies. A
+library that lists its behaviour layer as peer dependencies shows a smaller
+figure there without shipping less. Its exports analysis gives each export's
+cost instead. Other bundlers differ: esbuild measured these rows 1 to 11%
+larger, the most on "Every export".
 
 ## License
 

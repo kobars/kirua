@@ -151,12 +151,18 @@ It builds the npm package in `packages/kirua` and lists what `npm pack` would
 publish. The `node` test project builds the package too, and fails when its
 dependencies stop matching what the components import.
 
-Run `pnpm size:components` for the same changes, and before a release. It
-prints what each component costs a consumer and fails if importing one
-component through the package entry starts pulling in others. Every figure in
-the **Size** section of `packages/kirua/README.md` is in its output, or is a
-sum or difference of figures in it: when a change moves one, update the
-section.
+Run `pnpm size:components` and `pnpm check:install` for the same changes, and
+before a release.
+
+- `size:components` prints what each component costs a consumer and fails if
+  importing one component through the package entry starts pulling in others.
+  Every figure in the **Size** section of `packages/kirua/README.md` is in its
+  output, or is a sum or difference of figures in it: when a change moves one,
+  update the section.
+- `check:install` installs the packed package with npm the way a consumer does,
+  into an empty project and over the previous release, and fails if one of
+  kirua's dependencies is installed twice, which this repository's own
+  lockfile hides.
 
 Visual baselines in `src/components/__screenshots__` are committed. To approve an
 intended visual change, delete the affected PNG, re-run
