@@ -160,6 +160,33 @@ const nextConfig = {
 };
 ```
 
+## Size
+
+Measured on version 0.3.0: each family of exports bundled alone from the
+package entry, tree-shaken, minified and gzipped, with React and ReactDOM left
+out because your app already ships them.
+
+| Import                                        | kirua only | With its dependencies |
+| --------------------------------------------- | ---------- | --------------------- |
+| `Button`                                      | 2.19 kB    | 13.71 kB              |
+| `Card` and its five parts                     | 2.42 kB    | 12.48 kB              |
+| `Dialog` and its six parts, with Radix Dialog | 2.35 kB    | 27.00 kB              |
+| `Select`, the largest                         | 2.28 kB    | 45.71 kB              |
+| `Button`, `Card` and `Dialog` together        | 4.63 kB    | 29.79 kB              |
+| Every export                                  | 34.62 kB   | 129.32 kB             |
+
+About 10.35 kB of each "with its dependencies" figure is `clsx` and
+`tailwind-merge`, which every component uses to merge your `className`. Your
+app pays it once, so `Button`, `Card` and `Dialog` together cost 29.79 kB, not the 53.19 kB their
+rows add up to. Radix packages are shared the same way: `Dialog`, `Sheet` and
+`AlertDialog` together cost 27.70 kB, 0.70 kB more than `Dialog` alone.
+
+The stylesheet is a separate cost, the same whatever you import: 18.84 kB
+gzip, Tailwind's base layer included. It holds the utilities of every
+component, because `styles.css` names the whole package as a Tailwind source.
+
+Other bundlers differ a little; esbuild gives figures about a tenth smaller.
+
 ## License
 
 MIT for the code in this package. The values marked `[FIGMA]` in its
