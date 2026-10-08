@@ -113,6 +113,24 @@ The files load from your own origin, and a page downloads only the scripts it
 shows: one file per family for Latin text. Without `fonts.css`, system fonts
 are the fallback.
 
+Google Fonts also serves both families. Link them in the document head instead
+of importing `fonts.css`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
+/>
+```
+
+`fonts.css` needs no other server, and no stylesheet from another origin holds
+back the first paint. On an app that renders in the browser the two load at
+the same speed on a slow network, but Lighthouse's simulated mobile score
+favours the links: the package's files start earlier and share the connection
+with the app's JavaScript.
+
 In Next.js, `next/font/google` works in place of `fonts.css`. Call
 `Nunito({ subsets: ['latin'] })` and
 `Luckiest_Guy({ weight: '400', subsets: ['latin'] })` in the root layout and
