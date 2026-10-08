@@ -9,7 +9,7 @@ import { useCallback, useSyncExternalStore } from 'react';
  * `orders` route — so the sections share one document without sharing a
  * route table.
  */
-const readPath = () => window.location.hash.replace(/^#\/?/, '');
+export const readPath = () => window.location.hash.replace(/^#\/?/, '');
 
 function subscribe(onChange: () => void) {
   window.addEventListener('hashchange', onChange);

@@ -13,6 +13,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { highlight } from './highlight.plugin.ts';
 import { sectionNights } from './sectionNights.plugin.ts';
+import { sectionPreload } from './sectionPreload.plugin.ts';
 
 const ROOT = import.meta.dirname;
 const REPO = path.resolve(ROOT, '..');
@@ -28,7 +29,7 @@ export default defineConfig({
   // The repository's own `public/`: the favicon, and the character artwork the
   // marketing hero reuses, served from where it already is rather than copied.
   publicDir: path.join(REPO, 'public'),
-  plugins: [react(), tailwindcss(), highlight(), sectionNights()],
+  plugins: [react(), tailwindcss(), highlight(), sectionNights(), sectionPreload()],
   build: {
     target: BUILD_TARGET,
     outDir: 'dist',

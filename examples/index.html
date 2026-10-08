@@ -10,6 +10,25 @@
     />
     <title>Kirua examples</title>
 
+    <!-- The chunks of the section the address names, fetched alongside the
+         entry instead of after it has run. It sits above every stylesheet,
+         because an inline script after a pending stylesheet waits for it. The
+         build fills in the files; as written it names none. -->
+    <script>
+      (() => {
+        const sectionChunks = {};
+        const section = (location.hash || '').replace(/^#\/?/, '').split('/')[0];
+        const files = Object.hasOwn(sectionChunks, section) ? sectionChunks[section] : [];
+        for (const file of files) {
+          const link = document.createElement('link');
+          link.rel = 'modulepreload';
+          link.crossOrigin = '';
+          link.href = new URL(file, document.baseURI).href;
+          document.head.append(link);
+        }
+      })();
+    </script>
+
     <!-- Same two-origin preconnect as the design system's own page: the font
          files are on gstatic and need `crossorigin`; googleapis serves only the
          small CSS. The host document loads them, never the stylesheet. -->

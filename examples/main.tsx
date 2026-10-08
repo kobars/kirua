@@ -2,6 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { DirectionProvider, TooltipProvider } from '@kobars/kirua';
 import { App } from './App';
+import { loadInitialSection } from './sectionPages';
+import { readPath } from './shared/useHashRoute';
 import './styles.css';
 
 const RELOADED = 'kirua-preload-reload';
@@ -22,14 +24,18 @@ window.addEventListener('vite:preloadError', (event) => {
   window.location.reload();
 });
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    {/* Radix never reads the document's `dir`, so its keyboard behaviour is
-        told the same direction the layout already follows. */}
-    <DirectionProvider dir={document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'}>
-      <TooltipProvider delayDuration={200}>
-        <App />
-      </TooltipProvider>
-    </DirectionProvider>
-  </StrictMode>,
+// Not a top-level await: each section chunk imports this entry chunk, so the
+// entry waiting on a section would wait on itself.
+void loadInitialSection(readPath()).then(() =>
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      {/* Radix never reads the document's `dir`, so its keyboard behaviour is
+          told the same direction the layout already follows. */}
+      <DirectionProvider dir={document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'}>
+        <TooltipProvider delayDuration={200}>
+          <App />
+        </TooltipProvider>
+      </DirectionProvider>
+    </StrictMode>,
+  ),
 );
