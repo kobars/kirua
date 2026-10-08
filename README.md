@@ -302,37 +302,38 @@ docs/screenshots/  the images in this README
 
 ## Scripts
 
-| Command                 | What it does                                                                                                         |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `pnpm storybook`        | Storybook on http://localhost:6006                                                                                   |
-| `pnpm example`          | The example app in development, using the published package                                                          |
-| `pnpm example:source`   | The example app in development, using the components in `src`                                                        |
-| `pnpm dev`              | The rebuilt hero page on http://localhost:5173                                                                       |
-| `pnpm board`            | The project-tracker demo, rendered from `src/board/sample`                                                           |
-| `pnpm build`            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
-| `pnpm build:examples`   | Build the example app into `examples/dist`, using the published package                                              |
-| `pnpm build:lib`        | Build the npm package into `packages/kirua/dist`                                                                     |
-| `pnpm size:components`  | What one component costs a consumer, tree-shaken and gzipped; fails if tree-shaking through the entry breaks         |
-| `pnpm check:install`    | Install the packed package with npm, fresh and over the last release; fails if a kirua dependency is installed twice |
-| `pnpm pack:check`       | Build the package and list what `npm pack` would publish, without publishing                                         |
-| `pnpm build-storybook`  | Build static Storybook into `storybook-static`                                                                       |
-| `pnpm check`            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit                                   |
-| `pnpm test`             | Every Vitest project except WebKit, once                                                                             |
-| `pnpm test:coverage`    | The tests with coverage thresholds for `src/lib`                                                                     |
-| `pnpm test:webkit`      | The unit tests again in WebKit                                                                                       |
-| `pnpm lint`             | oxlint, including Tailwind class rules; warnings fail                                                                |
-| `pnpm lint:fix`         | Apply the auto-fixable lint findings                                                                                 |
-| `pnpm format`           | Prettier, including Tailwind class order                                                                             |
-| `pnpm check:examples`   | Build the example app from `src` and run the dogfood, usage, `className`, responsive, a11y, perf and journeys checks |
-| `pnpm check:dogfood`    | No example writes raw markup a component already covers                                                              |
-| `pnpm check:usage`      | Every exported component is placed by the example app, or exempted with a reason                                     |
-| `pnpm check:classname`  | No `className` or `style` in the example app, and no stylesheet rules of its own                                     |
-| `pnpm check:responsive` | Every route at five widths: no sideways scroll, WCAG target size                                                     |
-| `pnpm check:a11y`       | axe on every route, light and dark, phone and desktop                                                                |
-| `pnpm check:perf`       | JavaScript and CSS budgets per section, plus DOM size, paint and CSS coverage                                        |
-| `pnpm check:journeys`   | Complete user flows through each section of the built app                                                            |
-| `pnpm check:lighthouse` | Local Lighthouse measurements, reported rather than gated                                                            |
-| `pnpm check:storybook`  | Build Storybook and check its toolbar, navigation and portals in a real browser                                      |
+| Command                                 | What it does                                                                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `pnpm storybook`                        | Storybook on http://localhost:6006                                                                                   |
+| `pnpm example`                          | The example app in development, using the published package                                                          |
+| `pnpm example:source`                   | The example app in development, using the components in `src`                                                        |
+| `pnpm dev`                              | The rebuilt hero page on http://localhost:5173                                                                       |
+| `pnpm board`                            | The project-tracker demo, rendered from `src/board/sample`                                                           |
+| `pnpm build`                            | Type-check, build the hero page, check for dead classes and enforce the size budget                                  |
+| `pnpm build:examples`                   | Build the example app into `examples/dist`, using the published package                                              |
+| `pnpm build:lib`                        | Build the npm package into `packages/kirua/dist`                                                                     |
+| `pnpm size:components`                  | What one component costs a consumer, tree-shaken and gzipped; fails if tree-shaking through the entry breaks         |
+| `pnpm check:install`                    | Install the packed package with npm, fresh and over the last release; fails if a kirua dependency is installed twice |
+| `pnpm pack:check`                       | Build the package and list what `npm pack` would publish, without publishing                                         |
+| `pnpm build-storybook`                  | Build static Storybook into `storybook-static`                                                                       |
+| `pnpm check`                            | The whole gate: types, dead classes, lint, formatting, tests with coverage, WebKit                                   |
+| `pnpm test`                             | Every Vitest project except WebKit, once                                                                             |
+| `pnpm test:coverage`                    | The tests with coverage thresholds for `src/lib`                                                                     |
+| `pnpm test:webkit`                      | The unit tests again in WebKit                                                                                       |
+| `pnpm lint`                             | oxlint, including Tailwind class rules; warnings fail                                                                |
+| `pnpm lint:fix`                         | Apply the auto-fixable lint findings                                                                                 |
+| `pnpm format`                           | Prettier, including Tailwind class order                                                                             |
+| `pnpm check:examples`                   | Build the example app from `src` and run the dogfood, usage, `className`, responsive, a11y, perf and journeys checks |
+| `pnpm check:dogfood`                    | No example writes raw markup a component already covers                                                              |
+| `pnpm check:usage`                      | Every exported component is placed by the example app, or exempted with a reason                                     |
+| `pnpm check:classname`                  | No `className` or `style` in the example app, and no stylesheet rules of its own                                     |
+| `pnpm check:responsive`                 | Every route at five widths: no sideways scroll, WCAG target size                                                     |
+| `pnpm check:a11y`                       | axe on every route, light and dark, phone and desktop                                                                |
+| `pnpm check:perf`                       | JavaScript and CSS budgets per section, plus DOM size, paint and CSS coverage                                        |
+| `pnpm check:journeys`                   | Complete user flows through each section of the built app                                                            |
+| `pnpm check:lighthouse`                 | Local Lighthouse measurements, reported rather than gated                                                            |
+| `pnpm lighthouse:compare <base> <head>` | Two builds of the example app measured in turn; CI runs it on every pull request against its base                    |
+| `pnpm check:storybook`                  | Build Storybook and check its toolbar, navigation and portals in a real browser                                      |
 
 ## Testing
 

@@ -60,3 +60,53 @@ jobs:
 
       - name: Storybook build and browser checks
         run: pnpm check:storybook
+
+  lighthouse:
+    name: Lighthouse, against the base branch
+    # A comparison needs a base, so it runs on pull requests only. It runs on
+    # Linux beside the gates and fails only if Lighthouse itself cannot run:
+    # slower routes are reported as warnings and in the job summary.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check out the base branch beside it
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: lighthouse-base
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: lighthouse-base
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # From source, as the other example checks measure: the base build is
+      # the base branch's components, not the last release.
+      - name: Build the example app, head and base
+        run: |
+          KIRUA_SOURCE=1 pnpm build:examples
+          cd lighthouse-base && KIRUA_SOURCE=1 pnpm build:examples
+
+      - name: Compare
+        run: pnpm lighthouse:compare lighthouse-base/examples/dist examples/dist
+        env:
+          KIRUA_REVIEW_OUTPUT: lighthouse-reports
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: lighthouse-reports/lighthouse-compare/
+          retention-days: 14
