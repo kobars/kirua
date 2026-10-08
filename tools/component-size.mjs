@@ -32,10 +32,15 @@
  * the two bundles of `Button` are byte-identical but in a different order, and
  * gzip alone put 123 bytes between them.
  *
- * The stylesheet is measured once, because it does not depend on what is
- * imported: `styles.css` names every emitted component as a Tailwind source.
+ * It also fails when an emitted module does work on import. The package
+ * declares `"sideEffects": false` and a consumer's bundler trusts it, so code
+ * a module runs on import would be dropped from their build. Each module is
+ * bundled alone, imported for its side effects only, with every kirua module
+ * marked as having them: otherwise the field in the `package.json` beside
+ * `dist` applies and the check tests nothing. Whatever is left in the output
+ * is code a bundler cannot prove pure.
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
@@ -134,10 +139,60 @@ const reexport = (names, from) =>
   `export { ${names.join(', ')} } from ${JSON.stringify(from)};`;
 const kb = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;
 
+/** The code left when `file` is imported for its side effects alone. */
+async function leftover(file) {
+  const [result] = await build({
+    configFile: false,
+    root: REPO,
+    logLevel: 'silent',
+    publicDir: false,
+    plugins: [
+      {
+        name: 'side-effect-entry',
+        enforce: 'pre',
+        resolveId(id, importer) {
+          if (id.endsWith(ENTRY)) return `\0${ENTRY}`;
+          const resolved = path.isAbsolute(id)
+            ? id
+            : importer && !isBare(id)
+              ? path.resolve(path.dirname(importer), id)
+              : null;
+          return resolved?.startsWith(DIST) ? { id: resolved, moduleSideEffects: true } : null;
+        },
+        load: (id) => (id === `\0${ENTRY}` ? `import ${JSON.stringify(file)};` : null),
+      },
+    ],
+    build: {
+      write: false,
+      minify: true,
+      target: 'es2022',
+      lib: { entry: ENTRY, formats: ['es'], fileName: 'entry' },
+      rolldownOptions: {
+        external: (id) => isBare(id) && !id.endsWith(ENTRY),
+        treeshake: { moduleSideEffects: (id, external) => !external },
+        output: { minify: true },
+      },
+    },
+  });
+  return result.output
+    .filter((item) => item.type === 'chunk')
+    .map((item) => item.code)
+    .join('')
+    .replace(/^"use client";?/, '')
+    .trim();
+}
+
 if (families.length === 0) {
   // An empty match reports every family as fine, which is the worst way for this to break.
   console.error(`component-size: found no component module in ${INDEX}.`);
   process.exit(1);
+}
+
+/** Modules that do work on import, which `"sideEffects": false` would let a bundler drop. */
+const effects = [];
+for (const file of globSync('**/*.js', { cwd: DIST }).sort()) {
+  const code = await leftover(path.join(DIST, file));
+  if (code) effects.push(`${file}: ${code.slice(0, 120)}`);
 }
 
 /** What makes the measurement itself untrustworthy, as opposed to a tree-shaking failure. */
@@ -288,5 +343,16 @@ if (failures.length > 0) {
       'top-level side effect, or a `sideEffects` change in packages/kirua/package.json.\n',
   );
 }
-if (broken.length > 0 || failures.length > 0) process.exit(1);
-console.log('component-size: every family tree-shakes through the barrel.');
+if (effects.length > 0) {
+  console.error('\ncomponent-size: a module does work when it is imported.\n');
+  for (const effect of effects) console.error(`  - ${effect}`);
+  console.error(
+    '\nThe package declares "sideEffects": false, so a consumer\'s bundler drops this\n' +
+      'code. Mark a pure call `/* @__PURE__ */`, a pure function\n' +
+      '`/* @__NO_SIDE_EFFECTS__ */`, or rewrite what the bundler cannot prove pure.\n',
+  );
+}
+if (broken.length > 0 || failures.length > 0 || effects.length > 0) process.exit(1);
+console.log(
+  'component-size: every family tree-shakes through the barrel, and no module does work on import.',
+);

@@ -44,6 +44,11 @@ Make these two lines the app stylesheet's only rules:
 @import '@kobars/kirua/styles.css';
 ```
 
+Import them from a CSS file, as above, and not from JavaScript: Tailwind
+generates the components' classes only into a stylesheet that imports
+`tailwindcss`, and the package is marked free of side effects, so a bundler
+may drop a stylesheet imported from JavaScript.
+
 The package's stylesheet carries the tokens and the Tailwind theme, and names
 the package's own components as a Tailwind source, so every class they use is
 generated. Remove the `body`, background, colour and font rules a framework

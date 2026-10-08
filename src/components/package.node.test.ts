@@ -24,6 +24,7 @@ const DIST = path.join(ROOT, 'dist');
 type Manifest = {
   name: string;
   module?: string;
+  sideEffects?: unknown;
   main?: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
@@ -101,16 +102,26 @@ describe('the published package', () => {
   });
 
   /**
-   * Bundlers read `exports`; `module` is for tools that never learned to.
-   * Bundlephobia's per-export analysis looks for `module || main ||
-   * './index.js'` and failed on 0.4.0, which had only `exports`. No `main`:
-   * pointing it at ESM would mislead a require-based resolver.
+   * Bundlers read `exports`; `module` is for tools that read only the
+   * older entry fields and find nothing without it. There is no `main`:
+   * pointing it at ESM would mislead a resolver that expects CommonJS.
    */
   it('names the ES entry as `module`, the same file as exports["."].import', () => {
     const entry = manifest.exports['.'];
     if (typeof entry !== 'object') throw new Error('exports["."] must name types and import');
     expect(manifest.module).toBe(entry.import);
     expect(manifest.main).toBeUndefined();
+  });
+
+  /**
+   * `false`, not a list of the CSS files: no emitted module imports CSS, and a
+   * stylesheet `@import`ed from CSS is not subject to the field. Without the
+   * field a bundler keeps every module the barrel re-exports.
+   * `tools/component-size.mjs` checks that no module does work on import,
+   * which is what makes `false` true.
+   */
+  it('declares the package free of side effects', () => {
+    expect(manifest.sideEffects).toBe(false);
   });
 
   it('ships declarations beside the entry', () => {

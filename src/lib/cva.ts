@@ -25,6 +25,7 @@ type Config<T> = Parameters<typeof defineClassVariants<T>>[1];
  * badge({ size: 'sm' }); // 'inline-flex h-5'
  * badge.variants;        // { size: { sm: 'h-5', md: 'h-6' } }
  */
+/* @__NO_SIDE_EFFECTS__ */
 export function cva<T extends Schema>(base?: ClassValue, config?: Config<T>) {
   // `Config<T>` is conditional on `T` and TypeScript does not resolve it inside
   // the generic body, so the one property read here goes through a cast.

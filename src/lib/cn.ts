@@ -16,7 +16,7 @@ import { extendTailwindMerge } from 'tailwind-merge';
  * and `transition-press` are `@utility` rules too, listed so they cancel
  * against their neighbours rather than being read as colours.
  */
-const twMerge = extendTailwindMerge({
+const twMerge = /* @__PURE__ */ extendTailwindMerge({
   extend: {
     theme: {
       animate: [

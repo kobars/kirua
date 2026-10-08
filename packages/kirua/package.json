@@ -24,9 +24,7 @@
     "server-components"
   ],
   "type": "module",
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": false,
   "types": "./dist/components/index.d.ts",
   "module": "./dist/components/index.js",
   "exports": {
