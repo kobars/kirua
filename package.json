@@ -48,7 +48,8 @@
     "dead-classes": "node tools/dead-classes.mjs",
     "check:storybook": "pnpm build-storybook && node tools/storybook-theme-check.mjs",
     "check:journeys": "pnpm build:examples && node tools/example-journeys.mjs",
-    "check:lighthouse": "pnpm build:examples && node tools/lighthouse-examples.mjs"
+    "check:lighthouse": "pnpm build:examples && node tools/lighthouse-examples.mjs",
+    "lighthouse:compare": "node tools/lighthouse-compare.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.21",
