@@ -13,9 +13,9 @@
  *
  * **The output is minified a second time, fully.** Library mode with ES output
  * turns whitespace removal off, so that a library keeps the `@__PURE__`
- * annotations its consumer's bundler needs; `Button` came out as 2,117 lines
- * with `//#region` comments, and every figure read 13 to 25% above what an
- * app ships. `output.minify` minifies the final chunk, which nothing bundles
+ * annotations its consumer's bundler needs. Its output keeps whitespace and
+ * `//#region` comments, and every figure would read well above what an app
+ * ships. `output.minify` minifies the final chunk, which nothing bundles
  * again. Two figures:
  *
  * - **kirua only**: every npm package stays outside the bundle. What this
@@ -29,8 +29,8 @@
  * a limit. What does fail is the property every size here depends on: a
  * family imported through the barrel must reach exactly the modules it reaches
  * when imported from its own file. Compared as module lists, not bytes —
- * the two bundles of `Button` are byte-identical but in a different order, and
- * gzip alone put 123 bytes between them.
+ * the two bundles can hold the same code in a different order, and gzip alone
+ * then puts bytes between them.
  *
  * It also fails when an emitted module does work on import. The package
  * declares `"sideEffects": false` and a consumer's bundler trusts it, so code

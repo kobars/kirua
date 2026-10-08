@@ -3,14 +3,15 @@ import { type Document, parseBundle } from './okf';
 
 /**
  * The board's schema, in Zod, so the app gets parsing and types from one
- * definition. It parses; it does not enforce. `board/tools/validate.mjs`
+ * definition. It parses; it does not enforce. The board's own validator
  * decides whether a bundle is valid, runs in a pre-commit hook with zero
  * dependencies, and stays the authority — if the two disagree about what a
  * valid card is, this file is wrong.
  *
  * Every frontmatter value arrives as a string, because `okf.ts` reads the
- * same YAML subset `okf.mjs` does and neither guesses at types. The coercions
- * below are where a string becomes a number or a boolean, and nowhere else.
+ * same YAML subset the board's reader does and neither guesses at types. The
+ * coercions below are where a string becomes a number or a boolean, and
+ * nowhere else.
  */
 
 export const STORED_STATES = ['backlog', 'doing', 'blocked', 'done', 'held'] as const;
@@ -128,8 +129,8 @@ export function parseBoard(files: Record<string, string>): Board {
 }
 
 /** `ready` = stored `backlog` and every dependency is `done`. The same rule as
- *  `computeReady` in `okf.mjs`, including its quiet half: a dependency that
- *  does not resolve is not `done`, so the task is not ready. */
+ *  the board reader's own `computeReady`, including its quiet half: a
+ *  dependency that does not resolve is not `done`, so the task is not ready. */
 export function computeReady(tasks: readonly Task[]): Set<string> {
   const state = new Map(tasks.map((t) => [t.resource, t.state]));
   return new Set(

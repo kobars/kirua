@@ -3,7 +3,7 @@ import { parseBundle, parseDocument, parseYaml } from './okf';
 import { sample } from './sources';
 
 /**
- * The reader must agree with `board/tools/okf.mjs`, which is local-only and
+ * The reader must agree with the board's own reader, which is local-only and
  * cannot be imported here. So each case below is a shape the real bundle
  * uses, with the value the original reader produces for it.
  */

@@ -332,12 +332,11 @@ describe('the published package', () => {
    * provider silently stops reaching the components.
    *
    * Each primitive pins an exact version, and a consumer's install resolves
-   * newer primitives than this lockfile holds. An exact pin here therefore
-   * matched the repository and split every consumer: 0.4.0 asked for 1.1.4
-   * while the primitives npm installed asked for 1.1.5, and a fresh install
-   * held 12 copies. So the range is a caret, and its floor is the version the
-   * primitives pin: npm keeps an installed copy that still satisfies the
-   * range, so a floor below their pin left an upgrade from 0.4.0 on 1.1.4.
+   * newer primitives than this lockfile holds, so an exact pin here would
+   * match the repository and still split every consumer into several copies.
+   * The range is a caret, and its floor is the version the primitives pin:
+   * npm keeps an installed copy that still satisfies the range, so a floor
+   * below their pin leaves an upgrade on the old copy.
    * The primitives' own floors must pin that version too, or a consumer
    * whose lockfile holds a floor release gets the old copy beside the new.
    * `tools/consumer-install.mjs` installs the packed tarball, fresh and over

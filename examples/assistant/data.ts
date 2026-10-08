@@ -148,7 +148,7 @@ export const shortcuts = [
 
 /**
  * Six more conversations, so the sidebar has something to group, search and
- * scroll. Same shape as the four above, written out rather than generated so
+ * scroll. Same shape as the three above, written out rather than generated so
  * every line is readable in a diff.
  */
 export const moreConversations: Conversation[] = [

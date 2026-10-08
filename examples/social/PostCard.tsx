@@ -102,7 +102,7 @@ export function PostCard({ post, onDelete }: PostCardProps) {
           {/* A menu of commands, so `DropdownMenu` rather than a `Popover` of
             buttons: a menu answers the arrow keys, jumps to an item by its
             first letter, closes on Escape, and reports itself as a `menu` of
-            `menuitem`s. The same four commands are `ContextMenuItem`s at the
+            `menuitem`s. The same commands are `ContextMenuItem`s at the
             bottom of this file for the right-click path, so the two paths share
             one keyboard model. */}
           <DropdownMenu>

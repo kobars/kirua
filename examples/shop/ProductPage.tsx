@@ -56,7 +56,7 @@ export function ProductPage({ product, onAdd }: ProductPageProps) {
           {/* Three crumbs do not fit beside a product name at 320px, so the
               middle one collapses to an ellipsis there. It is `aria-hidden`,
               and the brand is a link on the page below, so nothing is lost to
-              a screen reader — the crumb it replaces was a duplicate. */}
+              a screen reader — the crumb it replaces is a duplicate. */}
           <Visible below="sm">
             <BreadcrumbItem>
               <BreadcrumbEllipsis />

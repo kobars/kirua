@@ -33,9 +33,10 @@ describe('the stylesheet fetches nothing from another origin', () => {
 });
 
 /**
- * kirua names its typefaces and does not ship them, so a host that loads
- * nothing at all must still get a working page. That is what the fallback
- * stacks are for, and it is the only thing keeping the decision safe.
+ * kirua's main stylesheet names its typefaces and does not load them; the
+ * font files come only through the separate `fonts.css` or the host. So a
+ * host that loads neither must still get a working page. That is what the
+ * fallback stacks are for, and it is the only thing keeping the decision safe.
  */
 describe('both font stacks end in something every device has', () => {
   it.each(['display', 'text'])('--font-%s falls back to a system family', (name) => {

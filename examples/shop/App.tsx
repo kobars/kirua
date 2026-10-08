@@ -265,7 +265,7 @@ export function App() {
 
             {/* The label is dropped below `sm`. At 375 the row is a logo, the
                 account and theme menus, Filter and this; keeping every word
-                left six pixels of clearance, which reads as a clipped edge. */}
+                leaves almost no clearance, which reads as a clipped edge. */}
             <Button
               variant="secondary"
               size="sm"

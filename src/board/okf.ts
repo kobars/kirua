@@ -1,12 +1,13 @@
 /**
  * The reader half of the board's tooling, ported to TypeScript for the app.
  *
- * `board/tools/okf.mjs` is the original and stays the authority: it runs in a
- * pre-commit hook with zero dependencies, and *an enforcement layer that can
- * fail to run is not one*. This file reads the same subset of YAML the same
- * way — scalars, inline lists, block lists, one level of nested map — and
- * throws on anything else with a line number, so a field shape nobody planned
- * for is loud here too. If the two ever disagree, this one is wrong.
+ * The board's own command-line reader, which lives beside a local board and
+ * not in this repository, stays the authority: it runs in a pre-commit hook
+ * with zero dependencies, and *an enforcement layer that can fail to run is
+ * not one*. This file reads the same subset of YAML the same way — scalars,
+ * inline lists, block lists, one level of nested map — and throws on anything
+ * else with a line number, so a field shape nobody planned for is loud here
+ * too. If the two ever disagree, this one is wrong.
  */
 
 export type YamlValue = string | null | YamlValue[] | { [key: string]: YamlValue };
