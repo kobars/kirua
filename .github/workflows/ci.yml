@@ -99,8 +99,11 @@ jobs:
           KIRUA_SOURCE=1 pnpm build:examples
           cd lighthouse-base && KIRUA_SOURCE=1 pnpm build:examples
 
+      # Five rounds, not three: the pages load Google Fonts over the internet,
+      # and its timing moves a single simulated LCP by a few hundred
+      # milliseconds, so two slow runs in three could set the median.
       - name: Compare
-        run: pnpm lighthouse:compare lighthouse-base/examples/dist examples/dist
+        run: pnpm lighthouse:compare lighthouse-base/examples/dist examples/dist 5
         env:
           KIRUA_REVIEW_OUTPUT: lighthouse-reports
 
