@@ -4,6 +4,19 @@ The values marked [FIGMA] in the stylesheets under dist/styles/ were measured
 from "Figma Anime Website UI Design: Futuristic & Interactive Hero Section" by
 @Dsingr on Figma Community. The design's rights remain with its author.
 
+The fonts under dist/styles/fonts/ are third-party and not covered by the MIT
+License:
+
+- Nunito, Copyright 2014 The Nunito Project Authors
+  (https://github.com/googlefonts/nunito), licensed under the SIL Open Font
+  License 1.1. The license is in dist/styles/fonts/OFL-Nunito.txt.
+- Luckiest Guy, Copyright (c) 2010 by Brian J. Bonislawsky DBA Astigmatic
+  (AOETI), licensed under the Apache License 2.0. The license is in
+  dist/styles/fonts/LICENSE-LuckiestGuy.txt.
+
+The files are the Latin, Latin Extended, Cyrillic and Vietnamese subsets
+Google Fonts serves, unmodified.
+
 This package contains no third-party artwork. The source repository,
 https://github.com/kobars/kirua, also holds character images and a rebuild of
 that hero design, which its own NOTICE excludes from the license. Neither is

@@ -17,8 +17,8 @@ type LocaleWithWeekInfo = Intl.Locale & {
  * accessor. Everywhere else falls back to Monday, which leaves only the
  * handful of Saturday-first regions wrong, and only on those engines.
  */
-const SUNDAY_FIRST = new Set(
-  (
+const SUNDAY_FIRST = /* @__PURE__ */ new Set(
+  /* @__PURE__ */ (
     'AG AS BD BR BS BT BW BZ CA CO DM DO ET GT GU HK HN ID IL IN IS JM JP KE KH KR LA ' +
     'MH MM MO MT MX MZ NI NP PA PE PH PK PR PT PY SA SG SV TH TT TW UM US VE VI WS YE ZA ZW'
   ).split(' '),

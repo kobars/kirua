@@ -64,14 +64,14 @@ export const buttonVariants = cva(
       variant: {
         primary: [
           'bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active',
-          ...pressable,
+          pressable,
           'solo-enabled:border-line-press',
           'solo-enabled:bg-primary-gradient solo-enabled:hover:bg-primary-gradient-hover',
           'forced-colors:bg-none',
         ],
         secondary: [
           'border-2 border-secondary-line bg-secondary text-on-secondary hover:bg-secondary-hover aria-expanded:bg-secondary-hover',
-          ...pressable,
+          pressable,
           'solo-enabled:border-secondary-raised-line solo-enabled:text-on-secondary-raised',
           // Written for each state the plain look styles, so the raised fill
           // wins in all of them. Hover is shown by the lift.
@@ -81,7 +81,7 @@ export const buttonVariants = cva(
         ghost: 'bg-transparent text-on-ghost hover:bg-ghost-hover aria-expanded:bg-ghost-hover',
         danger: [
           'bg-danger text-on-danger hover:bg-danger-hover',
-          ...pressable,
+          pressable,
           'solo-enabled:border-line-press',
           '[--press-shade:var(--color-shade-press-danger)]',
         ],

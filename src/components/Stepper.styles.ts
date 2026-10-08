@@ -19,9 +19,9 @@ const MARKER_BASE =
   'flex size-6 shrink-0 items-center justify-center rounded-pill text-caption font-semibold tabular-nums';
 
 export const stepperMarker = {
-  done: `${MARKER_BASE} bg-primary text-on-primary`,
-  current: `${MARKER_BASE} border-2 border-primary bg-page text-fg`,
-  upcoming: `${MARKER_BASE} border border-line bg-page text-fg-muted`,
+  done: MARKER_BASE + ' bg-primary text-on-primary',
+  current: MARKER_BASE + ' border-2 border-primary bg-page text-fg',
+  upcoming: MARKER_BASE + ' border border-line bg-page text-fg-muted',
 } as const;
 
 export type StepStatus = keyof typeof stepperMarker;

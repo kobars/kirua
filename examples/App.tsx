@@ -1,23 +1,11 @@
-import { lazy, Suspense, useEffect, type ComponentType } from 'react';
+import { Suspense, useEffect } from 'react';
 import { AppMain, Container, Spinner } from '@kobars/kirua';
 import { Hub } from './Hub';
-import { HUB_TITLE, SECTIONS, type SectionId } from './sections';
+import { HUB_TITLE, SECTIONS } from './sections';
+import { INITIAL, PAGES } from './sectionPages';
 import { SectionErrorBoundary } from './shared/SectionErrorBoundary';
 import { useApplyNightPalette } from './shared/useNightPalette';
 import { sectionOf, useHashPath } from './shared/useHashRoute';
-
-/**
- * Each section is its own chunk, so opening one downloads that section and
- * the shared code, not the other five.
- */
-const PAGES: Record<SectionId, ComponentType> = {
-  shop: lazy(() => import('./shop/App').then((module) => ({ default: module.App }))),
-  his: lazy(() => import('./his/App').then((module) => ({ default: module.App }))),
-  social: lazy(() => import('./social/App').then((module) => ({ default: module.App }))),
-  mobile: lazy(() => import('./mobile/App').then((module) => ({ default: module.App }))),
-  assistant: lazy(() => import('./assistant/App').then((module) => ({ default: module.App }))),
-  marketing: lazy(() => import('./marketing/App').then((module) => ({ default: module.App }))),
-};
 
 /** The path the previous screen was shown for; undefined until the first one. */
 let shownPath: string | undefined;
@@ -76,7 +64,7 @@ export function App() {
       </>
     );
 
-  const Page = PAGES[section.id];
+  const Page = INITIAL[section.id] ?? PAGES[section.id];
   return (
     <SectionErrorBoundary key={section.id} name={section.name}>
       <Suspense

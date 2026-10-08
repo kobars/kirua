@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.5.0
+
+### Changed
+
+- The package declares `"sideEffects": false`, so a bundler drops every
+  module of it your app does not use, through the barrel as well as by
+  path. The build checks that no module does work when it is imported. If
+  you import `@kobars/kirua/styles.css` from JavaScript, import it from your
+  CSS file instead, after `tailwindcss`: imported from JavaScript it never
+  generated the components' classes, and a bundler may now drop it.
+
+### Added
+
+- `@kobars/kirua/fonts.css`: Nunito and Luckiest Guy as `@font-face` rules
+  and woff2 files in the package, so the fonts load from your own origin.
+  Import it after `styles.css` and remove the Google Fonts `<link>`, which
+  blocks rendering until a stylesheet from another origin arrives. The
+  files are the subsets Google Fonts serves, unmodified, split by script so
+  a Latin page downloads one file per family. Both licenses ship beside the
+  files.
+
+### Fixed
+
+- `sources/<Module>.css` generates only its module's classes. In 0.4.x,
+  Tailwind's automatic source detection widened each file a stylesheet
+  named in `node_modules` to its whole folder, so in an app every
+  per-module stylesheet generated every component's classes: 18.80 kB
+  gzipped, the same as `styles.css`. Each stylesheet now lists its classes
+  inline. `Button` needs 7.78 kB, `Card` 7.03 kB and `Dialog` 7.96 kB.
+- `styles.css` lists its classes the same way and is 18.41 kB gzipped in an
+  app, as 0.4.1 stated; it was 18.80 kB.
+
 ## 0.4.1
 
 ### Fixed

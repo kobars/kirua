@@ -13,10 +13,13 @@
  *   rewritten to a relative `.js` path, which resolves under both `bundler`
  *   and `nodenext` module resolution.
  * - **Styles**: the token layers, copied as Tailwind source CSS, and a
- *   `styles.css` entry that names the emitted JavaScript as a Tailwind source.
- *   Beside it, `theme.css` (the token layers alone) and one `sources/<Module>.css`
- *   per component module, naming the files that module reaches, so a consumer
- *   can generate the classes of only the components they import.
+ *   `styles.css` entry that lists the class candidates in the emitted
+ *   JavaScript. Beside it, `theme.css` (the token layers alone) and one
+ *   `sources/<Module>.css` per component module, listing the class candidates
+ *   in the files that module reaches, so a consumer can generate the classes
+ *   of only the components they import.
+ * - **Fonts**: `fonts.css` and the font files and licenses it points at, in
+ *   `styles/fonts/`.
  *
  * Only what the barrel reaches is emitted. Stories, tests and the browser-only
  * contrast module are never imported by it.
@@ -27,6 +30,7 @@
 import { execFileSync } from 'node:child_process';
 import {
   copyFileSync,
+  cpSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -37,6 +41,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
+import { Scanner } from '@tailwindcss/oxide';
 import react from '@vitejs/plugin-react';
 import { build } from 'vite';
 
@@ -135,20 +140,52 @@ for (const file of files(OUT).filter((f) => f.endsWith('.d.ts'))) {
   if (rewritten !== text) writeFileSync(file, rewritten);
 }
 
+/**
+ * Every stylesheet that generates component classes lists them inline, as the
+ * class candidates found in the files it covers, rather than naming the files.
+ * With automatic source detection on, which is Tailwind's default, an
+ * `@source` that names a file inside `node_modules` is widened to that file's
+ * whole directory. A file list would then generate every component's classes,
+ * plus utilities named only in the `.d.ts` comments beside them. The
+ * candidates come from the scanner the Tailwind plugins use, so the generated
+ * CSS is the same as scanning only those files.
+ */
+const unsafe = [];
+function inlineSource(label, files) {
+  const candidates = new Scanner({})
+    .scanFiles(
+      files
+        .filter((file) => !NOT_SOURCES.includes(path.relative(OUT, file)))
+        .map((file) => ({ content: readFileSync(file, 'utf8'), extension: 'js' })),
+    )
+    .sort();
+  // `inline()` expands braces like a shell, and its argument is a CSS string,
+  // where a double quote ends it and a backslash starts an escape.
+  for (const candidate of candidates.filter((c) => /["{}\\]/.test(c))) {
+    unsafe.push(`${label}: ${candidate}`);
+  }
+  return `@source inline("${candidates.join(' ')}");\n`;
+}
+
 mkdirSync(path.join(OUT, 'styles'), { recursive: true });
 for (const sheet of readdirSync(path.join(SRC, 'styles')).filter((f) => f.endsWith('.css'))) {
   copyFileSync(path.join(SRC, 'styles', sheet), path.join(OUT, 'styles', sheet));
 }
+cpSync(path.join(SRC, 'styles', 'fonts'), path.join(OUT, 'styles', 'fonts'), {
+  recursive: true,
+});
+const emitted = ['components', 'lib'].flatMap((dir) =>
+  readdirSync(path.join(OUT, dir))
+    .filter((file) => file.endsWith('.js'))
+    .map((file) => path.join(OUT, dir, file)),
+);
 writeFileSync(
   path.join(OUT, 'styles.css'),
-  `/* kirua: the token layers, the Tailwind theme and the component sources.
- * Import after \`tailwindcss\`. The fonts are loaded by the host page. */
+  `/* kirua: the token layers, the Tailwind theme and the component classes.
+ * Import after \`tailwindcss\`. The fonts are in \`fonts.css\`. */
 @import './styles/kirua.css';
 
-@source './components/*.js';
-@source './lib/*.js';
-${NOT_SOURCES.map((file) => `@source not './${file}';`).join('\n')}
-`,
+${inlineSource('styles.css', emitted)}`,
 );
 
 writeFileSync(
@@ -161,10 +198,9 @@ writeFileSync(
 );
 
 /**
- * Tailwind finds classes by reading files as text and never follows an import,
- * so each module's sources are its whole closure: every emitted file it
- * reaches through relative imports. `Dialog` needs `Button`'s classes because
- * it renders one.
+ * Tailwind never follows an import, so each module's sources are its whole
+ * closure: every emitted file it reaches through relative imports. `Dialog`
+ * needs `Button`'s classes because it renders one.
  */
 // `import "../lib/radius.js"` has no `from`: the build inlines a constant and
 // keeps the bare import, and that file is still reached.
@@ -181,14 +217,16 @@ mkdirSync(path.join(OUT, 'sources'), { recursive: true });
 const barrel = readFileSync(path.join(OUT, 'components/index.js'), 'utf8');
 for (const [, name] of barrel.matchAll(/^import \{ [^}]+ \} from "\.\/([^"]+)\.js";$/gm)) {
   if (name.endsWith('.variants')) continue;
-  const reached = [...closure(path.join(OUT, 'components', `${name}.js`))]
-    .filter((file) => !NOT_SOURCES.includes(path.relative(OUT, file)))
-    .map((file) => path.relative(path.join(OUT, 'sources'), file))
-    .sort();
+  const reached = [...closure(path.join(OUT, 'components', `${name}.js`))];
   writeFileSync(
     path.join(OUT, 'sources', `${name}.css`),
-    `/* The files ${name}.js reaches, for Tailwind to scan. */\n` +
-      reached.map((file) => `@source '${file}';\n`).join(''),
+    `/* The class candidates in the files ${name}.js reaches. */\n` +
+      inlineSource(`sources/${name}.css`, reached),
+  );
+}
+if (unsafe.length > 0) {
+  throw new Error(
+    `cannot write these candidates into @source inline():\n  ${unsafe.join('\n  ')}`,
   );
 }
 

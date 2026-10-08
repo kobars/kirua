@@ -36,8 +36,11 @@ export const listVariants = cva(
   {
     variants: {
       variant: {
-        bullet: `list-disc ps-5 marker:text-fg-muted ${NESTED}`,
-        number: `list-decimal ps-5 marker:font-medium marker:text-fg-muted marker:tabular-nums ${NESTED}`,
+        bullet: ['list-disc ps-5 marker:text-fg-muted', NESTED],
+        number: [
+          'list-decimal ps-5 marker:font-medium marker:text-fg-muted marker:tabular-nums',
+          NESTED,
+        ],
         plain: 'list-none! ps-0',
       },
       size: { sm: 'text-body-sm', md: 'text-body-md' },

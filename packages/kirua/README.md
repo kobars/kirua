@@ -44,11 +44,16 @@ Make these two lines the app stylesheet's only rules:
 @import '@kobars/kirua/styles.css';
 ```
 
-The package's stylesheet carries the tokens and the Tailwind theme, and names
-the package's own components as a Tailwind source, so every class they use is
-generated. Remove the `body`, background, colour and font rules a framework
-scaffold writes, such as the ones in create-next-app's `globals.css`. Those
-rules are unlayered, so they override kirua's base layer.
+Import them from a CSS file, as above, and not from JavaScript: Tailwind
+generates the components' classes only into a stylesheet that imports
+`tailwindcss`, and the package is marked free of side effects, so a bundler
+may drop a stylesheet imported from JavaScript.
+
+The package's stylesheet carries the tokens and the Tailwind theme, and lists
+every class the package's components use, so each one is generated. Remove
+the `body`, background, colour and font rules a framework scaffold writes,
+such as the ones in create-next-app's `globals.css`. Those rules are
+unlayered, so they override kirua's base layer.
 
 ### Only the styles of the components you use
 
@@ -94,22 +99,25 @@ The stylesheet acts on the whole app, not only on kirua's components:
   They select on kirua's `data-slot` attributes and leave the app's own
   elements alone.
 
-Load the fonts in the document head. The stylesheet does not fetch them, and
-system fonts are the fallback:
+The fonts, Nunito and Luckiest Guy, ship with the package. Import them after
+the stylesheet, from CSS like the stylesheet itself, and your bundler copies
+the font files into your build:
 
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
-/>
+```css
+@import 'tailwindcss';
+@import '@kobars/kirua/styles.css';
+@import '@kobars/kirua/fonts.css';
 ```
 
-In Next.js, `next/font/google` also works. Call `Nunito({ subsets: ['latin'] })`
-and `Luckiest_Guy({ weight: '400', subsets: ['latin'] })` in the root layout and
-put their `className`s on `<html>`. Next emits the real family names, which are
-the names the tokens use.
+The files load from your own origin, and a page downloads only the scripts it
+shows: one file per family for Latin text. Without `fonts.css`, system fonts
+are the fallback.
+
+In Next.js, `next/font/google` works in place of `fonts.css`. Call
+`Nunito({ subsets: ['latin'] })` and
+`Luckiest_Guy({ weight: '400', subsets: ['latin'] })` in the root layout and
+put their `className`s on `<html>`. Next emits the real family names, which
+are the names the tokens use.
 
 ## Usage
 
