@@ -11,12 +11,19 @@
  * between them the result. Each figure is the median of `rounds` runs, three
  * by default.
  *
+ * The pages' Google Fonts are fetched once and served by the same local server
+ * as the app. Over the internet their timing varies from run to run, and a
+ * font that lands before or after the largest paint moves a simulated LCP by
+ * a few hundred milliseconds. Both builds load the same files either way, so
+ * the difference stays meaningful, but the figures themselves are not the
+ * score a deployed page gets.
+ *
  * It reports and does not fail. A route whose median LCP is more than
  * `WARN_LCP_MS` slower than the base gets a warning annotation on CI. The
  * table goes to the console and, on GitHub Actions, to the job summary; the
  * reports go to `$KIRUA_REVIEW_OUTPUT/lighthouse-compare`.
  */
-import { appendFile, mkdir, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { SECTIONS, serve } from './example-apps.mjs';
 import { lighthouse } from './lighthouse-run.mjs';
@@ -35,10 +42,42 @@ const output = path.join(
 );
 await mkdir(output, { recursive: true });
 
-const servers = {
-  base: await serve(path.resolve(baseDist), { compress: true }),
-  head: await serve(path.resolve(headDist), { compress: true }),
-};
+const GOOGLE_CSS = /https:\/\/fonts\.googleapis\.com\/css2\?[^"']+/;
+// Google answers with woff2 rules only for a browser it recognises.
+const CHROME =
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
+
+async function fetched(url) {
+  const response = await fetch(url, { headers: { 'user-agent': CHROME } });
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  return Buffer.from(await response.arrayBuffer());
+}
+
+/** `serve` options that answer a build's Google Fonts requests locally. */
+async function localFonts(dist) {
+  const html = await readFile(path.join(dist, 'index.html'), 'utf8');
+  const href = html.match(GOOGLE_CSS)?.[0];
+  if (!href) return {};
+  const files = new Map();
+  let css = (await fetched(href.replaceAll('&amp;', '&'))).toString();
+  for (const [index, url] of [
+    ...new Set(css.match(/https:\/\/fonts\.gstatic\.com\/[^)'"]+/g)),
+  ].entries()) {
+    const local = `/google-fonts/${index}.woff2`;
+    files.set(local, { type: 'font/woff2', body: await fetched(url) });
+    css = css.replaceAll(url, local);
+  }
+  files.set('/google-fonts/fonts.css', { type: 'text/css; charset=utf-8', body: css });
+  return {
+    files,
+    rewrite: (file, body) =>
+      file === '/index.html' ? body.toString().replace(href, '/google-fonts/fonts.css') : body,
+  };
+}
+
+const serveBuild = async (dist) =>
+  serve(path.resolve(dist), { compress: true, ...(await localFonts(path.resolve(dist))) });
+const servers = { base: await serveBuild(baseDist), head: await serveBuild(headDist) };
 const rows = [];
 try {
   for (let round = 0; round < rounds; round++) {

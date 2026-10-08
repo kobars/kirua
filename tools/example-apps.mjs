@@ -175,20 +175,29 @@ const TYPES = {
   '.png': 'image/png',
 };
 
-/** A static server for the built app, on an ephemeral port. */
-export function serve(root = DIST, { compress = false } = {}) {
+/**
+ * A static server for the built app, on an ephemeral port.
+ *
+ * `files` adds paths served from memory, as `{ type, body }`, ahead of the
+ * folder. `rewrite(file, body)` may change a file from the folder before it is
+ * sent.
+ */
+export function serve(root = DIST, { compress = false, files = new Map(), rewrite } = {}) {
   return new Promise((resolve) => {
     const server = createServer(async (request, response) => {
       const url = new URL(request.url ?? '/', 'http://localhost');
       const file = url.pathname === '/' ? '/index.html' : url.pathname;
       try {
-        const body = await readFile(path.join(root, file));
+        const extra = files.get(file);
+        const read = extra ? extra.body : await readFile(path.join(root, file));
+        const body = !extra && rewrite ? rewrite(file, read) : read;
         const gzip =
           compress &&
           /\bgzip\b/.test(request.headers['accept-encoding'] ?? '') &&
           /\.(html|js|css|svg)$/.test(file);
         response.writeHead(200, {
-          'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
+          'content-type':
+            extra?.type ?? TYPES[path.extname(file)] ?? 'application/octet-stream',
           ...(gzip ? { 'content-encoding': 'gzip', vary: 'Accept-Encoding' } : {}),
         });
         response.end(gzip ? gzipSync(body) : body);
