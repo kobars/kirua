@@ -130,16 +130,23 @@ one file per component, with TypeScript declarations.
    ```
 
 2. **Import the styles** from your stylesheet. The package's stylesheet holds
-   the tokens and the Tailwind theme, and names the package's own components as
-   a Tailwind source, so every class they use is generated:
+   the tokens and the Tailwind theme, and lists the classes the package's own
+   components use, so every one of them is generated:
 
    ```css
    @import 'tailwindcss';
    @import '@kobars/kirua/styles.css';
    ```
 
-3. **Load the fonts** in the document head. The stylesheet does not fetch them,
-   and system fonts are the fallback:
+3. **Load the fonts.** Import them from the package after the stylesheet,
+   and they load from your own origin:
+
+   ```css
+   @import '@kobars/kirua/fonts.css';
+   ```
+
+   Or link them from Google Fonts in the document head, as this repository's
+   own pages do:
 
    ```html
    <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -149,6 +156,12 @@ one file per component, with TypeScript declarations.
      href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
    />
    ```
+
+   The package's files need no other server and hold back no first paint. On
+   an app that renders in the browser the two load at the same speed on a slow
+   network, but Lighthouse's simulated mobile score favours the links: the
+   package's files start earlier and share the connection with the app's
+   JavaScript. Without either, system fonts are the fallback.
 
 Then compose:
 

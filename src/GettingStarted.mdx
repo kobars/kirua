@@ -74,8 +74,25 @@ description and error. The application decides when to validate and passes
 
 ## 4. Load the base typefaces
 
-The host document loads the fonts; the component stylesheet does not fetch them.
-Place these links in the document head, or self-host equivalent font files:
+The component stylesheet names the typefaces and does not load them. Choose one
+of two ways.
+
+**From the package.** `fonts.css` ships the font files. Import it after the
+component stylesheet, from CSS, and your bundler copies the files into your
+build:
+
+```css
+@import 'tailwindcss';
+@import '@kobars/kirua/styles.css';
+@import '@kobars/kirua/fonts.css';
+```
+
+The files load from your own origin, and no other server sees the request. A
+page downloads only the scripts it shows: one file per family for Latin text.
+No stylesheet from another origin holds back the first paint, which matters
+most when your HTML carries the content, as with server rendering.
+
+**From Google Fonts.** Place these links in the document head:
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -85,6 +102,11 @@ Place these links in the document head, or self-host equivalent font files:
   href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400..800&display=swap"
 />
 ```
+
+On an app that renders in the browser, the content waits for its JavaScript.
+There the two load at the same speed on a slow network, but Lighthouse's
+simulated mobile score favours the links: the package's files start earlier
+and share the connection with that JavaScript.
 
 Use display type for short promotional headlines. Use the text family for
 navigation, labels, forms and reading. Both have system-font fallbacks.
