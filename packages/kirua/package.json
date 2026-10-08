@@ -35,6 +35,7 @@
     },
     "./styles.css": "./dist/styles.css",
     "./theme.css": "./dist/theme.css",
+    "./fonts.css": "./dist/styles/fonts.css",
     "./sources/*": "./dist/sources/*",
     "./package.json": "./package.json"
   },

@@ -274,6 +274,23 @@ describe('the published package', () => {
     }
   });
 
+  /**
+   * Every `url()` in fonts.css must resolve to a file in the package, or a
+   * consumer's bundler fails the build on it. The licenses travel with the
+   * files they cover.
+   */
+  it('ships every font file fonts.css names, with both licenses', () => {
+    const entry = manifest.exports['./fonts.css'];
+    if (typeof entry !== 'string') throw new Error('exports["./fonts.css"] must be a path');
+    const sheet = path.join(ROOT, entry);
+    const urls = [...read(sheet).matchAll(/url\('([^']+)'\)/g)].map((m) => m[1] ?? '');
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls) expect(files).toContain(path.resolve(path.dirname(sheet), url));
+    const fonts = path.join(DIST, 'styles/fonts');
+    expect(read(path.join(fonts, 'OFL-Nunito.txt'))).toContain('SIL Open Font License');
+    expect(read(path.join(fonts, 'LICENSE-LuckiestGuy.txt'))).toContain('Apache License');
+  });
+
   it('keeps theme.css free of component sources', () => {
     const entry = manifest.exports['./theme.css'];
     if (typeof entry !== 'string') throw new Error('exports["./theme.css"] must be a path');

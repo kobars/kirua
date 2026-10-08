@@ -18,6 +18,8 @@
  *   `sources/<Module>.css` per component module, listing the class candidates
  *   in the files that module reaches, so a consumer can generate the classes
  *   of only the components they import.
+ * - **Fonts**: `fonts.css` and the font files and licenses it points at, in
+ *   `styles/fonts/`.
  *
  * Only what the barrel reaches is emitted. Stories, tests and the browser-only
  * contrast module are never imported by it.
@@ -28,6 +30,7 @@
 import { execFileSync } from 'node:child_process';
 import {
   copyFileSync,
+  cpSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -168,6 +171,9 @@ mkdirSync(path.join(OUT, 'styles'), { recursive: true });
 for (const sheet of readdirSync(path.join(SRC, 'styles')).filter((f) => f.endsWith('.css'))) {
   copyFileSync(path.join(SRC, 'styles', sheet), path.join(OUT, 'styles', sheet));
 }
+cpSync(path.join(SRC, 'styles', 'fonts'), path.join(OUT, 'styles', 'fonts'), {
+  recursive: true,
+});
 const emitted = ['components', 'lib'].flatMap((dir) =>
   readdirSync(path.join(OUT, dir))
     .filter((file) => file.endsWith('.js'))
@@ -176,7 +182,7 @@ const emitted = ['components', 'lib'].flatMap((dir) =>
 writeFileSync(
   path.join(OUT, 'styles.css'),
   `/* kirua: the token layers, the Tailwind theme and the component classes.
- * Import after \`tailwindcss\`. The fonts are loaded by the host page. */
+ * Import after \`tailwindcss\`. The fonts are in \`fonts.css\`. */
 @import './styles/kirua.css';
 
 ${inlineSource('styles.css', emitted)}`,
