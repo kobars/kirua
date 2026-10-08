@@ -23,8 +23,8 @@ import { DEFAULT, type ThemeMenuLabels } from './themeLabels';
  * nights, because choosing one there would change nothing.
  *
  * A menu rather than a row of three toggles, because the header is the most
- * contested space on a phone: three more 44px controls there leave the shop's
- * cart button six pixels of clearance.
+ * contested space on a phone: three more controls there would leave the
+ * shop's cart button almost no clearance.
  *
  * The trigger shows the theme in force, not the choice made: under "System" it
  * is a sun or a moon depending on what the operating system currently says.

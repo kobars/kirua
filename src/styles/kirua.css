@@ -211,10 +211,10 @@
  * designer picked. A token system is the thing it overrides hardest, and none
  * of it is visible in a normal render.
  *
- * Measured, not guessed. Under emulation `bg-brand` computes to plain white
- * and `shadow-overlay` computes to `none` — so the two ways this system
- * separates one surface from another, fill and elevation, both stop working
- * at once. Everything below restores a boundary that forced colours KEEPS.
+ * In this mode `bg-brand` computes to plain white and `shadow-overlay`
+ * computes to `none` — so the two ways this system separates one surface
+ * from another, fill and elevation, both stop working at once. Everything
+ * below restores a boundary that forced colours KEEPS.
  *
  * `outline` with a negative offset rather than `border`, so nothing moves: a
  * border would add a pixel to every one of these boxes in this mode only.
@@ -237,9 +237,9 @@
     outline-offset: -1px;
   }
 
-  /* A scrollbar thumb is nothing but a fill. Measured: `bg-line-strong`
-     computes to Canvas here, so the thumb vanishes into the track. A system
-     colour is the one kind of fill the mode keeps. */
+  /* A scrollbar thumb is nothing but a fill. `bg-line-strong` computes to
+     Canvas here, so the thumb vanishes into the track. A system colour is the
+     one kind of fill the mode keeps. */
   [data-slot='scroll-bar-thumb'] {
     background-color: CanvasText;
   }

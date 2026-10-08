@@ -154,9 +154,8 @@ export interface BarChartProps extends ComponentProps<'div'> {
  * Each column is a grid, and the bar is positioned inside the one row that
  * takes the leftover space. That is not a stylistic choice: a percentage height
  * on a flex child resolves against a box flexbox is still free to shrink, so
- * the bars come out *nearly* proportional — measured at a 21% error on a 2:1
- * pair, which is enough to turn a chart into a lie and little enough that
- * nobody notices.
+ * the bars come out only *nearly* proportional — wrong enough to turn a chart
+ * into a lie, and close enough that nobody notices.
  */
 export function BarChart({
   className,

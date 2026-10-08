@@ -8,16 +8,17 @@
  *
  * This repository cannot see that failure by itself. Its lockfile holds the
  * Radix versions it was built against, while a consumer resolves the newest
- * ones. 0.4.0 pinned `@radix-ui/react-direction` to exactly 1.1.4, every
- * primitive npm installed by then pinned 1.1.5, and a fresh install held 12
- * copies: twelve React contexts, so `DirectionProvider` reached none of the
- * primitives that read it. Every test here passed.
+ * ones. When kirua pins `@radix-ui/react-direction` to an exact version and
+ * the primitives npm installs pin another, the install holds two or more
+ * copies. Each copy is its own React context, so `DirectionProvider`, on
+ * kirua's copy, reaches none of the primitives on another. The test suite
+ * passes all the same.
  *
  * It installs twice: into an empty project, and over the newest published
  * release below this one, as an upgrade does. The second case is not the
  * first one again. npm keeps an installed copy that still satisfies the new
- * range, so `^1.1.4` fixed a fresh install while an upgrade from 0.4.0 kept
- * its 1.1.4 and all 12 copies.
+ * range, so a widened range can fix a fresh install while an upgrade keeps
+ * the old exact copy and every duplicate.
  *
  * Only kirua's direct dependencies fail the run: their ranges are kirua's to
  * change. A duplicate deeper in the tree is printed and left alone.

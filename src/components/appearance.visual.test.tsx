@@ -24,9 +24,9 @@ afterEach(cleanup);
  *
  * One fixed width, and every surface context. Context is the axis worth
  * spending baselines on, because it is the axis where this system is unusual:
- * one `<Button variant="primary">` is meant to render as a blue pill on a page
- * and a white pill on the brand panel with no prop and no override, and nothing
- * else here can see that stop being true.
+ * one `<Button variant="primary">` is meant to render as a blue button on a
+ * page and a white one on the brand panel with no prop and no override, and
+ * nothing else here can see that stop being true.
  */
 const CONTEXTS = [
   ['page', 'bg-page'],

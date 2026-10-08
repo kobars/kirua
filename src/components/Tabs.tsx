@@ -25,8 +25,8 @@ export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrim
       className={cn(
         'inline-flex items-center gap-1 rounded-pill bg-sunken p-1.5',
         // A tab list is `inline-flex`, so it takes the width of its tabs and
-        // never shrinks: four tabs need 372 pixels, and on a 320-wide phone the
-        // bar runs past the viewport and scrolls the whole document instead of
+        // never shrinks: four tabs are wider than a 320-wide phone, so the bar
+        // runs past the viewport and scrolls the whole document instead of
         // scrolling inside itself.
         //
         // Both utilities are inert until it actually overflows — a bar that

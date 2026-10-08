@@ -5,7 +5,7 @@
  *
  * ## What the example app is for
  *
- * The example app under `examples/`, five applications as five sections, is
+ * The example app under `examples/`, six applications as six sections, is
  * the proof that this design system can be built with. It imports the bare
  * specifier `@kobars/kirua`, exactly as an outside consumer would, and cannot
  * reach into `src`. That only means anything while the app keeps using the

@@ -15,7 +15,7 @@ afterEach(cleanup);
  * **The comparison has to be made at the reference's width.** The reference is
  * a single desktop screen. `padding="lg"` at that width is `p-8`, 32px, against
  * a measured 31. Comparing the *mobile* step with that desktop measurement
- * makes kirua look 25-35% tighter than the reference, which it is not.
+ * makes kirua look tighter than the reference, which it is not.
  */
 
 const paddingOf = (padding: 'sm' | 'md' | 'lg') =>

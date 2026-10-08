@@ -50,8 +50,9 @@ const REPO = path.join(import.meta.dirname, '..');
 /**
  * Emitted files that are never a Tailwind source. `lib/cn.js` holds
  * tailwind-merge's scale names and adds no class to any element, but its
- * strings still generate three utilities nothing renders, 0.09 to 0.55 kB
- * on a single module's stylesheet. Mirrored in `package.node.test.ts`.
+ * strings would still generate utilities that nothing renders in the
+ * stylesheet of every module that imports it. Mirrored in
+ * `package.node.test.ts`.
  */
 const NOT_SOURCES = ['lib/cn.js'];
 const SRC = path.join(REPO, 'src');
@@ -96,7 +97,7 @@ await build({
         preserveModulesRoot: SRC,
         entryFileNames: '[name].js',
         // Tailwind scans the emitted JS as text, so a class named in a JSDoc
-        // example generated CSS nothing renders. The JSDoc stays in the
+        // example would generate CSS nothing renders. The JSDoc stays in the
         // declarations, where editors read it; `@__PURE__` must stay for
         // the consumer's tree-shaking.
         comments: { legal: true, annotation: true, jsdoc: false },

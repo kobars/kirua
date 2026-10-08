@@ -29,8 +29,8 @@ afterEach(cleanup);
  * small user-chosen palette, for people who cannot read the colours a designer
  * picked, and it is the mode a token system fails hardest in.
  *
- * Measured, not predicted: without the rules this file checks, `bg-brand`
- * computes to plain white, and `shadow-overlay` computes to `none`.
+ * Without the rules this file checks, `bg-brand` computes to plain white,
+ * and `shadow-overlay` computes to `none`.
  * So both of the ways this system separates one surface from another — fill and
  * elevation — stop working at the same time.
  */

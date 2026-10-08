@@ -40,7 +40,7 @@ const ROUTES = [
 ];
 
 /**
- * A marketing site, which is the archetype the other four sections are not:
+ * A marketing site, which is the archetype the other five sections are not:
  * anonymous, persuasive and typographic rather than signed in and task-oriented.
  *
  * That is why the black pill `NavBar` and the `SpotlightPanel` family live here.
