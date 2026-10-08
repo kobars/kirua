@@ -49,11 +49,11 @@ generates the components' classes only into a stylesheet that imports
 `tailwindcss`, and the package is marked free of side effects, so a bundler
 may drop a stylesheet imported from JavaScript.
 
-The package's stylesheet carries the tokens and the Tailwind theme, and names
-the package's own components as a Tailwind source, so every class they use is
-generated. Remove the `body`, background, colour and font rules a framework
-scaffold writes, such as the ones in create-next-app's `globals.css`. Those
-rules are unlayered, so they override kirua's base layer.
+The package's stylesheet carries the tokens and the Tailwind theme, and lists
+every class the package's components use, so each one is generated. Remove
+the `body`, background, colour and font rules a framework scaffold writes,
+such as the ones in create-next-app's `globals.css`. Those rules are
+unlayered, so they override kirua's base layer.
 
 ### Only the styles of the components you use
 

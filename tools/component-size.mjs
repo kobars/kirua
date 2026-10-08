@@ -40,7 +40,8 @@
  * `dist` applies and the check tests nothing. Whatever is left in the output
  * is code a bundler cannot prove pure.
  */
-import { globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, globSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { gzipSync } from 'node:zlib';
@@ -199,17 +200,26 @@ for (const file of globSync('**/*.js', { cwd: DIST }).sort()) {
 const broken = unread.map((line) => `${path.relative(REPO, INDEX)}: cannot read \`${line}\``);
 const failures = [];
 
-const CSS_ROOT = path.join(REPO, 'node_modules/.tmp/kirua-size');
-mkdirSync(CSS_ROOT, { recursive: true });
+/**
+ * The stylesheets are compiled as in a consumer's project: automatic source
+ * detection on, the project root outside any `node_modules`, and the package
+ * installed in the root's `node_modules`. Detection walks the project root, so
+ * a package compiled from outside it, or from a root inside `node_modules`,
+ * generates different CSS from the same stylesheets.
+ */
+const CSS_ROOT = mkdtempSync(path.join(tmpdir(), 'kirua-size-'));
+const INSTALLED = path.join(CSS_ROOT, 'node_modules/@kobars/kirua/dist');
+cpSync(DIST, INSTALLED, { recursive: true });
 
-/** `@import 'tailwindcss'` and the given package stylesheets, compiled as a consumer's CSS entry is. */
+/** Tailwind and the given package stylesheets, compiled as a consumer's CSS entry is. */
 async function stylesheet(name, sheets) {
   const input = path.join(CSS_ROOT, `${name}.css`);
   writeFileSync(
     input,
-    `@import 'tailwindcss';\n` +
-      sheets.map((sheet) => `@import ${JSON.stringify(path.join(DIST, sheet))};\n`).join('') +
-      `@source not '.';\n`,
+    `@import ${JSON.stringify(path.join(REPO, 'node_modules/tailwindcss/index.css'))};\n` +
+      sheets
+        .map((sheet) => `@import ${JSON.stringify(path.join(INSTALLED, sheet))};\n`)
+        .join(''),
   );
   let asset;
   try {
@@ -309,6 +319,11 @@ if (whole.source && assembled.source !== whole.source) {
       `(${kb(assembled.gzip)} against ${kb(whole.gzip)} gzip)`,
   );
 }
+// A module's sources must generate only what that module reaches.
+for (const row of rows.filter((row) => row.styles === whole.gzip)) {
+  broken.push(`sources/${row.family}.css generates as much as styles.css does`);
+}
+rmSync(CSS_ROOT, { recursive: true, force: true });
 
 rows.sort((a, b) => b.all - a.all);
 console.table(

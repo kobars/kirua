@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync }
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { Scanner } from '@tailwindcss/oxide';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as barrel from './index';
 
@@ -60,6 +61,19 @@ function specifiers(text: string): string[] {
     for (const match of text.matchAll(pattern)) found.push(match[2] ?? '');
   }
   return found;
+}
+
+/** The class candidates Tailwind's scanner finds in the given files, sorted. */
+const candidatesOf = (list: string[]) =>
+  new Scanner({})
+    .scanFiles(list.map((file) => ({ content: read(file), extension: 'js' })))
+    .sort();
+
+/** The candidates a stylesheet lists in its one `@source inline("…")`. */
+function inlined(sheet: string): string[] {
+  const lists = [...sheet.matchAll(/@source\s+inline\("([^"]*)"\)/g)];
+  expect(lists).toHaveLength(1);
+  return (lists[0]?.[1] ?? '').split(' ').filter(Boolean);
 }
 
 /** `@radix-ui/react-slot/x` → `@radix-ui/react-slot`, `react/jsx-runtime` → `react`. */
@@ -186,28 +200,28 @@ describe('the published package', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('names every Tailwind source the stylesheet entry points at', () => {
+  it('lists the class candidates of every emitted module in the stylesheet entry', () => {
     const entry = manifest.exports['./styles.css'];
     if (typeof entry !== 'string') throw new Error('exports["./styles.css"] must be a path');
-    const sheet = read(path.join(ROOT, entry));
-    const sources = [...sheet.matchAll(/@source\s+'([^']+)'/g)].map((m) => m[1] ?? '');
-    expect(sources.length).toBeGreaterThan(0);
-    for (const source of sources) {
-      const dir = path.join(path.dirname(path.join(ROOT, entry)), path.dirname(source));
-      expect(readdirSync(dir).some((f) => f.endsWith('.js'))).toBe(true);
-    }
+    const emitted = files.filter(
+      (f) =>
+        f.endsWith('.js') &&
+        /^(components|lib)\/[^/]+$/.test(path.relative(DIST, f)) &&
+        !NOT_SOURCES.includes(path.relative(DIST, f)),
+    );
+    expect(inlined(read(path.join(ROOT, entry)))).toEqual(candidatesOf(emitted));
   });
 
   /**
-   * Tailwind never follows an import, so a module's sources must name every
-   * file it reaches. Checked as a closed set rather than against the build's
-   * own walk: a listed file's relative imports must all be listed too.
+   * Tailwind never follows an import, so a module's sources must hold the
+   * candidates of every file it reaches. The reached files are walked here
+   * from the module's own file, independently of the build's walk.
    *
    * `lib/cn.js` is the one file left out on purpose, by `NOT_SOURCES` in
    * `tools/build-lib.mjs`: it adds no class to any element, and its scale
    * names generated utilities nothing renders.
    */
-  it('lists, per component module, every file that module reaches', () => {
+  it('lists, per component module, the candidates of every file that module reaches', () => {
     const sources = path.join(DIST, 'sources');
     const modules = [
       ...read(path.join(DIST, 'components/index.js')).matchAll(
@@ -220,29 +234,44 @@ describe('the published package', () => {
 
     const gaps: string[] = [];
     for (const name of modules) {
-      const listed = new Set(
-        [...read(path.join(sources, `${name}.css`)).matchAll(/@source\s+'([^']+)'/g)].map((m) =>
-          path.resolve(sources, m[1] ?? ''),
-        ),
-      );
-      if (!listed.has(path.join(DIST, 'components', `${name}.js`)))
-        gaps.push(`${name}: itself`);
-      for (const file of listed) {
+      const listed = new Set(inlined(read(path.join(sources, `${name}.css`))));
+      const reached = new Set<string>();
+      const visit = (file: string) => {
+        if (reached.has(file) || NOT_SOURCES.includes(path.relative(DIST, file))) return;
+        reached.add(file);
         for (const specifier of specifiers(read(file)).filter((s) => s.startsWith('.'))) {
-          const target = path.resolve(path.dirname(file), specifier);
-          if (!listed.has(target) && !NOT_SOURCES.includes(path.relative(DIST, target)))
-            gaps.push(`${name}: ${path.relative(DIST, target)}`);
+          visit(path.resolve(path.dirname(file), specifier));
+        }
+      };
+      visit(path.join(DIST, 'components', `${name}.js`));
+      for (const file of reached) {
+        for (const candidate of candidatesOf([file])) {
+          if (!listed.has(candidate))
+            gaps.push(`${name}: ${candidate} from ${path.relative(DIST, file)}`);
         }
       }
     }
     expect(gaps).toEqual([]);
   });
 
-  it('leaves the files that are not class sources out of styles.css as well', () => {
-    const entry = manifest.exports['./styles.css'];
-    if (typeof entry !== 'string') throw new Error('exports["./styles.css"] must be a path');
-    const sheet = read(path.join(ROOT, entry));
-    for (const file of NOT_SOURCES) expect(sheet).toContain(`@source not './${file}';`);
+  it('leaves the files that are not class sources out of every stylesheet', () => {
+    const others = new Set(
+      candidatesOf(
+        files.filter((f) => f.endsWith('.js') && !NOT_SOURCES.includes(path.relative(DIST, f))),
+      ),
+    );
+    const only = candidatesOf(NOT_SOURCES.map((file) => path.join(DIST, file))).filter(
+      (candidate) => !others.has(candidate),
+    );
+    expect(only.length).toBeGreaterThan(0);
+    const sheets = [
+      path.join(DIST, 'styles.css'),
+      ...readdirSync(path.join(DIST, 'sources')).map((f) => path.join(DIST, 'sources', f)),
+    ];
+    for (const sheet of sheets) {
+      const listed = new Set(inlined(read(sheet)));
+      expect(only.filter((candidate) => listed.has(candidate))).toEqual([]);
+    }
   });
 
   it('keeps theme.css free of component sources', () => {

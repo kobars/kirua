@@ -96,6 +96,7 @@
     "@storybook/addon-vitest": "^10.5.8",
     "@storybook/react-vite": "^10.5.8",
     "@tailwindcss/cli": "4.3.3",
+    "@tailwindcss/oxide": "4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
